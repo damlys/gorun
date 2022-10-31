@@ -1,0 +1,52 @@
+{
+  "name": "gorun",
+  "initializeCommand": "curl https://raw.githubusercontent.com/damlys/godev/a2d7cdffd23ab77c4cd98911a3e37c497ce3ff55/scripts/init-host.sh | sh",
+  "postAttachCommand": "curl https://raw.githubusercontent.com/damlys/godev/a2d7cdffd23ab77c4cd98911a3e37c497ce3ff55/scripts/init-container.bash | bash",
+
+  "image": "ghcr.io/damlys/godev:2022-10-31-12-08-20-a2d7cdf",
+  "runArgs": [
+    "--name=devcontainer-gorun",
+    "--add-host=kubernetes.docker.internal:host-gateway"
+    //
+  ],
+  "mounts": [
+    "type=volume,source=devvolume-gcloud,target=/root/.config/gcloud",
+    "type=volume,source=devvolume-gh,target=/root/.config/gh",
+    "type=volume,source=devvolume-helm,target=/root/.config/helm",
+    "type=volume,source=devvolume-kube,target=/root/.kube",
+    "type=volume,source=devvolume-terraform,target=/root/.terraform.d"
+  ],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "eamodio.gitlens",
+        "esbenp.prettier-vscode",
+        "foxundermoon.shell-format",
+        "GitHub.vscode-pull-request-github",
+        "googlecloudtools.cloudcode",
+        "hashicorp.hcl",
+        "hashicorp.terraform",
+        "redhat.vscode-xml",
+        "redhat.vscode-yaml",
+        "streetsidesoftware.code-spell-checker"
+      ],
+      "settings": {
+        "[hcl]": { "editor.defaultFormatter": "hashicorp.hcl" },
+        "[helm]": { "editor.defaultFormatter": null, "editor.formatOnSave": false },
+        "[ignore]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
+        "[json][jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+        "[shellscript]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
+        "[terraform][terraform-vars]": { "editor.defaultFormatter": "hashicorp.terraform" },
+        "[xml]": { "editor.defaultFormatter": "redhat.vscode-xml" },
+        "[yaml]": { "editor.defaultFormatter": "redhat.vscode-yaml" },
+
+        "cloudcode.autoDependencies": "off",
+
+        "redhat.telemetry.enabled": false,
+
+        "shellformat.path": "/usr/local/bin/shfmt"
+      }
+    }
+  }
+}
