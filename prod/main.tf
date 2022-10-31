@@ -43,6 +43,11 @@ resource "google_project_iam_member" "viewers" {
 ### Google Cloud Platform services
 #######################################
 
+resource "google_project_service" "cloudkms" {
+  project = google_project.this.project_id
+  service = "cloudkms.googleapis.com"
+}
+
 resource "google_project_service" "container" {
   project = google_project.this.project_id
   service = "container.googleapis.com"
@@ -67,9 +72,31 @@ data "google_compute_subnetwork" "default" {
 ### Google Kubernetes Engine cluster
 #######################################
 
+resource "google_kms_key_ring" "primary_cluster_database" {
+  depends_on = [
+    google_project_service.cloudkms,
+  ]
+  project  = google_project.this.project_id
+  name     = "primary-cluster-database"
+  location = local.gcp_region
+}
+
+resource "google_kms_crypto_key" "primary_cluster_database" {
+  key_ring = google_kms_key_ring.primary_cluster_database.id
+  name     = "primary-cluster-database"
+  purpose  = "ENCRYPT_DECRYPT"
+}
+
+resource "google_kms_crypto_key_iam_member" "primary_cluster_database" {
+  crypto_key_id = google_kms_crypto_key.primary_cluster_database.id
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  member        = "serviceAccount:service-${google_project.this.number}@container-engine-robot.iam.gserviceaccount.com"
+}
+
 resource "google_container_cluster" "primary" {
   depends_on = [
     google_project_service.container,
+    google_kms_crypto_key_iam_member.primary_cluster_database,
   ]
   initial_node_count       = 1
   remove_default_node_pool = true
@@ -77,6 +104,11 @@ resource "google_container_cluster" "primary" {
   project  = google_project.this.project_id
   name     = "primary-cluster"
   location = local.gke_location
+
+  database_encryption {
+    state    = "ENCRYPTED"
+    key_name = google_kms_crypto_key.primary_cluster_database.id
+  }
 
   release_channel {
     channel = "STABLE"
