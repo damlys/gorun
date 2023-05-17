@@ -8,7 +8,7 @@ resource "google_project_iam_member" "general_owners" {
   member  = each.key
 
   for_each = toset([
-    "serviceAccount:gha-damlys-gomod@gorun-general-2.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gorun@gorun-general-2.iam.gserviceaccount.com",
   ])
 }
 
@@ -22,7 +22,7 @@ resource "google_project_iam_member" "dev_owners" {
   member  = each.key
 
   for_each = toset([
-    "serviceAccount:gha-damlys-gomod@gorun-general-2.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gorun@gorun-general-2.iam.gserviceaccount.com",
   ])
 }
 
@@ -36,7 +36,7 @@ resource "google_project_iam_member" "prod_owners" {
   member  = each.key
 
   for_each = toset([
-    "serviceAccount:gha-damlys-gomod@gorun-general-2.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gorun@gorun-general-2.iam.gserviceaccount.com",
   ])
 }
 

@@ -1,5 +1,5 @@
 apiVersion: v2
 name: kuard
-version: 0.0.0
+version: 0.0.1
 annotations:
   repository: oci://europe-central2-docker.pkg.dev/gorun-general-2/public-helm-charts/gorun

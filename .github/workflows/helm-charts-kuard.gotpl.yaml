@@ -1,0 +1,46 @@
+name: helm/charts/kuard
+on:
+  pull_request:
+    paths:
+      - "helm/charts/kuard/**"
+      - "!helm/charts/kuard/README.md"
+  push:
+    branches:
+      - main
+    paths:
+      - "helm/charts/kuard/**"
+      - "!helm/charts/kuard/README.md"
+jobs:
+  helm-charts-kuard:
+    name: helm/charts/kuard
+    runs-on: ubuntu-22.04
+    container: ghcr.io/damlys/gorun-devcontainer:0.0.0
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      GITHUB_OWNER: ${{ github.actor }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: git clone
+        uses: actions/checkout@v3
+      - run: git config --system --add safe.directory /__w/gorun/gorun
+      - name: gcloud auth
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/715614799977/locations/global/workloadIdentityPools/github/providers/github-actions
+          service_account: gha-damlys-gorun@gorun-general-2.iam.gserviceaccount.com
+          create_credentials_file: true
+          export_environment_variables: true
+          cleanup_credentials: true
+      - name: helm auth
+        run: gcloud auth application-default print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
+      - name: build
+        run: ./scripts/helm-chart build "kuard"
+      - name: test
+        run: ./scripts/helm-chart test "kuard"
+      - name: publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: ./scripts/helm-chart publish "kuard"
+      - name: show
+        run: ./scripts/helm-chart show "kuard"

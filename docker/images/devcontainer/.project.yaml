@@ -1,5 +1,5 @@
 repository: europe-central2-docker.pkg.dev/gorun-general-2/public-docker-images/gorun/devcontainer
-tag: 0.0.0
+tag: 0.0.1
 aliases:
   # https://hub.docker.com/r/damlys/gorun-devcontainer
   - damlys/gorun-devcontainer
