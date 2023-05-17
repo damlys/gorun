@@ -1,0 +1,7 @@
+repository: europe-central2-docker.pkg.dev/gorun-general-2/public-docker-images/gorun/devcontainer
+tag: 0.0.0
+aliases:
+  # https://hub.docker.com/r/damlys/gorun-devcontainer
+  - damlys/gorun-devcontainer
+  # https://github.com/users/damlys/packages/container/package/gorun-devcontainer
+  - ghcr.io/damlys/gorun-devcontainer

@@ -1,0 +1,12 @@
+image:
+  repository: europe-central2-docker.pkg.dev/gorun-general-2/public-docker-images/gorun/kuard
+  tag: 0.0.0
+
+configEnvs: {}
+secretConfigEnvs: {}
+configFiles: {}
+secretConfigFiles: {}
+
+httpServer:
+  minReplicas: 1
+  maxReplicas: 1

@@ -1,0 +1,7 @@
+creation_rules:
+  - # raw Kubernetes secrets
+    path_regex: \.secret\.(dec|enc)\.yaml$
+    encrypted_regex: ^(data|stringData)$
+    gcp_kms: projects/gorun-general-2/locations/europe-central2/keyRings/sops/cryptoKeys/gh-damlys-gorun
+  - # other files
+    gcp_kms: projects/gorun-general-2/locations/europe-central2/keyRings/sops/cryptoKeys/gh-damlys-gorun

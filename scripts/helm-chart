@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -e
+for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
+
+function main {
+  local cmd="$1"
+  local project_name="$2"
+  local project_path="helm/charts/${project_name}"
+  local chart_repository
+  local chart_name
+  local chart_version
+
+  chart_repository="$(yq '.annotations.repository' "${project_path}/Chart.yaml")"
+  chart_name="$(yq '.name' "${project_path}/Chart.yaml")"
+  chart_version="$(yq '.version' "${project_path}/Chart.yaml")"
+
+  case "${cmd}" in
+  "build")
+    helm package "${project_path}" --destination="${project_path}/.."
+    ;;
+
+  "test")
+    if ! str::ends_with "${chart_repository}/${chart_name}" "/gorun/${project_name}"; then
+      log::error "chart does not match naming convention: ${project_path}"
+      return 1
+    fi
+    if ! semver::validate "${chart_version}"; then
+      log::error "chart version is not a valid SemVer number: ${project_path}"
+      return 1
+    fi
+    helm lint "${project_path}"
+    ;;
+
+  "publish")
+    git::tag "${project_path}/v${chart_version}"
+    helm push "${project_path}-${chart_version}.tgz" "${chart_repository}"
+    ;;
+
+  "show")
+    echo "helm pull \"${chart_repository}/${chart_name}\" --version=\"${chart_version}\""
+    ;;
+
+  *)
+    log::error "unknown command: ${cmd}"
+    return 127
+    ;;
+  esac
+}
+
+main "$@"

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -e
+for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
+
+function main {
+  local cmd="$1"
+  local project_name="$2"
+  local project_path="terraform/submodules/${project_name}"
+  local module_repository
+  local module_version
+
+  module_repository="$(yq '.repository' "${project_path}/.project.yaml")"
+  module_version="$(yq '.version' "${project_path}/.project.yaml")"
+
+  case "${cmd}" in
+  "build")
+    cd "${project_path}"
+    git ls-files --others --exclude-standard --cached | zip --names-stdin "../${project_name}-${module_version}.zip"
+    cd ../../..
+    ;;
+
+  "test")
+    if ! str::ends_with "${module_repository}" "/gorun/${project_name}"; then
+      log::error "module does not match naming convention: ${project_path}"
+      return 1
+    fi
+    if ! semver::validate "${module_version}"; then
+      log::error "module version is not a valid SemVer number: ${project_path}"
+      return 1
+    fi
+    terraform -chdir="${project_path}" fmt -check -recursive .
+    terraform -chdir="${project_path}" init -input=false
+    terraform -chdir="${project_path}" validate
+    ;;
+
+  "publish")
+    git::tag "${project_path}/v${module_version}"
+    gcloud storage cp "${project_path}-${module_version}.zip" "gs://${module_repository}/${module_version}.zip"
+    ;;
+
+  "show")
+    echo "module \"\" { source = \"gcs::https://www.googleapis.com/storage/v1/${module_repository}/${module_version}.zip\" }"
+    ;;
+
+  *)
+    log::error "unknown command: ${cmd}"
+    return 127
+    ;;
+  esac
+}
+
+main "$@"

@@ -1,0 +1,144 @@
+name: {{ .ProjectPath }}
+on:
+  pull_request:
+    paths:
+      - "{{ .ProjectPath }}/**"
+      - "!{{ .ProjectPath }}/README.md"
+  push:
+    branches:
+      - main
+    paths:
+      - "{{ .ProjectPath }}/**"
+      - "!{{ .ProjectPath }}/README.md"
+
+      {{- if eq .ProjectType "docker/images" }}
+      - "!{{ .ProjectPath }}/container-structure-test.yaml"
+      {{- end }}
+jobs:
+  {{ .WorkflowFilename }}:
+    name: {{ .ProjectPath }}
+    runs-on: ubuntu-22.04
+    container: ghcr.io/damlys/gorun-devcontainer:0.0.0
+    permissions:
+      contents: write
+      id-token: write
+
+      {{- if eq .ProjectType "docker/images" }}
+      packages: write
+      {{- end }}
+    env:
+      GITHUB_OWNER: {{ "${{ github.actor }}" }}
+      GITHUB_TOKEN: {{ "${{ secrets.GITHUB_TOKEN }}" }}
+
+      {{- if eq .ProjectType "docker/images" }}
+      DOCKER_BUILDKIT: 1
+      {{- end }}
+
+      {{- if or (eq .ProjectType "terraform/submodules") (eq .ProjectType "terraform/modules") }}
+      TF_IN_AUTOMATION: 1
+      {{- end }}
+    steps:
+      - name: git clone
+        uses: actions/checkout@v3
+      {{- /*
+        TODO: remove this workaround when the issue is fixed
+        https://github.com/actions/checkout/issues/1169
+      */}}
+      - run: git config --system --add safe.directory /__w/gorun/gorun
+      - name: gcloud auth
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/715614799977/locations/global/workloadIdentityPools/github/providers/github-actions
+          service_account: gha-damlys-gorun@gorun-general-2.iam.gserviceaccount.com
+          create_credentials_file: true
+          export_environment_variables: true
+          cleanup_credentials: true
+
+      {{- if eq .ProjectType "docker/images" }}
+      - name: docker auth (Google Artifact Registry)
+        run: gcloud auth configure-docker "europe-central2-docker.pkg.dev"
+      - name: docker auth (Docker Hub)
+        uses: docker/login-action@v2
+        with:
+          username: {{ "${{ vars.DOCKERHUB_USERNAME }}" }}
+          password: {{ "${{ secrets.DOCKERHUB_TOKEN }}" }}
+      - name: docker auth (GitHub Packages)
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: {{ "${{ github.actor }}" }}
+          password: {{ "${{ secrets.GITHUB_TOKEN }}" }}
+      - name: docker buildx
+        uses: docker/setup-buildx-action@v2
+      - name: build
+        run: ./scripts/docker-image build "{{ .ProjectName }}"
+      - name: test
+        run: ./scripts/docker-image test "{{ .ProjectName }}"
+      - name: publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: ./scripts/docker-image publish "{{ .ProjectName }}"
+      - name: show
+        run: ./scripts/docker-image show "{{ .ProjectName }}"
+      {{- end }}
+
+      {{- if eq .ProjectType "helm/charts" }}
+      - name: helm auth
+        run: gcloud auth application-default print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
+      - name: build
+        run: ./scripts/helm-chart build "{{ .ProjectName }}"
+      - name: test
+        run: ./scripts/helm-chart test "{{ .ProjectName }}"
+      - name: publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: ./scripts/helm-chart publish "{{ .ProjectName }}"
+      - name: show
+        run: ./scripts/helm-chart show "{{ .ProjectName }}"
+      {{- end }}
+
+      {{- if or (eq .ProjectType "terraform/submodules") (eq .ProjectType "terraform/modules") }}
+      - name: cache
+        uses: actions/cache@v3
+        with:
+          key: {{ .WorkflowFilename }}
+          path: |
+            {{ .ProjectPath }}/.terraform
+
+            {{- if eq .ProjectType "terraform/submodules" }}
+            {{ .ProjectPath }}/.terraform.lock.hcl
+            {{- end }}
+      {{- end }}
+
+      {{- if eq .ProjectType "terraform/submodules" }}
+      - name: build
+        run: ./scripts/terraform-submodule build "{{ .ProjectName }}"
+      - name: test
+        run: ./scripts/terraform-submodule test "{{ .ProjectName }}"
+      - name: publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: ./scripts/terraform-submodule publish "{{ .ProjectName }}"
+      - name: show
+        run: ./scripts/terraform-submodule show "{{ .ProjectName }}"
+      {{- end }}
+
+      {{- if eq .ProjectType "kubernetes/raw" }}
+      {{- end }}
+
+      {{- if eq .ProjectType "helm/releases" }}
+      {{- end }}
+
+      {{- if eq .ProjectType "terraform/modules" }}
+      - name: test
+        run: ./scripts/terraform-module test "{{ .ProjectName }}"
+      - name: fmt check
+        run: terraform -chdir="{{ .ProjectPath }}" fmt -check -recursive .
+      - name: init
+        run: terraform -chdir="{{ .ProjectPath }}" init -input=false
+      - name: validate
+        run: terraform -chdir="{{ .ProjectPath }}" validate
+      - name: plan
+        if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
+        run: terraform -chdir="{{ .ProjectPath }}" plan -input=false
+      - name: apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform -chdir="{{ .ProjectPath }}" apply -input=false -auto-approve
+      {{- end }}

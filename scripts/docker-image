@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -e
+for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
+
+function main {
+  local cmd="$1"
+  local project_name="$2"
+  local project_path="docker/images/${project_name}"
+  local image_repository
+  local image_tag
+  local image
+  local image_aliases
+
+  image_repository="$(yq '.repository' "${project_path}/.project.yaml")"
+  image_tag="$(yq '.tag' "${project_path}/.project.yaml")"
+  image="${image_repository}:${image_tag}"
+  image_aliases=$(yq '.aliases.[] + ":" + .tag' "${project_path}/.project.yaml")
+
+  case "${cmd}" in
+  "build")
+    if [[ "${DOCKER_BUILDKIT}" == "1" ]]; then
+      docker buildx build --load --tag="${image}" "${project_path}"
+    else
+      docker build --tag="${image}" "${project_path}"
+    fi
+    ;;
+
+  "test")
+    if ! str::ends_with "${image_repository}" "/gorun/${project_name}"; then
+      log::error "image does not match naming convention: ${project_path}"
+      return 1
+    fi
+    if ! semver::validate "${image_tag}"; then
+      log::error "image tag is not a valid SemVer number: ${project_path}"
+      return 1
+    fi
+    container-structure-test test --image="${image}" --config="${project_path}/container-structure-test.yaml"
+    ;;
+
+  "publish")
+    git::tag "${project_path}/v${image_tag}"
+    if [[ "${DOCKER_BUILDKIT}" == "1" ]]; then
+      docker buildx build --push --platform="linux/amd64,linux/arm64/v8" --tag="${image}" "${project_path}"
+
+      for alias in $image_aliases; do
+        docker buildx build --push --platform="linux/amd64,linux/arm64/v8" --tag="${alias}" "${project_path}"
+      done
+    else
+      docker push "${image}"
+
+      for alias in $image_aliases; do
+        docker tag "${image}" "${alias}"
+        docker push "${alias}"
+      done
+    fi
+    ;;
+
+  "show")
+    echo "docker pull \"${image}\""
+
+    for alias in $image_aliases; do
+      echo "docker pull \"${alias}\""
+    done
+    ;;
+
+  *)
+    log::error "unknown command: ${cmd}"
+    return 127
+    ;;
+  esac
+}
+
+main "$@"

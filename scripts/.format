@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -e
+for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
+
+function main {
+  for f in docker/images/*/container-structure-test.yaml; do
+    if yq '. | has "commandTests"' "${f}" --exit-status >/dev/null 2>&1; then
+      yq --inplace ".commandTests |= sort_by(.name)" "${f}"
+    fi
+    if yq '. | has "fileContentTests"' "${f}" --exit-status >/dev/null 2>&1; then
+      yq --inplace ".fileContentTests |= sort_by(.name)" "${f}"
+    fi
+    if yq '. | has "fileExistenceTests"' "${f}" --exit-status >/dev/null 2>&1; then
+      yq --inplace ".fileExistenceTests |= sort_by(.name)" "${f}"
+    fi
+    if yq '.metadataTest | has "envVars"' "${f}" --exit-status >/dev/null 2>&1; then
+      yq --inplace ".metadataTest.envVars |= sort_by(.key)" "${f}"
+    fi
+  done
+}
+
+main "$@"

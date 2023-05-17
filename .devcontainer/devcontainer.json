@@ -1,0 +1,63 @@
+{
+  "name": "gorun",
+
+  "image": "europe-central2-docker.pkg.dev/gorun-general-2/public-docker-images/gorun/devcontainer:0.0.0",
+  "runArgs": [
+    "--name=devcontainer-gorun",
+    "--add-host=kubernetes.docker.internal:host-gateway", // "docker-desktop" host
+    "--env-file=${localEnv:HOME}/.devcontainer.env"
+  ],
+  "containerUser": "root",
+  "containerEnv": {
+    "DOCKER_BUILDKIT": "1",
+    "EDITOR": "code --wait", // SOPS default editor
+    "KUBECONFIG": "/root/.kube/config:/run/secrets/host-kubeconfig"
+  },
+  "mounts": [
+    "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock",
+    "type=bind,source=${localEnv:HOME}/.kube/config,target=/run/secrets/host-kubeconfig,readonly", // "docker-desktop" context
+    "type=volume,source=devcontainer-docker,target=/root/.docker",
+    "type=volume,source=devcontainer-gcloud,target=/root/.config/gcloud",
+    "type=volume,source=devcontainer-gh,target=/root/.config/gh",
+    "type=volume,source=devcontainer-helm,target=/root/.config/helm",
+    "type=volume,source=devcontainer-kube,target=/root/.kube",
+    "type=volume,source=devcontainer-skaffold,target=/root/.skaffold",
+    "type=volume,source=devcontainer-terraform,target=/root/.terraform.d"
+  ],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode", // https://prettier.io/docs/en/editors.html#visual-studio-code
+        "foxundermoon.shell-format", // https://github.com/foxundermoon/vs-shell-format
+        "golang.go", // https://github.com/golang/vscode-go
+        "googlecloudtools.cloudcode", // https://cloud.google.com/code
+        "hashicorp.hcl",
+        "hashicorp.terraform", // https://www.terraform.io/docs/terraform-tools
+        "ms-azuretools.vscode-docker",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "redhat.vscode-xml",
+        "redhat.vscode-yaml",
+        "timonwong.shellcheck" // https://github.com/vscode-shellcheck/vscode-shellcheck
+      ],
+      "settings": {
+        "[dockerfile]": { "editor.defaultFormatter": "ms-azuretools.vscode-docker" },
+        "[go]": { "editor.defaultFormatter": "golang.go" },
+        "[hcl]": { "editor.defaultFormatter": "hashicorp.hcl" },
+        "[helm]": { "editor.defaultFormatter": null, "editor.formatOnSave": false },
+        "[ignore]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
+        "[json][jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+        "[shellscript]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
+        "[terraform][terraform-vars]": { "editor.defaultFormatter": "hashicorp.terraform" },
+        "[xml]": { "editor.defaultFormatter": "redhat.vscode-xml" },
+        "[yaml]": { "editor.defaultFormatter": "redhat.vscode-yaml" },
+
+        "cloudcode.autoDependencies": "off",
+        "go.lintTool": "golangci-lint",
+        "go.toolsManagement.autoUpdate": false,
+        "shellcheck.exclude": ["1090"],
+        "shellformat.path": "/usr/local/bin/shfmt"
+      }
+    }
+  }
+}

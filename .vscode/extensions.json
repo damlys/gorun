@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "bierner.markdown-preview-github-styles",
+    "eamodio.gitlens", // https://gitlens.amod.io/
+    "GitHub.copilot",
+    "github.vscode-github-actions",
+    "GitHub.vscode-pull-request-github",
+    "streetsidesoftware.code-spell-checker" // https://streetsidesoftware.com/vscode-spell-checker/
+  ]
+}

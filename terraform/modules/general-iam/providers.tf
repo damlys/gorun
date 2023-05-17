@@ -1,0 +1,5 @@
+provider "github" {
+}
+
+provider "google" {
+}

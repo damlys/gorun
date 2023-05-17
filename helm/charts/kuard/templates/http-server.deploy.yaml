@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}-http-server"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    app.kubernetes.io/component: http-server
+    {{- include "kuard.metadataLabels" $ | nindent 4 }}
+spec:
+  replicas: {{ .Values.httpServer.minReplicas }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: http-server
+      {{- include "kuard.selectorLabels" $ | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: http-server
+        {{- include "kuard.metadataLabels" $ | nindent 8 }}
+      annotations:
+        checksum/configs: "{{ include "kuard.configsChecksum" $ }}"
+    spec:
+      serviceAccountName: "{{ .Release.Name }}-general"
+      containers:
+        - name: http-server
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          envFrom:
+            - configMapRef:
+                name: "{{ .Release.Name }}-config-envs"
+            - secretRef:
+                name: "{{ .Release.Name }}-config-envs"
+          volumeMounts:
+            - name: config-files
+              mountPath: /run/secrets/kuard
+              readOnly: true
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              port: http
+              path: /ready
+          livenessProbe:
+            httpGet:
+              port: http
+              path: /healthy
+          resources:
+            requests:
+              cpu: 1m
+              memory: 1M
+            limits:
+              cpu: 250m
+              memory: 256M
+      volumes:
+        - name: config-files
+          projected:
+            sources:
+              - configMap:
+                  name: "{{ .Release.Name }}-config-files"
+              - secret:
+                  name: "{{ .Release.Name }}-config-files"

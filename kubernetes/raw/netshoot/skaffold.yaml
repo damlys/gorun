@@ -1,0 +1,11 @@
+apiVersion: skaffold/v4beta2
+kind: Config
+manifests:
+  rawYaml:
+    - ./pod.yaml
+deploy:
+  kubectl:
+    hooks:
+      after:
+        - host:
+            command: ["echo", " + kubectl exec -it netshoot -- bash"]

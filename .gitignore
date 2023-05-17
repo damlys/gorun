@@ -1,0 +1,25 @@
+# system
+.DS_Store
+*.bak
+*.swp
+*.tmp
+*~
+desktop.ini
+thumbs.db
+
+# google-github-actions/auth
+gha-creds-*.json
+
+# helm
+/helm/charts/*.tgz
+
+# terraform
+.terraform
+/terraform/submodules/*.zip
+/terraform/submodules/**/.terraform.lock.hcl
+/terraform/submodules/**/*.tfstate
+/terraform/submodules/**/*.tfstate.backup
+
+# sops
+*.dec.*
+*.secret.dec.yaml

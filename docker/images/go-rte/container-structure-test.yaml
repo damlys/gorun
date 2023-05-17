@@ -1,0 +1,33 @@
+schemaVersion: 2.0.0
+commandTests:
+  - name: no go binary
+    command: which
+    args:
+      - go
+    exitCode: 1
+fileExistenceTests:
+  - name: deploy's home directory
+    path: /home/deploy
+    shouldExist: true
+    uid: 1000
+    gid: 1000
+    permissions: drwxr-xr-x
+  - name: no go directory
+    path: /go
+    shouldExist: false
+fileContentTests:
+  - name: deploy group
+    path: /etc/group
+    expectedContents:
+      - .*deploy:x:1000:.*
+  - name: deploy user
+    path: /etc/passwd
+    expectedContents:
+      - .*deploy:x:1000:1000::/home/deploy:/bin/bash.*
+metadataTest:
+  user: root:root
+  workdir: /
+  volumes: []
+  exposedPorts: []
+  entrypoint: []
+  cmd: ["bash"]

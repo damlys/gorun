@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -e
+for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
+
+function main {
+  local cmd="$1"
+  local project_name="$2"
+  local project_path="terraform/modules/${project_name}"
+  local terraform_file="${project_path}/terraform.tf"
+  local backend_prefix
+
+  backend_prefix="$(hclq get 'terraform.backend.gcs.prefix' --in="${terraform_file}")"
+
+  case "${cmd}" in
+  "test")
+    if ! str::contains "${backend_prefix}" "${terraform_file}"; then
+      log::error "terraform backend does not match naming convention: ${terraform_file}"
+      return 1
+    fi
+    ;;
+
+  *)
+    log::error "unknown command: ${cmd}"
+    return 127
+    ;;
+  esac
+}
+
+main "$@"
