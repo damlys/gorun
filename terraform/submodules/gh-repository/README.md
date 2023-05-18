@@ -1,1 +1,1 @@
-This module configures GitHub repositories and creates resources used within.
+This module configures GitHub repositories and creates associated resources.
