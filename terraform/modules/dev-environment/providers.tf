@@ -8,7 +8,7 @@ data "google_client_config" "oauth2" {
 data "google_project" "this" {
 }
 
-data "google_container_cluster" "this" {
+data "google_container_cluster" "this" { # gke_gorun-dev-2_europe-central2-a_dev
   location = "europe-central2-a"
   name     = "dev"
 }

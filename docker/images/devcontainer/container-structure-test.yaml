@@ -19,6 +19,12 @@ commandTests:
     command: docker
     args:
       - --version
+  - # https://github.com/docker/buildx
+    name: docker buildx
+    command: docker
+    args:
+      - buildx
+      - version
   - # https://docs.docker.com/compose/reference/
     name: docker compose
     command: docker
