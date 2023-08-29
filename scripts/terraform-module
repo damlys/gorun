@@ -14,7 +14,7 @@ function main {
   case "${cmd}" in
   "test")
     if ! str::contains "${backend_prefix}" "${terraform_file}"; then
-      log::error "terraform backend does not match naming convention: ${terraform_file}"
+      log::error "terraform backend does not match naming convention: ${project_path}"
       return 1
     fi
     ;;

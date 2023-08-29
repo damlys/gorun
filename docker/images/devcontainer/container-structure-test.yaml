@@ -67,6 +67,11 @@ commandTests:
     command: golangci-lint
     args:
       - version
+  - # https://pkg.go.dev/golang.org/x/tools/cmd/gonew
+    name: gonew
+    command: which
+    args:
+      - gonew
   - name: gopls
     command: gopls
     args:

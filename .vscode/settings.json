@@ -11,5 +11,9 @@
     "*.yml.gotpl": "helm",
 
     "*.tf.tftpl": "terraform"
+  },
+  "files.readonlyInclude": {
+    "**/*.gotpl.*": true,
+    "**/*.tftpl.*": true
   }
 }

@@ -17,6 +17,7 @@ gha-creds-*.json
 .terraform
 /terraform/submodules/*.zip
 /terraform/submodules/**/.terraform.lock.hcl
+/terraform/submodules/**/*.tflock
 /terraform/submodules/**/*.tfstate
 /terraform/submodules/**/*.tfstate.backup
 
