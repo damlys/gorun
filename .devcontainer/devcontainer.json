@@ -1,7 +1,7 @@
 {
   "name": "gorun",
 
-  "image": "europe-central2-docker.pkg.dev/gorun-general-2/public-docker-images/gorun/devcontainer:0.0.0",
+  "image": "europe-central2-docker.pkg.dev/gorun-general-2/public-docker-images/gorun/devcontainer:0.0.2",
   "runArgs": [
     "--name=devcontainer-gorun",
     "--add-host=kubernetes.docker.internal:host-gateway", // "docker-desktop" host

@@ -85,7 +85,7 @@ commandTests:
     name: govulncheck
     command: govulncheck
     args:
-      - -help
+      - -version
   - # https://hclq.sh/
     name: hclq
     command: hclq
