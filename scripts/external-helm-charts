@@ -4,40 +4,41 @@ for lib in "$(dirname "$0")"/libs/*.bash; do source "${lib}"; done
 
 function main {
   local cmd="$1"
-  local registry="oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogke"
+  local registry="oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
 
   case "${cmd}" in
   "download")
-    cd ./third_party/helm
-    rm -rf ./charts/*
-    log::info "downloading"
-    helm dependency update
+    rm -rf ./third_party/helm/charts/*
 
-    cd ./charts
-    for filename in ./*.tgz; do
+    log::info "downloading"
+    helm dependency update ./third_party/helm
+
+    for filename in ./third_party/helm/charts/*.tgz; do
       log::info "unpackaging: ${filename}"
-      tar -xf "$filename"
-      rm -f "$filename"
+      tar --directory=./third_party/helm/charts -xf "$filename"
     done
+
+    rm -f ./third_party/helm/charts/*.tgz
 
     log::info "done"
     ;;
 
   "push")
-    cd ./third_party/helm/charts
-    rm -f ./*.tgz
+    rm -f ./third_party/helm/charts/*.tgz
 
-    for filename in ./*; do
+    for filename in ./third_party/helm/charts/*; do
       if file::is_dir "$filename"; then
         log::info "packaging: ${filename}"
         helm package "${filename}" --destination="${filename}/.."
       fi
     done
 
-    for filename in ./*.tgz; do
+    for filename in ./third_party/helm/charts/*.tgz; do
       log::info "pushing: ${filename}"
       helm push "${filename}" "${registry}"
     done
+
+    rm -f ./third_party/helm/charts/*.tgz
 
     log::info "done"
     ;;
