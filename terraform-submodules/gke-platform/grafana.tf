@@ -22,9 +22,9 @@ resource "helm_release" "grafana_operator" {
     google_container_node_pool.this,
   ]
 
-  repository = null
-  chart      = "../../third_party/helm/charts/grafana-operator"
-  version    = null
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "grafana-operator"
+  version    = "v5.14.0"
 
   namespace = kubernetes_namespace.grafana_operator.metadata[0].name
   name      = "grafana-operator"
@@ -45,7 +45,7 @@ resource "kubernetes_namespace" "grafana" {
 }
 
 module "grafana_service_account" {
-  source = "../gke-service-account"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gke-service-account/0.0.1.zip"
 
   google_project           = var.google_project
   google_container_cluster = google_container_cluster.this
@@ -177,7 +177,7 @@ resource "kubernetes_manifest" "grafana_healthcheckpolicy" { # console.cloud.goo
 }
 
 module "grafana_availability_monitor" { # console.cloud.google.com/monitoring/uptime
-  source = "../gcp-availability-monitor"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-availability-monitor/0.0.1.zip"
 
   google_project = var.google_project
 
