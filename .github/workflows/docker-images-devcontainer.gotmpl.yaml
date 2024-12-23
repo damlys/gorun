@@ -17,7 +17,7 @@ jobs:
   docker-images-devcontainer:
     name: docker-images/devcontainer
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gogcp-devcontainer:0.0.0
+    container: ghcr.io/damlys/gogcp-devcontainer:0.0.1
     permissions:
       contents: write
       id-token: write
