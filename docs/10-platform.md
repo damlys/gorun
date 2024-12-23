@@ -29,6 +29,7 @@ $ gcloud auth configure-docker "europe-central2-docker.pkg.dev"
 
 - [oci://europe-central2-docker.pkg.dev/gogke-main-0/public-helm-charts](https://console.cloud.google.com/artifacts/docker/gogke-main-0/europe-central2/public-helm-charts?project=gogke-main-0)
 - [oci://europe-central2-docker.pkg.dev/gogke-main-0/private-helm-charts](https://console.cloud.google.com/artifacts/docker/gogke-main-0/europe-central2/private-helm-charts?project=gogke-main-0)
+- [oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts](https://console.cloud.google.com/artifacts/docker/gogke-main-0/europe-central2/external-helm-charts?project=gogke-main-0)
 
 ```
 $ gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"

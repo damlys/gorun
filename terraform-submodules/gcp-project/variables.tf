@@ -14,6 +14,9 @@ variable "billing_account_id" {
 variable "services" {
   type = set(string)
   default = [
+    "cloudresourcemanager.googleapis.com",
+    "serviceusage.googleapis.com",
+
     "artifactregistry.googleapis.com",
     "cloudkms.googleapis.com",
     "compute.googleapis.com",

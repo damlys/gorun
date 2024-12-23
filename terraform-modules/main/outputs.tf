@@ -23,6 +23,7 @@ output "helm_charts_registries" {
   value = [
     module.public_helm_charts_registry.ref,
     module.private_helm_charts_registry.ref,
+    module.external_helm_charts_registry.ref,
   ]
 }
 

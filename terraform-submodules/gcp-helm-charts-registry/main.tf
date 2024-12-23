@@ -6,7 +6,7 @@ resource "google_artifact_registry_repository" "this" {
   mode   = "STANDARD_REPOSITORY"
   format = "DOCKER"
   docker_config {
-    immutable_tags = true
+    immutable_tags = var.registry_immutability
   }
 }
 

@@ -107,6 +107,19 @@ module "private_helm_charts_registry" {
   ]
 }
 
+module "external_helm_charts_registry" {
+  source = "../../terraform-submodules/gcp-helm-charts-registry"
+
+  google_project = module.main_project.google_project
+  registry_name  = "external-helm-charts"
+
+  registry_immutability = false
+
+  iam_writers = [
+    "serviceAccount:gha-damlys-gogcp@gogke-main-0.iam.gserviceaccount.com",
+  ]
+}
+
 #######################################
 ### Terraform submodules registries
 #######################################
