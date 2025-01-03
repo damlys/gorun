@@ -2,20 +2,8 @@ dependencies:
 - name: eck-operator
   repository: https://helm.elastic.co
   version: 2.16.0
-- name: grafana
-  repository: https://grafana.github.io/helm-charts
-  version: 8.8.2
-- name: loki
-  repository: https://grafana.github.io/helm-charts
-  version: 6.24.0
-- name: mimir-distributed
-  repository: https://grafana.github.io/helm-charts
-  version: 5.5.1
 - name: opentelemetry-operator
   repository: https://open-telemetry.github.io/opentelemetry-helm-charts
   version: 0.76.0
-- name: tempo-distributed
-  repository: https://grafana.github.io/helm-charts
-  version: 1.28.0
-digest: sha256:bfa6e317775a5c622e6094da93aa1b29c49f37cb6c65411f7d3e7edda58f00c5
-generated: "2025-01-02T16:42:06.83165893Z"
+digest: sha256:ee161c975aec967b1ff140d98d105cf8166999bea6504204c5ecaf12b4699180
+generated: "2025-01-03T11:04:08.643888167Z"

@@ -11,7 +11,6 @@ definitions:
     terraform-submodule-gke-service-account: terraform-submodules/gke-service-account/.terraform
     terraform-submodule-helm-release: terraform-submodules/helm-release/.terraform
     terraform-submodule-k8s-elk-stack: terraform-submodules/k8s-elk-stack/.terraform
-    terraform-submodule-k8s-lgtm-stack: terraform-submodules/k8s-lgtm-stack/.terraform
     terraform-submodule-kuard: terraform-submodules/kuard/.terraform
     terraform-module-kuard: terraform-modules/kuard/.terraform
     terraform-module-main: terraform-modules/main/.terraform
@@ -458,34 +457,6 @@ definitions:
           - ./scripts/terraform-submodule test "k8s-elk-stack"
           - ./scripts/terraform-submodule publish "k8s-elk-stack"
           - ./scripts/terraform-submodule show "k8s-elk-stack"
-    - step: &terraform-submodule-k8s-lgtm-stack-test
-        name: test terraform-submodules/k8s-lgtm-stack
-        condition:
-          changesets:
-            includePaths:
-              - "terraform-submodules/k8s-lgtm-stack/**"
-        caches:
-          - terraform-submodule-k8s-lgtm-stack
-        script:
-          - *auth
-          - ./scripts/terraform-submodule build "k8s-lgtm-stack"
-          - ./scripts/terraform-submodule test "k8s-lgtm-stack"
-          - ./scripts/terraform-submodule pre-publish "k8s-lgtm-stack"
-          - ./scripts/terraform-submodule show "k8s-lgtm-stack"
-    - step: &terraform-submodule-k8s-lgtm-stack-publish
-        name: publish terraform-submodules/k8s-lgtm-stack
-        condition:
-          changesets:
-            includePaths:
-              - "terraform-submodules/k8s-lgtm-stack/**"
-        caches:
-          - terraform-submodule-k8s-lgtm-stack
-        script:
-          - *auth
-          - ./scripts/terraform-submodule build "k8s-lgtm-stack"
-          - ./scripts/terraform-submodule test "k8s-lgtm-stack"
-          - ./scripts/terraform-submodule publish "k8s-lgtm-stack"
-          - ./scripts/terraform-submodule show "k8s-lgtm-stack"
     - step: &terraform-submodule-kuard-test
         name: test terraform-submodules/kuard
         condition:
@@ -724,7 +695,6 @@ pipelines:
           - step: *terraform-submodule-gke-service-account-test
           - step: *terraform-submodule-helm-release-test
           - step: *terraform-submodule-k8s-elk-stack-test
-          - step: *terraform-submodule-k8s-lgtm-stack-test
           - step: *terraform-submodule-kuard-test
           - step: *terraform-module-kuard-validate
           - step: *terraform-module-main-validate
@@ -755,7 +725,6 @@ pipelines:
           - step: *terraform-submodule-gke-service-account-publish
           - step: *terraform-submodule-helm-release-publish
           - step: *terraform-submodule-k8s-elk-stack-publish
-          - step: *terraform-submodule-k8s-lgtm-stack-publish
           - step: *terraform-submodule-kuard-publish
       - parallel:
           - step: *terraform-module-kuard-plan
