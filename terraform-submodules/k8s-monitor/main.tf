@@ -4,7 +4,7 @@
 
 resource "kubernetes_namespace" "elasticsearch" {
   metadata {
-    name = "elk-elasticsearch"
+    name = "monitor-elasticsearch"
   }
 }
 
@@ -16,7 +16,7 @@ resource "kubernetes_manifest" "elasticsearch" {
       name      = "elasticsearch"
       namespace = kubernetes_namespace.elasticsearch.metadata[0].name
       labels = {
-        "app.kubernetes.io/name"      = "elk"
+        "app.kubernetes.io/name"      = "monitor"
         "app.kubernetes.io/component" = "elasticsearch"
       }
       annotations = {
@@ -24,7 +24,7 @@ resource "kubernetes_manifest" "elasticsearch" {
       }
     }
     spec = yamldecode(templatefile("${path.module}/assets/elasticsearch_spec.yaml.tftpl", {
-      version = local.version
+      elastic_version = local.elastic_version
     }))
   }
 
@@ -39,7 +39,7 @@ resource "kubernetes_manifest" "elasticsearch" {
 
 resource "kubernetes_namespace" "kibana" {
   metadata {
-    name = "elk-kibana"
+    name = "monitor-kibana"
   }
 }
 
@@ -51,7 +51,7 @@ resource "kubernetes_manifest" "kibana" {
       name      = "kibana"
       namespace = kubernetes_namespace.kibana.metadata[0].name
       labels = {
-        "app.kubernetes.io/name"      = "elk"
+        "app.kubernetes.io/name"      = "monitor"
         "app.kubernetes.io/component" = "kibana"
       }
       annotations = {
@@ -59,7 +59,7 @@ resource "kubernetes_manifest" "kibana" {
       }
     }
     spec = yamldecode(templatefile("${path.module}/assets/kibana_spec.yaml.tftpl", {
-      version = local.version
+      elastic_version = local.elastic_version
 
       kibana_domain = var.kibana_domain
 

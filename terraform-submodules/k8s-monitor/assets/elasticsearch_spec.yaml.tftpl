@@ -1,4 +1,4 @@
-version: "${version}"
+version: "${elastic_version}"
 nodeSets:
   - name: default
     count: 1
@@ -18,8 +18,8 @@ nodeSets:
                 cpu: 25m
                 memory: 32Mi
               limits:
-                cpu: 200m
-                memory: 256Mi
+                cpu: 100m
+                memory: 128Mi
           - # prevent permissions errors
             name: chown
             securityContext:
@@ -30,8 +30,8 @@ nodeSets:
                 cpu: 25m
                 memory: 32Mi
               limits:
-                cpu: 200m
-                memory: 256Mi
+                cpu: 100m
+                memory: 128Mi
         containers:
           - name: elasticsearch
             resources:
