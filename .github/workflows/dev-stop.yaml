@@ -1,16 +1,19 @@
-name: delete-gke-node-pools
+name: dev-stop
 on:
   schedule:
     - cron: "0 12,14,16,18,20,22 * * *"
 jobs:
-  delete-gke-node-pools:
-    name: delete-gke-node-pools
+  dev-stop:
+    name: dev-stop
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gogcp-devcontainer:0.0.1
     steps:
+      - name: git clone
+        uses: actions/checkout@v4
+      - name: git clone fix
+        run: git config --system --add safe.directory /__w/gogcp/gogcp
       - name: gcloud auth
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
-      - name: gcloud container node-pools delete
-        run: gcloud --quiet container node-pools delete "gogke-test-7" --location="europe-central2-a" --cluster="gogke-test-7" --project="gogke-test-0" || true
+      - run: ./scripts/dev stop

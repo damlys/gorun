@@ -1,0 +1,31 @@
+#!/bin/bash
+set -e
+for lib in "$(dirname "$0")"/libs/*.bash; do source "${lib}"; done
+
+function main {
+  local cmd="$1"
+
+  case "${cmd}" in
+  "stop")
+    log::info "destroying test node pool"
+    gcloud --quiet container node-pools delete "gogke-test-7" --location="europe-central2-a" --cluster="gogke-test-7" --project="gogke-test-0" || true
+
+    log::info "done"
+    ;;
+
+  "start")
+    log::info "creating test node pool"
+    terraform -chdir="terraform-modules/test" init -input=false
+    terraform -chdir="terraform-modules/test" apply -input=false -auto-approve -target=module.test_platform.google_container_node_pool.this
+
+    log::info "done"
+    ;;
+
+  *)
+    log::error "unknown command: ${cmd}"
+    return 127
+    ;;
+  esac
+}
+
+main "$@"
