@@ -2,49 +2,29 @@
 ### OpenTelemetry Operator
 #######################################
 
-resource "kubernetes_namespace" "otel_operator" {
+resource "kubernetes_namespace" "opentelemetry_operator" {
   metadata {
     name = "opentelemetry-operator"
   }
 }
 
-resource "helm_release" "otel_operator" {
+resource "helm_release" "opentelemetry_operator" {
   # TODO
   repository = null
   chart      = "../../third_party/helm/charts/opentelemetry-operator"
   version    = null
 
-  namespace = kubernetes_namespace.otel_operator.metadata[0].name
+  namespace = kubernetes_namespace.opentelemetry_operator.metadata[0].name
   name      = "opentelemetry-operator"
-  values    = [file("${path.module}/assets/otel_operator.yaml")]
-}
-
-#######################################
-### Elastic Cloud on Kubernetes (ECK)
-#######################################
-
-resource "kubernetes_namespace" "eck_operator" {
-  metadata {
-    name = "elastic-system"
-  }
-}
-
-resource "helm_release" "eck_operator" {
-  # TODO
-  repository = null
-  chart      = "../../third_party/helm/charts/eck-operator"
-  version    = null
-
-  namespace = kubernetes_namespace.eck_operator.metadata[0].name
-  name      = "elastic-operator"
+  values    = [file("${path.module}/assets/opentelemetry_operator.yaml")]
 }
 
 #######################################
 ### ...
 #######################################
 
-module "test_elk_stack" {
-  source = "../../terraform-submodules/k8s-elk-stack" # TODO
+module "test_lgtm_stack" {
+  source = "../../terraform-submodules/k8s-lgtm-stack"
 
-  kibana_domain = "kibana.gogke-test-7.damlys.pl"
+  grafana_domain = "grafana.gogke-test-7.damlys.pl"
 }
