@@ -4,7 +4,7 @@
 
 resource "kubernetes_namespace" "elasticsearch" {
   metadata {
-    name = "monitor-elasticsearch"
+    name = "elk-elasticsearch"
   }
 }
 
@@ -16,7 +16,7 @@ resource "kubernetes_manifest" "elasticsearch" {
       name      = "elasticsearch"
       namespace = kubernetes_namespace.elasticsearch.metadata[0].name
       labels = {
-        "app.kubernetes.io/name"      = "monitor"
+        "app.kubernetes.io/name"      = "elk"
         "app.kubernetes.io/component" = "elasticsearch"
       }
       annotations = {
@@ -39,7 +39,7 @@ resource "kubernetes_manifest" "elasticsearch" {
 
 resource "kubernetes_namespace" "kibana" {
   metadata {
-    name = "monitor-kibana"
+    name = "elk-kibana"
   }
 }
 
@@ -51,7 +51,7 @@ resource "kubernetes_manifest" "kibana" {
       name      = "kibana"
       namespace = kubernetes_namespace.kibana.metadata[0].name
       labels = {
-        "app.kubernetes.io/name"      = "monitor"
+        "app.kubernetes.io/name"      = "elk"
         "app.kubernetes.io/component" = "kibana"
       }
       annotations = {

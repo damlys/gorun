@@ -43,8 +43,8 @@ resource "helm_release" "eck_operator" {
 ### ...
 #######################################
 
-module "test_monitor" {
-  source = "../../terraform-submodules/k8s-monitor" # TODO
+module "test_elk_stack" {
+  source = "../../terraform-submodules/k8s-elk-stack" # TODO
 
   kibana_domain = "kibana.gogke-test-7.damlys.pl"
 }

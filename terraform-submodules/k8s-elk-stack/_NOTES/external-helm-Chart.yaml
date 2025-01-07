@@ -1,0 +1,8 @@
+apiVersion: v2
+name: noname
+version: 0.0.0
+dependencies:
+  - # https://github.com/elastic/cloud-on-k8s/tree/main/deploy/eck-operator
+    repository: https://helm.elastic.co
+    name: eck-operator
+    version: 2.16.0

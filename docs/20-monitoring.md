@@ -1,5 +1,5 @@
 # Monitoring
 
-## Kibana instances
+## Grafana instances
 
-- [kibana.gogke-test-7.damlys.pl](https://kibana.gogke-test-7.damlys.pl/app/discover)
+- [grafana.gogke-test-7.damlys.pl](https://grafana.gogke-test-7.damlys.pl/explore)
