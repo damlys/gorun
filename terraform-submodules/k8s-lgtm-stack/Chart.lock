@@ -1,0 +1,15 @@
+dependencies:
+- name: grafana
+  repository: https://grafana.github.io/helm-charts
+  version: 8.8.2
+- name: loki
+  repository: https://grafana.github.io/helm-charts
+  version: 6.24.0
+- name: mimir-distributed
+  repository: https://grafana.github.io/helm-charts
+  version: 5.5.1
+- name: tempo-distributed
+  repository: https://grafana.github.io/helm-charts
+  version: 1.28.0
+digest: sha256:39d9ae1a443348020277d116fb78d7548f728630178d3a42ce1ab6f703cc6bba
+generated: "2025-01-07T09:39:14.981473759Z"

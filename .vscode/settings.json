@@ -34,6 +34,7 @@
     "**/*.tftpl.*": true, // files rendered by Terraform
     "**/Chart.lock": true,
     "bitbucket-pipelines.yml": true,
+    "terraform-submodules/*/charts/**/*": true,
     "third_party/helm/charts/**/*": true
   }
 }
