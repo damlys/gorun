@@ -8,17 +8,15 @@ resource "kubernetes_namespace" "tempo" {
   }
 }
 
-# resource "helm_release" "tempo" {
-#   repository = null
-#   chart      = "../../third_party/helm/charts/tempo"
-#   version    = null
+resource "helm_release" "tempo" {
+  chart = "${path.module}/charts/tempo-distributed"
 
-#   namespace = kubernetes_namespace.tempo.metadata[0].name
-#   name      = "tempo"
+  name      = "tempo"
+  namespace = kubernetes_namespace.tempo.metadata[0].name
 
-#   values = [templatefile("${path.module}/assets/tempo.yaml.tftpl", {
-#   })]
-# }
+  values = [templatefile("${path.module}/assets/tempo.yaml.tftpl", {
+  })]
+}
 
 #######################################
 ### Mimir
@@ -30,17 +28,15 @@ resource "kubernetes_namespace" "mimir" {
   }
 }
 
-# resource "helm_release" "mimir" {
-#   repository = null
-#   chart      = "../../third_party/helm/charts/mimir"
-#   version    = null
+resource "helm_release" "mimir" {
+  chart = "${path.module}/charts/mimir-distributed"
 
-#   namespace = kubernetes_namespace.mimir.metadata[0].name
-#   name      = "mimir"
+  name      = "mimir"
+  namespace = kubernetes_namespace.mimir.metadata[0].name
 
-#   values = [templatefile("${path.module}/assets/mimir.yaml.tftpl", {
-#   })]
-# }
+  values = [templatefile("${path.module}/assets/mimir.yaml.tftpl", {
+  })]
+}
 
 #######################################
 ### Loki
@@ -52,17 +48,15 @@ resource "kubernetes_namespace" "loki" {
   }
 }
 
-# resource "helm_release" "loki" {
-#   repository = null
-#   chart      = "../../third_party/helm/charts/loki"
-#   version    = null
+resource "helm_release" "loki" {
+  chart = "${path.module}/charts/loki"
 
-#   namespace = kubernetes_namespace.loki.metadata[0].name
-#   name      = "loki"
+  name      = "loki"
+  namespace = kubernetes_namespace.loki.metadata[0].name
 
-#   values = [templatefile("${path.module}/assets/loki.yaml.tftpl", {
-#   })]
-# }
+  values = [templatefile("${path.module}/assets/loki.yaml.tftpl", {
+  })]
+}
 
 #######################################
 ### Grafana
@@ -74,18 +68,16 @@ resource "kubernetes_namespace" "grafana" {
   }
 }
 
-# resource "helm_release" "grafana" {
-#   repository = null
-#   chart      = "../../third_party/helm/charts/grafana"
-#   version    = null
+resource "helm_release" "grafana" {
+  chart = "${path.module}/charts/grafana"
 
-#   namespace = kubernetes_namespace.grafana.metadata[0].name
-#   name      = "grafana"
+  name      = "grafana"
+  namespace = kubernetes_namespace.grafana.metadata[0].name
 
-#   values = [templatefile("${path.module}/assets/grafana.yaml.tftpl", {
-#     grafana_domain = var.grafana_domain,
-#   })]
-# }
+  values = [templatefile("${path.module}/assets/grafana.yaml.tftpl", {
+    grafana_domain = var.grafana_domain,
+  })]
+}
 
 #######################################
 ### OpenTelemetry Collector

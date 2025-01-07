@@ -14,9 +14,10 @@ resource "helm_release" "opentelemetry_operator" {
   chart      = "../../third_party/helm/charts/opentelemetry-operator"
   version    = null
 
-  namespace = kubernetes_namespace.opentelemetry_operator.metadata[0].name
   name      = "opentelemetry-operator"
-  values    = [file("${path.module}/assets/opentelemetry_operator.yaml")]
+  namespace = kubernetes_namespace.opentelemetry_operator.metadata[0].name
+
+  values = [file("${path.module}/assets/helm_release.opentelemetry_operator.yaml")]
 }
 
 #######################################
