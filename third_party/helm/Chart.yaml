@@ -1,5 +1,5 @@
 apiVersion: v2
-name: noname
+name: undefined
 version: 0.0.0
 dependencies:
   - # https://github.com/grafana/helm-charts/tree/main/charts/grafana
