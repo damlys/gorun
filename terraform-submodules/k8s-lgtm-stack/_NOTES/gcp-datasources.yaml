@@ -12,7 +12,6 @@ datasources:
         access: proxy
         jsonData:
           authenticationType: gce # required IAM roles: "roles/monitoring.viewer"
-          defaultProject: gogke-test-0 # TODO
       - name: GCP traces
         type: googlecloud-trace-datasource # Google Cloud Trace: https://github.com/GoogleCloudPlatform/cloud-trace-data-source-plugin
         access: proxy

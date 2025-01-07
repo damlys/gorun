@@ -16,16 +16,16 @@ datasources:
     datasources:
       - name: Loki
         type: loki
-        url: http://loki-read.lgtm-loki.svc.cluster.local:3100
+        url: "http://${loki_name}-read.${loki_namespace}.svc.cluster.local:3100"
         access: proxy
         jsonData:
           maxLines: 5000
       - name: Mimir
         type: prometheus
-        url: http://mimir-nginx.lgtm-mimir.svc.cluster.local:80/prometheus
+        url: "http://${mimir_name}-nginx.${mimir_namespace}.svc.cluster.local:80/prometheus"
         access: proxy
         isDefault: true
       - name: Tempo
         type: tempo
-        url: http://tempo-query.lgtm-tempo.svc.cluster.local:16686
+        url: "http://${tempo_name}-query.${tempo_namespace}.svc.cluster.local:16686"
         access: proxy

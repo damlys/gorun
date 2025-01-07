@@ -1,20 +1,20 @@
 #######################################
-### Tempo
+### Loki
 #######################################
 
-resource "kubernetes_namespace" "tempo" {
+resource "kubernetes_namespace" "loki" {
   metadata {
-    name = "lgtm-tempo"
+    name = "lgtm-loki"
   }
 }
 
-resource "helm_release" "tempo" {
-  chart = "${path.module}/charts/tempo-distributed"
+resource "helm_release" "loki" {
+  chart = "${path.module}/charts/loki"
 
-  name      = "tempo"
-  namespace = kubernetes_namespace.tempo.metadata[0].name
+  name      = "loki"
+  namespace = kubernetes_namespace.loki.metadata[0].name
 
-  values = [templatefile("${path.module}/assets/tempo.yaml.tftpl", {
+  values = [templatefile("${path.module}/assets/loki.yaml.tftpl", {
   })]
 }
 
@@ -39,22 +39,22 @@ resource "helm_release" "mimir" {
 }
 
 #######################################
-### Loki
+### Tempo
 #######################################
 
-resource "kubernetes_namespace" "loki" {
+resource "kubernetes_namespace" "tempo" {
   metadata {
-    name = "lgtm-loki"
+    name = "lgtm-tempo"
   }
 }
 
-resource "helm_release" "loki" {
-  chart = "${path.module}/charts/loki"
+resource "helm_release" "tempo" {
+  chart = "${path.module}/charts/tempo-distributed"
 
-  name      = "loki"
-  namespace = kubernetes_namespace.loki.metadata[0].name
+  name      = "tempo"
+  namespace = kubernetes_namespace.tempo.metadata[0].name
 
-  values = [templatefile("${path.module}/assets/loki.yaml.tftpl", {
+  values = [templatefile("${path.module}/assets/tempo.yaml.tftpl", {
   })]
 }
 
@@ -75,7 +75,16 @@ resource "helm_release" "grafana" {
   namespace = kubernetes_namespace.grafana.metadata[0].name
 
   values = [templatefile("${path.module}/assets/grafana.yaml.tftpl", {
-    grafana_domain = var.grafana_domain,
+    grafana_domain = var.grafana_domain
+
+    loki_name      = helm_release.loki.name
+    loki_namespace = helm_release.loki.namespace
+
+    mimir_name      = helm_release.mimir.name
+    mimir_namespace = helm_release.mimir.namespace
+
+    tempo_name      = helm_release.tempo.name
+    tempo_namespace = helm_release.tempo.namespace
   })]
 }
 
