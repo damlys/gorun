@@ -1,6 +1,12 @@
+serviceAccount:
+  create: false
+  name: "${tempo_service_account_name}"
+
 tempo: {}
 
 minio:
   enabled: true
   persistence:
     size: 10Gi
+# TODO
+# gcs

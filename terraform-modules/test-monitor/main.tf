@@ -9,9 +9,8 @@ resource "kubernetes_namespace" "opentelemetry_operator" {
 }
 
 resource "helm_release" "opentelemetry_operator" {
-  # TODO
   repository = null
-  chart      = "../../third_party/helm/charts/opentelemetry-operator"
+  chart      = "../../third_party/helm/charts/opentelemetry-operator" # TODO
   version    = null
 
   name      = "opentelemetry-operator"
@@ -25,7 +24,10 @@ resource "helm_release" "opentelemetry_operator" {
 #######################################
 
 module "test_lgtm_stack" {
-  source = "../../terraform-submodules/k8s-lgtm-stack"
+  source = "../../terraform-submodules/gke-lgtm-stack" # TODO
+
+  google_project           = data.google_project.this
+  google_container_cluster = data.google_container_cluster.this
 
   grafana_domain = "grafana.gogke-test-7.damlys.pl"
 }

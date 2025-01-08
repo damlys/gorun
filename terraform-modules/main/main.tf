@@ -3,7 +3,7 @@
 #######################################
 
 module "main_project" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-project/0.0.2.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-project/0.0.3.zip"
 
   project_id   = "gogke-main-0"
   project_name = "gogke-main-0"
@@ -14,7 +14,7 @@ module "main_project" {
 }
 
 module "test_project" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-project/0.0.2.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-project/0.0.3.zip"
 
   project_id   = "gogke-test-0"
   project_name = "gogke-test-0"
@@ -25,7 +25,7 @@ module "test_project" {
 }
 
 module "prod_project" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-project/0.0.2.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-project/0.0.3.zip"
 
   project_id   = "gogke-prod-0"
   project_name = "gogke-prod-0"
