@@ -13,7 +13,7 @@ module "mimir_service_account" {
   service_account_name     = "mimir"
 }
 
-resource "helm_release" "mimir" {
+data "helm_template" "mimir" {
   chart = "${path.module}/charts/mimir-distributed"
 
   name      = "mimir"
@@ -26,6 +26,12 @@ resource "helm_release" "mimir" {
     }),
     file("${path.module}/assets/mimir/resources.yaml"),
   ]
-
-  timeout = 900
 }
+# resource "helm_release" "mimir" {
+#   chart     = data.helm_template.mimir.chart
+#   name      = data.helm_template.mimir.name
+#   namespace = data.helm_template.mimir.namespace
+#   values    = data.helm_template.mimir.values
+
+#   timeout = 900
+# }

@@ -38,7 +38,7 @@ resource "helm_release" "grafana_postgresql" {
   ]
 }
 
-resource "helm_release" "grafana" {
+data "helm_template" "grafana" {
   chart = "${path.module}/charts/grafana"
 
   name      = "grafana"
@@ -52,21 +52,27 @@ resource "helm_release" "grafana" {
       grafana_postgresql_name      = helm_release.grafana_postgresql.name
       grafana_postgresql_namespace = helm_release.grafana_postgresql.namespace
     }),
-    templatefile("${path.module}/assets/grafana/lgtm-datasources.yaml.tftpl", {
-      loki_name      = helm_release.loki.name
-      loki_namespace = helm_release.loki.namespace
+    # templatefile("${path.module}/assets/grafana/lgtm-datasources.yaml.tftpl", {
+    #   loki_name      = helm_release.loki.name
+    #   loki_namespace = helm_release.loki.namespace
 
-      mimir_name      = helm_release.mimir.name
-      mimir_namespace = helm_release.mimir.namespace
+    #   mimir_name      = helm_release.mimir.name
+    #   mimir_namespace = helm_release.mimir.namespace
 
-      tempo_name      = helm_release.tempo.name
-      tempo_namespace = helm_release.tempo.namespace
-    }),
+    #   tempo_name      = helm_release.tempo.name
+    #   tempo_namespace = helm_release.tempo.namespace
+    # }),
     templatefile("${path.module}/assets/grafana/gcp-datasources.yaml.tftpl", {
       project_id = var.google_project.project_id
     }),
     file("${path.module}/assets/grafana/resources.yaml"),
   ]
+}
+resource "helm_release" "grafana" {
+  chart     = data.helm_template.grafana.chart
+  name      = data.helm_template.grafana.name
+  namespace = data.helm_template.grafana.namespace
+  values    = data.helm_template.grafana.values
 }
 
 resource "kubernetes_manifest" "grafana_httproute" {

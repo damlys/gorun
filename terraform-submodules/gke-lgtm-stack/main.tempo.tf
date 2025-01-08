@@ -13,7 +13,7 @@ module "tempo_service_account" {
   service_account_name     = "tempo"
 }
 
-resource "helm_release" "tempo" {
+data "helm_template" "tempo" {
   chart = "${path.module}/charts/tempo-distributed"
 
   name      = "tempo"
@@ -25,6 +25,12 @@ resource "helm_release" "tempo" {
     }),
     file("${path.module}/assets/tempo/resources.yaml"),
   ]
-
-  timeout = 600
 }
+# resource "helm_release" "tempo" {
+#   chart     = data.helm_template.tempo.chart
+#   name      = data.helm_template.tempo.name
+#   namespace = data.helm_template.tempo.namespace
+#   values    = data.helm_template.tempo.values
+
+#   timeout = 600
+# }
