@@ -24,5 +24,8 @@ resource "helm_release" "mimir" {
     templatefile("${path.module}/assets/mimir/values.yaml.tftpl", {
       mimir_service_account_name = module.mimir_service_account.kubernetes_service_account.metadata[0].name
     }),
+    file("${path.module}/assets/mimir/resources.yaml"),
   ]
+
+  timeout = 900
 }

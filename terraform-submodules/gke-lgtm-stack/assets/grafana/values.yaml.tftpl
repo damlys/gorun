@@ -10,13 +10,20 @@ grafana.ini: # https://grafana.com/docs/grafana/latest/setup-grafana/configure-g
     mode: console
     level: error
 
+  database:
+    type: postgres
+    host: "${grafana_postgresql_name}.${grafana_postgresql_namespace}.svc.cluster.local:5432"
+    user: grafana
+    password: grafana # TODO
+    name: grafana
+
   auth:
-    disable_login_form: true
-  auth.proxy: # https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/auth-proxy/
-    enabled: true
-    header_name: X-Goog-Authenticated-User-Email
-    header_property: email
-    auto_sign_up: true
+    disable_login_form: false
+  # auth.proxy: # https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/auth-proxy/
+  #   enabled: true
+  #   header_name: X-Goog-Authenticated-User-Email
+  #   header_property: email
+  #   auto_sign_up: true
   users:
     allow_sign_up: false
     allow_org_create: true
@@ -26,5 +33,3 @@ grafana.ini: # https://grafana.com/docs/grafana/latest/setup-grafana/configure-g
   security:
     admin_user: admin
     admin_password: admin # TODO
-# TODO
-# postgres

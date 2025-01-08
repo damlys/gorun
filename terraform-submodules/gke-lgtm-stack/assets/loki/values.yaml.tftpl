@@ -5,10 +5,8 @@ serviceAccount:
 loki:
   auth_enabled: false
 
-minio:
+# lokiCanary:
+#   enabled: false
+
+minio: # TODO gcs
   enabled: true
-  persistence:
-    size: 10Gi
-# TODO
-# lokicanary=false
-# gcs

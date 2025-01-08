@@ -27,6 +27,15 @@ resource "google_project_iam_member" "grafana_gcp_datasources" {
   member  = module.grafana_service_account.google_service_account.member
 }
 
+resource "helm_release" "grafana_postgresql" {
+  chart = "${path.module}/charts/postgresql"
+
+  name      = "postgresql"
+  namespace = kubernetes_namespace.grafana.metadata[0].name
+
+  values = [file("${path.module}/assets/grafana_postgresql/values.yaml")]
+}
+
 resource "helm_release" "grafana" {
   chart = "${path.module}/charts/grafana"
 
@@ -37,18 +46,24 @@ resource "helm_release" "grafana" {
     templatefile("${path.module}/assets/grafana/values.yaml.tftpl", {
       grafana_service_account_name = module.grafana_service_account.kubernetes_service_account.metadata[0].name
       grafana_domain               = var.grafana_domain
+
+      grafana_postgresql_name      = helm_release.grafana_postgresql.name
+      grafana_postgresql_namespace = helm_release.grafana_postgresql.namespace
     }),
     templatefile("${path.module}/assets/grafana/lgtm-datasources.yaml.tftpl", {
-      loki_name       = helm_release.loki.name
-      loki_namespace  = helm_release.loki.namespace
+      loki_name      = helm_release.loki.name
+      loki_namespace = helm_release.loki.namespace
+
       mimir_name      = helm_release.mimir.name
       mimir_namespace = helm_release.mimir.namespace
+
       tempo_name      = helm_release.tempo.name
       tempo_namespace = helm_release.tempo.namespace
     }),
     templatefile("${path.module}/assets/grafana/gcp-datasources.yaml.tftpl", {
       project_id = var.google_project.project_id
     }),
+    file("${path.module}/assets/grafana/resources.yaml"),
   ]
 }
 

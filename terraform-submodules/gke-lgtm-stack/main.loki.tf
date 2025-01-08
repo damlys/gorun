@@ -24,5 +24,8 @@ resource "helm_release" "loki" {
     templatefile("${path.module}/assets/loki/values.yaml.tftpl", {
       loki_service_account_name = module.loki_service_account.kubernetes_service_account.metadata[0].name
     }),
+    file("${path.module}/assets/loki/resources.yaml"),
   ]
+
+  timeout = 600
 }

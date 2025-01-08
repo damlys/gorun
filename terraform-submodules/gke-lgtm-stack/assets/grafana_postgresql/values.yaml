@@ -1,0 +1,6 @@
+auth:
+  enablePostgresUser: true
+  postgresPassword: postgres # TODO
+  username: grafana
+  password: grafana # TODO
+  database: grafana

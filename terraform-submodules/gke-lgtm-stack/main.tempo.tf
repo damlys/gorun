@@ -23,5 +23,8 @@ resource "helm_release" "tempo" {
     templatefile("${path.module}/assets/tempo/values.yaml.tftpl", {
       tempo_service_account_name = module.tempo_service_account.kubernetes_service_account.metadata[0].name
     }),
+    file("${path.module}/assets/tempo/resources.yaml"),
   ]
+
+  timeout = 600
 }
