@@ -19,17 +19,29 @@ grafana.ini: # https://grafana.com/docs/grafana/latest/setup-grafana/configure-g
 
   auth:
     disable_login_form: false
+  # TODO
   # auth.proxy: # https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/auth-proxy/
   #   enabled: true
   #   header_name: X-Goog-Authenticated-User-Email
   #   header_property: email
   #   auto_sign_up: true
   users:
-    allow_sign_up: false
+    allow_sign_up: true
     allow_org_create: true
     auto_assign_org: true
     auto_assign_org_id: 1
-    auto_assign_org_role: "Admin"
+    auto_assign_org_role: Viewer
   security:
+    disable_initial_admin_creation: false
+    admin_email: admin@localhost
     admin_user: admin
     admin_password: admin # TODO
+
+adminUser: admin
+adminPassword: admin # TODO
+admin:
+  existingSecret: ""
+  userKey: admin-user
+  passwordKey: admin-password
+
+assertNoLeakedSecrets: false # TODO

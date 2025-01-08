@@ -33,7 +33,9 @@ resource "helm_release" "grafana_postgresql" {
   name      = "postgresql"
   namespace = kubernetes_namespace.grafana.metadata[0].name
 
-  values = [file("${path.module}/assets/grafana_postgresql/values.yaml")]
+  values = [
+    file("${path.module}/assets/grafana_postgresql/values.yaml"),
+  ]
 }
 
 resource "helm_release" "grafana" {
@@ -85,8 +87,8 @@ resource "kubernetes_manifest" "grafana_httproute" {
       hostnames = [var.grafana_domain]
       rules = [{
         backendRefs = [{
-          name = "${helm_release.grafana.name}-service"
-          port = 3000
+          name = helm_release.grafana.name
+          port = 80
         }]
       }]
     }
@@ -105,7 +107,7 @@ resource "kubernetes_manifest" "grafana_healthcheckpolicy" {
       targetRef = {
         group = ""
         kind  = "Service"
-        name  = "${helm_release.grafana.name}-service"
+        name  = helm_release.grafana.name
       }
       default = {
         config = {
