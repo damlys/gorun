@@ -38,6 +38,14 @@ resource "helm_release" "grafana_postgresql" {
   ]
 }
 
+resource "helm_release" "grafana" {
+  chart     = data.helm_template.grafana.chart
+  name      = data.helm_template.grafana.name
+  namespace = data.helm_template.grafana.namespace
+  values    = data.helm_template.grafana.values
+
+  timeout = 300
+}
 data "helm_template" "grafana" {
   chart = "${path.module}/charts/grafana"
 
@@ -67,12 +75,6 @@ data "helm_template" "grafana" {
     }),
     file("${path.module}/assets/grafana/resources.yaml"),
   ]
-}
-resource "helm_release" "grafana" {
-  chart     = data.helm_template.grafana.chart
-  name      = data.helm_template.grafana.name
-  namespace = data.helm_template.grafana.namespace
-  values    = data.helm_template.grafana.values
 }
 
 resource "kubernetes_manifest" "grafana_httproute" {

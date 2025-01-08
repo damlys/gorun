@@ -13,6 +13,14 @@ module "loki_service_account" {
   service_account_name     = "loki"
 }
 
+# resource "helm_release" "loki" {
+#   chart     = data.helm_template.loki.chart
+#   name      = data.helm_template.loki.name
+#   namespace = data.helm_template.loki.namespace
+#   values    = data.helm_template.loki.values
+
+#   timeout = 600
+# }
 data "helm_template" "loki" {
   chart = "${path.module}/charts/loki"
 
@@ -27,11 +35,3 @@ data "helm_template" "loki" {
     file("${path.module}/assets/loki/resources.yaml"),
   ]
 }
-# resource "helm_release" "loki" {
-#   chart     = data.helm_template.loki.chart
-#   name      = data.helm_template.loki.name
-#   namespace = data.helm_template.loki.namespace
-#   values    = data.helm_template.loki.values
-
-#   timeout = 600
-# }
