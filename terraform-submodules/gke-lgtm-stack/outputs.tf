@@ -1,10 +1,8 @@
-# TODO
-
 output "grafana_username" {
   value = "admin"
 }
 
 output "grafana_password" {
-  value     = "admin"
+  value     = "admin" # TODO
   sensitive = true
 }
