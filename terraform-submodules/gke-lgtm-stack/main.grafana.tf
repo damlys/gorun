@@ -62,14 +62,14 @@ data "helm_template" "grafana" {
     }),
     file("${path.module}/assets/grafana/scale.yaml"),
     templatefile("${path.module}/assets/grafana/lgtm-datasources.yaml.tftpl", {
-      loki_name      = helm_release.loki.name
-      loki_namespace = helm_release.loki.namespace
+      loki_name      = data.helm_template.loki.name
+      loki_namespace = data.helm_template.loki.namespace
 
-      mimir_name      = helm_release.mimir.name
-      mimir_namespace = helm_release.mimir.namespace
+      mimir_name      = data.helm_template.mimir.name
+      mimir_namespace = data.helm_template.mimir.namespace
 
-      tempo_name      = helm_release.tempo.name
-      tempo_namespace = helm_release.tempo.namespace
+      tempo_name      = data.helm_template.tempo.name
+      tempo_namespace = data.helm_template.tempo.namespace
     }),
     templatefile("${path.module}/assets/grafana/gcp-datasources.yaml.tftpl", {
       project_id = var.google_project.project_id

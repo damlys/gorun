@@ -17,6 +17,7 @@ thumbs.db
 # terraform
 /terraform-*/**/.terraform
 /terraform-*/**/.terraform.tfstate.lock.info
+/terraform-*/**/errored.tfstate
 /terraform-*/**/terraform.tfstate
 /terraform-*/**/terraform.tfstate.backup
 /terraform-*/**/terraform.tfvars

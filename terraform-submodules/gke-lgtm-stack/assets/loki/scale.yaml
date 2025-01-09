@@ -33,21 +33,21 @@ singleBinary:
       memory: 1Mi
     limits: {}
 write:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
       memory: 1Mi
     limits: {}
 read:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
       memory: 1Mi
     limits: {}
 backend:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
@@ -60,6 +60,8 @@ ingester:
       cpu: 1m
       memory: 1Mi
     limits: {}
+  zoneAwareReplication:
+    enabled: false
 distributor:
   #replicas: 1
   resources:

@@ -36,14 +36,14 @@ resource "google_storage_bucket_iam_member" "mimir_service_account" {
   member = module.mimir_service_account.google_service_account.member
 }
 
-resource "helm_release" "mimir" {
-  chart     = data.helm_template.mimir.chart
-  name      = data.helm_template.mimir.name
-  namespace = data.helm_template.mimir.namespace
-  values    = data.helm_template.mimir.values
+# resource "helm_release" "mimir" {
+#   chart     = data.helm_template.mimir.chart
+#   name      = data.helm_template.mimir.name
+#   namespace = data.helm_template.mimir.namespace
+#   values    = data.helm_template.mimir.values
 
-  timeout = 900
-}
+#   timeout = 900
+# }
 data "helm_template" "mimir" {
   chart = "${path.module}/charts/mimir-distributed"
 
@@ -51,7 +51,6 @@ data "helm_template" "mimir" {
   namespace = kubernetes_namespace.mimir.metadata[0].name
 
   values = [
-    file("${path.module}/charts/mimir-distributed/small.yaml"),
     templatefile("${path.module}/assets/mimir/values.yaml.tftpl", {
       mimir_service_account_name = module.mimir_service_account.kubernetes_service_account.metadata[0].name
       mimir_bucket_name          = google_storage_bucket.mimir.name

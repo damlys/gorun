@@ -5,6 +5,8 @@ alertmanager:
       cpu: 1m
       memory: 1Mi
     limits: {}
+  zoneAwareReplication:
+    enabled: false
 distributor:
   #replicas: 1
   resources:
@@ -13,13 +15,14 @@ distributor:
       memory: 1Mi
     limits: {}
 ingester:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
       memory: 1Mi
     limits: {}
   zoneAwareReplication:
+    enabled: false
     migration:
       {}
       #replicas: 1
@@ -59,7 +62,7 @@ ruler_query_scheduler:
       memory: 1Mi
     limits: {}
 querier:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
@@ -73,7 +76,7 @@ query_frontend:
       memory: 1Mi
     limits: {}
 query_scheduler:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
@@ -86,6 +89,8 @@ store_gateway:
       cpu: 1m
       memory: 1Mi
     limits: {}
+  zoneAwareReplication:
+    enabled: false
 compactor:
   #replicas: 1
   resources:
@@ -199,6 +204,12 @@ gr-metricname-cache:
     limits: {}
 continuous_test:
   #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+rollout_operator:
   resources:
     requests:
       cpu: 1m

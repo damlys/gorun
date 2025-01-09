@@ -10,7 +10,7 @@ function scale {
 
   echo "" >"${output}"
 
-  for key in $(yq eval '.. | select(key == "replicas" or key == "resources") | path | join(".")' "${input}"); do
+  for key in $(yq eval '.. | select(key == "replicas" or key == "resources" or key == "zoneAwareReplication") | path | join(".")' "${input}"); do
     echo "debug: key=$key"
 
     # set replicas=1
@@ -24,6 +24,11 @@ function scale {
       yq eval ".$key.requests.memory = \"1Mi\"" --inplace "${output}"
 
       yq eval ".$key.limits = {}" --inplace "${output}"
+    fi
+
+    # set zoneAwareReplication.enabled=false
+    if [[ "${key}" == *"zoneAwareReplication" ]]; then
+      yq eval ".$key.enabled = false" --inplace "${output}"
     fi
   done
 

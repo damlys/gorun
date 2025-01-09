@@ -36,14 +36,14 @@ resource "google_storage_bucket_iam_member" "tempo_service_account" {
   member = module.tempo_service_account.google_service_account.member
 }
 
-resource "helm_release" "tempo" {
-  chart     = data.helm_template.tempo.chart
-  name      = data.helm_template.tempo.name
-  namespace = data.helm_template.tempo.namespace
-  values    = data.helm_template.tempo.values
+# resource "helm_release" "tempo" {
+#   chart     = data.helm_template.tempo.chart
+#   name      = data.helm_template.tempo.name
+#   namespace = data.helm_template.tempo.namespace
+#   values    = data.helm_template.tempo.values
 
-  timeout = 600
-}
+#   timeout = 600
+# }
 data "helm_template" "tempo" {
   chart = "${path.module}/charts/tempo-distributed"
 
