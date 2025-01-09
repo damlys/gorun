@@ -2,36 +2,29 @@ datasources:
   lgtm-datasources.yaml:
     apiVersion: 1
     datasources:
-      - name: Loki logs
-        uid: loki-logs
+      - name: LGTM logs
+        uid: lgtm-logs
         type: loki
-        url: "http://${loki_name}-gateway.${loki_namespace}.svc.cluster.local:80"
+        url: "http://${loki_name}-gateway.${loki_namespace}.svc:80"
         isDefault: false
         jsonData:
           maxLines: 5000
-      - name: Mimir metrics
-        uid: mimir-metrics
+      - name: LGTM metrics
+        uid: lgtm-metrics
         type: prometheus
-        url: "http://${mimir_name}-nginx.${mimir_namespace}.svc.cluster.local:80/prometheus"
+        url: "http://${mimir_name}-nginx.${mimir_namespace}.svc:80/prometheus"
         isDefault: true
-      - name: Mimir alerts
-        uid: mimir-alerts
-        type: alertmanager
-        url: "http://${mimir_name}-nginx.${mimir_namespace}.svc.cluster.local:80/alertmanager"
-        isDefault: false
-        jsonData:
-          implementation: prometheus
-      - name: Tempo traces
-        uid: tempo-traces
+      - name: LGTM traces
+        uid: lgtm-traces
         type: tempo
-        url: "http://${tempo_name}-query-frontend.${tempo_namespace}.svc.cluster.local:3100"
+        url: "http://${tempo_name}-query-frontend.${tempo_namespace}.svc:3100"
         isDefault: false
         jsonData:
           tracesToLogsV2:
-            datasourceUid: loki-logs
+            datasourceUid: lgtm-logs
           lokiSearch:
-            datasourceUid: loki-logs
+            datasourceUid: lgtm-logs
           tracesToMetrics:
-            datasourceUid: mimir-metrics
+            datasourceUid: lgtm-metrics
           serviceMap:
-            datasourceUid: mimir-metrics
+            datasourceUid: lgtm-metrics
