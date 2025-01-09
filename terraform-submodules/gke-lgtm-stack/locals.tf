@@ -10,4 +10,7 @@ locals {
 
   tempo_desc = "cluster: gke_${var.google_project.project_id}_${var.google_container_cluster.location}_${var.google_container_cluster.name}, namespace: ${kubernetes_namespace.tempo.metadata[0].name}"
   tempo_hash = substr(sha256(local.tempo_desc), 0, 5)
+
+  otelcol_desc = "cluster: gke_${var.google_project.project_id}_${var.google_container_cluster.location}_${var.google_container_cluster.name}, namespace: ${kubernetes_namespace.otelcol.metadata[0].name}"
+  otelcol_hash = substr(sha256(local.otelcol_desc), 0, 5)
 }

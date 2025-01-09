@@ -17,6 +17,7 @@ function main {
     rm -rf "${project_path}/charts"
 
     log::info "downloading Helm charts: ${project_path}"
+    yq '.dependencies |= sort_by(.name)' --inplace "${project_path}/Chart.yaml"
     helm dependency update "${project_path}"
 
     for chart in "${project_path}"/charts/*.tgz; do

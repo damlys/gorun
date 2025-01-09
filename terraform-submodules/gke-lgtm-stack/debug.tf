@@ -17,3 +17,8 @@ resource "local_file" "tempo" {
   filename = "${path.module}/debug.tempo-${local.tempo_hash}.yaml"
   content  = data.helm_template.tempo.manifest
 }
+
+resource "local_file" "otelcol_logs" {
+  filename = "${path.module}/debug.otelcol_logs-${local.otelcol_hash}.yaml"
+  content  = data.helm_template.otelcol_logs.manifest
+}

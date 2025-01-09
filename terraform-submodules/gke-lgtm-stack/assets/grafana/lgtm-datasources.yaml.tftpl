@@ -2,29 +2,29 @@ datasources:
   lgtm-datasources.yaml:
     apiVersion: 1
     datasources:
-      - name: LGTM logs
-        uid: lgtm-logs
+      - name: Loki logs
+        uid: loki
         type: loki
         url: "http://${loki_name}-gateway.${loki_namespace}.svc:80"
         isDefault: false
         jsonData:
           maxLines: 5000
-      - name: LGTM metrics
-        uid: lgtm-metrics
+      - name: Mimir metrics
+        uid: mimir
         type: prometheus
         url: "http://${mimir_name}-nginx.${mimir_namespace}.svc:80/prometheus"
         isDefault: true
-      - name: LGTM traces
-        uid: lgtm-traces
+      - name: Tempo traces
+        uid: tempo
         type: tempo
         url: "http://${tempo_name}-query-frontend.${tempo_namespace}.svc:3100"
         isDefault: false
         jsonData:
           tracesToLogsV2:
-            datasourceUid: lgtm-logs
+            datasourceUid: loki
           lokiSearch:
-            datasourceUid: lgtm-logs
+            datasourceUid: loki
           tracesToMetrics:
-            datasourceUid: lgtm-metrics
+            datasourceUid: mimir
           serviceMap:
-            datasourceUid: lgtm-metrics
+            datasourceUid: mimir
