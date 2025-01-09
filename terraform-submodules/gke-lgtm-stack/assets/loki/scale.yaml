@@ -1,0 +1,186 @@
+lokiCanary:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+adminApi:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+gateway:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+enterpriseGateway:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+singleBinary:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+write:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+read:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+backend:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+ingester:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+distributor:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+querier:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+queryFrontend:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+queryScheduler:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+indexGateway:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+compactor:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+bloomGateway:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+bloomPlanner:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+bloomBuilder:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+patternIngester:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+ruler:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+memcachedExporter:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+resultsCache:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+chunksCache:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+minio:
+  #replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+sidecar:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+monitoring:
+  selfMonitoring:
+    grafanaAgent:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 1Mi
+        limits: {}
+tableManager:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}

@@ -3,19 +3,35 @@ datasources:
     apiVersion: 1
     datasources:
       - name: Loki logs
+        uid: loki-logs
         type: loki
-        url: "http://${loki_name}-read.${loki_namespace}.svc.cluster.local:3100"
+        url: "http://${loki_name}-gateway.${loki_namespace}.svc.cluster.local:80"
+        isDefault: false
         jsonData:
           maxLines: 5000
       - name: Mimir metrics
+        uid: mimir-metrics
         type: prometheus
         url: "http://${mimir_name}-nginx.${mimir_namespace}.svc.cluster.local:80/prometheus"
         isDefault: true
       - name: Mimir alerts
+        uid: mimir-alerts
         type: alertmanager
         url: "http://${mimir_name}-nginx.${mimir_namespace}.svc.cluster.local:80/alertmanager"
+        isDefault: false
         jsonData:
           implementation: mimir
       - name: Tempo traces
+        uid: tempo-traces
         type: tempo
-        url: "http://${tempo_name}-query.${tempo_namespace}.svc.cluster.local:16686"
+        url: "http://${tempo_name}-query-frontend.${tempo_namespace}.svc.cluster.local:3100"
+        isDefault: false
+        jsonData:
+          tracesToLogsV2:
+            datasourceUid: loki-logs
+          lokiSearch:
+            datasourceUid: loki-logs
+          tracesToMetrics:
+            datasourceUid: mimir-metrics
+          serviceMap:
+            datasourceUid: mimir-metrics

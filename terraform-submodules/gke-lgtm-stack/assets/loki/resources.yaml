@@ -1,6 +1,0 @@
-chunksCache:
-  replicas: 1
-  resources:
-    requests:
-      cpu: 1m
-      memory: 1Mi

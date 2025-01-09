@@ -60,20 +60,20 @@ data "helm_template" "grafana" {
       grafana_postgresql_name      = helm_release.grafana_postgresql.name
       grafana_postgresql_namespace = helm_release.grafana_postgresql.namespace
     }),
-    # templatefile("${path.module}/assets/grafana/lgtm-datasources.yaml.tftpl", {
-    #   loki_name      = helm_release.loki.name
-    #   loki_namespace = helm_release.loki.namespace
+    file("${path.module}/assets/grafana/scale.yaml"),
+    templatefile("${path.module}/assets/grafana/lgtm-datasources.yaml.tftpl", {
+      loki_name      = helm_release.loki.name
+      loki_namespace = helm_release.loki.namespace
 
-    #   mimir_name      = helm_release.mimir.name
-    #   mimir_namespace = helm_release.mimir.namespace
+      mimir_name      = helm_release.mimir.name
+      mimir_namespace = helm_release.mimir.namespace
 
-    #   tempo_name      = helm_release.tempo.name
-    #   tempo_namespace = helm_release.tempo.namespace
-    # }),
+      tempo_name      = helm_release.tempo.name
+      tempo_namespace = helm_release.tempo.namespace
+    }),
     templatefile("${path.module}/assets/grafana/gcp-datasources.yaml.tftpl", {
       project_id = var.google_project.project_id
     }),
-    file("${path.module}/assets/grafana/resources.yaml"),
   ]
 }
 

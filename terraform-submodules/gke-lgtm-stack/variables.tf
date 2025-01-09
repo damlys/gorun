@@ -11,6 +11,11 @@ variable "google_container_cluster" {
   })
 }
 
+variable "platform_region" {
+  type    = string
+  default = "europe-central2"
+}
+
 variable "grafana_domain" {
   type = string
 }

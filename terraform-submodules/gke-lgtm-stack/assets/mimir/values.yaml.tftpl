@@ -2,7 +2,14 @@ serviceAccount:
   create: false
   name: "${mimir_service_account_name}"
 
-mimir: {}
+mimir:
+  {}
+  # structuredConfig:
+  #   common:
+  #     storage:
+  #       backend: gcs
+  #       gcs:
+  #         bucket_name: "${mimir_bucket_name}"
 
-minio: # TODO gcs
+minio:
   enabled: true

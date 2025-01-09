@@ -5,8 +5,16 @@ serviceAccount:
 loki:
   auth_enabled: false
 
-# lokiCanary:
-#   enabled: false
+  # storage_config:
+  #   gcs:
+  #     bucket_name: "${loki_bucket_name}"
+  # storage:
+  #   type: gcs
+  #   gcs: {}
+  #   bucketNames:
+  #     chunks: "${loki_bucket_name}"
+  #     ruler: "${loki_bucket_name}"
+  #     admin: "${loki_bucket_name}"
 
-minio: # TODO gcs
+minio:
   enabled: true
