@@ -20,7 +20,7 @@ datasources:
         url: "http://${mimir_name}-nginx.${mimir_namespace}.svc.cluster.local:80/alertmanager"
         isDefault: false
         jsonData:
-          implementation: mimir
+          implementation: prometheus
       - name: Tempo traces
         uid: tempo-traces
         type: tempo

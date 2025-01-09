@@ -5,16 +5,30 @@ serviceAccount:
 loki:
   auth_enabled: false
 
-  # storage_config:
-  #   gcs:
-  #     bucket_name: "${loki_bucket_name}"
-  # storage:
-  #   type: gcs
-  #   gcs: {}
-  #   bucketNames:
-  #     chunks: "${loki_bucket_name}"
-  #     ruler: "${loki_bucket_name}"
-  #     admin: "${loki_bucket_name}"
+  storage:
+    type: gcs
+    gcs: {}
+    bucketNames:
+      chunks: "${loki_bucket_name}"
+      ruler: "${loki_bucket_name}"
+  storage_config:
+    gcs:
+      bucket_name: "${loki_bucket_name}"
+  schemaConfig:
+    configs:
+      - from: 1970-01-01
+        store: tsdb
+        object_store: gcs
+        schema: v13
+        index:
+          prefix: index_
+          period: 24h
 
+write:
+  persistence:
+    volumeClaimsEnabled: false
+backend:
+  persistence:
+    volumeClaimsEnabled: false
 minio:
-  enabled: true
+  enabled: false

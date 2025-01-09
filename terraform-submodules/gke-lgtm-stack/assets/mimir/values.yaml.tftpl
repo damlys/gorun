@@ -3,13 +3,39 @@ serviceAccount:
   name: "${mimir_service_account_name}"
 
 mimir:
-  {}
-  # structuredConfig:
-  #   common:
-  #     storage:
-  #       backend: gcs
-  #       gcs:
-  #         bucket_name: "${mimir_bucket_name}"
+  structuredConfig:
+    common:
+      storage:
+        backend: gcs
+        gcs:
+          bucket_name: "${mimir_bucket_name}"
+    blocks_storage:
+      backend: gcs
+      gcs:
+        bucket_name: "${mimir_bucket_name}"
+      storage_prefix: blocks
+    alertmanager_storage:
+      backend: gcs
+      gcs:
+        bucket_name: "${mimir_bucket_name}"
+      storage_prefix: alertmanager
+    ruler_storage:
+      backend: gcs
+      gcs:
+        bucket_name: "${mimir_bucket_name}"
+      storage_prefix: ruler
 
+alertmanager:
+  persistentVolume:
+    enabled: false
+ingester:
+  persistentVolume:
+    enabled: false
+store_gateway:
+  persistentVolume:
+    enabled: false
+compactor:
+  persistentVolume:
+    enabled: false
 minio:
-  enabled: true
+  enabled: false

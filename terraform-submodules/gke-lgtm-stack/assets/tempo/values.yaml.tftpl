@@ -3,11 +3,11 @@ serviceAccount:
   name: "${tempo_service_account_name}"
 
 tempo: {}
-# storage:
-#   trace:
-#     backend: gcs
-#     gcs:
-#       bucket_name: "${tempo_bucket_name}"
+storage:
+  trace:
+    backend: gcs
+    gcs:
+      bucket_name: "${tempo_bucket_name}"
 
 minio:
-  enabled: true
+  enabled: false
