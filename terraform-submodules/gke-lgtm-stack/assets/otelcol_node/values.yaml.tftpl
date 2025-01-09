@@ -1,0 +1,35 @@
+image:
+  repository: otel/opentelemetry-collector-k8s
+
+mode: daemonset
+replicaCount: 1
+presets:
+  kubernetesAttributes:
+    enabled: true
+  logsCollection:
+    enabled: true
+    includeCollectorLogs: true
+  kubeletMetrics:
+    enabled: true
+  hostMetrics:
+    enabled: true
+
+config:
+  exporters:
+    otlphttp/loki:
+      endpoint: "${loki_entrypoint}/otlp"
+    otlphttp/mimir:
+      endpoint: "${mimir_entrypoint}/otlp"
+    otlphttp/tempo:
+      endpoint: "${tempo_entrypoint}"
+  service:
+    pipelines:
+      logs:
+        exporters:
+          - otlphttp/loki
+      metrics:
+        exporters:
+          - otlphttp/mimir
+      traces:
+        exporters:
+          - otlphttp/tempo

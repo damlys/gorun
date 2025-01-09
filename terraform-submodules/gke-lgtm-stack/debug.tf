@@ -18,7 +18,12 @@ resource "local_file" "tempo" {
   content  = data.helm_template.tempo.manifest
 }
 
-resource "local_file" "otelcol_logs" {
-  filename = "${path.module}/debug.otelcol_logs-${local.otelcol_hash}.yaml"
-  content  = data.helm_template.otelcol_logs.manifest
+resource "local_file" "otelcol_cluster" {
+  filename = "${path.module}/debug.otelcol_cluster-${local.otelcol_hash}.yaml"
+  content  = data.helm_template.otelcol_cluster.manifest
+}
+
+resource "local_file" "otelcol_node" {
+  filename = "${path.module}/debug.otelcol_node-${local.otelcol_hash}.yaml"
+  content  = data.helm_template.otelcol_node.manifest
 }

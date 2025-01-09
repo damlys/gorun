@@ -1,3 +1,8 @@
+mimir:
+  structuredConfig:
+    ingester:
+      ring:
+        replication_factor: 1
 alertmanager:
   #replicas: 1
   resources:

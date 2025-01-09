@@ -5,19 +5,19 @@ datasources:
       - name: Loki logs
         uid: loki
         type: loki
-        url: "http://${loki_name}-gateway.${loki_namespace}.svc:80"
+        url: "${loki_entrypoint}"
         isDefault: false
         jsonData:
           maxLines: 5000
       - name: Mimir metrics
         uid: mimir
         type: prometheus
-        url: "http://${mimir_name}-nginx.${mimir_namespace}.svc:80/prometheus"
+        url: "${mimir_entrypoint}/prometheus"
         isDefault: true
       - name: Tempo traces
         uid: tempo
         type: tempo
-        url: "http://${tempo_name}-query-frontend.${tempo_namespace}.svc:3100"
+        url: "${tempo_entrypoint}"
         isDefault: false
         jsonData:
           tracesToLogsV2:
