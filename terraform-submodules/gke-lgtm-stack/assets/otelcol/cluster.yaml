@@ -2,6 +2,6 @@ mode: deployment
 replicaCount: 1
 presets:
   kubernetesEvents:
-    enabled: true
+    enabled: false
   clusterMetrics:
-    enabled: true
+    enabled: false

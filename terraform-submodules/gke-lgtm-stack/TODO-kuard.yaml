@@ -1,25 +1,9 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: opentelemetry-targetallocator-sa
-  namespace: lgtm-otelcol
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: opentelemetry-targetallocator-role
+  name: opentelemetry-collector-targetallocator
 rules:
-  - apiGroups:
-      - monitoring.coreos.com
-    resources:
-      - "*"
-    verbs:
-      - "*"
-  - apiGroups: [""]
-    resources:
-      - namespaces
-    verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources:
       - nodes
@@ -44,40 +28,62 @@ rules:
     verbs: ["get", "list", "watch"]
   - nonResourceURLs: ["/metrics"]
     verbs: ["get"]
+  - apiGroups:
+      - monitoring.coreos.com
+    resources:
+      - servicemonitors
+      - podmonitors
+      - probes
+      - scrapeconfigs
+    verbs:
+      - "*"
+  - apiGroups: [""]
+    resources:
+      - namespaces
+    verbs: ["get", "list", "watch"]
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: lgtm-otelcol
+  name: prometheus
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: opentelemetry-targetallocator-rb
+  name: prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: opentelemetry-collector-targetallocator
 subjects:
   - kind: ServiceAccount
-    name: opentelemetry-targetallocator-sa
     namespace: lgtm-otelcol
-roleRef:
-  kind: ClusterRole
-  name: opentelemetry-targetallocator-role
-  apiGroup: rbac.authorization.k8s.io
+    name: prometheus
 
 ---
 apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
-  name: collector-with-ta
   namespace: lgtm-otelcol
+  name: prometheus
 spec:
   mode: statefulset
   targetAllocator:
     enabled: true
-    serviceAccount: opentelemetry-targetallocator-sa
+    serviceAccount: prometheus
     prometheusCR:
       enabled: true
+      podMonitorSelector: {}
+      serviceMonitorSelector: {}
   config:
     receivers:
       prometheus:
         config:
           scrape_configs:
-            - job_name: opentelemetry-collector
+            - job_name: otel-collector
               scrape_interval: 10s
               static_configs:
                 - targets:
@@ -90,62 +96,6 @@ spec:
     service:
       pipelines:
         metrics:
-          receivers:
-            - prometheus
-          processors:
-            - batch
-          exporters:
-            - otlphttp/mimir
-
----
-apiVersion: monitoring.coreos.com/v1
-kind: PodMonitor
-metadata:
-  namespace: kuar-demo
-  name: kuard-http-server
-  labels:
-    app.kubernetes.io/name: kuard
-    app.kubernetes.io/component: http-server
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: kuard
-      app.kubernetes.io/component: http-server
-  podMetricsEndpoints:
-    - port: http
-      path: /metrics
-      interval: 15s
-    - targetPort: 80
-      path: /metrics
-      interval: 15s
-    - targetPort: 8080
-      path: /metrics
-      interval: 15s
-
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  namespace: kuar-demo
-  name: kuard-http-server
-  labels:
-    app.kubernetes.io/name: kuard
-    app.kubernetes.io/component: http-server
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: kuard
-      app.kubernetes.io/component: http-server
-  # namespaceSelector:
-  #   matchNames:
-  #     - kuar-demo
-  endpoints:
-    - port: http
-      path: /metrics
-      interval: 15s
-    - targetPort: 80
-      path: /metrics
-      interval: 15s
-    - targetPort: 8080
-      path: /metrics
-      interval: 15s
+          receivers: [prometheus]
+          processors: [batch]
+          exporters: [otlphttp/mimir]
