@@ -53,3 +53,53 @@ data "helm_template" "otelcol_node" {
     file("${path.module}/assets/otelcol/node.yaml"),
   ]
 }
+
+resource "kubernetes_service_account" "otelcol_prometheus_targetallocator" {
+  metadata {
+    name      = "prometheus-targetallocator"
+    namespace = kubernetes_namespace.otelcol.metadata[0].name
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "otelcol_prometheus_targetallocator" {
+  metadata {
+    name = "${kubernetes_service_account.otelcol_prometheus_targetallocator.metadata[0].namespace}-${kubernetes_service_account.otelcol_prometheus_targetallocator.metadata[0].name}"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "opentelemetry-collector-targetallocator"
+  }
+  subject {
+    api_group = ""
+    kind      = "ServiceAccount"
+    name      = kubernetes_service_account.otelcol_prometheus_targetallocator.metadata[0].name
+    namespace = kubernetes_service_account.otelcol_prometheus_targetallocator.metadata[0].namespace
+  }
+}
+
+resource "kubernetes_manifest" "otelcol_prometheus" {
+  manifest = {
+    apiVersion = "opentelemetry.io/v1beta1"
+    kind       = "OpenTelemetryCollector"
+    metadata = {
+      name      = "prometheus"
+      namespace = kubernetes_namespace.otelcol.metadata[0].name
+    }
+    spec = {
+      mode = "statefulset"
+      targetAllocator = {
+        enabled        = true
+        serviceAccount = kubernetes_service_account.otelcol_prometheus_targetallocator.metadata[0].name
+        prometheusCR = {
+          enabled                = true
+          podMonitorSelector     = {}
+          serviceMonitorSelector = {}
+        }
+      }
+      config = yamldecode(templatefile("${path.module}/assets/otelcol/otelcol_prometheus_config.yaml.tftpl", {
+        mimir_entrypoint = local.mimir_entrypoint
+      }))
+    }
+  }
+}

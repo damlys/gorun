@@ -4,6 +4,6 @@ presets:
     enabled: true
     includeCollectorLogs: true
   hostMetrics:
-    enabled: false
+    enabled: true
   kubeletMetrics:
-    enabled: false
+    enabled: true
