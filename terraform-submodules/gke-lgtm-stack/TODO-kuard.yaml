@@ -1,0 +1,151 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: opentelemetry-targetallocator-sa
+  namespace: lgtm-otelcol
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: opentelemetry-targetallocator-role
+rules:
+  - apiGroups:
+      - monitoring.coreos.com
+    resources:
+      - "*"
+    verbs:
+      - "*"
+  - apiGroups: [""]
+    resources:
+      - namespaces
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources:
+      - nodes
+      - nodes/metrics
+      - services
+      - endpoints
+      - pods
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources:
+      - configmaps
+    verbs: ["get"]
+  - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs: ["get", "list", "watch"]
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+    verbs: ["get", "list", "watch"]
+  - nonResourceURLs: ["/metrics"]
+    verbs: ["get"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: opentelemetry-targetallocator-rb
+subjects:
+  - kind: ServiceAccount
+    name: opentelemetry-targetallocator-sa
+    namespace: lgtm-otelcol
+roleRef:
+  kind: ClusterRole
+  name: opentelemetry-targetallocator-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: collector-with-ta
+  namespace: lgtm-otelcol
+spec:
+  mode: statefulset
+  targetAllocator:
+    enabled: true
+    serviceAccount: opentelemetry-targetallocator-sa
+    prometheusCR:
+      enabled: true
+  config:
+    receivers:
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: opentelemetry-collector
+              scrape_interval: 10s
+              static_configs:
+                - targets:
+                    - 0.0.0.0:8888
+    processors:
+      batch: {}
+    exporters:
+      otlphttp/mimir:
+        endpoint: http://mimir-nginx.lgtm-mimir.svc:80/otlp
+    service:
+      pipelines:
+        metrics:
+          receivers:
+            - prometheus
+          processors:
+            - batch
+          exporters:
+            - otlphttp/mimir
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  namespace: kuar-demo
+  name: kuard-http-server
+  labels:
+    app.kubernetes.io/name: kuard
+    app.kubernetes.io/component: http-server
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kuard
+      app.kubernetes.io/component: http-server
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+    - targetPort: 80
+      path: /metrics
+      interval: 15s
+    - targetPort: 8080
+      path: /metrics
+      interval: 15s
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  namespace: kuar-demo
+  name: kuard-http-server
+  labels:
+    app.kubernetes.io/name: kuard
+    app.kubernetes.io/component: http-server
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kuard
+      app.kubernetes.io/component: http-server
+  # namespaceSelector:
+  #   matchNames:
+  #     - kuar-demo
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+    - targetPort: 80
+      path: /metrics
+      interval: 15s
+    - targetPort: 8080
+      path: /metrics
+      interval: 15s

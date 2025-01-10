@@ -1,4 +1,23 @@
 #######################################
+### Prometheus Operator
+#######################################
+
+resource "kubernetes_namespace" "prometheus_operator" {
+  metadata {
+    name = "prometheus-operator"
+  }
+}
+
+resource "helm_release" "prometheus_operator_crds" {
+  repository = null
+  chart      = "../../third_party/helm/charts/prometheus-operator-crds" # TODO
+  version    = null
+
+  name      = "prometheus-operator-crds"
+  namespace = kubernetes_namespace.prometheus_operator.metadata[0].name
+}
+
+#######################################
 ### OpenTelemetry Operator
 #######################################
 

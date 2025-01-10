@@ -1,20 +1,14 @@
 image:
   repository: otel/opentelemetry-collector-k8s
 
-mode: daemonset
-replicaCount: 1
 presets:
   kubernetesAttributes:
     enabled: true
-  logsCollection:
-    enabled: true
-    includeCollectorLogs: true
-  kubeletMetrics:
-    enabled: true
-  hostMetrics:
-    enabled: true
+    extractAllPodLabels: true
 
 config:
+  receivers: {}
+  processors: {}
   exporters:
     otlphttp/loki:
       endpoint: "${loki_entrypoint}/otlp"
@@ -25,11 +19,32 @@ config:
   service:
     pipelines:
       logs:
+        receivers:
+          - otlp
+        processors:
+          - batch
         exporters:
           - otlphttp/loki
+          - debug # TODO
       metrics:
+        receivers:
+          - otlp
+        processors:
+          - batch
         exporters:
           - otlphttp/mimir
+          - debug # TODO
       traces:
+        receivers:
+          - otlp
+        processors:
+          - batch
         exporters:
           - otlphttp/tempo
+          - debug # TODO
+
+ports:
+  metrics:
+    enabled: true
+podMonitor:
+  enabled: true
