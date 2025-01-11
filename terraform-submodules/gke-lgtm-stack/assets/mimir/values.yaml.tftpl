@@ -25,15 +25,15 @@ mimir:
         bucket_name: "${mimir_bucket_name}"
       storage_prefix: ruler
 
-ingester:
-  persistentVolume:
-    enabled: false
-store_gateway:
-  persistentVolume:
-    enabled: false
-compactor:
-  persistentVolume:
-    enabled: false
+# ingester:
+#   persistentVolume:
+#     enabled: false
+# store_gateway:
+#   persistentVolume:
+#     enabled: false
+# compactor:
+#   persistentVolume:
+#     enabled: false
 alertmanager:
   enabled: false
 minio:

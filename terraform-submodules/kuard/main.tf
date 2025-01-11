@@ -11,7 +11,7 @@ module "helm_release" {
   source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/helm-release/0.0.1.zip"
 
   # repository    = "oci://europe-central2-docker.pkg.dev/gogke-main-0/private-helm-charts/gogke"
-  chart = "../../helm-charts/kuard" # "kuard"
+  chart = "../../helm-charts/kuard" # TODO "kuard"
   # chart_version = "0.0.2"
 
   namespace = var.kubernetes_namespace.metadata[0].name
