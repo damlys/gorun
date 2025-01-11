@@ -1,0 +1,12 @@
+image:
+  repository: otel/opentelemetry-collector-k8s
+
+mode: daemonset
+presets:
+  kubernetesAttributes:
+    enabled: true
+    extractAllPodLabels: true
+    extractAllPodAnnotations: false
+
+  kubeletMetrics:
+    enabled: true

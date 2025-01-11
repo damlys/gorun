@@ -16,6 +16,7 @@ module "tempo_service_account" {
 resource "google_storage_bucket" "tempo" {
   project       = var.google_project.project_id
   name          = "tempo-${local.tempo_hash}"
+  labels        = local.tempo_labels
   location      = var.platform_region
   storage_class = "REGIONAL"
   force_destroy = true

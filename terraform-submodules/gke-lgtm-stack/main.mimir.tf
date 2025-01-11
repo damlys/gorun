@@ -16,6 +16,7 @@ module "mimir_service_account" {
 resource "google_storage_bucket" "mimir" {
   project       = var.google_project.project_id
   name          = "mimir-${local.mimir_hash}"
+  labels        = local.mimir_labels
   location      = var.platform_region
   storage_class = "REGIONAL"
   force_destroy = true

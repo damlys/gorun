@@ -16,6 +16,7 @@ module "loki_service_account" {
 resource "google_storage_bucket" "loki" {
   project       = var.google_project.project_id
   name          = "loki-${local.loki_hash}"
+  labels        = local.loki_labels
   location      = var.platform_region
   storage_class = "REGIONAL"
   force_destroy = true

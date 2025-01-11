@@ -1,0 +1,13 @@
+image:
+  repository: otel/opentelemetry-collector-k8s
+
+mode: statefulset
+replicaCount: 1
+presets:
+  kubernetesAttributes:
+    enabled: true
+    extractAllPodLabels: true
+    extractAllPodAnnotations: false
+
+  clusterMetrics:
+    enabled: true

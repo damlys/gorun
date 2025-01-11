@@ -1,0 +1,62 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: $${env:MY_POD_IP}:4317
+      http:
+        endpoint: $${env:MY_POD_IP}:4318
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: otel-collector
+          scrape_interval: 10s
+          static_configs:
+            - targets:
+                - 0.0.0.0:8888
+processors:
+  batch: {}
+  transform:
+    metric_statements:
+      - context: datapoint
+        statements:
+          - set(attributes["namespace"], resource.attributes["k8s.namespace.name"])
+          - set(attributes["container"], resource.attributes["k8s.container.name"])
+          - set(attributes["pod"], resource.attributes["k8s.pod.name"])
+          - set(attributes["pod_id"], resource.attributes["k8s.pod.uid"])
+          - set(attributes["node"], resource.attributes["k8s.node.name"])
+          - set(attributes["app"], resource.attributes["k8s-app"])
+exporters:
+  otlphttp/loki:
+    endpoint: "${loki_entrypoint}/otlp"
+  otlphttp/mimir:
+    endpoint: "${mimir_entrypoint}/otlp"
+  otlphttp/tempo:
+    endpoint: "${tempo_entrypoint}"
+  debug/logs:
+    verbosity: detailed
+  debug/metrics:
+    verbosity: detailed
+  debug/traces:
+    verbosity: detailed
+extensions:
+  health_check:
+    endpoint: $${env:MY_POD_IP}:13133
+service:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: [k8sattributes, transform, batch]
+      exporters: [otlphttp/loki, debug/logs]
+    metrics:
+      receivers: [otlp, prometheus]
+      processors: [k8sattributes, transform, batch]
+      exporters: [otlphttp/mimir, debug/metrics]
+    traces:
+      receivers: [otlp]
+      processors: [k8sattributes, transform, batch]
+      exporters: [otlphttp/tempo, debug/traces]
+  extensions:
+    - health_check
+  telemetry:
+    metrics:
+      address: $${env:MY_POD_IP}:8888
