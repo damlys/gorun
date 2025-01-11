@@ -19,7 +19,9 @@
   "yaml.format.printWidth": 120,
 
   "search.exclude": {
-    "**/.terraform": true
+    "**/.terraform": true,
+    "terraform-submodules/*/charts": true,
+    "third_party/helm/charts": true
   },
   "files.associations": {
     "*.gotmpl": "gotmpl",

@@ -1,6 +1,6 @@
 resource "kubernetes_namespace" "otelcol" {
   metadata {
-    name = "lgtm-otelcol"
+    name = "otel-collectors"
   }
 }
 
@@ -21,9 +21,9 @@ data "helm_template" "otelcol_cluster" {
   values = [
     file("${path.module}/assets/otelcol/reset.yaml"),
     templatefile("${path.module}/assets/otelcol/values.yaml.tftpl", {
-      loki_entrypoint  = local.loki_entrypoint
-      mimir_entrypoint = local.mimir_entrypoint
-      tempo_entrypoint = local.tempo_entrypoint
+      loki_entrypoint  = var.loki_entrypoint
+      mimir_entrypoint = var.mimir_entrypoint
+      tempo_entrypoint = var.tempo_entrypoint
     }),
     file("${path.module}/assets/otelcol/cluster.yaml"),
   ]
@@ -46,9 +46,9 @@ data "helm_template" "otelcol_node" {
   values = [
     file("${path.module}/assets/otelcol/reset.yaml"),
     templatefile("${path.module}/assets/otelcol/values.yaml.tftpl", {
-      loki_entrypoint  = local.loki_entrypoint
-      mimir_entrypoint = local.mimir_entrypoint
-      tempo_entrypoint = local.tempo_entrypoint
+      loki_entrypoint  = var.loki_entrypoint
+      mimir_entrypoint = var.mimir_entrypoint
+      tempo_entrypoint = var.tempo_entrypoint
     }),
     file("${path.module}/assets/otelcol/node.yaml"),
   ]
@@ -98,7 +98,7 @@ resource "kubernetes_manifest" "otelcol_prometheus" {
         }
       }
       config = yamldecode(templatefile("${path.module}/assets/otelcol/otelcol_prometheus_config.yaml.tftpl", {
-        mimir_entrypoint = local.mimir_entrypoint
+        mimir_entrypoint = var.mimir_entrypoint
       }))
     }
   }

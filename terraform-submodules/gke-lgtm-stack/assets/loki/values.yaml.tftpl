@@ -11,6 +11,7 @@ loki:
     bucketNames:
       chunks: "${loki_bucket_name}"
       ruler: "${loki_bucket_name}"
+      admin: "${loki_bucket_name}"
   storage_config:
     gcs:
       bucket_name: "${loki_bucket_name}"

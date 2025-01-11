@@ -8,14 +8,11 @@ dependencies:
 - name: mimir-distributed
   repository: https://grafana.github.io/helm-charts
   version: 5.5.1
-- name: opentelemetry-collector
-  repository: https://open-telemetry.github.io/opentelemetry-helm-charts
-  version: 0.111.1
 - name: postgresql
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 16.3.5
 - name: tempo-distributed
   repository: https://grafana.github.io/helm-charts
   version: 1.28.0
-digest: sha256:d7f53dee89bc4fc1d47efde4293b857b2a278b80021027930e26ed6b833e6dfd
-generated: "2025-01-09T17:26:32.67054547Z"
+digest: sha256:1608a723dc4f86d93de8d2104fee1089fcba68ea4e47d573e28eb4057d7e6d2a
+generated: "2025-01-11T10:05:46.000769295Z"
