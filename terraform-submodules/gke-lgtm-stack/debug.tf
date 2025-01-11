@@ -44,3 +44,38 @@ resource "local_file" "otelcol_node" {
   filename = "${path.module}/debug.otelcol_node-${local.otelcol_hash}.yaml"
   content  = data.helm_template.otelcol_node.manifest
 }
+
+resource "kubernetes_cluster_role_binding" "debug" {
+  metadata {
+    name = "lgtm-otelcol-debug"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+  }
+  subject {
+    api_group = ""
+    kind      = "ServiceAccount"
+    name      = "cluster-opentelemetry-collector"
+    namespace = "lgtm-otelcol"
+  }
+  subject {
+    api_group = ""
+    kind      = "ServiceAccount"
+    name      = "node-opentelemetry-collector"
+    namespace = "lgtm-otelcol"
+  }
+  subject {
+    api_group = ""
+    kind      = "ServiceAccount"
+    name      = "prometheus-collector"
+    namespace = "lgtm-otelcol"
+  }
+  subject {
+    api_group = ""
+    kind      = "ServiceAccount"
+    name      = "prometheus-targetallocator"
+    namespace = "lgtm-otelcol"
+  }
+}

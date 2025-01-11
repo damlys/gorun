@@ -9,6 +9,16 @@ receivers:
                 - 0.0.0.0:8888
 processors:
   batch: {}
+  transform:
+    metric_statements:
+      - context: datapoint
+        statements:
+          - set(attributes["namespace"], resource.attributes["k8s.namespace.name"])
+          - set(attributes["container"], resource.attributes["k8s.container.name"])
+          - set(attributes["pod"], resource.attributes["k8s.pod.name"])
+          - set(attributes["pod_id"], resource.attributes["k8s.pod.uid"])
+          - set(attributes["node"], resource.attributes["k8s.node.name"])
+          - set(attributes["app"], resource.attributes["k8s-app"])
   k8sattributes:
     extract:
       labels:
@@ -39,9 +49,11 @@ processors:
 exporters:
   otlphttp/mimir:
     endpoint: "${mimir_entrypoint}/otlp"
+  debug:
+    verbosity: detailed
 service:
   pipelines:
     metrics:
       receivers: [prometheus]
-      processors: [k8sattributes, batch]
+      processors: [k8sattributes, transform, batch]
       exporters: [otlphttp/mimir]
