@@ -3,8 +3,8 @@ set -e
 cd "$(dirname "$0")"/..
 
 function scale {
-  local input="charts/$1/values.yaml"
-  local output="assets/${2}/scale.yaml"
+  local input="../../third_party/helm/charts/$1/values.yaml"
+  local output="assets/$2/scale.yaml"
 
   echo "debug: input=$input, output=$output"
 

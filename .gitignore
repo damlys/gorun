@@ -9,8 +9,6 @@ thumbs.db
 
 # helm
 /helm-charts/*.tgz
-/terraform-submodules/*/charts/*.tgz
-/terraform-submodules/*/tmpcharts*
 /third_party/helm/charts/*.tgz
 /third_party/helm/tmpcharts*
 

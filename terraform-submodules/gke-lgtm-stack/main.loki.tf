@@ -38,7 +38,10 @@ resource "google_storage_bucket_iam_member" "loki_service_account" {
 }
 
 resource "helm_release" "loki" {
-  chart     = data.helm_template.loki.chart
+  repository = data.helm_template.loki.repository
+  chart      = data.helm_template.loki.chart
+  version    = data.helm_template.loki.version
+
   name      = data.helm_template.loki.name
   namespace = data.helm_template.loki.namespace
   values    = data.helm_template.loki.values
@@ -46,7 +49,9 @@ resource "helm_release" "loki" {
   timeout = 600
 }
 data "helm_template" "loki" {
-  chart = "${path.module}/charts/loki"
+  repository = null
+  chart      = "../../third_party/helm/charts/loki" # TODO
+  version    = null
 
   name      = "loki"
   namespace = kubernetes_namespace.loki.metadata[0].name

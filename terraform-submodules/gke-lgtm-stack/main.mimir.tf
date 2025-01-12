@@ -38,7 +38,10 @@ resource "google_storage_bucket_iam_member" "mimir_service_account" {
 }
 
 resource "helm_release" "mimir" {
-  chart     = data.helm_template.mimir.chart
+  repository = data.helm_template.mimir.repository
+  chart      = data.helm_template.mimir.chart
+  version    = data.helm_template.mimir.version
+
   name      = data.helm_template.mimir.name
   namespace = data.helm_template.mimir.namespace
   values    = data.helm_template.mimir.values
@@ -46,7 +49,9 @@ resource "helm_release" "mimir" {
   timeout = 900
 }
 data "helm_template" "mimir" {
-  chart = "${path.module}/charts/mimir-distributed"
+  repository = null
+  chart      = "../../third_party/helm/charts/mimir-distributed" # TODO
+  version    = null
 
   name      = "mimir"
   namespace = kubernetes_namespace.mimir.metadata[0].name

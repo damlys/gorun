@@ -38,7 +38,10 @@ resource "google_storage_bucket_iam_member" "tempo_service_account" {
 }
 
 resource "helm_release" "tempo" {
-  chart     = data.helm_template.tempo.chart
+  repository = data.helm_template.tempo.repository
+  chart      = data.helm_template.tempo.chart
+  version    = data.helm_template.tempo.version
+
   name      = data.helm_template.tempo.name
   namespace = data.helm_template.tempo.namespace
   values    = data.helm_template.tempo.values
@@ -46,7 +49,9 @@ resource "helm_release" "tempo" {
   timeout = 600
 }
 data "helm_template" "tempo" {
-  chart = "${path.module}/charts/tempo-distributed"
+  repository = null
+  chart      = "../../third_party/helm/charts/tempo-distributed" # TODO
+  version    = null
 
   name      = "tempo"
   namespace = kubernetes_namespace.tempo.metadata[0].name

@@ -1,12 +1,27 @@
 dependencies:
+- name: grafana
+  repository: https://grafana.github.io/helm-charts
+  version: 8.8.2
+- name: loki
+  repository: https://grafana.github.io/helm-charts
+  version: 6.24.0
+- name: mimir-distributed
+  repository: https://grafana.github.io/helm-charts
+  version: 5.5.1
 - name: opentelemetry-collector
   repository: https://open-telemetry.github.io/opentelemetry-helm-charts
   version: 0.111.1
 - name: opentelemetry-operator
   repository: https://open-telemetry.github.io/opentelemetry-helm-charts
   version: 0.76.0
+- name: postgresql
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 16.3.5
 - name: prometheus-operator-crds
   repository: https://prometheus-community.github.io/helm-charts
   version: 17.0.2
-digest: sha256:4adb07448f46acdfd2c28214813e41e3685bbd170e08c7a3c28d326bb8056c56
-generated: "2025-01-11T10:59:08.889005048Z"
+- name: tempo-distributed
+  repository: https://grafana.github.io/helm-charts
+  version: 1.28.0
+digest: sha256:f7b5984343081bf121dc94549554acf055d0914383486e03d58e2a7156b69ce9
+generated: "2025-01-12T12:29:45.411970305Z"

@@ -39,7 +39,10 @@ resource "helm_release" "grafana_postgresql" {
 }
 
 resource "helm_release" "grafana" {
-  chart     = data.helm_template.grafana.chart
+  repository = data.helm_template.grafana.repository
+  chart      = data.helm_template.grafana.chart
+  version    = data.helm_template.grafana.version
+
   name      = data.helm_template.grafana.name
   namespace = data.helm_template.grafana.namespace
   values    = data.helm_template.grafana.values
@@ -47,7 +50,9 @@ resource "helm_release" "grafana" {
   timeout = 300
 }
 data "helm_template" "grafana" {
-  chart = "${path.module}/charts/grafana"
+  repository = null
+  chart      = "../../third_party/helm/charts/grafana" # TODO
+  version    = null
 
   name      = "grafana"
   namespace = kubernetes_namespace.grafana.metadata[0].name
