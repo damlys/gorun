@@ -24,6 +24,8 @@ mimir:
       gcs:
         bucket_name: "${mimir_bucket_name}"
       storage_prefix: ruler
+    limits:
+      max_label_names_per_series: 50
 
 # ingester:
 #   persistentVolume:

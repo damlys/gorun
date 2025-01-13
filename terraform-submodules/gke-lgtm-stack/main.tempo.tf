@@ -57,10 +57,10 @@ data "helm_template" "tempo" {
   namespace = kubernetes_namespace.tempo.metadata[0].name
 
   values = [
+    file("${path.module}/assets/tempo/scale.yaml"),
     templatefile("${path.module}/assets/tempo/values.yaml.tftpl", {
       tempo_service_account_name = module.tempo_service_account.kubernetes_service_account.metadata[0].name
       tempo_bucket_name          = google_storage_bucket.tempo.name
     }),
-    file("${path.module}/assets/tempo/scale.yaml"),
   ]
 }

@@ -57,10 +57,10 @@ data "helm_template" "loki" {
   namespace = kubernetes_namespace.loki.metadata[0].name
 
   values = [
+    file("${path.module}/assets/loki/scale.yaml"),
     templatefile("${path.module}/assets/loki/values.yaml.tftpl", {
       loki_service_account_name = module.loki_service_account.kubernetes_service_account.metadata[0].name
       loki_bucket_name          = google_storage_bucket.loki.name
     }),
-    file("${path.module}/assets/loki/scale.yaml"),
   ]
 }

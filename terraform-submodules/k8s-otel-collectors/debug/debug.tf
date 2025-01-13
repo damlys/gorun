@@ -1,24 +1,19 @@
-data "helm_template" "debug" {
-  for_each = toset([
-    "clusterMetrics",
-    "hostMetrics",
-    "kubeletMetrics",
-    "kubernetesEvents",
-    "logsCollection",
-  ])
-
-  repository = null
-  chart      = "../../third_party/helm/charts/opentelemetry-collector" # TODO
-  version    = null
-
-  name      = lower(each.value)
-  namespace = "debug"
-  values    = [file("${path.module}/debug/values.${each.value}.yaml")]
+resource "local_file" "debug_common_config" {
+  filename = "${path.module}/debug/common_config.yaml"
+  content  = yamlencode(local.common_config)
 }
 
-resource "local_file" "debug" {
-  for_each = data.helm_template.debug
+resource "local_file" "debug_logs_config" {
+  filename = "${path.module}/debug/logs_config.yaml"
+  content  = yamlencode(local.logs_config)
+}
 
-  filename = "${path.module}/debug/render.${each.key}.yaml"
-  content  = data.helm_template.debug[each.key].manifest
+resource "local_file" "debug_prom_config" {
+  filename = "${path.module}/debug/prom_config.yaml"
+  content  = yamlencode(local.prom_config)
+}
+
+resource "local_file" "debug_apps_config" {
+  filename = "${path.module}/debug/apps_config.yaml"
+  content  = yamlencode(local.apps_config)
 }

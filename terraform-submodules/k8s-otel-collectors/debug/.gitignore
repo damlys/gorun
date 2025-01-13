@@ -1,1 +1,2 @@
-/render.*.yaml
+/*.yaml
+!/debug2.*.values.yaml

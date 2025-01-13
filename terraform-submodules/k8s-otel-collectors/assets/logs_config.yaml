@@ -1,0 +1,9 @@
+service:
+  pipelines:
+    logs:
+      receivers: [filelog/logs]
+      processors: [k8sattributes, batch]
+      exporters: [otlphttp/loki]
+
+  extensions:
+    - health_check

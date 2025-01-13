@@ -1,11 +1,17 @@
 locals {
-  common_config = yamldecode(templatefile("${path.module}/assets/config.yaml.tftpl", {
+  common_config = yamldecode(templatefile("${path.module}/assets/common_config.yaml.tftpl", {
     loki_entrypoint  = var.loki_entrypoint
     mimir_entrypoint = var.mimir_entrypoint
     tempo_entrypoint = var.tempo_entrypoint
   }))
-  cluster_config    = merge(local.common_config, yamldecode(file("${path.module}/assets/config.cluster.yaml")))
-  node_config       = merge(local.common_config, yamldecode(file("${path.module}/assets/config.node.yaml")))
-  prometheus_config = merge(local.common_config, yamldecode(file("${path.module}/assets/config.prometheus.yaml")))
-  apps_config       = merge(local.common_config, yamldecode(file("${path.module}/assets/config.apps.yaml")))
+  logs_config = merge(local.common_config, yamldecode(file("${path.module}/assets/logs_config.yaml")))
+  prom_config = merge(local.common_config, yamldecode(file("${path.module}/assets/prom_config.yaml")))
+  apps_config = merge(local.common_config, yamldecode(file("${path.module}/assets/apps_config.yaml")))
+
+  common_envs = [
+    { name = "K8S_NODE_NAME", valueFrom = { fieldRef = { fieldPath = "spec.nodeName" } } },
+    { name = "K8S_NODE_IP", valueFrom = { fieldRef = { fieldPath = "status.hostIP" } } },
+    { name = "K8S_POD_NAME", valueFrom = { fieldRef = { fieldPath = "metadata.name" } } },
+    { name = "K8S_POD_IP", valueFrom = { fieldRef = { fieldPath = "status.podIP" } } },
+  ]
 }

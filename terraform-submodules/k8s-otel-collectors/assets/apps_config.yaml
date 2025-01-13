@@ -1,0 +1,17 @@
+service:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: [k8sattributes, batch]
+      exporters: [otlphttp/loki, debug/logs]
+    metrics:
+      receivers: [otlp]
+      processors: [k8sattributes, batch]
+      exporters: [otlphttp/mimir, debug/metrics]
+    traces:
+      receivers: [otlp]
+      processors: [k8sattributes, batch]
+      exporters: [otlphttp/tempo, debug/traces]
+
+  extensions:
+    - health_check

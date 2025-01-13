@@ -57,10 +57,10 @@ data "helm_template" "mimir" {
   namespace = kubernetes_namespace.mimir.metadata[0].name
 
   values = [
+    file("${path.module}/assets/mimir/scale.yaml"),
     templatefile("${path.module}/assets/mimir/values.yaml.tftpl", {
       mimir_service_account_name = module.mimir_service_account.kubernetes_service_account.metadata[0].name
       mimir_bucket_name          = google_storage_bucket.mimir.name
     }),
-    file("${path.module}/assets/mimir/scale.yaml"),
   ]
 }

@@ -58,6 +58,7 @@ data "helm_template" "grafana" {
   namespace = kubernetes_namespace.grafana.metadata[0].name
 
   values = [
+    file("${path.module}/assets/grafana/scale.yaml"),
     templatefile("${path.module}/assets/grafana/values.yaml.tftpl", {
       grafana_service_account_name = module.grafana_service_account.kubernetes_service_account.metadata[0].name
       grafana_domain               = var.grafana_domain
@@ -65,7 +66,6 @@ data "helm_template" "grafana" {
       grafana_postgresql_name      = helm_release.grafana_postgresql.name
       grafana_postgresql_namespace = helm_release.grafana_postgresql.namespace
     }),
-    file("${path.module}/assets/grafana/scale.yaml"),
     templatefile("${path.module}/assets/grafana/lgtm-datasources.yaml.tftpl", {
       loki_entrypoint  = local.loki_entrypoint
       mimir_entrypoint = local.mimir_entrypoint
