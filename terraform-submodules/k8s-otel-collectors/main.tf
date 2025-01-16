@@ -19,7 +19,6 @@ resource "kubernetes_manifest" "logs_collector" {
     spec = {
       mode   = "daemonset"
       config = local.logs_config
-      env    = local.common_envs
 
       volumes = [
         { name = "varlogpods", hostPath = { path = "/var/log/pods" } },
@@ -104,7 +103,6 @@ resource "kubernetes_manifest" "prom_collector" {
     spec = {
       mode   = "statefulset"
       config = local.prom_config
-      env    = local.common_envs
 
       targetAllocator = {
         enabled        = true
@@ -168,7 +166,6 @@ resource "kubernetes_manifest" "apps_collector" {
     spec = {
       mode   = "deployment"
       config = local.apps_config
-      env    = local.common_envs
 
       observability = { metrics = { enableMetrics = true } }
     }

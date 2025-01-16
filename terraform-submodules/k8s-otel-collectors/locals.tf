@@ -7,11 +7,4 @@ locals {
   logs_config = merge(local.common_config, yamldecode(file("${path.module}/assets/logs_config.yaml")))
   prom_config = merge(local.common_config, yamldecode(file("${path.module}/assets/prom_config.yaml")))
   apps_config = merge(local.common_config, yamldecode(file("${path.module}/assets/apps_config.yaml")))
-
-  common_envs = [
-    { name = "K8S_NODE_NAME", valueFrom = { fieldRef = { fieldPath = "spec.nodeName" } } },
-    { name = "K8S_NODE_IP", valueFrom = { fieldRef = { fieldPath = "status.hostIP" } } },
-    { name = "K8S_POD_NAME", valueFrom = { fieldRef = { fieldPath = "metadata.name" } } },
-    { name = "K8S_POD_IP", valueFrom = { fieldRef = { fieldPath = "status.podIP" } } },
-  ]
 }
