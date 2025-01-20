@@ -196,84 +196,36 @@ resource "kubernetes_cluster_role_binding" "apps_collector" {
   }
 }
 
-#######################################
-### auto-instrumentations
-#######################################
-
-resource "kubernetes_namespace" "instrumentations" {
-  metadata {
-    name = "otel-instrumentations"
-  }
-}
-
-resource "kubernetes_manifest" "golang_instrumentation" {
+resource "kubernetes_manifest" "dotnet_instrumentation" {
   manifest = {
     apiVersion = "opentelemetry.io/v1alpha1"
     kind       = "Instrumentation"
     metadata = {
-      name      = "golang-instrumentation"
-      namespace = kubernetes_namespace.instrumentations.metadata[0].name
+      name      = "dotnet-instrumentation"
+      namespace = kubernetes_manifest.apps_collector.manifest.metadata.namespace
     }
     spec = {
       exporter = {
         endpoint = local.http_entrypoint
       }
-      propagators = [
-        "tracecontext",
-        "baggage",
-      ]
-      sampler = {
-        type     = "parentbased_traceidratio"
-        argument = "1"
-      }
+      propagators = ["tracecontext", "baggage"]
     }
   }
 }
 
-resource "kubernetes_manifest" "python_instrumentation" {
+resource "kubernetes_manifest" "go_instrumentation" {
   manifest = {
     apiVersion = "opentelemetry.io/v1alpha1"
     kind       = "Instrumentation"
     metadata = {
-      name      = "python-instrumentation"
-      namespace = kubernetes_namespace.instrumentations.metadata[0].name
+      name      = "go-instrumentation"
+      namespace = kubernetes_manifest.apps_collector.manifest.metadata.namespace
     }
     spec = {
       exporter = {
         endpoint = local.http_entrypoint
       }
-      propagators = [
-        "tracecontext",
-        "baggage",
-      ]
-      sampler = {
-        type     = "parentbased_traceidratio"
-        argument = "1"
-      }
-    }
-  }
-}
-
-resource "kubernetes_manifest" "nodejs_instrumentation" {
-  manifest = {
-    apiVersion = "opentelemetry.io/v1alpha1"
-    kind       = "Instrumentation"
-    metadata = {
-      name      = "nodejs-instrumentation"
-      namespace = kubernetes_namespace.instrumentations.metadata[0].name
-    }
-    spec = {
-      exporter = {
-        endpoint = local.grpc_entrypoint
-      }
-      propagators = [
-        "tracecontext",
-        "baggage",
-      ]
-      sampler = {
-        type     = "parentbased_traceidratio"
-        argument = "1"
-      }
+      propagators = ["tracecontext", "baggage"]
     }
   }
 }
@@ -284,44 +236,47 @@ resource "kubernetes_manifest" "java_instrumentation" {
     kind       = "Instrumentation"
     metadata = {
       name      = "java-instrumentation"
-      namespace = kubernetes_namespace.instrumentations.metadata[0].name
+      namespace = kubernetes_manifest.apps_collector.manifest.metadata.namespace
     }
     spec = {
       exporter = {
         endpoint = local.grpc_entrypoint
       }
-      propagators = [
-        "tracecontext",
-        "baggage",
-      ]
-      sampler = {
-        type     = "parentbased_traceidratio"
-        argument = "1"
-      }
+      propagators = ["tracecontext", "baggage"]
     }
   }
 }
 
-resource "kubernetes_manifest" "dotnet_instrumentation" {
+resource "kubernetes_manifest" "nodejs_instrumentation" {
   manifest = {
     apiVersion = "opentelemetry.io/v1alpha1"
     kind       = "Instrumentation"
     metadata = {
-      name      = "dotnet-instrumentation"
-      namespace = kubernetes_namespace.instrumentations.metadata[0].name
+      name      = "nodejs-instrumentation"
+      namespace = kubernetes_manifest.apps_collector.manifest.metadata.namespace
+    }
+    spec = {
+      exporter = {
+        endpoint = local.grpc_entrypoint
+      }
+      propagators = ["tracecontext", "baggage"]
+    }
+  }
+}
+
+resource "kubernetes_manifest" "python_instrumentation" {
+  manifest = {
+    apiVersion = "opentelemetry.io/v1alpha1"
+    kind       = "Instrumentation"
+    metadata = {
+      name      = "python-instrumentation"
+      namespace = kubernetes_manifest.apps_collector.manifest.metadata.namespace
     }
     spec = {
       exporter = {
         endpoint = local.http_entrypoint
       }
-      propagators = [
-        "tracecontext",
-        "baggage",
-      ]
-      sampler = {
-        type     = "parentbased_traceidratio"
-        argument = "1"
-      }
+      propagators = ["tracecontext", "baggage"]
     }
   }
 }
