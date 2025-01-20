@@ -10,28 +10,28 @@ ingester:
   zoneAwareReplication:
     enabled: false
 metricsGenerator:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
       memory: 1Mi
     limits: {}
 distributor:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
       memory: 1Mi
     limits: {}
 compactor:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
       memory: 1Mi
     limits: {}
 querier:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
@@ -44,21 +44,21 @@ queryFrontend:
         cpu: 1m
         memory: 1Mi
       limits: {}
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
       memory: 1Mi
     limits: {}
 enterpriseFederationFrontend:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
       memory: 1Mi
     limits: {}
 memcached:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
@@ -77,21 +77,21 @@ minio:
       memory: 1Mi
     limits: {}
 gateway:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
       memory: 1Mi
     limits: {}
 adminApi:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
       memory: 1Mi
     limits: {}
 enterpriseGateway:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m

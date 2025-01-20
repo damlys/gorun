@@ -1,4 +1,4 @@
-#replicas: 1
+replicas: 1
 testFramework:
   resources:
     requests:
@@ -29,7 +29,7 @@ sidecar:
       memory: 1Mi
     limits: {}
 imageRenderer:
-  #replicas: 1
+  replicas: 1
   resources:
     requests:
       cpu: 1m
