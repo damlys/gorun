@@ -1,5 +1,5 @@
 #######################################
-### Prometheus Operator
+### Prometheus Operator (CRDs)
 #######################################
 
 resource "kubernetes_namespace" "prometheus_operator" {

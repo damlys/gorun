@@ -3,15 +3,15 @@ service:
     logs:
       receivers: [otlp]
       processors: [k8sattributes, batch]
-      exporters: [otlphttp/loki, debug/logs]
+      exporters: [otlphttp/loki]
     metrics:
       receivers: [otlp]
       processors: [k8sattributes, batch]
-      exporters: [otlphttp/mimir, debug/metrics]
+      exporters: [otlphttp/mimir]
     traces:
       receivers: [otlp]
       processors: [k8sattributes, batch]
-      exporters: [otlphttp/tempo, debug/traces]
+      exporters: [otlphttp/tempo]
 
   extensions:
     - health_check

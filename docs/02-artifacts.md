@@ -23,7 +23,6 @@ $ ./scripts/helm-chart show "kuard"
 ## Terraform submodules
 
 ```
-$ ./scripts/terraform-submodule download-helm-charts "kuard"
 $ ./scripts/terraform-submodule build "kuard"
 $ ./scripts/terraform-submodule test "kuard"
 $ ./scripts/terraform-submodule pre-publish "kuard"

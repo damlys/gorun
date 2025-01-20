@@ -5,6 +5,8 @@ ingester:
       cpu: 1m
       memory: 1Mi
     limits: {}
+  config:
+    replication_factor: 1
   zoneAwareReplication:
     enabled: false
 metricsGenerator:

@@ -8,6 +8,14 @@ storage:
     backend: gcs
     gcs:
       bucket_name: "${tempo_bucket_name}"
+traces:
+  otlp:
+    grpc:
+      enabled: true
+    http:
+      enabled: true
+gateway:
+  enabled: true
 
 minio:
   enabled: false

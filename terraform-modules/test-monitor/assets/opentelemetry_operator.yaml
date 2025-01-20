@@ -1,6 +1,11 @@
 manager:
   collectorImage:
     repository: otel/opentelemetry-collector-contrib
+  extraArgs:
+    - "--enable-go-instrumentation=true"
+  # featureGates: "+operator.autoinstrumentation.go"
+  # featureGatesMap:
+  #   "operator.autoinstrumentation.go": true
 
 admissionWebhooks:
   certManager:
