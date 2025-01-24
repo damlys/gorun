@@ -1,4 +1,84 @@
 #######################################
+### otlp
+#######################################
+
+resource "kubernetes_namespace" "otlp_collector" {
+  metadata {
+    name = "otel-otlp-collector"
+  }
+}
+
+resource "kubernetes_manifest" "otlp_collector" {
+  manifest = {
+    apiVersion = "opentelemetry.io/v1beta1"
+    kind       = "OpenTelemetryCollector"
+    metadata = {
+      name      = "otlp"
+      namespace = kubernetes_namespace.otlp_collector.metadata[0].name
+    }
+    spec = {
+      mode   = "deployment"
+      config = local.otlp_config
+
+      observability = { metrics = { enableMetrics = true } }
+    }
+  }
+}
+
+data "kubernetes_service_account" "otlp_collector" {
+  metadata {
+    name      = "${kubernetes_manifest.otlp_collector.manifest.metadata.name}-collector"
+    namespace = kubernetes_manifest.otlp_collector.manifest.metadata.namespace
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "otlp_collector" {
+  metadata {
+    name = "${data.kubernetes_service_account.otlp_collector.metadata[0].namespace}-${data.kubernetes_service_account.otlp_collector.metadata[0].name}"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "opentelemetry-collector"
+  }
+  subject {
+    api_group = ""
+    kind      = "ServiceAccount"
+    name      = data.kubernetes_service_account.otlp_collector.metadata[0].name
+    namespace = data.kubernetes_service_account.otlp_collector.metadata[0].namespace
+  }
+}
+
+resource "kubernetes_manifest" "otlp_instrumentation" {
+  manifest = {
+    apiVersion = "opentelemetry.io/v1alpha1"
+    kind       = "Instrumentation"
+    metadata = {
+      name      = "otlp-instrumentation"
+      namespace = kubernetes_manifest.otlp_collector.manifest.metadata.namespace
+    }
+    spec = {
+      exporter = {
+        endpoint = local.grpc_entrypoint
+      }
+      dotnet = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.grpc_entrypoint }] }
+      go     = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.grpc_entrypoint }] }
+      java   = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.grpc_entrypoint }] }
+      nodejs = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.grpc_entrypoint }] }
+      python = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.http_entrypoint }] } # Python auto-instrumentation does not support gRPC protocol
+
+      propagators = [
+        "tracecontext",
+        "baggage",
+      ]
+      sampler = {
+        type = "always_on"
+      }
+    }
+  }
+}
+
+#######################################
 ### logs
 #######################################
 
@@ -142,161 +222,5 @@ resource "kubernetes_cluster_role_binding" "prom_collector" {
     kind      = "ServiceAccount"
     name      = data.kubernetes_service_account.prom_collector.metadata[0].name
     namespace = data.kubernetes_service_account.prom_collector.metadata[0].namespace
-  }
-}
-
-#######################################
-### apps
-#######################################
-
-resource "kubernetes_namespace" "apps_collector" {
-  metadata {
-    name = "otel-apps-collector"
-  }
-}
-
-resource "kubernetes_manifest" "apps_collector" {
-  manifest = {
-    apiVersion = "opentelemetry.io/v1beta1"
-    kind       = "OpenTelemetryCollector"
-    metadata = {
-      name      = "apps"
-      namespace = kubernetes_namespace.apps_collector.metadata[0].name
-    }
-    spec = {
-      mode   = "deployment"
-      config = local.apps_config
-
-      observability = { metrics = { enableMetrics = true } }
-    }
-  }
-}
-
-data "kubernetes_service_account" "apps_collector" {
-  metadata {
-    name      = "${kubernetes_manifest.apps_collector.manifest.metadata.name}-collector"
-    namespace = kubernetes_manifest.apps_collector.manifest.metadata.namespace
-  }
-}
-
-resource "kubernetes_cluster_role_binding" "apps_collector" {
-  metadata {
-    name = "${data.kubernetes_service_account.apps_collector.metadata[0].namespace}-${data.kubernetes_service_account.apps_collector.metadata[0].name}"
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "opentelemetry-collector"
-  }
-  subject {
-    api_group = ""
-    kind      = "ServiceAccount"
-    name      = data.kubernetes_service_account.apps_collector.metadata[0].name
-    namespace = data.kubernetes_service_account.apps_collector.metadata[0].namespace
-  }
-}
-
-resource "kubernetes_manifest" "dotnet_instrumentation" {
-  manifest = {
-    apiVersion = "opentelemetry.io/v1alpha1"
-    kind       = "Instrumentation"
-    metadata = {
-      name      = "dotnet-instrumentation"
-      namespace = kubernetes_manifest.apps_collector.manifest.metadata.namespace
-    }
-    spec = {
-      exporter = {
-        endpoint = local.grpc_entrypoint
-      }
-      propagators = ["tracecontext", "baggage"]
-      sampler = {
-        type = "always_on"
-      }
-      dotnet = {}
-    }
-  }
-}
-
-resource "kubernetes_manifest" "go_instrumentation" {
-  manifest = {
-    apiVersion = "opentelemetry.io/v1alpha1"
-    kind       = "Instrumentation"
-    metadata = {
-      name      = "go-instrumentation"
-      namespace = kubernetes_manifest.apps_collector.manifest.metadata.namespace
-    }
-    spec = {
-      exporter = {
-        endpoint = local.grpc_entrypoint
-      }
-      propagators = ["tracecontext", "baggage"]
-      sampler = {
-        type = "always_on"
-      }
-      go = {}
-    }
-  }
-}
-
-resource "kubernetes_manifest" "java_instrumentation" {
-  manifest = {
-    apiVersion = "opentelemetry.io/v1alpha1"
-    kind       = "Instrumentation"
-    metadata = {
-      name      = "java-instrumentation"
-      namespace = kubernetes_manifest.apps_collector.manifest.metadata.namespace
-    }
-    spec = {
-      exporter = {
-        endpoint = local.grpc_entrypoint
-      }
-      propagators = ["tracecontext", "baggage"]
-      sampler = {
-        type = "always_on"
-      }
-      java = {}
-    }
-  }
-}
-
-resource "kubernetes_manifest" "nodejs_instrumentation" {
-  manifest = {
-    apiVersion = "opentelemetry.io/v1alpha1"
-    kind       = "Instrumentation"
-    metadata = {
-      name      = "nodejs-instrumentation"
-      namespace = kubernetes_manifest.apps_collector.manifest.metadata.namespace
-    }
-    spec = {
-      exporter = {
-        endpoint = local.grpc_entrypoint
-      }
-      propagators = ["tracecontext", "baggage"]
-      sampler = {
-        type = "always_on"
-      }
-      nodejs = {}
-    }
-  }
-}
-
-resource "kubernetes_manifest" "python_instrumentation" {
-  manifest = {
-    apiVersion = "opentelemetry.io/v1alpha1"
-    kind       = "Instrumentation"
-    metadata = {
-      name      = "python-instrumentation"
-      namespace = kubernetes_manifest.apps_collector.manifest.metadata.namespace
-    }
-    spec = {
-      exporter = {
-        endpoint = local.http_entrypoint # Python auto-instrumentation does not support gRPC protocol
-      }
-      propagators = ["tracecontext", "baggage"]
-      sampler = {
-        type = "always_on"
-      }
-      python = {}
-    }
   }
 }
