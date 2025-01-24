@@ -4,7 +4,9 @@
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
   "files.trimTrailingWhitespace": true,
+  "editor.indentSize": 2,
   "editor.tabSize": 2,
+  "prettier.tabWidth": 2,
 
   "[dockerfile]": { "editor.defaultFormatter": "ms-azuretools.vscode-docker" },
   "[hcl]": { "editor.defaultFormatter": "hashicorp.hcl" },

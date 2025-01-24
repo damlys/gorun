@@ -2,7 +2,7 @@ service:
   pipelines:
     metrics:
       receivers: [prometheus]
-      processors: [k8sattributes, batch]
+      processors: [k8sattributes]
       exporters: [prometheusremotewrite/mimir]
 
   extensions:

@@ -206,9 +206,13 @@ resource "kubernetes_manifest" "dotnet_instrumentation" {
     }
     spec = {
       exporter = {
-        endpoint = local.http_entrypoint
+        endpoint = local.grpc_entrypoint
       }
       propagators = ["tracecontext", "baggage"]
+      sampler = {
+        type = "always_on"
+      }
+      dotnet = {}
     }
   }
 }
@@ -223,9 +227,13 @@ resource "kubernetes_manifest" "go_instrumentation" {
     }
     spec = {
       exporter = {
-        endpoint = local.http_entrypoint
+        endpoint = local.grpc_entrypoint
       }
       propagators = ["tracecontext", "baggage"]
+      sampler = {
+        type = "always_on"
+      }
+      go = {}
     }
   }
 }
@@ -243,6 +251,10 @@ resource "kubernetes_manifest" "java_instrumentation" {
         endpoint = local.grpc_entrypoint
       }
       propagators = ["tracecontext", "baggage"]
+      sampler = {
+        type = "always_on"
+      }
+      java = {}
     }
   }
 }
@@ -260,6 +272,10 @@ resource "kubernetes_manifest" "nodejs_instrumentation" {
         endpoint = local.grpc_entrypoint
       }
       propagators = ["tracecontext", "baggage"]
+      sampler = {
+        type = "always_on"
+      }
+      nodejs = {}
     }
   }
 }
@@ -274,9 +290,13 @@ resource "kubernetes_manifest" "python_instrumentation" {
     }
     spec = {
       exporter = {
-        endpoint = local.http_entrypoint
+        endpoint = local.http_entrypoint # Python auto-instrumentation does not support gRPC protocol
       }
       propagators = ["tracecontext", "baggage"]
+      sampler = {
+        type = "always_on"
+      }
+      python = {}
     }
   }
 }

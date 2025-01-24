@@ -16,3 +16,7 @@ secretConfigFiles:
     {
       "data": "example secret.json"
     }
+
+httpServer:
+  podAnnotations:
+    instrumentation.opentelemetry.io/inject-go: otel-apps-collector/go-instrumentation

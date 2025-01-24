@@ -15,6 +15,8 @@ receivers:
       # format is /var/log/pods/<namespace_name>_<pod_name>_<pod_uid>/<container_name>/<run_id>.log
       - /var/log/pods/lgtm-*_*_*/*/*.log # Grafana namespaces
       - /var/log/pods/otel-*_*_*/*/*.log # OpenTelemetry namespaces
+      - /var/log/pods/*_*_*/opentelemetry-auto-instrumentation/*.log
+      - /var/log/pods/*_*_*/opentelemetry-auto-instrumentation-*/*.log
     operators:
       - id: container-parser
         type: container # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/pkg/stanza/docs/operators/container.md
@@ -25,15 +27,13 @@ receivers:
   prometheus: # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/prometheusreceiver/README.md
     config:
       scrape_configs:
-        - job_name: opentelemetry-collector
-          scrape_interval: 30s
+        - job_name: otel-collector
+          scrape_interval: 10s
           static_configs:
             - targets:
                 - 0.0.0.0:8888
 
 processors:
-  batch: {}
-
   k8sattributes: # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/README.md
     auth_type: serviceAccount
     passthrough: false
