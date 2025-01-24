@@ -3,9 +3,9 @@ resource "local_file" "debug_common_config" {
   content  = yamlencode(local.common_config)
 }
 
-resource "local_file" "debug_logs_config" {
-  filename = "${path.module}/debug/logs_config.yaml"
-  content  = yamlencode(local.logs_config)
+resource "local_file" "debug_file_config" {
+  filename = "${path.module}/debug/file_config.yaml"
+  content  = yamlencode(local.file_config)
 }
 
 resource "local_file" "debug_otlp_config" {
