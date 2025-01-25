@@ -1,5 +1,5 @@
 module "test_lgtm_stack" {
-  source = "../../terraform-submodules/gke-lgtm-stack" # TODO
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gke-lgtm-stack/0.0.1.zip"
 
   google_project           = data.google_project.this
   google_container_cluster = data.google_container_cluster.this
@@ -8,7 +8,7 @@ module "test_lgtm_stack" {
 }
 
 module "test_otel_collectors" {
-  source = "../../terraform-submodules/k8s-otel-collectors" # TODO
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/k8s-otel-collectors/0.0.1.zip"
 
   loki_entrypoint  = module.test_lgtm_stack.loki_entrypoint
   mimir_entrypoint = module.test_lgtm_stack.mimir_entrypoint
