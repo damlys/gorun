@@ -11,7 +11,7 @@ resource "kubernetes_namespace" "cert_manager" {
 resource "helm_release" "cert_manager" {
   repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
   chart      = "cert-manager"
-  version    = "1.16.3"
+  version    = "v1.16.3"
 
   name      = "cert-manager"
   namespace = kubernetes_namespace.cert_manager.metadata[0].name
