@@ -12,7 +12,7 @@ grafana.ini:
 
   database:
     type: postgres
-    host: "${grafana_postgresql_name}.${grafana_postgresql_namespace}.svc.cluster.local:5432"
+    host: "${grafana_postgresql_host}:5432"
     user: grafana
     password: Secret123
     name: grafana
