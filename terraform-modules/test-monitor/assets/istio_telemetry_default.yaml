@@ -1,4 +1,0 @@
-tracing:
-  - providers:
-      - name: otel-tracing
-    randomSamplingPercentage: 100.00 # default is "0.00"

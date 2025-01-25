@@ -102,11 +102,9 @@ resource "kubernetes_manifest" "file_collector" {
 
       volumes = [
         { name = "varlogpods", hostPath = { path = "/var/log/pods" } },
-        { name = "varlibdockercontainers", hostPath = { path = "/var/lib/docker/containers" } },
       ]
       volumeMounts = [
         { name = "varlogpods", mountPath = "/var/log/pods", readOnly = true },
-        { name = "varlibdockercontainers", mountPath = "/var/lib/docker/containers", readOnly = true },
       ]
 
       observability = { metrics = { enableMetrics = true } }

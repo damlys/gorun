@@ -61,7 +61,8 @@ resource "helm_release" "opentelemetry_operator" {
   values    = [file("${path.module}/assets/opentelemetry_operator.yaml")]
 }
 
-resource "kubernetes_cluster_role" "opentelemetry_collector" { # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/README.md#role-based-access-control
+# https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/README.md#role-based-access-control
+resource "kubernetes_cluster_role" "opentelemetry_collector" {
   metadata {
     name = "opentelemetry-collector"
   }
@@ -82,7 +83,8 @@ resource "kubernetes_cluster_role" "opentelemetry_collector" { # https://github.
   }
 }
 
-resource "kubernetes_cluster_role" "opentelemetry_targetallocator" { # https://github.com/open-telemetry/opentelemetry-operator/tree/main/cmd/otel-allocator#rbac
+# https://github.com/open-telemetry/opentelemetry-operator/tree/main/cmd/otel-allocator#rbac
+resource "kubernetes_cluster_role" "opentelemetry_targetallocator" {
   metadata {
     name = "opentelemetry-targetallocator"
   }
@@ -110,6 +112,27 @@ resource "kubernetes_cluster_role" "opentelemetry_targetallocator" { # https://g
     non_resource_urls = ["/metrics"]
     verbs             = ["get"]
   }
+}
+
+#######################################
+### OpenTelemetry & Grafana
+#######################################
+
+module "test_lgtm_stack" {
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gke-lgtm-stack/0.0.1.zip"
+
+  google_project           = data.google_project.this
+  google_container_cluster = data.google_container_cluster.this
+
+  grafana_domain = "grafana.gogke-test-7.damlys.pl"
+}
+
+module "test_otel_collectors" {
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/k8s-otel-collectors/0.0.1.zip"
+
+  loki_entrypoint  = module.test_lgtm_stack.loki_entrypoint
+  mimir_entrypoint = module.test_lgtm_stack.mimir_entrypoint
+  tempo_entrypoint = module.test_lgtm_stack.tempo_entrypoint
 }
 
 #######################################
@@ -141,40 +164,23 @@ resource "helm_release" "istiod" {
   namespace = kubernetes_namespace.istio_system.metadata[0].name
 
   values = [templatefile("${path.module}/assets/istiod.yaml.tftpl", {
-    otlp_grpc_host = module.test_otel_collectors.otlp_grpc_host
-    otlp_grpc_port = module.test_otel_collectors.otlp_grpc_port
+    opentelemetry_service = module.test_otel_collectors.otlp_grpc_host
+    opentelemetry_port    = module.test_otel_collectors.otlp_grpc_port
   })]
 }
 
-resource "kubernetes_manifest" "istio_telemetry_default" {
+resource "kubernetes_manifest" "istio_telemetry_mesh_default" {
+  depends_on = [
+    helm_release.istiod,
+  ]
+
   manifest = {
-    apiVersion = "telemetry.istio.io/v1" # https://istio.io/latest/docs/reference/config/telemetry/
-    kind       = "Telemetry"
+    apiVersion = "telemetry.istio.io/v1"
+    kind       = "Telemetry" # https://istio.io/latest/docs/reference/config/telemetry/
     metadata = {
-      name      = "default"
+      name      = "mesh-default"
       namespace = kubernetes_namespace.istio_system.metadata[0].name
     }
-    spec = yamldecode(file("${path.module}/assets/istio_telemetry_default.yaml"))
+    spec = yamldecode(file("${path.module}/assets/istio_telemetry_mesh_default.yaml"))
   }
-}
-
-#######################################
-### ...
-#######################################
-
-module "test_lgtm_stack" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gke-lgtm-stack/0.0.1.zip"
-
-  google_project           = data.google_project.this
-  google_container_cluster = data.google_container_cluster.this
-
-  grafana_domain = "grafana.gogke-test-7.damlys.pl"
-}
-
-module "test_otel_collectors" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/k8s-otel-collectors/0.0.1.zip"
-
-  loki_entrypoint  = module.test_lgtm_stack.loki_entrypoint
-  mimir_entrypoint = module.test_lgtm_stack.mimir_entrypoint
-  tempo_entrypoint = module.test_lgtm_stack.tempo_entrypoint
 }

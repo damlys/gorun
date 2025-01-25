@@ -7,6 +7,17 @@ module "service_account" {
   service_account_name     = "kuard"
 }
 
+resource "kubernetes_labels" "namespace" {
+  api_version = "v1"
+  kind        = "Namespace"
+  metadata {
+    name = var.kubernetes_namespace.metadata[0].name
+  }
+  labels = {
+    istio-injection = "disabled" # or "enabled"
+  }
+}
+
 module "helm_release" {
   source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/helm-release/0.0.1.zip"
 
