@@ -32,9 +32,9 @@ resource "google_project_iam_member" "grafana_gcp_datasources" {
 }
 
 resource "helm_release" "grafana_postgresql" {
-  repository = null
-  chart      = "../../third_party/helm/charts/postgresql" # TODO
-  version    = null
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "postgresql"
+  version    = "16.3.5"
 
   name      = "postgresql"
   namespace = kubernetes_namespace.grafana.metadata[0].name
@@ -56,9 +56,9 @@ resource "helm_release" "grafana" {
   timeout = 300
 }
 data "helm_template" "grafana" {
-  repository = null
-  chart      = "../../third_party/helm/charts/grafana" # TODO
-  version    = null
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "grafana"
+  version    = "8.8.2"
 
   name      = "grafana"
   namespace = kubernetes_namespace.grafana.metadata[0].name
@@ -145,7 +145,7 @@ module "grafana_availability_monitor" {
   request_path     = "/healthz"
   response_content = "Ok"
 
-  notification_emails = ["damlys.test@gmail.com"] # TODO
+  notification_emails = ["damlys.test@gmail.com"]
 }
 
 #######################################
@@ -203,9 +203,9 @@ resource "helm_release" "loki" {
   timeout = 600
 }
 data "helm_template" "loki" {
-  repository = null
-  chart      = "../../third_party/helm/charts/loki" # TODO
-  version    = null
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "loki"
+  version    = "6.24.0"
 
   name      = "loki"
   namespace = kubernetes_namespace.loki.metadata[0].name
@@ -274,9 +274,9 @@ resource "helm_release" "mimir" {
   timeout = 900
 }
 data "helm_template" "mimir" {
-  repository = null
-  chart      = "../../third_party/helm/charts/mimir-distributed" # TODO
-  version    = null
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "mimir-distributed"
+  version    = "5.5.1"
 
   name      = "mimir"
   namespace = kubernetes_namespace.mimir.metadata[0].name
@@ -345,9 +345,9 @@ resource "helm_release" "tempo" {
   timeout = 600
 }
 data "helm_template" "tempo" {
-  repository = null
-  chart      = "../../third_party/helm/charts/tempo-distributed" # TODO
-  version    = null
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "tempo-distributed"
+  version    = "1.28.0"
 
   name      = "tempo"
   namespace = kubernetes_namespace.tempo.metadata[0].name

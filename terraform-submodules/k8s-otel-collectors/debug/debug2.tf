@@ -7,9 +7,7 @@ data "helm_template" "debug2" {
     "logsCollection",
   ])
 
-  repository = null
-  chart      = "../../third_party/helm/charts/opentelemetry-collector" # TODO
-  version    = null
+  chart = "../../third_party/helm/charts/opentelemetry-collector"
 
   name      = lower(each.value)
   namespace = "debug"
