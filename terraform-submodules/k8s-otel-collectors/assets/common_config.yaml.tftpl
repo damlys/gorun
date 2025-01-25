@@ -36,6 +36,11 @@ receivers:
                 - 0.0.0.0:8888
 
 processors:
+  memory_limiter: # https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/memorylimiterprocessor/README.md
+    check_interval: 1s
+    limit_percentage: 80
+    spike_limit_percentage: 20
+
   filter: # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/filterprocessor/README.md
     error_mode: ignore
     traces:
@@ -74,6 +79,9 @@ processors:
         - from: pod
           key_regex: (.*)
           tag_name: $$1
+
+  batch: # https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/batchprocessor/README.md
+    timeout: 10s
 
 exporters:
   otlphttp/loki:

@@ -45,17 +45,6 @@ resource "helm_release" "grafana_postgresql" {
 }
 
 resource "helm_release" "grafana" {
-  repository = data.helm_template.grafana.repository
-  chart      = data.helm_template.grafana.chart
-  version    = data.helm_template.grafana.version
-
-  name      = data.helm_template.grafana.name
-  namespace = data.helm_template.grafana.namespace
-  values    = data.helm_template.grafana.values
-
-  timeout = 300
-}
-data "helm_template" "grafana" {
   repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
   chart      = "grafana"
   version    = "8.8.2"
@@ -81,6 +70,8 @@ data "helm_template" "grafana" {
       project_id = var.google_project.project_id
     }),
   ]
+
+  timeout = 300
 }
 
 resource "kubernetes_manifest" "grafana_httproute" {
@@ -192,17 +183,6 @@ resource "google_storage_bucket_iam_member" "loki_service_account" {
 }
 
 resource "helm_release" "loki" {
-  repository = data.helm_template.loki.repository
-  chart      = data.helm_template.loki.chart
-  version    = data.helm_template.loki.version
-
-  name      = data.helm_template.loki.name
-  namespace = data.helm_template.loki.namespace
-  values    = data.helm_template.loki.values
-
-  timeout = 600
-}
-data "helm_template" "loki" {
   repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
   chart      = "loki"
   version    = "6.24.0"
@@ -217,6 +197,8 @@ data "helm_template" "loki" {
       loki_bucket_name          = google_storage_bucket.loki.name
     }),
   ]
+
+  timeout = 600
 }
 
 #######################################
@@ -263,17 +245,6 @@ resource "google_storage_bucket_iam_member" "mimir_service_account" {
 }
 
 resource "helm_release" "mimir" {
-  repository = data.helm_template.mimir.repository
-  chart      = data.helm_template.mimir.chart
-  version    = data.helm_template.mimir.version
-
-  name      = data.helm_template.mimir.name
-  namespace = data.helm_template.mimir.namespace
-  values    = data.helm_template.mimir.values
-
-  timeout = 900
-}
-data "helm_template" "mimir" {
   repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
   chart      = "mimir-distributed"
   version    = "5.5.1"
@@ -288,6 +259,8 @@ data "helm_template" "mimir" {
       mimir_bucket_name          = google_storage_bucket.mimir.name
     }),
   ]
+
+  timeout = 900
 }
 
 #######################################
@@ -334,17 +307,6 @@ resource "google_storage_bucket_iam_member" "tempo_service_account" {
 }
 
 resource "helm_release" "tempo" {
-  repository = data.helm_template.tempo.repository
-  chart      = data.helm_template.tempo.chart
-  version    = data.helm_template.tempo.version
-
-  name      = data.helm_template.tempo.name
-  namespace = data.helm_template.tempo.namespace
-  values    = data.helm_template.tempo.values
-
-  timeout = 600
-}
-data "helm_template" "tempo" {
   repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
   chart      = "tempo-distributed"
   version    = "1.28.0"
@@ -359,4 +321,6 @@ data "helm_template" "tempo" {
       tempo_bucket_name          = google_storage_bucket.tempo.name
     }),
   ]
+
+  timeout = 600
 }
