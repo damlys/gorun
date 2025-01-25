@@ -85,8 +85,8 @@ resource "kubernetes_manifest" "grafana_httproute" {
     spec = {
       parentRefs = [{
         kind        = "Gateway"
-        namespace   = "gateway"
-        name        = "gateway"
+        namespace   = "gke-gateway"
+        name        = "gke-gateway"
         sectionName = "https"
       }]
       hostnames = [var.grafana_domain]

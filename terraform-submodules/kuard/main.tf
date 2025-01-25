@@ -45,8 +45,8 @@ resource "kubernetes_manifest" "httproute" {
     spec = {
       parentRefs = [{
         kind        = "Gateway"
-        namespace   = "gateway"
-        name        = "gateway"
+        namespace   = "gke-gateway"
+        name        = "gke-gateway"
         sectionName = "https"
       }]
       hostnames = [var.domain]

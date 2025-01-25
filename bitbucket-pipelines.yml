@@ -7,6 +7,7 @@ definitions:
     terraform-submodule-gcp-project: terraform-submodules/gcp-project/.terraform
     terraform-submodule-gcp-terraform-modules-registry: terraform-submodules/gcp-terraform-modules-registry/.terraform
     terraform-submodule-gcp-terraform-state-bucket: terraform-submodules/gcp-terraform-state-bucket/.terraform
+    terraform-submodule-gke-gateway: terraform-submodules/gke-gateway/.terraform
     terraform-submodule-gke-lgtm-stack: terraform-submodules/gke-lgtm-stack/.terraform
     terraform-submodule-gke-platform: terraform-submodules/gke-platform/.terraform
     terraform-submodule-gke-service-account: terraform-submodules/gke-service-account/.terraform
@@ -346,6 +347,34 @@ definitions:
           - ./scripts/terraform-submodule test "gcp-terraform-state-bucket"
           - ./scripts/terraform-submodule publish "gcp-terraform-state-bucket"
           - ./scripts/terraform-submodule show "gcp-terraform-state-bucket"
+    - step: &terraform-submodule-gke-gateway-test
+        name: test terraform-submodules/gke-gateway
+        condition:
+          changesets:
+            includePaths:
+              - "terraform-submodules/gke-gateway/**"
+        caches:
+          - terraform-submodule-gke-gateway
+        script:
+          - *auth
+          - ./scripts/terraform-submodule build "gke-gateway"
+          - ./scripts/terraform-submodule test "gke-gateway"
+          - ./scripts/terraform-submodule pre-publish "gke-gateway"
+          - ./scripts/terraform-submodule show "gke-gateway"
+    - step: &terraform-submodule-gke-gateway-publish
+        name: publish terraform-submodules/gke-gateway
+        condition:
+          changesets:
+            includePaths:
+              - "terraform-submodules/gke-gateway/**"
+        caches:
+          - terraform-submodule-gke-gateway
+        script:
+          - *auth
+          - ./scripts/terraform-submodule build "gke-gateway"
+          - ./scripts/terraform-submodule test "gke-gateway"
+          - ./scripts/terraform-submodule publish "gke-gateway"
+          - ./scripts/terraform-submodule show "gke-gateway"
     - step: &terraform-submodule-gke-lgtm-stack-test
         name: test terraform-submodules/gke-lgtm-stack
         condition:
@@ -720,6 +749,7 @@ pipelines:
           - step: *terraform-submodule-gcp-project-test
           - step: *terraform-submodule-gcp-terraform-modules-registry-test
           - step: *terraform-submodule-gcp-terraform-state-bucket-test
+          - step: *terraform-submodule-gke-gateway-test
           - step: *terraform-submodule-gke-lgtm-stack-test
           - step: *terraform-submodule-gke-platform-test
           - step: *terraform-submodule-gke-service-account-test
@@ -751,6 +781,7 @@ pipelines:
           - step: *terraform-submodule-gcp-project-publish
           - step: *terraform-submodule-gcp-terraform-modules-registry-publish
           - step: *terraform-submodule-gcp-terraform-state-bucket-publish
+          - step: *terraform-submodule-gke-gateway-publish
           - step: *terraform-submodule-gke-lgtm-stack-publish
           - step: *terraform-submodule-gke-platform-publish
           - step: *terraform-submodule-gke-service-account-publish

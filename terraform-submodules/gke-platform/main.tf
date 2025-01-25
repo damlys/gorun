@@ -271,6 +271,12 @@ resource "kubernetes_namespace" "this" {
   metadata {
     name = each.value
   }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].labels,
+    ]
+  }
 }
 
 resource "google_project_iam_member" "cluster_viewers" {
@@ -429,36 +435,36 @@ resource "google_certificate_manager_certificate_map_entry" "ingress_internet" {
   certificates = [google_certificate_manager_certificate.ingress_internet.id]
 }
 
-resource "kubernetes_namespace" "gateway" {
+resource "kubernetes_namespace" "gke_gateway" {
   depends_on = [
     google_container_cluster.this,
   ]
 
   metadata {
-    name = "gateway"
+    name = "gke-gateway"
   }
 }
 
-resource "kubernetes_namespace" "gateway_redirect" {
+resource "kubernetes_namespace" "gke_gateway_redirect" {
   depends_on = [
     google_container_cluster.this,
   ]
 
   metadata {
-    name = "gateway-redirect"
+    name = "gke-gateway-redirect"
     labels = {
-      name = "gateway-redirect"
+      name = "gke-gateway-redirect"
     }
   }
 }
 
-resource "kubernetes_manifest" "gateway" { # console.cloud.google.com/net-services/loadbalancing/list/loadBalancers
+resource "kubernetes_manifest" "gke_gateway" { # console.cloud.google.com/net-services/loadbalancing/list/loadBalancers
   manifest = {
     apiVersion = "gateway.networking.k8s.io/v1"
     kind       = "Gateway"
     metadata = {
-      namespace = kubernetes_namespace.gateway.metadata[0].name
-      name      = "gateway"
+      namespace = kubernetes_namespace.gke_gateway.metadata[0].name
+      name      = "gke-gateway"
       annotations = {
         "networking.gke.io/certmap" = google_certificate_manager_certificate_map.ingress_internet.name
       }
@@ -476,7 +482,7 @@ resource "kubernetes_manifest" "gateway" { # console.cloud.google.com/net-servic
             }]
             namespaces = {
               from     = "Selector"
-              selector = { matchLabels = kubernetes_namespace.gateway_redirect.metadata[0].labels }
+              selector = { matchLabels = kubernetes_namespace.gke_gateway_redirect.metadata[0].labels }
             }
           }
         },
@@ -502,19 +508,19 @@ resource "kubernetes_manifest" "gateway" { # console.cloud.google.com/net-servic
   }
 }
 
-resource "kubernetes_manifest" "gateway_redirect_http_to_https" {
+resource "kubernetes_manifest" "gke_gateway_redirect_http_to_https" {
   manifest = {
     apiVersion = "gateway.networking.k8s.io/v1"
     kind       = "HTTPRoute"
     metadata = {
-      namespace = kubernetes_namespace.gateway_redirect.metadata[0].name
+      namespace = kubernetes_namespace.gke_gateway_redirect.metadata[0].name
       name      = "http-to-https"
     }
     spec = {
       parentRefs = [{
         kind        = "Gateway"
-        namespace   = kubernetes_manifest.gateway.manifest.metadata.namespace
-        name        = kubernetes_manifest.gateway.manifest.metadata.name
+        namespace   = kubernetes_manifest.gke_gateway.manifest.metadata.namespace
+        name        = kubernetes_manifest.gke_gateway.manifest.metadata.name
         sectionName = "http"
       }]
       rules = [{
