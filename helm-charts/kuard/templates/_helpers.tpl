@@ -1,5 +1,5 @@
 {{- define "kuard.selectorLabels" -}}
-app.kubernetes.io/namespace: "{{ .Release.Namespace }}"
+app.kubernetes.io/part-of: "{{ .Release.Namespace }}"
 app.kubernetes.io/instance: "{{ .Release.Name }}"
 app.kubernetes.io/name: "{{ join "-" (reverse (slice (reverse (splitList "/" .Values.image.repository)) 0 2)) }}"
 {{- end -}}

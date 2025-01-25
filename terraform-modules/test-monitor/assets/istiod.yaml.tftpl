@@ -1,0 +1,12 @@
+meshConfig: # https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/
+  enableTracing: true
+  defaultConfig:
+    tracing:
+      sampling: 100.0 # default is "1.0"
+  extensionProviders:
+    - name: opentelemetry
+      opentelemetry:
+        service: "${opentelemetry_service}"
+        port: "${opentelemetry_port}"
+        resource_detectors:
+          environment: {}

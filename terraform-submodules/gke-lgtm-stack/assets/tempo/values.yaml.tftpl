@@ -1,0 +1,21 @@
+serviceAccount:
+  create: false
+  name: "${tempo_service_account_name}"
+
+tempo: {}
+storage:
+  trace:
+    backend: gcs
+    gcs:
+      bucket_name: "${tempo_bucket_name}"
+traces:
+  otlp:
+    grpc:
+      enabled: true
+    http:
+      enabled: true
+gateway:
+  enabled: true
+
+minio:
+  enabled: false

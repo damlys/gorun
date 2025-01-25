@@ -100,6 +100,12 @@ wget https://get.helm.sh/helm-v${helm_version}-${TARGETOS}-${TARGETARCH}.tar.gz 
 tar -zxvf helm.tar.gz
 mv ${TARGETOS}-${TARGETARCH}/helm /usr/local/bin/helm
 
+# istioctl: https://github.com/istio/istio/releases
+istioctl_version="1.24.2"
+export ISTIO_VERSION="${istioctl_version}" && curl -L https://istio.io/downloadIstio | sh -
+mv istio-${istioctl_version}/bin/istioctl /usr/local/bin/istioctl
+mv istio-${istioctl_version}/tools/istioctl.bash /etc/bash_completion.d/istioctl
+
 # shfmt: https://github.com/mvdan/sh/releases
 shfmt_version="3.10.0"
 wget https://github.com/mvdan/sh/releases/download/v${shfmt_version}/shfmt_v${shfmt_version}_${TARGETOS}_${TARGETARCH} \

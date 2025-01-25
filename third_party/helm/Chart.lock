@@ -1,6 +1,36 @@
 dependencies:
-- name: grafana-operator
-  repository: oci://ghcr.io/grafana/helm-charts
-  version: v5.14.0
-digest: sha256:3130008b45b129697075635b727a039e94117fe7bc898c758b1b746cc4708d80
-generated: "2024-10-28T17:18:03.420232+01:00"
+- name: base
+  repository: https://istio-release.storage.googleapis.com/charts
+  version: 1.24.2
+- name: cert-manager
+  repository: https://charts.jetstack.io
+  version: v1.16.3
+- name: grafana
+  repository: https://grafana.github.io/helm-charts
+  version: 8.8.2
+- name: istiod
+  repository: https://istio-release.storage.googleapis.com/charts
+  version: 1.24.2
+- name: loki
+  repository: https://grafana.github.io/helm-charts
+  version: 6.24.0
+- name: mimir-distributed
+  repository: https://grafana.github.io/helm-charts
+  version: 5.5.1
+- name: opentelemetry-collector
+  repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+  version: 0.111.1
+- name: opentelemetry-operator
+  repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+  version: 0.76.0
+- name: postgresql
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 16.3.5
+- name: prometheus-operator-crds
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 17.0.2
+- name: tempo-distributed
+  repository: https://grafana.github.io/helm-charts
+  version: 1.28.0
+digest: sha256:5564f46d43c80c310b0059d213064f00616a75cfc8e1105875bd16dac264403b
+generated: "2025-01-25T11:58:49.51782425Z"

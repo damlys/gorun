@@ -1,8 +1,49 @@
 apiVersion: v2
-name: none
+name: undefined
 version: 0.0.0
 dependencies:
-  - # https://github.com/grafana/grafana-operator
-    repository: oci://ghcr.io/grafana/helm-charts
-    name: grafana-operator
-    version: v5.14.0
+  - # https://github.com/istio/istio/tree/master/manifests/charts/base
+    repository: https://istio-release.storage.googleapis.com/charts
+    name: base
+    version: 1.24.2
+  - # https://github.com/cert-manager/cert-manager/tree/master/deploy/charts/cert-manager
+    repository: https://charts.jetstack.io
+    name: cert-manager
+    version: v1.16.3
+  - # https://github.com/grafana/helm-charts/tree/main/charts/grafana
+    repository: https://grafana.github.io/helm-charts
+    name: grafana
+    version: 8.8.2
+  - # https://github.com/istio/istio/tree/master/manifests/charts/istio-control/istio-discovery
+    repository: https://istio-release.storage.googleapis.com/charts
+    name: istiod
+    version: 1.24.2
+  - # https://github.com/grafana/loki/tree/main/production/helm/loki
+    repository: https://grafana.github.io/helm-charts
+    name: loki
+    version: 6.24.0
+  - # https://github.com/grafana/mimir/tree/main/operations/helm/charts/mimir-distributed
+    repository: https://grafana.github.io/helm-charts
+    name: mimir-distributed
+    version: 5.5.1
+  - # https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector
+    repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+    name: opentelemetry-collector
+    version: 0.111.1
+  - # https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
+    repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+    name: opentelemetry-operator
+    version: 0.76.0
+  - # https://github.com/bitnami/charts/tree/main/bitnami/postgresql
+    # https://hub.docker.com/r/bitnamicharts/postgresql
+    repository: oci://registry-1.docker.io/bitnamicharts
+    name: postgresql
+    version: 16.3.5
+  - # https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-operator-crds
+    repository: https://prometheus-community.github.io/helm-charts
+    name: prometheus-operator-crds
+    version: 17.0.2
+  - # https://github.com/grafana/helm-charts/tree/main/charts/tempo-distributed
+    repository: https://grafana.github.io/helm-charts
+    name: tempo-distributed
+    version: 1.28.0

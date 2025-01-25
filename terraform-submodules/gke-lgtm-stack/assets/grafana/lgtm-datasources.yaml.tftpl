@@ -1,0 +1,30 @@
+datasources:
+  lgtm-datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Loki logs
+        uid: loki
+        type: loki
+        url: "${loki_entrypoint}"
+        isDefault: false
+        jsonData:
+          maxLines: 5000
+      - name: Mimir metrics
+        uid: mimir
+        type: prometheus
+        url: "${mimir_entrypoint}/prometheus"
+        isDefault: true
+      - name: Tempo traces
+        uid: tempo
+        type: tempo
+        url: "${tempo_entrypoint}"
+        isDefault: false
+        jsonData:
+          tracesToLogsV2:
+            datasourceUid: loki
+          lokiSearch:
+            datasourceUid: loki
+          tracesToMetrics:
+            datasourceUid: mimir
+          serviceMap:
+            datasourceUid: mimir

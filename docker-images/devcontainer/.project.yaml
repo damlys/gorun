@@ -1,5 +1,5 @@
 repository: europe-central2-docker.pkg.dev/gogke-main-0/private-docker-images/gogke/devcontainer
-tag: 0.0.1
+tag: 0.0.2
 aliases:
   - # https://hub.docker.com/r/damlys/gogcp-devcontainer
     repository: damlys/gogcp-devcontainer

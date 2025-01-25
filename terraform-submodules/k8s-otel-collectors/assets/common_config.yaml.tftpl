@@ -1,0 +1,133 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  filelog: # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/filelogreceiver/README.md
+    include_file_name: false
+    include_file_path: true
+    include:
+      - /var/log/pods/*/*/*.log
+    exclude:
+      # format is /var/log/pods/<namespace_name>_<pod_name>_<pod_uid>/<container_name>/<run_id>.log
+      - /var/log/pods/lgtm-*_*_*/*/*.log # Grafana namespaces
+      - /var/log/pods/otel-*_*_*/*/*.log # OpenTelemetry namespaces
+      - /var/log/pods/*_*_*/opentelemetry-auto-instrumentation/*.log
+      - /var/log/pods/*_*_*/opentelemetry-auto-instrumentation-*/*.log
+      - /var/log/pods/*_*_*/istio-init/*.log
+      - /var/log/pods/*_*_*/istio-proxy/*.log
+    operators:
+      - id: container-parser
+        type: container # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/pkg/stanza/docs/operators/container.md
+        max_log_size: 102400 # bytes, it's 100 KiB
+    retry_on_failure:
+      enabled: true
+
+  prometheus: # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/prometheusreceiver/README.md
+    config:
+      scrape_configs:
+        - job_name: opentelemetry-collector
+          scrape_interval: 1m
+          static_configs:
+            - targets:
+                - 0.0.0.0:8888
+
+processors:
+  memory_limiter: # https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/memorylimiterprocessor/README.md
+    check_interval: 1s
+    limit_percentage: 80
+    spike_limit_percentage: 20
+
+  filter: # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/filterprocessor/README.md
+    error_mode: ignore
+    traces:
+      span:
+        - 'URL(attributes["http.url"])["url.path"] == "/_healthy"'
+        - 'URL(attributes["http.url"])["url.path"] == "/_healthz"'
+        - 'URL(attributes["http.url"])["url.path"] == "/-/healthy"'
+        - 'URL(attributes["http.url"])["url.path"] == "/-/healthz"'
+        - 'URL(attributes["http.url"])["url.path"] == "/healthy"'
+        - 'URL(attributes["http.url"])["url.path"] == "/healthz"'
+
+  k8sattributes: # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/README.md
+    auth_type: serviceAccount
+    passthrough: false
+    pod_association:
+      - sources:
+          - from: resource_attribute
+            name: k8s.pod.uid
+      - sources:
+          - from: resource_attribute
+            name: k8s.pod.ip
+      - sources:
+          - from: connection
+    extract:
+      metadata:
+        - k8s.node.name
+        - k8s.namespace.name
+        - k8s.pod.name
+        - k8s.deployment.name
+        - k8s.replicaset.name
+        - k8s.statefulset.name
+        - k8s.daemonset.name
+        - k8s.cronjob.name
+        - k8s.job.name
+      labels:
+        - from: pod
+          key_regex: (.*)
+          tag_name: $$1
+
+  batch: # https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/batchprocessor/README.md
+    timeout: 10s
+
+exporters:
+  otlphttp/loki:
+    endpoint: "${loki_entrypoint}/otlp"
+
+  otlphttp/mimir:
+    endpoint: "${mimir_entrypoint}/otlp"
+
+  otlphttp/tempo:
+    endpoint: "${tempo_entrypoint}/otlp"
+
+  prometheusremotewrite/mimir: # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/prometheusremotewriteexporter/README.md
+    endpoint: "${mimir_entrypoint}/api/v1/push"
+    resource_to_telemetry_conversion:
+      enabled: true
+
+  debug/logs:
+    verbosity: detailed
+
+  debug/metrics:
+    verbosity: detailed
+
+  debug/traces:
+    verbosity: detailed
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+#
+#
+# service:
+#   pipelines:
+#     logs:
+#       receivers: []
+#       processors: []
+#       exporters: [debug/logs]
+#     metrics:
+#       receivers: []
+#       processors: []
+#       exporters: [debug/metrics]
+#     traces:
+#       receivers: []
+#       processors: []
+#       exporters: [debug/traces]
+#
+#   extensions:
+#     - health_check
+#
+#

@@ -9,10 +9,13 @@ thumbs.db
 
 # helm
 /helm-charts/*.tgz
+/third_party/helm/charts/*.tgz
+/third_party/helm/tmpcharts*
 
 # terraform
 /terraform-*/**/.terraform
 /terraform-*/**/.terraform.tfstate.lock.info
+/terraform-*/**/errored.tfstate
 /terraform-*/**/terraform.tfstate
 /terraform-*/**/terraform.tfstate.backup
 /terraform-*/**/terraform.tfvars

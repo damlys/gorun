@@ -7,14 +7,17 @@ definitions:
     terraform-submodule-gcp-project: terraform-submodules/gcp-project/.terraform
     terraform-submodule-gcp-terraform-modules-registry: terraform-submodules/gcp-terraform-modules-registry/.terraform
     terraform-submodule-gcp-terraform-state-bucket: terraform-submodules/gcp-terraform-state-bucket/.terraform
+    terraform-submodule-gke-lgtm-stack: terraform-submodules/gke-lgtm-stack/.terraform
     terraform-submodule-gke-platform: terraform-submodules/gke-platform/.terraform
     terraform-submodule-gke-service-account: terraform-submodules/gke-service-account/.terraform
     terraform-submodule-helm-release: terraform-submodules/helm-release/.terraform
+    terraform-submodule-k8s-otel-collectors: terraform-submodules/k8s-otel-collectors/.terraform
     terraform-submodule-kuard: terraform-submodules/kuard/.terraform
     terraform-module-kuard: terraform-modules/kuard/.terraform
     terraform-module-main: terraform-modules/main/.terraform
     terraform-module-prod: terraform-modules/prod/.terraform
     terraform-module-test: terraform-modules/test/.terraform
+    terraform-module-test-monitor: terraform-modules/test-monitor/.terraform
   scripts:
     - &auth |
       set -e
@@ -343,6 +346,34 @@ definitions:
           - ./scripts/terraform-submodule test "gcp-terraform-state-bucket"
           - ./scripts/terraform-submodule publish "gcp-terraform-state-bucket"
           - ./scripts/terraform-submodule show "gcp-terraform-state-bucket"
+    - step: &terraform-submodule-gke-lgtm-stack-test
+        name: test terraform-submodules/gke-lgtm-stack
+        condition:
+          changesets:
+            includePaths:
+              - "terraform-submodules/gke-lgtm-stack/**"
+        caches:
+          - terraform-submodule-gke-lgtm-stack
+        script:
+          - *auth
+          - ./scripts/terraform-submodule build "gke-lgtm-stack"
+          - ./scripts/terraform-submodule test "gke-lgtm-stack"
+          - ./scripts/terraform-submodule pre-publish "gke-lgtm-stack"
+          - ./scripts/terraform-submodule show "gke-lgtm-stack"
+    - step: &terraform-submodule-gke-lgtm-stack-publish
+        name: publish terraform-submodules/gke-lgtm-stack
+        condition:
+          changesets:
+            includePaths:
+              - "terraform-submodules/gke-lgtm-stack/**"
+        caches:
+          - terraform-submodule-gke-lgtm-stack
+        script:
+          - *auth
+          - ./scripts/terraform-submodule build "gke-lgtm-stack"
+          - ./scripts/terraform-submodule test "gke-lgtm-stack"
+          - ./scripts/terraform-submodule publish "gke-lgtm-stack"
+          - ./scripts/terraform-submodule show "gke-lgtm-stack"
     - step: &terraform-submodule-gke-platform-test
         name: test terraform-submodules/gke-platform
         condition:
@@ -427,6 +458,34 @@ definitions:
           - ./scripts/terraform-submodule test "helm-release"
           - ./scripts/terraform-submodule publish "helm-release"
           - ./scripts/terraform-submodule show "helm-release"
+    - step: &terraform-submodule-k8s-otel-collectors-test
+        name: test terraform-submodules/k8s-otel-collectors
+        condition:
+          changesets:
+            includePaths:
+              - "terraform-submodules/k8s-otel-collectors/**"
+        caches:
+          - terraform-submodule-k8s-otel-collectors
+        script:
+          - *auth
+          - ./scripts/terraform-submodule build "k8s-otel-collectors"
+          - ./scripts/terraform-submodule test "k8s-otel-collectors"
+          - ./scripts/terraform-submodule pre-publish "k8s-otel-collectors"
+          - ./scripts/terraform-submodule show "k8s-otel-collectors"
+    - step: &terraform-submodule-k8s-otel-collectors-publish
+        name: publish terraform-submodules/k8s-otel-collectors
+        condition:
+          changesets:
+            includePaths:
+              - "terraform-submodules/k8s-otel-collectors/**"
+        caches:
+          - terraform-submodule-k8s-otel-collectors
+        script:
+          - *auth
+          - ./scripts/terraform-submodule build "k8s-otel-collectors"
+          - ./scripts/terraform-submodule test "k8s-otel-collectors"
+          - ./scripts/terraform-submodule publish "k8s-otel-collectors"
+          - ./scripts/terraform-submodule show "k8s-otel-collectors"
     - step: &terraform-submodule-kuard-test
         name: test terraform-submodules/kuard
         condition:
@@ -607,6 +666,44 @@ definitions:
           - terraform -chdir="terraform-modules/test" init -input="false"
           - terraform -chdir="terraform-modules/test" apply -input="false" -auto-approve
         trigger: manual
+    - step: &terraform-module-test-monitor-validate
+        name: validate terraform-modules/test-monitor
+        condition:
+          changesets:
+            includePaths:
+              - "terraform-modules/test-monitor/**"
+        caches:
+          - terraform-module-test-monitor
+        script:
+          - *auth
+          - ./scripts/terraform-module test "test-monitor"
+          - terraform -chdir="terraform-modules/test-monitor" init -input="false"
+          - terraform -chdir="terraform-modules/test-monitor" validate
+    - step: &terraform-module-test-monitor-plan
+        name: plan terraform-modules/test-monitor
+        condition:
+          changesets:
+            includePaths:
+              - "terraform-modules/test-monitor/**"
+        caches:
+          - terraform-module-test-monitor
+        script:
+          - *auth
+          - terraform -chdir="terraform-modules/test-monitor" init -input="false"
+          - terraform -chdir="terraform-modules/test-monitor" plan -input="false"
+    - step: &terraform-module-test-monitor-apply
+        name: apply terraform-modules/test-monitor
+        condition:
+          changesets:
+            includePaths:
+              - "terraform-modules/test-monitor/**"
+        caches:
+          - terraform-module-test-monitor
+        script:
+          - *auth
+          - terraform -chdir="terraform-modules/test-monitor" init -input="false"
+          - terraform -chdir="terraform-modules/test-monitor" apply -input="false" -auto-approve
+        trigger: manual
 
 pipelines:
   pull-requests:
@@ -623,19 +720,23 @@ pipelines:
           - step: *terraform-submodule-gcp-project-test
           - step: *terraform-submodule-gcp-terraform-modules-registry-test
           - step: *terraform-submodule-gcp-terraform-state-bucket-test
+          - step: *terraform-submodule-gke-lgtm-stack-test
           - step: *terraform-submodule-gke-platform-test
           - step: *terraform-submodule-gke-service-account-test
           - step: *terraform-submodule-helm-release-test
+          - step: *terraform-submodule-k8s-otel-collectors-test
           - step: *terraform-submodule-kuard-test
           - step: *terraform-module-kuard-validate
           - step: *terraform-module-main-validate
           - step: *terraform-module-prod-validate
           - step: *terraform-module-test-validate
+          - step: *terraform-module-test-monitor-validate
       - parallel:
           - step: *terraform-module-kuard-plan
           - step: *terraform-module-main-plan
           - step: *terraform-module-prod-plan
           - step: *terraform-module-test-plan
+          - step: *terraform-module-test-monitor-plan
   branches:
     main:
       - parallel:
@@ -650,17 +751,21 @@ pipelines:
           - step: *terraform-submodule-gcp-project-publish
           - step: *terraform-submodule-gcp-terraform-modules-registry-publish
           - step: *terraform-submodule-gcp-terraform-state-bucket-publish
+          - step: *terraform-submodule-gke-lgtm-stack-publish
           - step: *terraform-submodule-gke-platform-publish
           - step: *terraform-submodule-gke-service-account-publish
           - step: *terraform-submodule-helm-release-publish
+          - step: *terraform-submodule-k8s-otel-collectors-publish
           - step: *terraform-submodule-kuard-publish
       - parallel:
           - step: *terraform-module-kuard-plan
           - step: *terraform-module-main-plan
           - step: *terraform-module-prod-plan
           - step: *terraform-module-test-plan
+          - step: *terraform-module-test-monitor-plan
       - parallel:
           - step: *terraform-module-kuard-apply
           - step: *terraform-module-main-apply
           - step: *terraform-module-prod-apply
           - step: *terraform-module-test-apply
+          - step: *terraform-module-test-monitor-apply

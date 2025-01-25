@@ -13,3 +13,4 @@ httpServer:
   minReplicas: 1
   maxReplicas: 1
   maxUnavailable: 1
+  podAnnotations: {}
