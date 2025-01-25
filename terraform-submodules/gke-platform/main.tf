@@ -270,6 +270,9 @@ resource "kubernetes_namespace" "this" {
 
   metadata {
     name = each.value
+    labels = {
+      istio-injection = "enabled"
+    }
   }
 }
 

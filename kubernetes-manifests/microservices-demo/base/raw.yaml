@@ -33,7 +33,7 @@ spec:
       labels:
         app: emailservice
       annotations:
-        instrumentation.opentelemetry.io/inject-python: "otel-otlp-collector/otlp-instrumentation"
+        #instrumentation.opentelemetry.io/inject-python: "otel-otlp-collector/otlp-instrumentation"
     spec:
       serviceAccountName: emailservice
       terminationGracePeriodSeconds: 5
@@ -110,7 +110,7 @@ spec:
       labels:
         app: checkoutservice
       annotations:
-        instrumentation.opentelemetry.io/inject-go: "otel-otlp-collector/otlp-instrumentation"
+        #instrumentation.opentelemetry.io/inject-go: "otel-otlp-collector/otlp-instrumentation"
         instrumentation.opentelemetry.io/otel-go-auto-target-exe: "/src/checkoutservice"
     spec:
       serviceAccountName: checkoutservice
@@ -195,7 +195,7 @@ spec:
       labels:
         app: recommendationservice
       annotations:
-        instrumentation.opentelemetry.io/inject-python: "otel-otlp-collector/otlp-instrumentation"
+        #instrumentation.opentelemetry.io/inject-python: "otel-otlp-collector/otlp-instrumentation"
     spec:
       serviceAccountName: recommendationservice
       terminationGracePeriodSeconds: 5
@@ -275,7 +275,7 @@ spec:
         app: frontend
       annotations:
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
-        instrumentation.opentelemetry.io/inject-go: "otel-otlp-collector/otlp-instrumentation"
+        #instrumentation.opentelemetry.io/inject-go: "otel-otlp-collector/otlp-instrumentation"
         instrumentation.opentelemetry.io/otel-go-auto-target-exe: "/src/server"
     spec:
       serviceAccountName: frontend
@@ -389,7 +389,7 @@ spec:
       labels:
         app: paymentservice
       annotations:
-        instrumentation.opentelemetry.io/inject-nodejs: "otel-otlp-collector/otlp-instrumentation"
+        #instrumentation.opentelemetry.io/inject-nodejs: "otel-otlp-collector/otlp-instrumentation"
     spec:
       serviceAccountName: paymentservice
       terminationGracePeriodSeconds: 5
@@ -464,7 +464,7 @@ spec:
       labels:
         app: productcatalogservice
       annotations:
-        instrumentation.opentelemetry.io/inject-go: "otel-otlp-collector/otlp-instrumentation"
+        #instrumentation.opentelemetry.io/inject-go: "otel-otlp-collector/otlp-instrumentation"
         instrumentation.opentelemetry.io/otel-go-auto-target-exe: "/src/server"
     spec:
       serviceAccountName: productcatalogservice
@@ -540,7 +540,7 @@ spec:
       labels:
         app: cartservice
       annotations:
-        instrumentation.opentelemetry.io/inject-dotnet: "otel-otlp-collector/otlp-instrumentation"
+        #instrumentation.opentelemetry.io/inject-dotnet: "otel-otlp-collector/otlp-instrumentation"
     spec:
       serviceAccountName: cartservice
       terminationGracePeriodSeconds: 5
@@ -772,7 +772,7 @@ spec:
       labels:
         app: currencyservice
       annotations:
-        instrumentation.opentelemetry.io/inject-nodejs: "otel-otlp-collector/otlp-instrumentation"
+        #instrumentation.opentelemetry.io/inject-nodejs: "otel-otlp-collector/otlp-instrumentation"
     spec:
       serviceAccountName: currencyservice
       terminationGracePeriodSeconds: 5
@@ -848,7 +848,7 @@ spec:
       labels:
         app: shippingservice
       annotations:
-        instrumentation.opentelemetry.io/inject-go: "otel-otlp-collector/otlp-instrumentation"
+        #instrumentation.opentelemetry.io/inject-go: "otel-otlp-collector/otlp-instrumentation"
         instrumentation.opentelemetry.io/otel-go-auto-target-exe: "/src/shippingservice"
     spec:
       serviceAccountName: shippingservice
@@ -924,7 +924,7 @@ spec:
       labels:
         app: adservice
       annotations:
-        instrumentation.opentelemetry.io/inject-java: "otel-otlp-collector/otlp-instrumentation"
+        #instrumentation.opentelemetry.io/inject-java: "otel-otlp-collector/otlp-instrumentation"
     spec:
       serviceAccountName: adservice
       terminationGracePeriodSeconds: 5

@@ -1,7 +1,16 @@
 dependencies:
+- name: base
+  repository: https://istio-release.storage.googleapis.com/charts
+  version: 1.24.2
+- name: cert-manager
+  repository: https://charts.jetstack.io
+  version: v1.16.3
 - name: grafana
   repository: https://grafana.github.io/helm-charts
   version: 8.8.2
+- name: istiod
+  repository: https://istio-release.storage.googleapis.com/charts
+  version: 1.24.2
 - name: loki
   repository: https://grafana.github.io/helm-charts
   version: 6.24.0
@@ -23,5 +32,5 @@ dependencies:
 - name: tempo-distributed
   repository: https://grafana.github.io/helm-charts
   version: 1.28.0
-digest: sha256:f7b5984343081bf121dc94549554acf055d0914383486e03d58e2a7156b69ce9
-generated: "2025-01-12T12:29:45.411970305Z"
+digest: sha256:6aae464b25e99d192a1b5b7ef0f63833f3c6ed29bd451afad48e5770864b6732
+generated: "2025-01-24T12:29:44.106118097Z"

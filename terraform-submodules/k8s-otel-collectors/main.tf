@@ -59,13 +59,13 @@ resource "kubernetes_manifest" "otlp_instrumentation" {
     }
     spec = {
       exporter = {
-        endpoint = local.grpc_entrypoint
+        endpoint = local.otlp_grpc_entrypoint
       }
-      dotnet = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.grpc_entrypoint }] }
-      go     = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.grpc_entrypoint }] }
-      java   = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.grpc_entrypoint }] }
-      nodejs = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.grpc_entrypoint }] }
-      python = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.http_entrypoint }] } # Python auto-instrumentation does not support gRPC protocol
+      dotnet = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.otlp_grpc_entrypoint }] }
+      go     = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.otlp_grpc_entrypoint }] }
+      java   = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.otlp_grpc_entrypoint }] }
+      nodejs = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.otlp_grpc_entrypoint }] }
+      python = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.otlp_http_entrypoint }] } # Python auto-instrumentation does not support gRPC protocol
 
       propagators = [
         "tracecontext",

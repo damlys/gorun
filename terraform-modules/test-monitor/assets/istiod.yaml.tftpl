@@ -1,0 +1,20 @@
+meshConfig:
+  enableTracing: true
+  defaultConfig:
+    tracing:
+      sampling: 100.0 # TODO default is "1.0"
+  extensionProviders:
+    - name: otel-tracing
+      opentelemetry: # https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/#MeshConfig-ExtensionProvider-OpenTelemetryTracingProvider
+        service: "${otlp_grpc_host}"
+        port: "${otlp_grpc_port}"
+        resource_detectors:
+          environment: {}
+
+global:
+  proxy:
+    resources:
+      requests:
+        cpu: 1m
+        memory: 1Mi
+      limits: {}

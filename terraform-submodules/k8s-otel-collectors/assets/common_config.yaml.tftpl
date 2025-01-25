@@ -17,6 +17,8 @@ receivers:
       - /var/log/pods/otel-*_*_*/*/*.log # OpenTelemetry namespaces
       - /var/log/pods/*_*_*/opentelemetry-auto-instrumentation/*.log
       - /var/log/pods/*_*_*/opentelemetry-auto-instrumentation-*/*.log
+      - /var/log/pods/*_*_*/istio-init/*.log
+      - /var/log/pods/*_*_*/istio-proxy/*.log
     operators:
       - id: container-parser
         type: container # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/pkg/stanza/docs/operators/container.md
@@ -34,6 +36,17 @@ receivers:
                 - 0.0.0.0:8888
 
 processors:
+  filter: # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/filterprocessor/README.md
+    error_mode: ignore
+    traces:
+      span:
+        - 'URL(attributes["http.url"])["url.path"] == "/_healthy"'
+        - 'URL(attributes["http.url"])["url.path"] == "/_healthz"'
+        - 'URL(attributes["http.url"])["url.path"] == "/-/healthy"'
+        - 'URL(attributes["http.url"])["url.path"] == "/-/healthz"'
+        - 'URL(attributes["http.url"])["url.path"] == "/healthy"'
+        - 'URL(attributes["http.url"])["url.path"] == "/healthz"'
+
   k8sattributes: # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/README.md
     auth_type: serviceAccount
     passthrough: false

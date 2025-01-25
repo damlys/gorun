@@ -2,7 +2,7 @@ service:
   pipelines:
     logs:
       receivers: [filelog]
-      processors: [k8sattributes]
+      processors: [filter, k8sattributes]
       exporters: [otlphttp/loki]
 
   extensions:

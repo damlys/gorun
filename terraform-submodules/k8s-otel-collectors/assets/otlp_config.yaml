@@ -2,15 +2,15 @@ service:
   pipelines:
     logs:
       receivers: [otlp]
-      processors: [k8sattributes]
+      processors: [filter, k8sattributes]
       exporters: [otlphttp/loki]
     metrics:
       receivers: [otlp]
-      processors: [k8sattributes]
+      processors: [filter, k8sattributes]
       exporters: [otlphttp/mimir]
     traces:
       receivers: [otlp]
-      processors: [k8sattributes]
+      processors: [filter, k8sattributes]
       exporters: [otlphttp/tempo]
 
   extensions:

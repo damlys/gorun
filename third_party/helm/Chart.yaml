@@ -2,10 +2,22 @@ apiVersion: v2
 name: undefined
 version: 0.0.0
 dependencies:
+  - # https://github.com/istio/istio/tree/master/manifests/charts/base
+    repository: https://istio-release.storage.googleapis.com/charts
+    name: base
+    version: 1.24.2
+  - # https://github.com/cert-manager/cert-manager/tree/master/deploy/charts/cert-manager
+    repository: https://charts.jetstack.io
+    name: cert-manager
+    version: 1.16.3
   - # https://github.com/grafana/helm-charts/tree/main/charts/grafana
     repository: https://grafana.github.io/helm-charts
     name: grafana
     version: 8.8.2
+  - # https://github.com/istio/istio/tree/master/manifests/charts/istio-control/istio-discovery
+    repository: https://istio-release.storage.googleapis.com/charts
+    name: istiod
+    version: 1.24.2
   - # https://github.com/grafana/loki/tree/main/production/helm/loki
     repository: https://grafana.github.io/helm-charts
     name: loki

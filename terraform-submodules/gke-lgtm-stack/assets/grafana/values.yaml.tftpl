@@ -14,7 +14,7 @@ grafana.ini:
     type: postgres
     host: "${grafana_postgresql_name}.${grafana_postgresql_namespace}.svc.cluster.local:5432"
     user: grafana
-    password: grafana # TODO
+    password: Secret123
     name: grafana
 
   auth:
@@ -27,15 +27,15 @@ grafana.ini:
     auto_assign_org_role: Viewer
   security:
     disable_initial_admin_creation: false
-    admin_email: admin@localhost
+    admin_email: damlys.test@gmail.com
     admin_user: admin
-    admin_password: admin # TODO
+    admin_password: Secret123
 
 adminUser: admin
-adminPassword: admin # TODO
+adminPassword: Secret123
 admin:
   existingSecret: ""
   userKey: admin-user
   passwordKey: admin-password
 
-assertNoLeakedSecrets: false # TODO
+assertNoLeakedSecrets: false

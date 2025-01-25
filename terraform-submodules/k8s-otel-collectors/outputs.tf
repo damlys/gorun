@@ -1,19 +1,23 @@
-output "grpc_entrypoint" {
-  value = local.grpc_entrypoint
+output "otlp_grpc_host" {
+  value = local.otlp_grpc_host
 }
 
-output "http_entrypoint" {
-  value = local.http_entrypoint
+output "otlp_http_host" {
+  value = local.otlp_http_host
 }
 
-output "annotations" {
-  value = {
-    "instrumentation.opentelemetry.io/inject-dotnet" = "${kubernetes_manifest.otlp_instrumentation.manifest.metadata.namespace}/${kubernetes_manifest.otlp_instrumentation.manifest.metadata.name}"
-    "instrumentation.opentelemetry.io/inject-go"     = "${kubernetes_manifest.otlp_instrumentation.manifest.metadata.namespace}/${kubernetes_manifest.otlp_instrumentation.manifest.metadata.name}"
-    "instrumentation.opentelemetry.io/inject-java"   = "${kubernetes_manifest.otlp_instrumentation.manifest.metadata.namespace}/${kubernetes_manifest.otlp_instrumentation.manifest.metadata.name}"
-    "instrumentation.opentelemetry.io/inject-nodejs" = "${kubernetes_manifest.otlp_instrumentation.manifest.metadata.namespace}/${kubernetes_manifest.otlp_instrumentation.manifest.metadata.name}"
-    "instrumentation.opentelemetry.io/inject-python" = "${kubernetes_manifest.otlp_instrumentation.manifest.metadata.namespace}/${kubernetes_manifest.otlp_instrumentation.manifest.metadata.name}"
+output "otlp_grpc_port" {
+  value = local.otlp_grpc_port
+}
 
-    "instrumentation.opentelemetry.io/otel-go-auto-target-exe" = "/path/to/container/executable"
-  }
+output "otlp_http_port" {
+  value = local.otlp_http_port
+}
+
+output "otlp_grpc_entrypoint" {
+  value = local.otlp_grpc_entrypoint
+}
+
+output "otlp_http_entrypoint" {
+  value = local.otlp_http_entrypoint
 }

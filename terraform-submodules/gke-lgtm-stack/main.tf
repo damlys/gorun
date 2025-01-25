@@ -32,7 +32,9 @@ resource "google_project_iam_member" "grafana_gcp_datasources" {
 }
 
 resource "helm_release" "grafana_postgresql" {
-  chart = "${path.module}/charts/postgresql"
+  repository = null
+  chart      = "../../third_party/helm/charts/postgresql" # TODO
+  version    = null
 
   name      = "postgresql"
   namespace = kubernetes_namespace.grafana.metadata[0].name

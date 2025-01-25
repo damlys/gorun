@@ -9,7 +9,7 @@ locals {
   mimir_hash = substr(sha256(yamlencode(local.mimir_labels)), 0, 5)
   tempo_hash = substr(sha256(yamlencode(local.tempo_labels)), 0, 5)
 
-  loki_entrypoint  = "http://${data.helm_template.loki.name}-gateway.${data.helm_template.loki.namespace}.svc:80"
-  mimir_entrypoint = "http://${data.helm_template.mimir.name}-nginx.${data.helm_template.mimir.namespace}.svc:80"
-  tempo_entrypoint = "http://${data.helm_template.tempo.name}-gateway.${data.helm_template.tempo.namespace}.svc:80"
+  loki_entrypoint  = "http://${data.helm_template.loki.name}-gateway.${data.helm_template.loki.namespace}.svc.cluster.local:80"
+  mimir_entrypoint = "http://${data.helm_template.mimir.name}-nginx.${data.helm_template.mimir.namespace}.svc.cluster.local:80"
+  tempo_entrypoint = "http://${data.helm_template.tempo.name}-gateway.${data.helm_template.tempo.namespace}.svc.cluster.local:80"
 }

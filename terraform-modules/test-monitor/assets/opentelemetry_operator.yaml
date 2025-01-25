@@ -6,9 +6,3 @@ manager:
   # featureGates: "+operator.autoinstrumentation.go"
   # featureGatesMap:
   #   "operator.autoinstrumentation.go": true
-
-admissionWebhooks:
-  certManager:
-    enabled: false
-  autoGenerateCert:
-    enabled: true
