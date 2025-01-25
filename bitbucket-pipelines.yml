@@ -1,4 +1,4 @@
-image: damlys/gogcp-devcontainer:0.0.1
+image: damlys/gogcp-devcontainer:0.0.2
 definitions:
   caches:
     terraform-submodule-gcp-availability-monitor: terraform-submodules/gcp-availability-monitor/.terraform
