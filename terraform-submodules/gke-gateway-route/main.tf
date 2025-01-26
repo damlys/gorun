@@ -1,4 +1,4 @@
-resource "kubernetes_manifest" "httproute" {
+resource "kubernetes_manifest" "http_route" {
   manifest = {
     apiVersion = "gateway.networking.k8s.io/v1"
     kind       = "HTTPRoute" # https://gateway-api.sigs.k8s.io/reference/spec/#gateway.networking.k8s.io/v1.HTTPRoute
@@ -29,7 +29,7 @@ resource "kubernetes_manifest" "httproute" {
   }
 }
 
-resource "kubernetes_manifest" "healthcheckpolicy" {
+resource "kubernetes_manifest" "health_check_policy" {
   manifest = {
     apiVersion = "networking.gke.io/v1"
     kind       = "HealthCheckPolicy" # https://googlecloudplatform.github.io/gke-gateway-api/#healthcheckpolicy

@@ -534,3 +534,22 @@ resource "kubernetes_manifest" "gke_gateway_redirect_http_to_https" {
     }
   }
 }
+
+#######################################
+### Identity-Aware Proxy
+#######################################
+
+resource "google_compute_firewall" "ingress_iap" {
+  project = var.google_project.project_id
+  network = google_compute_network.this.name
+  name    = "${var.platform_name}-ingress-iap"
+
+  direction     = "INGRESS"
+  source_ranges = ["35.235.240.0/20"]
+  priority      = 1000
+
+  allow {
+    protocol = "tcp"
+    ports    = [22] # SSH only
+  }
+}

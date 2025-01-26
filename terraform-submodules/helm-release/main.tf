@@ -17,4 +17,8 @@ resource "kubernetes_manifest" "this" {
     : "${m.apiVersion}/${m.kind}/${try(m.metadata.namespace, "-")}/${m.metadata.name}" => m
   }
   manifest = each.value
+
+  field_manager {
+    force_conflicts = true
+  }
 }

@@ -16,10 +16,13 @@ resource "kubernetes_labels" "namespace" {
   labels = {
     istio-injection = "disabled" # or "enabled"
   }
+
+  force = true
 }
 
 module "helm_release" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/helm-release/0.0.1.zip"
+  # source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/helm-release/0.0.1.zip"
+  source = "../helm-release"
 
   repository    = "oci://europe-central2-docker.pkg.dev/gogke-main-0/private-helm-charts/gogke"
   chart         = "kuard"

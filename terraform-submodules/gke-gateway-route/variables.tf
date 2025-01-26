@@ -1,9 +1,10 @@
 variable "kubernetes_service" {
   type = object({
     metadata = list(object({
-      name      = string
-      namespace = string
-      labels    = map(string)
+      name        = string
+      namespace   = string
+      labels      = map(string)
+      annotations = map(string)
     }))
   })
 }
