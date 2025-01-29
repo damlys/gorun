@@ -7,7 +7,7 @@ data "google_compute_backend_service" "grafana" {
   name    = "gkegw1-rxra-lgtm-grafana-grafana-80-3y1pnm1bpt5z"
 }
 
-resource "google_iap_web_backend_service_iam_member" "this" { # console.cloud.google.com/security/iap
+resource "google_iap_web_backend_service_iam_member" "this" {
   project             = data.google_project.this.project_id
   web_backend_service = data.google_compute_backend_service.grafana.name
   role                = "roles/iap.httpsResourceAccessor" # IAP-secured Web App User
@@ -16,7 +16,7 @@ resource "google_iap_web_backend_service_iam_member" "this" { # console.cloud.go
   for_each = toset(concat(
     [data.google_service_account.grafana.member],
     [for v in local.user_accounts : "user:${v}"],
-    [for v in local.service_accounts : "serviceAccount:${v}"],
+    # [for v in local.service_accounts : "serviceAccount:${v}"],
   ))
 }
 
@@ -44,10 +44,6 @@ resource "google_service_account_iam_member" "this" {
 ### Grafana provider
 #######################################
 
-# data "" "" { # console.cloud.google.com/auth/clients
-#   x = "764086219165-hh5sjve1m8nmh7ge4lra8qfqi1387l4s.apps.googleusercontent.com"
-# }
-
 data "google_service_account_id_token" "grafana" {
   target_audience        = "764086219165-hh5sjve1m8nmh7ge4lra8qfqi1387l4s.apps.googleusercontent.com"
   target_service_account = data.google_service_account.grafana.email
@@ -67,6 +63,10 @@ provider "grafana" {
 ### Grafana access
 #######################################
 
+data "grafana_user" "admin" {
+  email = "accounts.google.com:${data.google_service_account.grafana.email}"
+}
+
 resource "grafana_user" "this" {
   email    = each.value
   login    = each.value
@@ -75,7 +75,7 @@ resource "grafana_user" "this" {
 
   for_each = toset(concat(
     [for v in local.user_accounts : "accounts.google.com:${v}"],
-    [for v in local.service_accounts : "accounts.google.com:${v}"],
+    # [for v in local.service_accounts : "accounts.google.com:${v}"],
   ))
 }
 
