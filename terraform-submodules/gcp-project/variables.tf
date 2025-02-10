@@ -24,7 +24,6 @@ variable "services" {
 
     "certificatemanager.googleapis.com",
     "dns.googleapis.com",
-    "iap.googleapis.com",
     "networkservices.googleapis.com",
 
     "cloudtrace.googleapis.com",

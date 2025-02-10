@@ -1,9 +1,3 @@
-variable "google_project" {
-  type = object({
-    project_id = string
-  })
-}
-
 variable "kubernetes_service" {
   type = object({
     metadata = list(object({
@@ -32,14 +26,4 @@ variable "container_port" {
 variable "health_check_path" {
   type    = string
   default = "/healthy"
-}
-
-variable "iap_enabled" {
-  type    = bool
-  default = false
-}
-
-variable "iap_members" {
-  type    = set(string)
-  default = []
 }

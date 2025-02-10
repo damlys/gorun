@@ -83,18 +83,12 @@ data "kubernetes_service" "grafana" {
 module "grafana_gateway_route" {
   source = "../gke-gateway-route" # TODO
 
-  google_project     = var.google_project
   kubernetes_service = data.kubernetes_service.grafana
 
   domain            = var.grafana_domain
   service_port      = 80
   container_port    = 3000
   health_check_path = "/healthz"
-
-  iap_enabled = true
-  iap_members = [
-    "user:damlys.test@gmail.com",
-  ]
 }
 
 module "grafana_availability_monitor" {

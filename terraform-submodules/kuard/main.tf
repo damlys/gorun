@@ -47,15 +47,9 @@ data "kubernetes_service" "this" {
 module "gateway_route" {
   source = "../gke-gateway-route" # TODO
 
-  google_project     = var.google_project
   kubernetes_service = data.kubernetes_service.this
 
   domain = var.domain
-
-  iap_enabled = true
-  iap_members = [
-    "user:damlys.test@gmail.com",
-  ]
 }
 
 module "availability_monitor" {
