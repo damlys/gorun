@@ -17,8 +17,7 @@ resource "kubernetes_resource_quota" "pods" {
 }
 
 module "this" {
-  # source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/kuard/0.0.4.zip"
-  source = "../../terraform-submodules/kuard" # TODO
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/kuard/0.0.5.zip"
 
   google_project           = data.google_project.this
   google_container_cluster = data.google_container_cluster.this

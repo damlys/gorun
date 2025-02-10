@@ -5,7 +5,6 @@ resource "kubernetes_manifest" "http_route" {
     metadata = {
       name      = var.kubernetes_service.metadata[0].name
       namespace = var.kubernetes_service.metadata[0].namespace
-      labels    = var.kubernetes_service.metadata[0].labels
     }
     spec = {
       parentRefs = [{
@@ -36,7 +35,6 @@ resource "kubernetes_manifest" "health_check_policy" {
     metadata = {
       name      = var.kubernetes_service.metadata[0].name
       namespace = var.kubernetes_service.metadata[0].namespace
-      labels    = var.kubernetes_service.metadata[0].labels
     }
     spec = {
       targetRef = {

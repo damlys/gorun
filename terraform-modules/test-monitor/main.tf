@@ -119,8 +119,7 @@ resource "kubernetes_cluster_role" "opentelemetry_targetallocator" {
 #######################################
 
 module "test_lgtm_stack" {
-  # source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gke-lgtm-stack/0.0.1.zip"
-  source = "../../terraform-submodules/gke-lgtm-stack" # TODO
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gke-lgtm-stack/0.0.2.zip"
 
   google_project           = data.google_project.this
   google_container_cluster = data.google_container_cluster.this

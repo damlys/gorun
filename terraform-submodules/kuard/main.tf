@@ -21,12 +21,11 @@ resource "kubernetes_labels" "namespace" {
 }
 
 module "helm_release" {
-  # source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/helm-release/0.0.1.zip"
-  source = "../helm-release"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/helm-release/0.0.2.zip"
 
   repository    = "oci://europe-central2-docker.pkg.dev/gogke-main-0/private-helm-charts/gogke"
   chart         = "kuard"
-  chart_version = "0.0.2"
+  chart_version = "0.0.3"
 
   namespace = var.kubernetes_namespace.metadata[0].name
   name      = "kuard"
@@ -45,7 +44,7 @@ data "kubernetes_service" "this" {
 }
 
 module "gateway_route" {
-  source = "../gke-gateway-route" # TODO
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gke-gateway-route/0.0.1.zip"
 
   kubernetes_service = data.kubernetes_service.this
 

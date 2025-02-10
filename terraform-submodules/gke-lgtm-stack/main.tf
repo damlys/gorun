@@ -81,7 +81,7 @@ data "kubernetes_service" "grafana" {
 }
 
 module "grafana_gateway_route" {
-  source = "../gke-gateway-route" # TODO
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gke-gateway-route/0.0.1.zip"
 
   kubernetes_service = data.kubernetes_service.grafana
 
