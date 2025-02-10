@@ -1,2 +1,2 @@
-repository: gogke-main-0-private-terraform-modules/gogke/k8s-otel-collectors
-version: 0.0.1
+repository: gogke-main-0-private-terraform-modules/gogke/o11y/k8s-otel-collectors
+version: 0.1.0

@@ -1,2 +1,2 @@
-repository: gogke-main-0-private-terraform-modules/gogke/helm-release
-version: 0.0.2
+repository: gogke-main-0-private-terraform-modules/gogke/kuard/helm-release
+version: 0.1.0

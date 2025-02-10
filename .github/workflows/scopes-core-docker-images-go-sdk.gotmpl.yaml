@@ -1,21 +1,21 @@
-name: docker-images/go-sdk
+name: scopes/core/docker-images/go-sdk
 on:
   pull_request:
     paths:
-      - ".github/workflows/docker-images-go-sdk.gotmpl.yaml"
-      - "docker-images/go-sdk/**"
-      - "!docker-images/go-sdk/README.md"
+      - ".github/workflows/scopes-core-docker-images-go-sdk.gotmpl.yaml"
+      - "scopes/core/docker-images/go-sdk/**"
+      - "!scopes/core/docker-images/go-sdk/README.md"
   push:
     branches:
       - main
     paths:
-      - ".github/workflows/docker-images-go-sdk.gotmpl.yaml"
-      - "docker-images/go-sdk/**"
-      - "!docker-images/go-sdk/README.md"
-      - "!docker-images/go-sdk/container-structure-test.yaml"
+      - ".github/workflows/scopes-core-docker-images-go-sdk.gotmpl.yaml"
+      - "scopes/core/docker-images/go-sdk/**"
+      - "!scopes/core/docker-images/go-sdk/README.md"
+      - "!scopes/core/docker-images/go-sdk/container-structure-test.yaml"
 jobs:
-  docker-images-go-sdk:
-    name: docker-images/go-sdk
+  scopes-core-docker-images-go-sdk:
+    name: scopes/core/docker-images/go-sdk
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gogcp-devcontainer:0.0.2
     permissions:
@@ -51,14 +51,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: build
-        run: ./scripts/docker-image build "go-sdk"
+        run: ./scripts/docker-image build "core" "go-sdk"
       - name: test
-        run: ./scripts/docker-image test "go-sdk"
+        run: ./scripts/docker-image test "core" "go-sdk"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/docker-image pre-publish "go-sdk"
+        run: ./scripts/docker-image pre-publish "core" "go-sdk"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/docker-image publish "go-sdk"
+        run: ./scripts/docker-image publish "core" "go-sdk"
       - name: show
-        run: ./scripts/docker-image show "go-sdk"
+        run: ./scripts/docker-image show "core" "go-sdk"

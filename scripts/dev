@@ -15,8 +15,8 @@ function main {
 
   "start")
     log::info "creating test node pool"
-    terraform -chdir="terraform-modules/test" init -input=false
-    terraform -chdir="terraform-modules/test" apply -input=false -auto-approve -target=module.test_platform.google_container_node_pool.this
+    terraform -chdir="scopes/core/terraform-modules/test" init -input=false
+    terraform -chdir="scopes/core/terraform-modules/test" apply -input=false -auto-approve -target=module.test_platform.google_container_node_pool.this
 
     log::info "done"
     ;;

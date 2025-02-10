@@ -1,21 +1,21 @@
-name: docker-images/devcontainer
+name: scopes/kuard/docker-images/kuard
 on:
   pull_request:
     paths:
-      - ".github/workflows/docker-images-devcontainer.gotmpl.yaml"
-      - "docker-images/devcontainer/**"
-      - "!docker-images/devcontainer/README.md"
+      - ".github/workflows/scopes-kuard-docker-images-kuard.gotmpl.yaml"
+      - "scopes/kuard/docker-images/kuard/**"
+      - "!scopes/kuard/docker-images/kuard/README.md"
   push:
     branches:
       - main
     paths:
-      - ".github/workflows/docker-images-devcontainer.gotmpl.yaml"
-      - "docker-images/devcontainer/**"
-      - "!docker-images/devcontainer/README.md"
-      - "!docker-images/devcontainer/container-structure-test.yaml"
+      - ".github/workflows/scopes-kuard-docker-images-kuard.gotmpl.yaml"
+      - "scopes/kuard/docker-images/kuard/**"
+      - "!scopes/kuard/docker-images/kuard/README.md"
+      - "!scopes/kuard/docker-images/kuard/container-structure-test.yaml"
 jobs:
-  docker-images-devcontainer:
-    name: docker-images/devcontainer
+  scopes-kuard-docker-images-kuard:
+    name: scopes/kuard/docker-images/kuard
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gogcp-devcontainer:0.0.2
     permissions:
@@ -51,14 +51,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: build
-        run: ./scripts/docker-image build "devcontainer"
+        run: ./scripts/docker-image build "kuard" "kuard"
       - name: test
-        run: ./scripts/docker-image test "devcontainer"
+        run: ./scripts/docker-image test "kuard" "kuard"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/docker-image pre-publish "devcontainer"
+        run: ./scripts/docker-image pre-publish "kuard" "kuard"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/docker-image publish "devcontainer"
+        run: ./scripts/docker-image publish "kuard" "kuard"
       - name: show
-        run: ./scripts/docker-image show "devcontainer"
+        run: ./scripts/docker-image show "kuard" "kuard"

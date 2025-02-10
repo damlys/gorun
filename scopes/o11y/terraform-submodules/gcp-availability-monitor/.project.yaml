@@ -1,2 +1,2 @@
-repository: gogke-main-0-private-terraform-modules/gogke/gcp-availability-monitor
-version: 0.0.1
+repository: gogke-main-0-private-terraform-modules/gogke/o11y/gcp-availability-monitor
+version: 0.1.0

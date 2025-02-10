@@ -1,5 +1,5 @@
 module "service_account" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gke-service-account/0.0.1.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-service-account/0.1.0.zip"
 
   google_project           = var.google_project
   google_container_cluster = var.google_container_cluster
@@ -21,11 +21,11 @@ resource "kubernetes_labels" "namespace" {
 }
 
 module "helm_release" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/helm-release/0.0.2.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/kuard/helm-release/0.1.0.zip"
 
-  repository    = "oci://europe-central2-docker.pkg.dev/gogke-main-0/private-helm-charts/gogke"
+  repository    = "oci://europe-central2-docker.pkg.dev/gogke-main-0/private-helm-charts/gogke/kuard"
   chart         = "kuard"
-  chart_version = "0.0.3"
+  chart_version = "0.1.0"
 
   namespace = var.kubernetes_namespace.metadata[0].name
   name      = "kuard"
@@ -44,7 +44,7 @@ data "kubernetes_service" "this" {
 }
 
 module "gateway_route" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gke-gateway-route/0.0.1.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-gateway-route/0.1.0.zip"
 
   kubernetes_service = data.kubernetes_service.this
 
@@ -52,7 +52,7 @@ module "gateway_route" {
 }
 
 module "availability_monitor" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-availability-monitor/0.0.1.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/o11y/gcp-availability-monitor/0.1.0.zip"
 
   google_project = var.google_project
 

@@ -1,20 +1,20 @@
-name: helm-charts/kuard
+name: scopes/kuard/helm-charts/kuard
 on:
   pull_request:
     paths:
-      - ".github/workflows/helm-charts-kuard.gotmpl.yaml"
-      - "helm-charts/kuard/**"
-      - "!helm-charts/kuard/README.md"
+      - ".github/workflows/scopes-kuard-helm-charts-kuard.gotmpl.yaml"
+      - "scopes/kuard/helm-charts/kuard/**"
+      - "!scopes/kuard/helm-charts/kuard/README.md"
   push:
     branches:
       - main
     paths:
-      - ".github/workflows/helm-charts-kuard.gotmpl.yaml"
-      - "helm-charts/kuard/**"
-      - "!helm-charts/kuard/README.md"
+      - ".github/workflows/scopes-kuard-helm-charts-kuard.gotmpl.yaml"
+      - "scopes/kuard/helm-charts/kuard/**"
+      - "!scopes/kuard/helm-charts/kuard/README.md"
 jobs:
-  helm-charts-kuard:
-    name: helm-charts/kuard
+  scopes-kuard-helm-charts-kuard:
+    name: scopes/kuard/helm-charts/kuard
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gogcp-devcontainer:0.0.2
     permissions:
@@ -36,14 +36,14 @@ jobs:
       - name: helm auth (Google Artifact Registry)
         run: gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
       - name: build
-        run: ./scripts/helm-chart build "kuard"
+        run: ./scripts/helm-chart build "kuard" "kuard"
       - name: test
-        run: ./scripts/helm-chart test "kuard"
+        run: ./scripts/helm-chart test "kuard" "kuard"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/helm-chart pre-publish "kuard"
+        run: ./scripts/helm-chart pre-publish "kuard" "kuard"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/helm-chart publish "kuard"
+        run: ./scripts/helm-chart publish "kuard" "kuard"
       - name: show
-        run: ./scripts/helm-chart show "kuard"
+        run: ./scripts/helm-chart show "kuard" "kuard"

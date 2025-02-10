@@ -1,2 +1,2 @@
-repository: gogke-main-0-private-terraform-modules/gogke/gke-lgtm-stack
-version: 0.0.2
+repository: gogke-main-0-private-terraform-modules/gogke/o11y/gke-lgtm-stack
+version: 0.1.0

@@ -10,6 +10,6 @@ terraform {
 
   backend "gcs" {
     bucket = "gogke-main-0-terraform-state"
-    prefix = "github.com/gogcp/gogke/terraform-modules/prod"
+    prefix = "github.com/gogcp/gogke/scopes/core/terraform-modules/prod"
   }
 }

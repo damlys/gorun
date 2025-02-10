@@ -11,6 +11,7 @@ import (
 )
 
 type project struct {
+	ProjectScope     string
 	ProjectName      string
 	ProjectPath      string
 	ProjectType      string
@@ -51,9 +52,10 @@ func listProjects(currentPath ...string) ([]project, error) {
 		if f.Name() == ".project.yaml" {
 			n := len(currentPath)
 			p := project{
+				ProjectScope:     currentPath[n-3],
 				ProjectName:      currentPath[n-1],
 				ProjectPath:      path.Join(currentPath[1:n]...),
-				ProjectType:      path.Join(currentPath[1 : n-1]...),
+				ProjectType:      currentPath[n-2],
 				WorkflowFilename: strings.Join(currentPath[1:n], "-"),
 			}
 			projects = append(projects, p)

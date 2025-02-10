@@ -3,7 +3,7 @@
 #######################################
 
 module "main_project" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-project/0.0.2.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-project/0.1.0.zip"
 
   project_id   = "gogke-main-0"
   project_name = "gogke-main-0"
@@ -14,7 +14,7 @@ module "main_project" {
 }
 
 module "test_project" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-project/0.0.2.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-project/0.1.0.zip"
 
   project_id   = "gogke-test-0"
   project_name = "gogke-test-0"
@@ -25,7 +25,7 @@ module "test_project" {
 }
 
 module "prod_project" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-project/0.0.2.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-project/0.1.0.zip"
 
   project_id   = "gogke-prod-0"
   project_name = "gogke-prod-0"
@@ -40,7 +40,7 @@ module "prod_project" {
 #######################################
 
 module "terraform_state_bucket" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-terraform-state-bucket/0.0.1.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-terraform-state-bucket/0.1.0.zip"
 
   google_project = module.main_project.google_project
   bucket_name    = "terraform-state"
@@ -55,7 +55,7 @@ module "terraform_state_bucket" {
 #######################################
 
 module "public_docker_images_registry" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-docker-images-registry/0.0.2.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-docker-images-registry/0.1.0.zip"
 
   google_project = module.main_project.google_project
   registry_name  = "public-docker-images"
@@ -67,7 +67,7 @@ module "public_docker_images_registry" {
 }
 
 module "private_docker_images_registry" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-docker-images-registry/0.0.2.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-docker-images-registry/0.1.0.zip"
 
   google_project = module.main_project.google_project
   registry_name  = "private-docker-images"
@@ -85,7 +85,7 @@ module "private_docker_images_registry" {
 #######################################
 
 module "public_helm_charts_registry" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-helm-charts-registry/0.0.2.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-helm-charts-registry/0.1.0.zip"
 
   google_project = module.main_project.google_project
   registry_name  = "public-helm-charts"
@@ -97,7 +97,7 @@ module "public_helm_charts_registry" {
 }
 
 module "private_helm_charts_registry" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-helm-charts-registry/0.0.2.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-helm-charts-registry/0.1.0.zip"
 
   google_project = module.main_project.google_project
   registry_name  = "private-helm-charts"
@@ -108,7 +108,7 @@ module "private_helm_charts_registry" {
 }
 
 module "external_helm_charts_registry" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-helm-charts-registry/0.0.2.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-helm-charts-registry/0.1.0.zip"
 
   google_project = module.main_project.google_project
   registry_name  = "external-helm-charts"
@@ -125,7 +125,7 @@ module "external_helm_charts_registry" {
 #######################################
 
 module "public_terraform_modules_registry" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-terraform-modules-registry/0.0.1.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-terraform-modules-registry/0.1.0.zip"
 
   google_project = module.main_project.google_project
   registry_name  = "public-terraform-modules"
@@ -137,7 +137,7 @@ module "public_terraform_modules_registry" {
 }
 
 module "private_terraform_modules_registry" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gcp-terraform-modules-registry/0.0.1.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-terraform-modules-registry/0.1.0.zip"
 
   google_project = module.main_project.google_project
   registry_name  = "private-terraform-modules"

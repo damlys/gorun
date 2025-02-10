@@ -1,0 +1,53 @@
+name: scopes/core/terraform-modules/prod
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/scopes-core-terraform-modules-prod.gotmpl.yaml"
+      - "scopes/core/terraform-modules/prod/**"
+      - "!scopes/core/terraform-modules/prod/README.md"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/scopes-core-terraform-modules-prod.gotmpl.yaml"
+      - "scopes/core/terraform-modules/prod/**"
+      - "!scopes/core/terraform-modules/prod/README.md"
+jobs:
+  scopes-core-terraform-modules-prod:
+    name: scopes/core/terraform-modules/prod
+    runs-on: ubuntu-24.04
+    container: ghcr.io/damlys/gogcp-devcontainer:0.0.2
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      TF_IN_AUTOMATION: 1
+    steps:
+      - name: git clone
+        uses: actions/checkout@v4
+      - name: git clone fix
+        run: git config --system --add safe.directory /__w/gogcp/gogcp
+      - name: gcloud auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+          create_credentials_file: true
+          cleanup_credentials: true
+      - name: cache
+        uses: actions/cache@v4
+        with:
+          key: scopes-core-terraform-modules-prod
+          path: |
+            scopes/core/terraform-modules/prod/.terraform
+      - name: test
+        run: ./scripts/terraform-module test "core" "prod"
+      - name: init
+        run: terraform -chdir="scopes/core/terraform-modules/prod" init -input=false
+      - name: validate
+        run: terraform -chdir="scopes/core/terraform-modules/prod" validate
+      - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
+        name: plan
+        run: terraform -chdir="scopes/core/terraform-modules/prod" plan -input=false
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        name: apply
+        run: terraform -chdir="scopes/core/terraform-modules/prod" apply -input=false -auto-approve

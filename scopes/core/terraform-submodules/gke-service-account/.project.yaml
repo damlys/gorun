@@ -1,2 +1,2 @@
-repository: gogke-main-0-private-terraform-modules/gogke/gke-service-account
-version: 0.0.1
+repository: gogke-main-0-private-terraform-modules/gogke/core/gke-service-account
+version: 0.1.0

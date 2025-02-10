@@ -18,6 +18,6 @@ terraform {
 
   backend "gcs" {
     bucket = "gogke-main-0-terraform-state"
-    prefix = "github.com/gogcp/gogke/terraform-modules/test-monitor"
+    prefix = "github.com/gogcp/gogke/scopes/o11y/terraform-modules/test-monitor"
   }
 }

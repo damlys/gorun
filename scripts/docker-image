@@ -4,8 +4,9 @@ for lib in "$(dirname "$0")"/libs/*.bash; do source "${lib}"; done
 
 function main {
   local cmd="$1"
-  local project_name="$2"
-  local project_path="docker-images/${project_name}"
+  local project_scope="$2"
+  local project_name="$3"
+  local project_path="scopes/${project_scope}/docker-images/${project_name}"
   local image_repository
   local image_tag
   local image

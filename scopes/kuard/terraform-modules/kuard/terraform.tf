@@ -18,6 +18,6 @@ terraform {
 
   backend "gcs" {
     bucket = "gogke-main-0-terraform-state"
-    prefix = "github.com/gogcp/gogke/terraform-modules/kuard"
+    prefix = "github.com/gogcp/gogke/scopes/kuard/terraform-modules/kuard"
   }
 }
