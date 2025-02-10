@@ -58,7 +58,7 @@ resource "helm_release" "grafana" {
       grafana_service_account_name = module.grafana_service_account.kubernetes_service_account.metadata[0].name
       grafana_domain               = var.grafana_domain
       grafana_postgresql_host      = "${helm_release.grafana_postgresql.name}.${helm_release.grafana_postgresql.namespace}.svc.cluster.local"
-      grafana_admin_email          = module.grafana_service_account.google_service_account.email
+      grafana_admin_email          = "damlys.test@gmail.com"
     }),
     templatefile("${path.module}/assets/grafana/lgtm-datasources.yaml.tftpl", {
       loki_entrypoint  = local.loki_entrypoint
