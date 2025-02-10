@@ -57,9 +57,8 @@ resource "helm_release" "grafana" {
     templatefile("${path.module}/assets/grafana/values.yaml.tftpl", {
       grafana_service_account_name = module.grafana_service_account.kubernetes_service_account.metadata[0].name
       grafana_domain               = var.grafana_domain
-
-      grafana_postgresql_name      = helm_release.grafana_postgresql.name
-      grafana_postgresql_namespace = helm_release.grafana_postgresql.namespace
+      grafana_postgresql_host      = "${helm_release.grafana_postgresql.name}.${helm_release.grafana_postgresql.namespace}.svc.cluster.local"
+      grafana_admin_email          = "damlys.test@gmail.com"
     }),
     templatefile("${path.module}/assets/grafana/lgtm-datasources.yaml.tftpl", {
       loki_entrypoint  = local.loki_entrypoint
@@ -74,57 +73,22 @@ resource "helm_release" "grafana" {
   timeout = 300
 }
 
-resource "kubernetes_manifest" "grafana_httproute" {
-  manifest = {
-    apiVersion = "gateway.networking.k8s.io/v1"
-    kind       = "HTTPRoute"
-    metadata = {
-      name      = helm_release.grafana.name
-      namespace = helm_release.grafana.namespace
-    }
-    spec = {
-      parentRefs = [{
-        kind        = "Gateway"
-        namespace   = "gateway"
-        name        = "gateway"
-        sectionName = "https"
-      }]
-      hostnames = [var.grafana_domain]
-      rules = [{
-        backendRefs = [{
-          name = helm_release.grafana.name
-          port = 80
-        }]
-      }]
-    }
+data "kubernetes_service" "grafana" {
+  metadata {
+    name      = helm_release.grafana.name
+    namespace = helm_release.grafana.namespace
   }
 }
 
-resource "kubernetes_manifest" "grafana_healthcheckpolicy" {
-  manifest = {
-    apiVersion = "networking.gke.io/v1"
-    kind       = "HealthCheckPolicy"
-    metadata = {
-      name      = helm_release.grafana.name
-      namespace = helm_release.grafana.namespace
-    }
-    spec = {
-      targetRef = {
-        group = ""
-        kind  = "Service"
-        name  = helm_release.grafana.name
-      }
-      default = {
-        config = {
-          type = "HTTP"
-          httpHealthCheck = {
-            port        = 3000
-            requestPath = "/healthz"
-          }
-        }
-      }
-    }
-  }
+module "grafana_gateway_route" {
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gke-gateway-route/0.0.1.zip"
+
+  kubernetes_service = data.kubernetes_service.grafana
+
+  domain            = var.grafana_domain
+  service_port      = 80
+  container_port    = 3000
+  health_check_path = "/healthz"
 }
 
 module "grafana_availability_monitor" {

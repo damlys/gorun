@@ -16,7 +16,7 @@ jobs:
   terraform-submodules-kuard:
     name: terraform-submodules/kuard
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gogcp-devcontainer:0.0.1
+    container: ghcr.io/damlys/gogcp-devcontainer:0.0.2
     permissions:
       contents: write
       id-token: write

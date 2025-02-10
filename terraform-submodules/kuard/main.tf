@@ -16,79 +16,39 @@ resource "kubernetes_labels" "namespace" {
   labels = {
     istio-injection = "disabled" # or "enabled"
   }
+
+  force = true
 }
 
 module "helm_release" {
-  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/helm-release/0.0.1.zip"
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/helm-release/0.0.2.zip"
 
   repository    = "oci://europe-central2-docker.pkg.dev/gogke-main-0/private-helm-charts/gogke"
   chart         = "kuard"
-  chart_version = "0.0.2"
+  chart_version = "0.0.3"
 
   namespace = var.kubernetes_namespace.metadata[0].name
   name      = "kuard"
   values    = [templatefile("${path.module}/assets/values.yaml.tftpl", { service_account_name = module.service_account.kubernetes_service_account.metadata[0].name })]
 }
 
-resource "kubernetes_manifest" "httproute" {
+data "kubernetes_service" "this" {
   depends_on = [
     module.helm_release,
   ]
 
-  manifest = {
-    apiVersion = "gateway.networking.k8s.io/v1"
-    kind       = "HTTPRoute"
-    metadata = {
-      namespace = var.kubernetes_namespace.metadata[0].name
-      name      = "kuard"
-    }
-    spec = {
-      parentRefs = [{
-        kind        = "Gateway"
-        namespace   = "gateway"
-        name        = "gateway"
-        sectionName = "https"
-      }]
-      hostnames = [var.domain]
-      rules = [{
-        backendRefs = [{
-          name = "kuard-http-server"
-          port = 80
-        }]
-      }]
-    }
+  metadata {
+    name      = "kuard-http-server"
+    namespace = var.kubernetes_namespace.metadata[0].name
   }
 }
 
-resource "kubernetes_manifest" "healthcheckpolicy" {
-  depends_on = [
-    module.helm_release,
-  ]
+module "gateway_route" {
+  source = "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/gke-gateway-route/0.0.1.zip"
 
-  manifest = {
-    apiVersion = "networking.gke.io/v1"
-    kind       = "HealthCheckPolicy"
-    metadata = {
-      namespace = var.kubernetes_namespace.metadata[0].name
-      name      = "kuard"
-    }
-    spec = {
-      targetRef = {
-        group = ""
-        kind  = "Service"
-        name  = "kuard-http-server"
-      }
-      default = {
-        config = {
-          type = "HTTP"
-          httpHealthCheck = {
-            port        = 8080
-            requestPath = "/healthy"
-          }
-        }
-      }
-    }
-  }
+  kubernetes_service = data.kubernetes_service.this
+
+  domain = var.domain
 }
 
 module "availability_monitor" {
