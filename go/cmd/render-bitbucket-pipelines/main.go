@@ -1,52 +1,34 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
-	"strings"
+	"path"
 
+	"github.com/damlys/gogcp/go/internal/monorepo"
 	"github.com/damlys/gogcp/go/internal/tmpl"
 )
 
 func main() {
-	projects := struct {
-		DockerImages        []string
-		HelmCharts          []string
-		HelmReleases        []string
-		KubernetesManifests []string
-		TerraformModules    []string
-		TerraformSubmodules []string
-	}{
-		DockerImages:        listDirs("./docker-images"),
-		HelmCharts:          listDirs("./helm-charts"),
-		HelmReleases:        listDirs("./helm-releases"),
-		KubernetesManifests: listDirs("./kubernetes-manifests"),
-		TerraformModules:    listDirs("./terraform-modules"),
-		TerraformSubmodules: listDirs("./terraform-submodules"),
-	}
-	templateFilePath := "./bitbucket-pipelines.yml.gotmpl"
-	outputFilePath := "./bitbucket-pipelines.yml"
-
-	err := tmpl.RenderTemplate(templateFilePath, outputFilePath, projects)
+	wd, err := os.Getwd()
 	if err != nil {
-		panic(fmt.Errorf("template render error: %v", err))
+		log.Fatalf("working directory get error: %v\n", err)
+	}
+	log.Printf("working directory: %s\n", wd)
+
+	projects, err := monorepo.ListProjects(wd)
+	if err != nil {
+		log.Fatalf("projects list error: %v\n", err)
+	}
+	log.Printf("projects count: %d\n", len(projects))
+
+	templateFilePath := path.Join(wd, "bitbucket-pipelines.yml.gotmpl")
+	outputFilePath := path.Join(wd, "bitbucket-pipelines.yml")
+	log.Printf("rendering\n")
+	err = tmpl.RenderTemplate(templateFilePath, outputFilePath, projects)
+	if err != nil {
+		log.Fatalf("template render error: %v\n", err)
 	}
 
 	log.Print("done!\n")
-}
-
-func listDirs(path string) []string {
-	files, err := os.ReadDir(path)
-	if err != nil {
-		panic(fmt.Errorf("dir read error (%s): %v", path, err))
-	}
-
-	var dirs []string
-	for _, f := range files {
-		if f.IsDir() && !strings.HasPrefix(f.Name(), ".") {
-			dirs = append(dirs, f.Name())
-		}
-	}
-	return dirs
 }
