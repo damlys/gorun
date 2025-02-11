@@ -11,9 +11,9 @@ tbd
 ## Terraform modules
 
 ```
-$ ./scripts/terraform-module test "kuard"
-$ terraform -chdir="terraform-modules/kuard" init
-$ terraform -chdir="terraform-modules/kuard" validate
-$ terraform -chdir="terraform-modules/kuard" plan
-$ terraform -chdir="terraform-modules/kuard" apply
+$ ./scripts/terraform-module test "kuard" "kuard"
+$ terraform -chdir="scopes/kuard/terraform-modules/kuard" init
+$ terraform -chdir="scopes/kuard/terraform-modules/kuard" validate
+$ terraform -chdir="scopes/kuard/terraform-modules/kuard" plan
+$ terraform -chdir="scopes/kuard/terraform-modules/kuard" apply
 ```

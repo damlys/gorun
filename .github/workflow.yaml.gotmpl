@@ -2,14 +2,14 @@ name: {{ .ProjectPath }}
 on:
   pull_request:
     paths:
-      - ".github/workflows/{{ .WorkflowFilename }}.gotmpl.yaml"
+      - ".github/workflows/{{ .ProjectSlug }}.gotmpl.yaml"
       - "{{ .ProjectPath }}/**"
       - "!{{ .ProjectPath }}/README.md"
   push:
     branches:
       - main
     paths:
-      - ".github/workflows/{{ .WorkflowFilename }}.gotmpl.yaml"
+      - ".github/workflows/{{ .ProjectSlug }}.gotmpl.yaml"
       - "{{ .ProjectPath }}/**"
       - "!{{ .ProjectPath }}/README.md"
 
@@ -17,7 +17,7 @@ on:
       - "!{{ .ProjectPath }}/container-structure-test.yaml"
       {{- end }}
 jobs:
-  {{ .WorkflowFilename }}:
+  {{ .ProjectSlug }}:
     name: {{ .ProjectPath }}
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gogcp-devcontainer:0.0.2
@@ -73,41 +73,41 @@ jobs:
           username: {{ "${{ github.actor }}" }}
           password: {{ "${{ secrets.GITHUB_TOKEN }}" }}
       - name: build
-        run: ./scripts/docker-image build "{{ .ProjectName }}"
+        run: ./scripts/docker-image build "{{ .ProjectScope }}" "{{ .ProjectName }}"
       - name: test
-        run: ./scripts/docker-image test "{{ .ProjectName }}"
+        run: ./scripts/docker-image test "{{ .ProjectScope }}" "{{ .ProjectName }}"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/docker-image pre-publish "{{ .ProjectName }}"
+        run: ./scripts/docker-image pre-publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/docker-image publish "{{ .ProjectName }}"
+        run: ./scripts/docker-image publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
       - name: show
-        run: ./scripts/docker-image show "{{ .ProjectName }}"
+        run: ./scripts/docker-image show "{{ .ProjectScope }}" "{{ .ProjectName }}"
       {{- end }}
 
       {{- if eq .ProjectType "helm-charts" }}
       - name: helm auth (Google Artifact Registry)
         run: gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
       - name: build
-        run: ./scripts/helm-chart build "{{ .ProjectName }}"
+        run: ./scripts/helm-chart build "{{ .ProjectScope }}" "{{ .ProjectName }}"
       - name: test
-        run: ./scripts/helm-chart test "{{ .ProjectName }}"
+        run: ./scripts/helm-chart test "{{ .ProjectScope }}" "{{ .ProjectName }}"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/helm-chart pre-publish "{{ .ProjectName }}"
+        run: ./scripts/helm-chart pre-publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/helm-chart publish "{{ .ProjectName }}"
+        run: ./scripts/helm-chart publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
       - name: show
-        run: ./scripts/helm-chart show "{{ .ProjectName }}"
+        run: ./scripts/helm-chart show "{{ .ProjectScope }}" "{{ .ProjectName }}"
       {{- end }}
 
       {{- if or (eq .ProjectType "terraform-submodules") (eq .ProjectType "terraform-modules") }}
       - name: cache
         uses: actions/cache@v4
         with:
-          key: {{ .WorkflowFilename }}
+          key: {{ .ProjectSlug }}
           path: |
             {{ .ProjectPath }}/.terraform
 
@@ -118,17 +118,17 @@ jobs:
 
       {{- if eq .ProjectType "terraform-submodules" }}
       - name: build
-        run: ./scripts/terraform-submodule build "{{ .ProjectName }}"
+        run: ./scripts/terraform-submodule build "{{ .ProjectScope }}" "{{ .ProjectName }}"
       - name: test
-        run: ./scripts/terraform-submodule test "{{ .ProjectName }}"
+        run: ./scripts/terraform-submodule test "{{ .ProjectScope }}" "{{ .ProjectName }}"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/terraform-submodule pre-publish "{{ .ProjectName }}"
+        run: ./scripts/terraform-submodule pre-publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/terraform-submodule publish "{{ .ProjectName }}"
+        run: ./scripts/terraform-submodule publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
       - name: show
-        run: ./scripts/terraform-submodule show "{{ .ProjectName }}"
+        run: ./scripts/terraform-submodule show "{{ .ProjectScope }}" "{{ .ProjectName }}"
       {{- end }}
 
       {{- if eq .ProjectType "kubernetes-manifests" }}
@@ -139,7 +139,7 @@ jobs:
 
       {{- if eq .ProjectType "terraform-modules" }}
       - name: test
-        run: ./scripts/terraform-module test "{{ .ProjectName }}"
+        run: ./scripts/terraform-module test "{{ .ProjectScope }}" "{{ .ProjectName }}"
       - name: init
         run: terraform -chdir="{{ .ProjectPath }}" init -input=false
       - name: validate

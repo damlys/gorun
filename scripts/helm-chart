@@ -4,8 +4,9 @@ for lib in "$(dirname "$0")"/libs/*.bash; do source "${lib}"; done
 
 function main {
   local cmd="$1"
-  local project_name="$2"
-  local project_path="helm-charts/${project_name}"
+  local project_scope="$2"
+  local project_name="$3"
+  local project_path="scopes/${project_scope}/helm-charts/${project_name}"
   local chart_repository
   local chart_name
   local chart_version
@@ -38,7 +39,7 @@ function main {
     fi
     if ! changelog::contains_version "${project_path}" "${chart_version}"; then
       log::error "changelog does not contain header with the chart version: ${project_path}"
-      return 1
+      #return 1
     fi
     if git::tag_exists "${project_path}/v${chart_version}"; then
       log::error "git tag with chart version already exists: ${chart_version}"

@@ -1,12 +1,13 @@
 image: damlys/gogcp-devcontainer:0.0.2
 definitions:
   caches:
-    {{- range .TerraformSubmodules }}
-    terraform-submodule-{{.}}: terraform-submodules/{{.}}/.terraform
+    {{- range . }}
+
+    {{- if or (eq .ProjectType "terraform-submodules") (eq .ProjectType "terraform-modules") }}
+    {{ .ProjectSlug }}: {{ .ProjectPath }}/.terraform
     {{- end }}
-    {{- range .TerraformModules }}
-    terraform-module-{{.}}: terraform-modules/{{.}}/.terraform
-    {{- end }}
+
+    {{- end }}{{/* range . */}}
   scripts:
     - &auth |
       set -e
@@ -15,179 +16,190 @@ definitions:
       gcloud auth configure-docker "europe-central2-docker.pkg.dev"
       gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
   steps:
-    {{- range .DockerImages }}
-    - step: &docker-image-{{.}}-test
-        name: test docker-images/{{.}}
+    {{- range . }}
+
+    {{- if eq .ProjectType "docker-images" }}
+    - step: &test-{{ .ProjectSlug }}
+        name: test {{ .ProjectPath }}
         condition:
           changesets:
             includePaths:
-              - "docker-images/{{.}}/**"
+              - "{{ .ProjectPath }}/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "{{.}}"
-          - ./scripts/docker-image test "{{.}}"
-          - ./scripts/docker-image pre-publish "{{.}}"
-          - ./scripts/docker-image show "{{.}}"
-    - step: &docker-image-{{.}}-publish
-        name: publish docker-images/{{.}}
+          - ./scripts/docker-image build "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/docker-image test "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/docker-image pre-publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/docker-image show "{{ .ProjectScope }}" "{{ .ProjectName }}"
+    - step: &publish-{{ .ProjectSlug }}
+        name: publish {{ .ProjectPath }}
         condition:
           changesets:
             includePaths:
-              - "docker-images/{{.}}/**"
+              - "{{ .ProjectPath }}/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "{{.}}"
-          - ./scripts/docker-image test "{{.}}"
-          - ./scripts/docker-image publish "{{.}}"
-          - ./scripts/docker-image show "{{.}}"
+          - ./scripts/docker-image build "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/docker-image test "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/docker-image publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/docker-image show "{{ .ProjectScope }}" "{{ .ProjectName }}"
     {{- end }}
 
-    {{- range .HelmCharts }}
-    - step: &helm-chart-{{.}}-test
-        name: test helm-charts/{{.}}
+    {{- if eq .ProjectType "helm-charts" }}
+    - step: &test-{{ .ProjectSlug }}
+        name: test {{ .ProjectPath }}
         condition:
           changesets:
             includePaths:
-              - "helm-charts/{{.}}/**"
+              - "{{ .ProjectPath }}/**"
         script:
           - *auth
-          - ./scripts/helm-chart build "{{.}}"
-          - ./scripts/helm-chart test "{{.}}"
-          - ./scripts/helm-chart pre-publish "{{.}}"
-          - ./scripts/helm-chart show "{{.}}"
-    - step: &helm-chart-{{.}}-publish
-        name: publish helm-charts/{{.}}
+          - ./scripts/helm-chart build "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/helm-chart test "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/helm-chart pre-publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/helm-chart show "{{ .ProjectScope }}" "{{ .ProjectName }}"
+    - step: &publish-{{ .ProjectSlug }}
+        name: publish {{ .ProjectPath }}
         condition:
           changesets:
             includePaths:
-              - "helm-charts/{{.}}/**"
+              - "{{ .ProjectPath }}/**"
         script:
           - *auth
-          - ./scripts/helm-chart build "{{.}}"
-          - ./scripts/helm-chart test "{{.}}"
-          - ./scripts/helm-chart publish "{{.}}"
-          - ./scripts/helm-chart show "{{.}}"
+          - ./scripts/helm-chart build "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/helm-chart test "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/helm-chart publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/helm-chart show "{{ .ProjectScope }}" "{{ .ProjectName }}"
     {{- end }}
 
-    {{- range .TerraformSubmodules }}
-    - step: &terraform-submodule-{{.}}-test
-        name: test terraform-submodules/{{.}}
+    {{- if eq .ProjectType "terraform-submodules" }}
+    - step: &test-{{ .ProjectSlug }}
+        name: test {{ .ProjectPath }}
         condition:
           changesets:
             includePaths:
-              - "terraform-submodules/{{.}}/**"
+              - "{{ .ProjectPath }}/**"
         caches:
-          - terraform-submodule-{{.}}
+          - {{ .ProjectSlug }}
         script:
           - *auth
-          - ./scripts/terraform-submodule build "{{.}}"
-          - ./scripts/terraform-submodule test "{{.}}"
-          - ./scripts/terraform-submodule pre-publish "{{.}}"
-          - ./scripts/terraform-submodule show "{{.}}"
-    - step: &terraform-submodule-{{.}}-publish
-        name: publish terraform-submodules/{{.}}
+          - ./scripts/terraform-submodule build "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/terraform-submodule test "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/terraform-submodule pre-publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/terraform-submodule show "{{ .ProjectScope }}" "{{ .ProjectName }}"
+    - step: &publish-{{ .ProjectSlug }}
+        name: publish {{ .ProjectPath }}
         condition:
           changesets:
             includePaths:
-              - "terraform-submodules/{{.}}/**"
+              - "{{ .ProjectPath }}/**"
         caches:
-          - terraform-submodule-{{.}}
+          - {{ .ProjectSlug }}
         script:
           - *auth
-          - ./scripts/terraform-submodule build "{{.}}"
-          - ./scripts/terraform-submodule test "{{.}}"
-          - ./scripts/terraform-submodule publish "{{.}}"
-          - ./scripts/terraform-submodule show "{{.}}"
+          - ./scripts/terraform-submodule build "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/terraform-submodule test "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/terraform-submodule publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/terraform-submodule show "{{ .ProjectScope }}" "{{ .ProjectName }}"
     {{- end }}
 
-    {{- range .TerraformModules }}
-    - step: &terraform-module-{{.}}-validate
-        name: validate terraform-modules/{{.}}
+    {{- if eq .ProjectType "terraform-modules" }}
+    - step: &validate-{{ .ProjectSlug }}
+        name: validate {{ .ProjectPath }}
         condition:
           changesets:
             includePaths:
-              - "terraform-modules/{{.}}/**"
+              - "{{ .ProjectPath }}/**"
         caches:
-          - terraform-module-{{.}}
+          - {{ .ProjectSlug }}
         script:
           - *auth
-          - ./scripts/terraform-module test "{{.}}"
-          - terraform -chdir="terraform-modules/{{.}}" init -input="false"
-          - terraform -chdir="terraform-modules/{{.}}" validate
-    - step: &terraform-module-{{.}}-plan
-        name: plan terraform-modules/{{.}}
+          - ./scripts/terraform-module test "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - terraform -chdir="{{ .ProjectPath }}" init -input="false"
+          - terraform -chdir="{{ .ProjectPath }}" validate
+    - step: &plan-{{ .ProjectSlug }}
+        name: plan {{ .ProjectPath }}
         condition:
           changesets:
             includePaths:
-              - "terraform-modules/{{.}}/**"
+              - "{{ .ProjectPath }}/**"
         caches:
-          - terraform-module-{{.}}
+          - {{ .ProjectSlug }}
         script:
           - *auth
-          - terraform -chdir="terraform-modules/{{.}}" init -input="false"
-          - terraform -chdir="terraform-modules/{{.}}" plan -input="false"
-    - step: &terraform-module-{{.}}-apply
-        name: apply terraform-modules/{{.}}
+          - terraform -chdir="{{ .ProjectPath }}" init -input="false"
+          - terraform -chdir="{{ .ProjectPath }}" plan -input="false"
+    - step: &apply-{{ .ProjectSlug }}
+        name: apply {{ .ProjectPath }}
         condition:
           changesets:
             includePaths:
-              - "terraform-modules/{{.}}/**"
+              - "{{ .ProjectPath }}/**"
         caches:
-          - terraform-module-{{.}}
+          - {{ .ProjectSlug }}
         script:
           - *auth
-          - terraform -chdir="terraform-modules/{{.}}" init -input="false"
-          - terraform -chdir="terraform-modules/{{.}}" apply -input="false" -auto-approve
+          - terraform -chdir="{{ .ProjectPath }}" init -input="false"
+          - terraform -chdir="{{ .ProjectPath }}" apply -input="false" -auto-approve
         trigger: manual
     {{- end }}
+
+    {{- end }}{{/* range . */}}
 
 pipelines:
   pull-requests:
     "**":
       - parallel:
-          {{- range .DockerImages }}
-          - step: *docker-image-{{.}}-test
+          {{- range . }}
+
+          {{- if or (eq .ProjectType "docker-images") (eq .ProjectType "helm-charts") (eq .ProjectType "terraform-submodules") }}
+          - step: *test-{{ .ProjectSlug }}
           {{- end }}
-          {{- range .HelmCharts }}
-          - step: *helm-chart-{{.}}-test
+
+          {{- if eq .ProjectType "terraform-modules" }}
+          - step: *validate-{{ .ProjectSlug }}
           {{- end }}
-          {{- range .TerraformSubmodules }}
-          - step: *terraform-submodule-{{.}}-test
-          {{- end }}
-          {{- range .TerraformModules }}
-          - step: *terraform-module-{{.}}-validate
-          {{- end }}
+
+          {{- end }}{{/* range . */}}
       - parallel:
-          {{- range .TerraformModules }}
-          - step: *terraform-module-{{.}}-plan
+          {{- range . }}
+
+          {{- if eq .ProjectType "terraform-modules" }}
+          - step: *plan-{{ .ProjectSlug }}
           {{- end }}
+
+          {{- end }}{{/* range . */}}
   branches:
     main:
-      {{- if (or .DockerImages .HelmCharts .TerraformSubmodules) }}
       - parallel:
-          {{- range .DockerImages }}
-          - step: *docker-image-{{.}}-publish
+          {{- range . }}
+
+          {{- if or (eq .ProjectType "docker-images") (eq .ProjectType "helm-charts") (eq .ProjectType "terraform-submodules") }}
+          - step: *publish-{{ .ProjectSlug }}
           {{- end }}
-          {{- range .HelmCharts }}
-          - step: *helm-chart-{{.}}-publish
-          {{- end }}
-          {{- range .TerraformSubmodules }}
-          - step: *terraform-submodule-{{.}}-publish
-          {{- end }}
-      {{- end }}
+
+          {{- end }}{{/* range . */}}
       - parallel:
-          {{- range .TerraformModules }}
-          - step: *terraform-module-{{.}}-plan
+          {{- range . }}
+
+          {{- if eq .ProjectType "terraform-modules" }}
+          - step: *plan-{{ .ProjectSlug }}
           {{- end }}
+
+          {{- end }}{{/* range . */}}
       - parallel:
-          {{- range .TerraformModules }}
-          - step: *terraform-module-{{.}}-apply
+          {{- range . }}
+
+          {{- if eq .ProjectType "terraform-modules" }}
+          - step: *apply-{{ .ProjectSlug }}
           {{- end }}
+
+          {{- end }}{{/* range . */}}

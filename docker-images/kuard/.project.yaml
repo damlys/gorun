@@ -1,7 +1,0 @@
-repository: europe-central2-docker.pkg.dev/gogke-main-0/private-docker-images/gogke/kuard
-tag: 0.0.1
-aliases:
-  - # https://hub.docker.com/r/damlys/gogcp-kuard
-    repository: damlys/gogcp-kuard
-  - # https://github.com/users/damlys/packages/container/package/gogcp-kuard
-    repository: ghcr.io/damlys/gogcp-kuard
