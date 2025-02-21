@@ -4,13 +4,10 @@ for lib in "$(dirname "$0")"/libs/*.bash; do source "${lib}"; done
 
 function main {
   local cmd="$1"
-  local project_scope="$2"
-  local project_name="$3"
-  local project_path="scopes/${project_scope}/terraform-modules/${project_name}"
-  local terraform_file="${project_path}/terraform.tf"
+  local project_path="$2"
   local backend_prefix
 
-  backend_prefix="$(hclq get --raw 'terraform.backend.gcs.prefix' --in="${terraform_file}")"
+  backend_prefix="$(hclq get --raw 'terraform.backend.gcs.prefix' --in="${project_path}/terraform.tf")"
 
   case "${cmd}" in
   "test")

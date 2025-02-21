@@ -40,14 +40,14 @@ jobs:
             scopes/kuard/terraform-submodules/kuard/.terraform
             scopes/kuard/terraform-submodules/kuard/.terraform.lock.hcl
       - name: build
-        run: ./scripts/terraform-submodule build "kuard" "kuard"
+        run: ./scripts/terraform-submodule build "scopes/kuard/terraform-submodules/kuard"
       - name: test
-        run: ./scripts/terraform-submodule test "kuard" "kuard"
+        run: ./scripts/terraform-submodule test "scopes/kuard/terraform-submodules/kuard"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/terraform-submodule pre-publish "kuard" "kuard"
+        run: ./scripts/terraform-submodule pre-publish "scopes/kuard/terraform-submodules/kuard"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/terraform-submodule publish "kuard" "kuard"
+        run: ./scripts/terraform-submodule publish "scopes/kuard/terraform-submodules/kuard"
       - name: show
-        run: ./scripts/terraform-submodule show "kuard" "kuard"
+        run: ./scripts/terraform-submodule show "scopes/kuard/terraform-submodules/kuard"

@@ -72,34 +72,34 @@ jobs:
           username: {{ "${{ github.actor }}" }}
           password: {{ "${{ secrets.GITHUB_TOKEN }}" }}
       - name: build
-        run: ./scripts/docker-image build "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/docker-image build "{{ .ProjectPath }}"
       - name: test
-        run: ./scripts/docker-image test "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/docker-image test "{{ .ProjectPath }}"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/docker-image pre-publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/docker-image pre-publish "{{ .ProjectPath }}"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/docker-image publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/docker-image publish "{{ .ProjectPath }}"
       - name: show
-        run: ./scripts/docker-image show "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/docker-image show "{{ .ProjectPath }}"
       {{- end }}
 
       {{- if eq .ProjectType "helm-charts" }}
       - name: helm auth (Google Artifact Registry)
         run: gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
       - name: build
-        run: ./scripts/helm-chart build "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/helm-chart build "{{ .ProjectPath }}"
       - name: test
-        run: ./scripts/helm-chart test "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/helm-chart test "{{ .ProjectPath }}"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/helm-chart pre-publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/helm-chart pre-publish "{{ .ProjectPath }}"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/helm-chart publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/helm-chart publish "{{ .ProjectPath }}"
       - name: show
-        run: ./scripts/helm-chart show "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/helm-chart show "{{ .ProjectPath }}"
       {{- end }}
 
       {{- if or (eq .ProjectType "terraform-submodules") (eq .ProjectType "terraform-modules") }}
@@ -117,17 +117,17 @@ jobs:
 
       {{- if eq .ProjectType "terraform-submodules" }}
       - name: build
-        run: ./scripts/terraform-submodule build "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/terraform-submodule build "{{ .ProjectPath }}"
       - name: test
-        run: ./scripts/terraform-submodule test "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/terraform-submodule test "{{ .ProjectPath }}"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/terraform-submodule pre-publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/terraform-submodule pre-publish "{{ .ProjectPath }}"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/terraform-submodule publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/terraform-submodule publish "{{ .ProjectPath }}"
       - name: show
-        run: ./scripts/terraform-submodule show "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/terraform-submodule show "{{ .ProjectPath }}"
       {{- end }}
 
       {{- if eq .ProjectType "kubernetes-manifests" }}
@@ -138,7 +138,7 @@ jobs:
 
       {{- if eq .ProjectType "terraform-modules" }}
       - name: test
-        run: ./scripts/terraform-module test "{{ .ProjectScope }}" "{{ .ProjectName }}"
+        run: ./scripts/terraform-module test "{{ .ProjectPath }}"
       - name: init
         run: terraform -chdir="{{ .ProjectPath }}" init -input=false
       - name: validate

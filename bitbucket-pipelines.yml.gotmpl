@@ -31,10 +31,10 @@ definitions:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/docker-image test "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/docker-image pre-publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/docker-image show "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/docker-image build "{{ .ProjectPath }}"
+          - ./scripts/docker-image test "{{ .ProjectPath }}"
+          - ./scripts/docker-image pre-publish "{{ .ProjectPath }}"
+          - ./scripts/docker-image show "{{ .ProjectPath }}"
     - step: &publish-{{ .ProjectSlug }}
         name: publish {{ .ProjectPath }}
         condition:
@@ -47,10 +47,10 @@ definitions:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/docker-image test "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/docker-image publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/docker-image show "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/docker-image build "{{ .ProjectPath }}"
+          - ./scripts/docker-image test "{{ .ProjectPath }}"
+          - ./scripts/docker-image publish "{{ .ProjectPath }}"
+          - ./scripts/docker-image show "{{ .ProjectPath }}"
     {{- end }}
 
     {{- if eq .ProjectType "helm-charts" }}
@@ -62,10 +62,10 @@ definitions:
               - "{{ .ProjectPath }}/**"
         script:
           - *auth
-          - ./scripts/helm-chart build "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/helm-chart test "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/helm-chart pre-publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/helm-chart show "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/helm-chart build "{{ .ProjectPath }}"
+          - ./scripts/helm-chart test "{{ .ProjectPath }}"
+          - ./scripts/helm-chart pre-publish "{{ .ProjectPath }}"
+          - ./scripts/helm-chart show "{{ .ProjectPath }}"
     - step: &publish-{{ .ProjectSlug }}
         name: publish {{ .ProjectPath }}
         condition:
@@ -74,10 +74,10 @@ definitions:
               - "{{ .ProjectPath }}/**"
         script:
           - *auth
-          - ./scripts/helm-chart build "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/helm-chart test "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/helm-chart publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/helm-chart show "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/helm-chart build "{{ .ProjectPath }}"
+          - ./scripts/helm-chart test "{{ .ProjectPath }}"
+          - ./scripts/helm-chart publish "{{ .ProjectPath }}"
+          - ./scripts/helm-chart show "{{ .ProjectPath }}"
     {{- end }}
 
     {{- if eq .ProjectType "terraform-submodules" }}
@@ -91,10 +91,10 @@ definitions:
           - {{ .ProjectSlug }}
         script:
           - *auth
-          - ./scripts/terraform-submodule build "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/terraform-submodule test "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/terraform-submodule pre-publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/terraform-submodule show "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/terraform-submodule build "{{ .ProjectPath }}"
+          - ./scripts/terraform-submodule test "{{ .ProjectPath }}"
+          - ./scripts/terraform-submodule pre-publish "{{ .ProjectPath }}"
+          - ./scripts/terraform-submodule show "{{ .ProjectPath }}"
     - step: &publish-{{ .ProjectSlug }}
         name: publish {{ .ProjectPath }}
         condition:
@@ -105,10 +105,10 @@ definitions:
           - {{ .ProjectSlug }}
         script:
           - *auth
-          - ./scripts/terraform-submodule build "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/terraform-submodule test "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/terraform-submodule publish "{{ .ProjectScope }}" "{{ .ProjectName }}"
-          - ./scripts/terraform-submodule show "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/terraform-submodule build "{{ .ProjectPath }}"
+          - ./scripts/terraform-submodule test "{{ .ProjectPath }}"
+          - ./scripts/terraform-submodule publish "{{ .ProjectPath }}"
+          - ./scripts/terraform-submodule show "{{ .ProjectPath }}"
     {{- end }}
 
     {{- if eq .ProjectType "terraform-modules" }}
@@ -122,7 +122,7 @@ definitions:
           - {{ .ProjectSlug }}
         script:
           - *auth
-          - ./scripts/terraform-module test "{{ .ProjectScope }}" "{{ .ProjectName }}"
+          - ./scripts/terraform-module test "{{ .ProjectPath }}"
           - terraform -chdir="{{ .ProjectPath }}" init -input="false"
           - terraform -chdir="{{ .ProjectPath }}" validate
     - step: &plan-{{ .ProjectSlug }}

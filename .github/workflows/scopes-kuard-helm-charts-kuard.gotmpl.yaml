@@ -35,14 +35,14 @@ jobs:
       - name: helm auth (Google Artifact Registry)
         run: gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
       - name: build
-        run: ./scripts/helm-chart build "kuard" "kuard"
+        run: ./scripts/helm-chart build "scopes/kuard/helm-charts/kuard"
       - name: test
-        run: ./scripts/helm-chart test "kuard" "kuard"
+        run: ./scripts/helm-chart test "scopes/kuard/helm-charts/kuard"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/helm-chart pre-publish "kuard" "kuard"
+        run: ./scripts/helm-chart pre-publish "scopes/kuard/helm-charts/kuard"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/helm-chart publish "kuard" "kuard"
+        run: ./scripts/helm-chart publish "scopes/kuard/helm-charts/kuard"
       - name: show
-        run: ./scripts/helm-chart show "kuard" "kuard"
+        run: ./scripts/helm-chart show "scopes/kuard/helm-charts/kuard"

@@ -50,14 +50,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: build
-        run: ./scripts/docker-image build "kuard" "kuard"
+        run: ./scripts/docker-image build "scopes/kuard/docker-images/kuard"
       - name: test
-        run: ./scripts/docker-image test "kuard" "kuard"
+        run: ./scripts/docker-image test "scopes/kuard/docker-images/kuard"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/docker-image pre-publish "kuard" "kuard"
+        run: ./scripts/docker-image pre-publish "scopes/kuard/docker-images/kuard"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/docker-image publish "kuard" "kuard"
+        run: ./scripts/docker-image publish "scopes/kuard/docker-images/kuard"
       - name: show
-        run: ./scripts/docker-image show "kuard" "kuard"
+        run: ./scripts/docker-image show "scopes/kuard/docker-images/kuard"

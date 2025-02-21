@@ -40,14 +40,14 @@ jobs:
             scopes/core/terraform-submodules/gcp-docker-images-registry/.terraform
             scopes/core/terraform-submodules/gcp-docker-images-registry/.terraform.lock.hcl
       - name: build
-        run: ./scripts/terraform-submodule build "core" "gcp-docker-images-registry"
+        run: ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gcp-docker-images-registry"
       - name: test
-        run: ./scripts/terraform-submodule test "core" "gcp-docker-images-registry"
+        run: ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gcp-docker-images-registry"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/terraform-submodule pre-publish "core" "gcp-docker-images-registry"
+        run: ./scripts/terraform-submodule pre-publish "scopes/core/terraform-submodules/gcp-docker-images-registry"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/terraform-submodule publish "core" "gcp-docker-images-registry"
+        run: ./scripts/terraform-submodule publish "scopes/core/terraform-submodules/gcp-docker-images-registry"
       - name: show
-        run: ./scripts/terraform-submodule show "core" "gcp-docker-images-registry"
+        run: ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gcp-docker-images-registry"

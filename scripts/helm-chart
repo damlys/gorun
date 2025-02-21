@@ -4,12 +4,15 @@ for lib in "$(dirname "$0")"/libs/*.bash; do source "${lib}"; done
 
 function main {
   local cmd="$1"
-  local project_scope="$2"
-  local project_name="$3"
-  local project_path="scopes/${project_scope}/helm-charts/${project_name}"
+  local project_path="$2"
+  local project_scope
+  local project_name
   local chart_repository
   local chart_name
   local chart_version
+
+  project_scope="$(echo "${project_path}" | cut -d '/' -f 2)"
+  project_name="$(echo "${project_path}" | cut -d '/' -f 4)"
 
   chart_repository="$(yq '.annotations.repository' "${project_path}/Chart.yaml")"
   chart_name="$(yq '.name' "${project_path}/Chart.yaml")"
@@ -21,7 +24,7 @@ function main {
     ;;
 
   "test")
-    if ! str::ends_with "${chart_repository}/${chart_name}" "/${project_name}"; then
+    if ! str::ends_with "${chart_repository}/${chart_name}" "/${project_scope}/${project_name}"; then
       log::error "chart does not match naming convention: ${project_path}"
       return 1
     fi

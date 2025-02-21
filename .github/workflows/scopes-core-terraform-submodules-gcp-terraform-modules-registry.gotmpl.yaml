@@ -40,14 +40,14 @@ jobs:
             scopes/core/terraform-submodules/gcp-terraform-modules-registry/.terraform
             scopes/core/terraform-submodules/gcp-terraform-modules-registry/.terraform.lock.hcl
       - name: build
-        run: ./scripts/terraform-submodule build "core" "gcp-terraform-modules-registry"
+        run: ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gcp-terraform-modules-registry"
       - name: test
-        run: ./scripts/terraform-submodule test "core" "gcp-terraform-modules-registry"
+        run: ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gcp-terraform-modules-registry"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/terraform-submodule pre-publish "core" "gcp-terraform-modules-registry"
+        run: ./scripts/terraform-submodule pre-publish "scopes/core/terraform-submodules/gcp-terraform-modules-registry"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/terraform-submodule publish "core" "gcp-terraform-modules-registry"
+        run: ./scripts/terraform-submodule publish "scopes/core/terraform-submodules/gcp-terraform-modules-registry"
       - name: show
-        run: ./scripts/terraform-submodule show "core" "gcp-terraform-modules-registry"
+        run: ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gcp-terraform-modules-registry"

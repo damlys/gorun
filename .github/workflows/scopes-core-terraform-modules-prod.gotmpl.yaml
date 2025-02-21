@@ -39,7 +39,7 @@ jobs:
           path: |
             scopes/core/terraform-modules/prod/.terraform
       - name: test
-        run: ./scripts/terraform-module test "core" "prod"
+        run: ./scripts/terraform-module test "scopes/core/terraform-modules/prod"
       - name: init
         run: terraform -chdir="scopes/core/terraform-modules/prod" init -input=false
       - name: validate

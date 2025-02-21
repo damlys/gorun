@@ -39,7 +39,7 @@ jobs:
           path: |
             scopes/o11y/terraform-modules/test-monitor/.terraform
       - name: test
-        run: ./scripts/terraform-module test "o11y" "test-monitor"
+        run: ./scripts/terraform-module test "scopes/o11y/terraform-modules/test-monitor"
       - name: init
         run: terraform -chdir="scopes/o11y/terraform-modules/test-monitor" init -input=false
       - name: validate

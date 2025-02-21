@@ -4,13 +4,16 @@ for lib in "$(dirname "$0")"/libs/*.bash; do source "${lib}"; done
 
 function main {
   local cmd="$1"
-  local project_scope="$2"
-  local project_name="$3"
-  local project_path="scopes/${project_scope}/docker-images/${project_name}"
+  local project_path="$2"
+  local project_scope
+  local project_name
   local image_repository
   local image_tag
   local image
   local image_aliases
+
+  project_scope="$(echo "${project_path}" | cut -d '/' -f 2)"
+  project_name="$(echo "${project_path}" | cut -d '/' -f 4)"
 
   image_repository="$(yq '.repository' "${project_path}/.project.yaml")"
   image_tag="$(yq '.tag' "${project_path}/.project.yaml")"
@@ -27,7 +30,7 @@ function main {
     ;;
 
   "test")
-    if ! str::ends_with "${image_repository}" "/${project_name}"; then
+    if ! str::ends_with "${image_repository}" "/${project_scope}/${project_name}"; then
       log::error "image does not match naming convention: ${project_path}"
       return 1
     fi

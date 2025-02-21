@@ -40,14 +40,14 @@ jobs:
             scopes/core/terraform-submodules/gcp-terraform-state-bucket/.terraform
             scopes/core/terraform-submodules/gcp-terraform-state-bucket/.terraform.lock.hcl
       - name: build
-        run: ./scripts/terraform-submodule build "core" "gcp-terraform-state-bucket"
+        run: ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
       - name: test
-        run: ./scripts/terraform-submodule test "core" "gcp-terraform-state-bucket"
+        run: ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/terraform-submodule pre-publish "core" "gcp-terraform-state-bucket"
+        run: ./scripts/terraform-submodule pre-publish "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/terraform-submodule publish "core" "gcp-terraform-state-bucket"
+        run: ./scripts/terraform-submodule publish "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
       - name: show
-        run: ./scripts/terraform-submodule show "core" "gcp-terraform-state-bucket"
+        run: ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gcp-terraform-state-bucket"

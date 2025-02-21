@@ -40,14 +40,14 @@ jobs:
             scopes/o11y/terraform-submodules/gcp-availability-monitor/.terraform
             scopes/o11y/terraform-submodules/gcp-availability-monitor/.terraform.lock.hcl
       - name: build
-        run: ./scripts/terraform-submodule build "o11y" "gcp-availability-monitor"
+        run: ./scripts/terraform-submodule build "scopes/o11y/terraform-submodules/gcp-availability-monitor"
       - name: test
-        run: ./scripts/terraform-submodule test "o11y" "gcp-availability-monitor"
+        run: ./scripts/terraform-submodule test "scopes/o11y/terraform-submodules/gcp-availability-monitor"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/terraform-submodule pre-publish "o11y" "gcp-availability-monitor"
+        run: ./scripts/terraform-submodule pre-publish "scopes/o11y/terraform-submodules/gcp-availability-monitor"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/terraform-submodule publish "o11y" "gcp-availability-monitor"
+        run: ./scripts/terraform-submodule publish "scopes/o11y/terraform-submodules/gcp-availability-monitor"
       - name: show
-        run: ./scripts/terraform-submodule show "o11y" "gcp-availability-monitor"
+        run: ./scripts/terraform-submodule show "scopes/o11y/terraform-submodules/gcp-availability-monitor"

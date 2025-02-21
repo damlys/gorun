@@ -39,7 +39,7 @@ jobs:
           path: |
             scopes/kuard/terraform-modules/kuard/.terraform
       - name: test
-        run: ./scripts/terraform-module test "kuard" "kuard"
+        run: ./scripts/terraform-module test "scopes/kuard/terraform-modules/kuard"
       - name: init
         run: terraform -chdir="scopes/kuard/terraform-modules/kuard" init -input=false
       - name: validate

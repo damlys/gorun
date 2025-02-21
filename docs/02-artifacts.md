@@ -3,29 +3,29 @@
 ## Docker images
 
 ```
-$ ./scripts/docker-image build "kuard" "kuard"
-$ ./scripts/docker-image test "kuard" "kuard"
-$ ./scripts/docker-image pre-publish "kuard" "kuard"
-$ ./scripts/docker-image publish "kuard" "kuard"
-$ ./scripts/docker-image show "kuard" "kuard"
+$ ./scripts/docker-image build "scopes/kuard/docker-images/kuard"
+$ ./scripts/docker-image test "scopes/kuard/docker-images/kuard"
+$ ./scripts/docker-image pre-publish "scopes/kuard/docker-images/kuard"
+$ ./scripts/docker-image publish "scopes/kuard/docker-images/kuard"
+$ ./scripts/docker-image show "scopes/kuard/docker-images/kuard"
 ```
 
 ## Helm charts
 
 ```
-$ ./scripts/helm-chart build "kuard" "kuard"
-$ ./scripts/helm-chart test "kuard" "kuard"
-$ ./scripts/helm-chart pre-publish "kuard" "kuard"
-$ ./scripts/helm-chart publish "kuard" "kuard"
-$ ./scripts/helm-chart show "kuard" "kuard"
+$ ./scripts/helm-chart build "scopes/kuard/helm-charts/kuard"
+$ ./scripts/helm-chart test "scopes/kuard/helm-charts/kuard"
+$ ./scripts/helm-chart pre-publish "scopes/kuard/helm-charts/kuard"
+$ ./scripts/helm-chart publish "scopes/kuard/helm-charts/kuard"
+$ ./scripts/helm-chart show "scopes/kuard/helm-charts/kuard"
 ```
 
 ## Terraform submodules
 
 ```
-$ ./scripts/terraform-submodule build "kuard" "kuard"
-$ ./scripts/terraform-submodule test "kuard" "kuard"
-$ ./scripts/terraform-submodule pre-publish "kuard" "kuard"
-$ ./scripts/terraform-submodule publish "kuard" "kuard"
-$ ./scripts/terraform-submodule show "kuard" "kuard"
+$ ./scripts/terraform-submodule build "scopes/kuard/terraform-submodules/kuard"
+$ ./scripts/terraform-submodule test "scopes/kuard/terraform-submodules/kuard"
+$ ./scripts/terraform-submodule pre-publish "scopes/kuard/terraform-submodules/kuard"
+$ ./scripts/terraform-submodule publish "scopes/kuard/terraform-submodules/kuard"
+$ ./scripts/terraform-submodule show "scopes/kuard/terraform-submodules/kuard"
 ```

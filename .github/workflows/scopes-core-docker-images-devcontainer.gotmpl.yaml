@@ -50,14 +50,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: build
-        run: ./scripts/docker-image build "core" "devcontainer"
+        run: ./scripts/docker-image build "scopes/core/docker-images/devcontainer"
       - name: test
-        run: ./scripts/docker-image test "core" "devcontainer"
+        run: ./scripts/docker-image test "scopes/core/docker-images/devcontainer"
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: pre-publish
-        run: ./scripts/docker-image pre-publish "core" "devcontainer"
+        run: ./scripts/docker-image pre-publish "scopes/core/docker-images/devcontainer"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/docker-image publish "core" "devcontainer"
+        run: ./scripts/docker-image publish "scopes/core/docker-images/devcontainer"
       - name: show
-        run: ./scripts/docker-image show "core" "devcontainer"
+        run: ./scripts/docker-image show "scopes/core/docker-images/devcontainer"
