@@ -1,7 +1,7 @@
 {
   "name": "devcontainer-damlys",
 
-  "image": "europe-central2-docker.pkg.dev/gogke-main-0/private-docker-images/gogke/devcontainer:0.0.2",
+  "image": "europe-central2-docker.pkg.dev/gogke-main-0/private-docker-images/gogke/core/devcontainer:0.1.0",
   "runArgs": [
     "--name=devcontainer-damlys",
     "--env-file=${localEnv:HOME}${localEnv:USERPROFILE}/workspace/devcontainer-damlys.env"

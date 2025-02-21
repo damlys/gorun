@@ -9,14 +9,13 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/scopes-o11y-terraform-submodules-gke-lgtm-stack.gotmpl.yaml"
       - "scopes/o11y/terraform-submodules/gke-lgtm-stack/**"
       - "!scopes/o11y/terraform-submodules/gke-lgtm-stack/README.md"
 jobs:
   scopes-o11y-terraform-submodules-gke-lgtm-stack:
     name: scopes/o11y/terraform-submodules/gke-lgtm-stack
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gogcp-devcontainer:0.0.2
+    container: ghcr.io/damlys/gogcp-devcontainer:0.1.0
     permissions:
       contents: write
       id-token: write

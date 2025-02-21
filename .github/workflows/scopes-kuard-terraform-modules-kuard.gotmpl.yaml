@@ -9,14 +9,13 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/scopes-kuard-terraform-modules-kuard.gotmpl.yaml"
       - "scopes/kuard/terraform-modules/kuard/**"
       - "!scopes/kuard/terraform-modules/kuard/README.md"
 jobs:
   scopes-kuard-terraform-modules-kuard:
     name: scopes/kuard/terraform-modules/kuard
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gogcp-devcontainer:0.0.2
+    container: ghcr.io/damlys/gogcp-devcontainer:0.1.0
     permissions:
       contents: write
       id-token: write

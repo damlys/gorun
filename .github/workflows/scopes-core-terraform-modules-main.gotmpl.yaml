@@ -9,14 +9,13 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/scopes-core-terraform-modules-main.gotmpl.yaml"
       - "scopes/core/terraform-modules/main/**"
       - "!scopes/core/terraform-modules/main/README.md"
 jobs:
   scopes-core-terraform-modules-main:
     name: scopes/core/terraform-modules/main
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gogcp-devcontainer:0.0.2
+    container: ghcr.io/damlys/gogcp-devcontainer:0.1.0
     permissions:
       contents: write
       id-token: write

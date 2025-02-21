@@ -9,14 +9,13 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/scopes-core-terraform-submodules-gcp-terraform-state-bucket.gotmpl.yaml"
       - "scopes/core/terraform-submodules/gcp-terraform-state-bucket/**"
       - "!scopes/core/terraform-submodules/gcp-terraform-state-bucket/README.md"
 jobs:
   scopes-core-terraform-submodules-gcp-terraform-state-bucket:
     name: scopes/core/terraform-submodules/gcp-terraform-state-bucket
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gogcp-devcontainer:0.0.2
+    container: ghcr.io/damlys/gogcp-devcontainer:0.1.0
     permissions:
       contents: write
       id-token: write
