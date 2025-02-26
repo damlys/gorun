@@ -2,7 +2,6 @@ name: scopes/o11y/terraform-submodules/gke-lgtm-stack
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-o11y-terraform-submodules-gke-lgtm-stack.gotmpl.yaml"
       - "scopes/o11y/terraform-submodules/gke-lgtm-stack/**"
       - "!scopes/o11y/terraform-submodules/gke-lgtm-stack/README.md"
   push:

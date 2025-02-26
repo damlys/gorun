@@ -2,7 +2,6 @@ name: scopes/core/docker-images/go-rte
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-core-docker-images-go-rte.gotmpl.yaml"
       - "scopes/core/docker-images/go-rte/**"
       - "!scopes/core/docker-images/go-rte/README.md"
   push:

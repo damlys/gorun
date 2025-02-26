@@ -1,0 +1,25 @@
+name: test-bash
+on:
+  pull_request:
+    paths:
+      - "scripts/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/**"
+jobs:
+  test-bash:
+    name: test-bash
+    runs-on: ubuntu-24.04
+    container: ghcr.io/damlys/gogcp-devcontainer:0.1.0
+    steps:
+      - name: git clone
+        uses: actions/checkout@v4
+      - name: git clone fix
+        run: git config --system --add safe.directory /__w/gogcp/gogcp
+
+      - name: format check
+        run: shfmt --indent=2 --diff ./scripts
+      - name: lint check
+        run: shellcheck --exclude=1090 $(find ./scripts -type f)

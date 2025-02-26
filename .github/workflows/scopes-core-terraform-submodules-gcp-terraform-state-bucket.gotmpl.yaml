@@ -2,7 +2,6 @@ name: scopes/core/terraform-submodules/gcp-terraform-state-bucket
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-core-terraform-submodules-gcp-terraform-state-bucket.gotmpl.yaml"
       - "scopes/core/terraform-submodules/gcp-terraform-state-bucket/**"
       - "!scopes/core/terraform-submodules/gcp-terraform-state-bucket/README.md"
   push:

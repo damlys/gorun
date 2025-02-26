@@ -2,7 +2,6 @@ name: scopes/core/terraform-submodules/gcp-terraform-modules-registry
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-core-terraform-submodules-gcp-terraform-modules-registry.gotmpl.yaml"
       - "scopes/core/terraform-submodules/gcp-terraform-modules-registry/**"
       - "!scopes/core/terraform-submodules/gcp-terraform-modules-registry/README.md"
   push:

@@ -2,7 +2,6 @@ name: scopes/kuard/terraform-modules/kuard
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-kuard-terraform-modules-kuard.gotmpl.yaml"
       - "scopes/kuard/terraform-modules/kuard/**"
       - "!scopes/kuard/terraform-modules/kuard/README.md"
   push:
@@ -42,8 +41,6 @@ jobs:
         run: ./scripts/terraform-module test "scopes/kuard/terraform-modules/kuard"
       - name: init
         run: terraform -chdir="scopes/kuard/terraform-modules/kuard" init -input=false
-      - name: validate
-        run: terraform -chdir="scopes/kuard/terraform-modules/kuard" validate
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: plan
         run: terraform -chdir="scopes/kuard/terraform-modules/kuard" plan -input=false

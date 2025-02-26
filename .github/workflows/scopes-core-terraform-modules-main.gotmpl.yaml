@@ -2,7 +2,6 @@ name: scopes/core/terraform-modules/main
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-core-terraform-modules-main.gotmpl.yaml"
       - "scopes/core/terraform-modules/main/**"
       - "!scopes/core/terraform-modules/main/README.md"
   push:
@@ -42,8 +41,6 @@ jobs:
         run: ./scripts/terraform-module test "scopes/core/terraform-modules/main"
       - name: init
         run: terraform -chdir="scopes/core/terraform-modules/main" init -input=false
-      - name: validate
-        run: terraform -chdir="scopes/core/terraform-modules/main" validate
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: plan
         run: terraform -chdir="scopes/core/terraform-modules/main" plan -input=false

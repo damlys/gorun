@@ -2,7 +2,6 @@ name: scopes/core/terraform-submodules/gke-platform
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-core-terraform-submodules-gke-platform.gotmpl.yaml"
       - "scopes/core/terraform-submodules/gke-platform/**"
       - "!scopes/core/terraform-submodules/gke-platform/README.md"
   push:

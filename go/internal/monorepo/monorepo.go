@@ -5,14 +5,16 @@ import (
 	"os"
 	"path"
 	"strings"
+
+	"github.com/damlys/gogcp/go/internal/slug"
 )
 
 type Project struct {
-	ProjectScope string
-	ProjectName  string
-	ProjectType  string
 	ProjectPath  string
 	ProjectSlug  string
+	ProjectScope string
+	ProjectType  string
+	ProjectName  string
 }
 
 func ListProjects(currentPath ...string) ([]Project, error) {
@@ -25,12 +27,13 @@ func ListProjects(currentPath ...string) ([]Project, error) {
 	for _, f := range files {
 		if f.Name() == ".project.yaml" {
 			n := len(currentPath)
+			projectPath := path.Join(currentPath[1:n]...)
 			p := Project{
+				ProjectPath:  projectPath,
+				ProjectSlug:  slug.Make(projectPath),
 				ProjectScope: currentPath[n-3],
-				ProjectName:  currentPath[n-1],
 				ProjectType:  currentPath[n-2],
-				ProjectPath:  path.Join(currentPath[1:n]...),
-				ProjectSlug:  strings.Join(currentPath[1:n], "-"),
+				ProjectName:  currentPath[n-1],
 			}
 			projects = append(projects, p)
 		}

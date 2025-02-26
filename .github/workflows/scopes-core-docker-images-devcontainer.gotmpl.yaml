@@ -2,7 +2,6 @@ name: scopes/core/docker-images/devcontainer
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-core-docker-images-devcontainer.gotmpl.yaml"
       - "scopes/core/docker-images/devcontainer/**"
       - "!scopes/core/docker-images/devcontainer/README.md"
   push:
