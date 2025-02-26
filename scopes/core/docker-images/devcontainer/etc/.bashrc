@@ -6,5 +6,5 @@ if [ -f /etc/bash_completion ]; then
   . /etc/bash_completion
 fi
 
-complete -C /go/bin/gocomplete go
+complete -C /root/go/bin/gocomplete go
 complete -C /usr/local/bin/terraform terraform

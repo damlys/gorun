@@ -102,6 +102,12 @@ commandTests:
     command: gocomplete
     args:
       - --help
+  - name: gocomplete path
+    command: which
+    args:
+      - gocomplete
+    expectedOutput:
+      - /root/go/bin/gocomplete
   - # https://golangci-lint.run/
     name: golangci-lint
     command: golangci-lint
@@ -242,7 +248,7 @@ fileContentTests:
   - name: go shell completion
     path: /root/.bashrc
     expectedContents:
-      - .*complete -C /go/bin/gocomplete go.*
+      - .*complete -C /root/go/bin/gocomplete go.*
   - name: terraform shell completion
     path: /root/.bashrc
     expectedContents:
