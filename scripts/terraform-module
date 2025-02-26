@@ -16,6 +16,8 @@ function main {
       return 1
     fi
     terraform -chdir="${project_path}" fmt -check -recursive .
+    terraform -chdir="${project_path}" init -input=false
+    terraform -chdir="${project_path}" validate
     ;;
 
   *)

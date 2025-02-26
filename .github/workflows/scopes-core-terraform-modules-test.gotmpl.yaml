@@ -42,8 +42,6 @@ jobs:
         run: ./scripts/terraform-module test "scopes/core/terraform-modules/test"
       - name: init
         run: terraform -chdir="scopes/core/terraform-modules/test" init -input=false
-      - name: validate
-        run: terraform -chdir="scopes/core/terraform-modules/test" validate
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: plan
         run: terraform -chdir="scopes/core/terraform-modules/test" plan -input=false

@@ -123,8 +123,6 @@ definitions:
         script:
           - *auth
           - ./scripts/terraform-module test "{{ .ProjectPath }}"
-          - terraform -chdir="{{ .ProjectPath }}" init -input="false"
-          - terraform -chdir="{{ .ProjectPath }}" validate
     - step: &plan-{{ .ProjectSlug }}
         name: plan {{ .ProjectPath }}
         condition:

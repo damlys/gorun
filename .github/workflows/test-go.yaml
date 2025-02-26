@@ -1,0 +1,29 @@
+name: test-go
+on:
+  pull_request:
+    paths:
+      - "go/**/*.go"
+  push:
+    branches:
+      - main
+    paths:
+      - "go/**/*.go"
+jobs:
+  test-go:
+    name: test-go
+    runs-on: ubuntu-24.04
+    container: ghcr.io/damlys/gogcp-devcontainer:0.1.0
+    steps:
+      - name: git clone
+        uses: actions/checkout@v4
+      - name: git clone fix
+        run: git config --system --add safe.directory /__w/gogcp/gogcp
+
+      - name: format check
+        run: files="$(gofmt -l ./go)" && echo "$files" && test -z "$files"
+      - name: lint check (go vet)
+        run: go vet ./go/...
+      - name: lint check (golangci-lint)
+        run: golangci-lint run ./go/...
+      - name: unit tests
+        run: go test -v ./go/...

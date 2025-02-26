@@ -141,8 +141,6 @@ jobs:
         run: ./scripts/terraform-module test "{{ .ProjectPath }}"
       - name: init
         run: terraform -chdir="{{ .ProjectPath }}" init -input=false
-      - name: validate
-        run: terraform -chdir="{{ .ProjectPath }}" validate
       - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         name: plan
         run: terraform -chdir="{{ .ProjectPath }}" plan -input=false

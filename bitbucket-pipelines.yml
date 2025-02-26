@@ -134,8 +134,6 @@ definitions:
         script:
           - *auth
           - ./scripts/terraform-module test "scopes/core/terraform-modules/main"
-          - terraform -chdir="scopes/core/terraform-modules/main" init -input="false"
-          - terraform -chdir="scopes/core/terraform-modules/main" validate
     - step: &plan-scopes-core-terraform-modules-main
         name: plan scopes/core/terraform-modules/main
         condition:
@@ -172,8 +170,6 @@ definitions:
         script:
           - *auth
           - ./scripts/terraform-module test "scopes/core/terraform-modules/prod"
-          - terraform -chdir="scopes/core/terraform-modules/prod" init -input="false"
-          - terraform -chdir="scopes/core/terraform-modules/prod" validate
     - step: &plan-scopes-core-terraform-modules-prod
         name: plan scopes/core/terraform-modules/prod
         condition:
@@ -210,8 +206,6 @@ definitions:
         script:
           - *auth
           - ./scripts/terraform-module test "scopes/core/terraform-modules/test"
-          - terraform -chdir="scopes/core/terraform-modules/test" init -input="false"
-          - terraform -chdir="scopes/core/terraform-modules/test" validate
     - step: &plan-scopes-core-terraform-modules-test
         name: plan scopes/core/terraform-modules/test
         condition:
@@ -528,8 +522,6 @@ definitions:
         script:
           - *auth
           - ./scripts/terraform-module test "scopes/kuard/terraform-modules/kuard"
-          - terraform -chdir="scopes/kuard/terraform-modules/kuard" init -input="false"
-          - terraform -chdir="scopes/kuard/terraform-modules/kuard" validate
     - step: &plan-scopes-kuard-terraform-modules-kuard
         name: plan scopes/kuard/terraform-modules/kuard
         condition:
@@ -622,8 +614,6 @@ definitions:
         script:
           - *auth
           - ./scripts/terraform-module test "scopes/o11y/terraform-modules/test-monitor"
-          - terraform -chdir="scopes/o11y/terraform-modules/test-monitor" init -input="false"
-          - terraform -chdir="scopes/o11y/terraform-modules/test-monitor" validate
     - step: &plan-scopes-o11y-terraform-modules-test-monitor
         name: plan scopes/o11y/terraform-modules/test-monitor
         condition:
