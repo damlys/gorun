@@ -2,7 +2,6 @@ name: scopes/kuard/terraform-submodules/kuard
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-kuard-terraform-submodules-kuard.gotmpl.yaml"
       - "scopes/kuard/terraform-submodules/kuard/**"
       - "!scopes/kuard/terraform-submodules/kuard/README.md"
   push:

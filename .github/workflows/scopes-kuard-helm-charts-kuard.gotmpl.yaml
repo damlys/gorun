@@ -2,7 +2,6 @@ name: scopes/kuard/helm-charts/kuard
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-kuard-helm-charts-kuard.gotmpl.yaml"
       - "scopes/kuard/helm-charts/kuard/**"
       - "!scopes/kuard/helm-charts/kuard/README.md"
   push:

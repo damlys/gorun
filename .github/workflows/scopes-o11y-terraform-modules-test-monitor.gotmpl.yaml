@@ -2,7 +2,6 @@ name: scopes/o11y/terraform-modules/test-monitor
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-o11y-terraform-modules-test-monitor.gotmpl.yaml"
       - "scopes/o11y/terraform-modules/test-monitor/**"
       - "!scopes/o11y/terraform-modules/test-monitor/README.md"
   push:

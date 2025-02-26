@@ -2,7 +2,6 @@ name: scopes/o11y/terraform-submodules/k8s-otel-collectors
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-o11y-terraform-submodules-k8s-otel-collectors.gotmpl.yaml"
       - "scopes/o11y/terraform-submodules/k8s-otel-collectors/**"
       - "!scopes/o11y/terraform-submodules/k8s-otel-collectors/README.md"
   push:

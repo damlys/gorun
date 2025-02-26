@@ -2,7 +2,6 @@ name: scopes/core/terraform-modules/prod
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-core-terraform-modules-prod.gotmpl.yaml"
       - "scopes/core/terraform-modules/prod/**"
       - "!scopes/core/terraform-modules/prod/README.md"
   push:

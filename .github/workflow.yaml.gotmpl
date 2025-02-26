@@ -2,7 +2,6 @@ name: {{ .ProjectPath }}
 on:
   pull_request:
     paths:
-      - ".github/workflows/{{ .ProjectSlug }}.gotmpl.yaml"
       - "{{ .ProjectPath }}/**"
       - "!{{ .ProjectPath }}/README.md"
   push:

@@ -2,7 +2,6 @@ name: scopes/core/terraform-modules/test
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-core-terraform-modules-test.gotmpl.yaml"
       - "scopes/core/terraform-modules/test/**"
       - "!scopes/core/terraform-modules/test/README.md"
   push:

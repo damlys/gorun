@@ -2,7 +2,6 @@ name: scopes/core/terraform-submodules/gke-gateway-route
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-core-terraform-submodules-gke-gateway-route.gotmpl.yaml"
       - "scopes/core/terraform-submodules/gke-gateway-route/**"
       - "!scopes/core/terraform-submodules/gke-gateway-route/README.md"
   push:

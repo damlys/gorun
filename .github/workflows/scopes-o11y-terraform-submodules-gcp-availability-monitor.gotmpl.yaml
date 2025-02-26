@@ -2,7 +2,6 @@ name: scopes/o11y/terraform-submodules/gcp-availability-monitor
 on:
   pull_request:
     paths:
-      - ".github/workflows/scopes-o11y-terraform-submodules-gcp-availability-monitor.gotmpl.yaml"
       - "scopes/o11y/terraform-submodules/gcp-availability-monitor/**"
       - "!scopes/o11y/terraform-submodules/gcp-availability-monitor/README.md"
   push:
