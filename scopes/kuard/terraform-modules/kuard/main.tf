@@ -11,7 +11,7 @@ resource "kubernetes_resource_quota" "pods" {
   }
   spec {
     hard = {
-      pods = 3
+      pods = 4
     }
   }
 }
