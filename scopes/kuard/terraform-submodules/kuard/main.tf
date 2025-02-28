@@ -77,3 +77,41 @@ module "stateless_kuard_gateway_redirect" {
 #######################################
 ### stateful kuard
 #######################################
+
+module "stateful_kuard_service_account" {
+  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-service-account/0.1.0.zip"
+
+  google_project           = var.google_project
+  google_container_cluster = var.google_container_cluster
+  kubernetes_namespace     = var.kubernetes_namespace
+  service_account_name     = "stateful-kuard"
+}
+
+resource "helm_release" "stateful_kuard" {
+  # repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/private-helm-charts/gogke/kuard"
+  chart = "../../helm-charts/stateful-kuard" # "stateful-kuard"
+  # version = "0.1.0"
+
+  namespace = var.kubernetes_namespace.metadata[0].name
+  name      = "stateful-kuard"
+  values    = [templatefile("${path.module}/assets/values.yaml.tftpl", { service_account_name = module.stateful_kuard_service_account.kubernetes_service_account.metadata[0].name })]
+}
+
+data "kubernetes_service" "stateful_kuard" {
+  depends_on = [
+    helm_release.stateful_kuard,
+  ]
+
+  metadata {
+    name      = "stateful-kuard-http-server"
+    namespace = var.kubernetes_namespace.metadata[0].name
+  }
+}
+
+module "stateful_kuard_gateway_route" {
+  source = "../../../core/terraform-submodules/gke-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-gateway-route/0.1.0.zip"
+
+  kubernetes_service = data.kubernetes_service.stateful_kuard
+
+  domain = "stateful-kuard.${var.platform_domain}"
+}
