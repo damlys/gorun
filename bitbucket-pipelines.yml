@@ -9,6 +9,7 @@ definitions:
     scopes-core-terraform-submodules-gcp-project: scopes/core/terraform-submodules/gcp-project/.terraform
     scopes-core-terraform-submodules-gcp-terraform-modules-registry: scopes/core/terraform-submodules/gcp-terraform-modules-registry/.terraform
     scopes-core-terraform-submodules-gcp-terraform-state-bucket: scopes/core/terraform-submodules/gcp-terraform-state-bucket/.terraform
+    scopes-core-terraform-submodules-gke-gateway-redirect: scopes/core/terraform-submodules/gke-gateway-redirect/.terraform
     scopes-core-terraform-submodules-gke-gateway-route: scopes/core/terraform-submodules/gke-gateway-route/.terraform
     scopes-core-terraform-submodules-gke-platform: scopes/core/terraform-submodules/gke-platform/.terraform
     scopes-core-terraform-submodules-gke-service-account: scopes/core/terraform-submodules/gke-service-account/.terraform
@@ -371,6 +372,34 @@ definitions:
           - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
           - ./scripts/terraform-submodule publish "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
           - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
+    - step: &test-scopes-core-terraform-submodules-gke-gateway-redirect
+        name: test scopes/core/terraform-submodules/gke-gateway-redirect
+        condition:
+          changesets:
+            includePaths:
+              - "scopes/core/terraform-submodules/gke-gateway-redirect/**"
+        caches:
+          - scopes-core-terraform-submodules-gke-gateway-redirect
+        script:
+          - *auth
+          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gke-gateway-redirect"
+          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gke-gateway-redirect"
+          - ./scripts/terraform-submodule pre-publish "scopes/core/terraform-submodules/gke-gateway-redirect"
+          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gke-gateway-redirect"
+    - step: &publish-scopes-core-terraform-submodules-gke-gateway-redirect
+        name: publish scopes/core/terraform-submodules/gke-gateway-redirect
+        condition:
+          changesets:
+            includePaths:
+              - "scopes/core/terraform-submodules/gke-gateway-redirect/**"
+        caches:
+          - scopes-core-terraform-submodules-gke-gateway-redirect
+        script:
+          - *auth
+          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gke-gateway-redirect"
+          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gke-gateway-redirect"
+          - ./scripts/terraform-submodule publish "scopes/core/terraform-submodules/gke-gateway-redirect"
+          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gke-gateway-redirect"
     - step: &test-scopes-core-terraform-submodules-gke-gateway-route
         name: test scopes/core/terraform-submodules/gke-gateway-route
         condition:
@@ -739,6 +768,7 @@ pipelines:
           - step: *test-scopes-core-terraform-submodules-gcp-project
           - step: *test-scopes-core-terraform-submodules-gcp-terraform-modules-registry
           - step: *test-scopes-core-terraform-submodules-gcp-terraform-state-bucket
+          - step: *test-scopes-core-terraform-submodules-gke-gateway-redirect
           - step: *test-scopes-core-terraform-submodules-gke-gateway-route
           - step: *test-scopes-core-terraform-submodules-gke-platform
           - step: *test-scopes-core-terraform-submodules-gke-service-account
@@ -768,6 +798,7 @@ pipelines:
           - step: *publish-scopes-core-terraform-submodules-gcp-project
           - step: *publish-scopes-core-terraform-submodules-gcp-terraform-modules-registry
           - step: *publish-scopes-core-terraform-submodules-gcp-terraform-state-bucket
+          - step: *publish-scopes-core-terraform-submodules-gke-gateway-redirect
           - step: *publish-scopes-core-terraform-submodules-gke-gateway-route
           - step: *publish-scopes-core-terraform-submodules-gke-platform
           - step: *publish-scopes-core-terraform-submodules-gke-service-account

@@ -62,3 +62,10 @@ module "availability_monitor" {
 
   notification_emails = ["damlys.test@gmail.com"]
 }
+
+module "gateway_redirect" {
+  source = "../../../core/terraform-submodules/gke-gateway-redirect" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-gateway-redirect/0.1.0.zip"
+
+  old_domain = "old-${var.domain}"
+  new_domain = var.domain
+}

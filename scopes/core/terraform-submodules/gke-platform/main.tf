@@ -518,6 +518,7 @@ resource "kubernetes_manifest" "gke_gateway_redirect_http_to_https" {
     }
     spec = {
       parentRefs = [{
+        group       = "gateway.networking.k8s.io"
         kind        = "Gateway"
         namespace   = kubernetes_manifest.gke_gateway.manifest.metadata.namespace
         name        = kubernetes_manifest.gke_gateway.manifest.metadata.name
