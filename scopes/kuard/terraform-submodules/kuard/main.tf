@@ -24,7 +24,7 @@ module "helm_release" {
   source = "../helm-release" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/kuard/helm-release/0.1.0.zip"
 
   # repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/private-helm-charts/gogke/kuard"
-  chart = "../../helm-charts/kuard" # "kuard"
+  chart = "../../helm-charts/stateless-kuard" # "stateless-kuard"
   # chart_version = "0.1.0"
 
   namespace = var.kubernetes_namespace.metadata[0].name
@@ -48,7 +48,7 @@ module "gateway_route" {
 
   kubernetes_service = data.kubernetes_service.this
 
-  domain = var.domain
+  domain = "stateless-kuard.${var.platform_domain}"
 }
 
 module "availability_monitor" {
@@ -56,7 +56,7 @@ module "availability_monitor" {
 
   google_project = var.google_project
 
-  request_host     = var.domain
+  request_host     = "stateless-kuard.${var.platform_domain}"
   request_path     = "/healthy"
   response_content = "ok"
 
@@ -66,6 +66,6 @@ module "availability_monitor" {
 module "gateway_redirect" {
   source = "../../../core/terraform-submodules/gke-gateway-redirect" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-gateway-redirect/0.1.0.zip"
 
-  old_domain = "old-${var.domain}"
-  new_domain = var.domain
+  old_domain = "kuard.${var.platform_domain}"
+  new_domain = "stateless-kuard.${var.platform_domain}"
 }
