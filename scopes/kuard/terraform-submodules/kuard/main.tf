@@ -103,7 +103,7 @@ data "kubernetes_service" "stateful_kuard" {
   ]
 
   metadata {
-    name      = "stateful-kuard-http-server"
+    name      = "stateful-kuard-http-server-headless"
     namespace = var.kubernetes_namespace.metadata[0].name
   }
 }

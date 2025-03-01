@@ -7,12 +7,13 @@ metadata:
     app.kubernetes.io/component: http-server
     {{- include "kuard.metadataLabels" $ | nindent 4 }}
 spec:
+  serviceName: "{{ .Release.Name }}-http-server-headless"
   selector:
     matchLabels:
       app.kubernetes.io/component: http-server
       {{- include "kuard.selectorLabels" $ | nindent 6 }}
-  replicas: {{ .Values.httpServer.minReplicas }}
-  strategy:
+  replicas: {{ .Values.httpServer.replicas }}
+  updateStrategy:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: {{ .Values.httpServer.maxUnavailable }}
@@ -31,6 +32,33 @@ spec:
       {{- if .Values.serviceAccountName }}
       serviceAccountName: "{{ .Values.serviceAccountName }}"
       {{- end }}
+      initContainers:
+        - name: chown-data
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["chown"]
+          args: ["-R", "1000:3000", "/var/lib/kuard"]
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/kuard
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 32Mi
+          securityContext: # container security context
+            privileged: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - FOWNER
+            runAsNonRoot: false
+            readOnlyRootFilesystem: false
+            runAsUser: 0
+            runAsGroup: 0
       containers:
         - name: http-server
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -43,6 +71,8 @@ spec:
             - name: config-files
               mountPath: /run/secrets/kuard
               readOnly: true
+            - name: data
+              mountPath: /var/lib/kuard
           ports:
             - name: http
               containerPort: 8080
@@ -95,3 +125,13 @@ spec:
                   name: "{{ .Release.Name }}-config-files"
               - secret:
                   name: "{{ .Release.Name }}-config-files"
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        storageClassName: standard-rwo
+        accessModes:
+          - ReadWriteOncePod
+        resources:
+          requests:
+            storage: 1Gi
