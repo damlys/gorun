@@ -12,7 +12,7 @@ jobs:
   test-go:
     name: test-go
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gogcp-devcontainer:0.1.0
+    container: ghcr.io/damlys/gogcp-devcontainer:0.2.0
     steps:
       - name: git clone
         uses: actions/checkout@v4

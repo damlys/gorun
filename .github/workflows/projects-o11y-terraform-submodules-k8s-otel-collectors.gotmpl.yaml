@@ -14,7 +14,7 @@ jobs:
   projects-o11y-terraform-submodules-k8s-otel-collectors:
     name: projects/o11y/terraform-submodules/k8s-otel-collectors
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gogcp-devcontainer:0.1.0
+    container: ghcr.io/damlys/gogcp-devcontainer:0.2.0
     permissions:
       contents: write
       id-token: write
