@@ -33,7 +33,7 @@ spec:
       serviceAccountName: "{{ .Values.serviceAccountName }}"
       {{- end }}
       initContainers:
-        - name: chown-data
+        - name: chown-volume
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           command: ["chown"]
           args: ["-R", "1000:3000", "/var/lib/kuard"]
@@ -47,7 +47,7 @@ spec:
             limits:
               cpu: 100m
               memory: 32Mi
-          securityContext: # container security context
+          securityContext:
             privileged: false
             capabilities:
               drop:
@@ -131,7 +131,7 @@ spec:
       spec:
         storageClassName: standard-rwo
         accessModes:
-          - ReadWriteOncePod
+          - ReadWriteOnce
         resources:
           requests:
             storage: 1Gi
