@@ -10,13 +10,13 @@ desktop.ini
 thumbs.db
 
 # helm
-/scopes/*/helm-charts/*.tgz
+/projects/*/helm-charts/*.tgz
 /third_party/helm/charts/*.tgz
 /third_party/helm/tmpcharts*
 
 # terraform
-/scopes/*/terraform-*/*/.terraform
-/scopes/*/terraform-*/*/*tfstate*
-/scopes/*/terraform-*/*/*tfvars*
-/scopes/*/terraform-submodules/*.zip
-/scopes/*/terraform-submodules/*/.terraform.lock.hcl
+/projects/*/terraform-*/*/.terraform
+/projects/*/terraform-*/*/*tfstate*
+/projects/*/terraform-*/*/*tfvars*
+/projects/*/terraform-submodules/*.zip
+/projects/*/terraform-submodules/*/.terraform.lock.hcl

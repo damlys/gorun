@@ -1,25 +1,25 @@
 image: damlys/gogcp-devcontainer:0.1.0
 definitions:
   caches:
-    scopes-core-terraform-modules-main: scopes/core/terraform-modules/main/.terraform
-    scopes-core-terraform-modules-prod: scopes/core/terraform-modules/prod/.terraform
-    scopes-core-terraform-modules-test: scopes/core/terraform-modules/test/.terraform
-    scopes-core-terraform-submodules-gcp-docker-images-registry: scopes/core/terraform-submodules/gcp-docker-images-registry/.terraform
-    scopes-core-terraform-submodules-gcp-helm-charts-registry: scopes/core/terraform-submodules/gcp-helm-charts-registry/.terraform
-    scopes-core-terraform-submodules-gcp-project: scopes/core/terraform-submodules/gcp-project/.terraform
-    scopes-core-terraform-submodules-gcp-terraform-modules-registry: scopes/core/terraform-submodules/gcp-terraform-modules-registry/.terraform
-    scopes-core-terraform-submodules-gcp-terraform-state-bucket: scopes/core/terraform-submodules/gcp-terraform-state-bucket/.terraform
-    scopes-core-terraform-submodules-gke-gateway-redirect: scopes/core/terraform-submodules/gke-gateway-redirect/.terraform
-    scopes-core-terraform-submodules-gke-gateway-route: scopes/core/terraform-submodules/gke-gateway-route/.terraform
-    scopes-core-terraform-submodules-gke-platform: scopes/core/terraform-submodules/gke-platform/.terraform
-    scopes-core-terraform-submodules-gke-service-account: scopes/core/terraform-submodules/gke-service-account/.terraform
-    scopes-kuard-terraform-modules-kuard: scopes/kuard/terraform-modules/kuard/.terraform
-    scopes-kuard-terraform-submodules-helm-release: scopes/kuard/terraform-submodules/helm-release/.terraform
-    scopes-kuard-terraform-submodules-kuard: scopes/kuard/terraform-submodules/kuard/.terraform
-    scopes-o11y-terraform-modules-test-monitor: scopes/o11y/terraform-modules/test-monitor/.terraform
-    scopes-o11y-terraform-submodules-gcp-availability-monitor: scopes/o11y/terraform-submodules/gcp-availability-monitor/.terraform
-    scopes-o11y-terraform-submodules-gke-lgtm-stack: scopes/o11y/terraform-submodules/gke-lgtm-stack/.terraform
-    scopes-o11y-terraform-submodules-k8s-otel-collectors: scopes/o11y/terraform-submodules/k8s-otel-collectors/.terraform
+    projects-core-terraform-modules-main: projects/core/terraform-modules/main/.terraform
+    projects-core-terraform-modules-prod: projects/core/terraform-modules/prod/.terraform
+    projects-core-terraform-modules-test: projects/core/terraform-modules/test/.terraform
+    projects-core-terraform-submodules-gcp-docker-images-registry: projects/core/terraform-submodules/gcp-docker-images-registry/.terraform
+    projects-core-terraform-submodules-gcp-helm-charts-registry: projects/core/terraform-submodules/gcp-helm-charts-registry/.terraform
+    projects-core-terraform-submodules-gcp-project: projects/core/terraform-submodules/gcp-project/.terraform
+    projects-core-terraform-submodules-gcp-terraform-modules-registry: projects/core/terraform-submodules/gcp-terraform-modules-registry/.terraform
+    projects-core-terraform-submodules-gcp-terraform-state-bucket: projects/core/terraform-submodules/gcp-terraform-state-bucket/.terraform
+    projects-core-terraform-submodules-gke-gateway-redirect: projects/core/terraform-submodules/gke-gateway-redirect/.terraform
+    projects-core-terraform-submodules-gke-gateway-route: projects/core/terraform-submodules/gke-gateway-route/.terraform
+    projects-core-terraform-submodules-gke-platform: projects/core/terraform-submodules/gke-platform/.terraform
+    projects-core-terraform-submodules-gke-service-account: projects/core/terraform-submodules/gke-service-account/.terraform
+    projects-kuard-terraform-modules-kuard: projects/kuard/terraform-modules/kuard/.terraform
+    projects-kuard-terraform-submodules-helm-release: projects/kuard/terraform-submodules/helm-release/.terraform
+    projects-kuard-terraform-submodules-kuard: projects/kuard/terraform-submodules/kuard/.terraform
+    projects-o11y-terraform-modules-test-monitor: projects/o11y/terraform-modules/test-monitor/.terraform
+    projects-o11y-terraform-submodules-gcp-availability-monitor: projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform
+    projects-o11y-terraform-submodules-gke-lgtm-stack: projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform
+    projects-o11y-terraform-submodules-k8s-otel-collectors: projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform
   scripts:
     - &auth |
       set -e
@@ -28,822 +28,822 @@ definitions:
       gcloud auth configure-docker "europe-central2-docker.pkg.dev"
       gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
   steps:
-    - step: &test-scopes-core-docker-images-devcontainer
-        name: test scopes/core/docker-images/devcontainer
+    - step: &test-projects-core-docker-images-devcontainer
+        name: test projects/core/docker-images/devcontainer
         condition:
           changesets:
             includePaths:
-              - "scopes/core/docker-images/devcontainer/**"
+              - "projects/core/docker-images/devcontainer/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "scopes/core/docker-images/devcontainer"
-          - ./scripts/docker-image test "scopes/core/docker-images/devcontainer"
-          - ./scripts/docker-image pre-publish "scopes/core/docker-images/devcontainer"
-          - ./scripts/docker-image show "scopes/core/docker-images/devcontainer"
-    - step: &publish-scopes-core-docker-images-devcontainer
-        name: publish scopes/core/docker-images/devcontainer
+          - ./scripts/docker-image build "projects/core/docker-images/devcontainer"
+          - ./scripts/docker-image test "projects/core/docker-images/devcontainer"
+          - ./scripts/docker-image pre-publish "projects/core/docker-images/devcontainer"
+          - ./scripts/docker-image show "projects/core/docker-images/devcontainer"
+    - step: &publish-projects-core-docker-images-devcontainer
+        name: publish projects/core/docker-images/devcontainer
         condition:
           changesets:
             includePaths:
-              - "scopes/core/docker-images/devcontainer/**"
+              - "projects/core/docker-images/devcontainer/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "scopes/core/docker-images/devcontainer"
-          - ./scripts/docker-image test "scopes/core/docker-images/devcontainer"
-          - ./scripts/docker-image publish "scopes/core/docker-images/devcontainer"
-          - ./scripts/docker-image show "scopes/core/docker-images/devcontainer"
-    - step: &test-scopes-core-docker-images-go-rte
-        name: test scopes/core/docker-images/go-rte
+          - ./scripts/docker-image build "projects/core/docker-images/devcontainer"
+          - ./scripts/docker-image test "projects/core/docker-images/devcontainer"
+          - ./scripts/docker-image publish "projects/core/docker-images/devcontainer"
+          - ./scripts/docker-image show "projects/core/docker-images/devcontainer"
+    - step: &test-projects-core-docker-images-go-rte
+        name: test projects/core/docker-images/go-rte
         condition:
           changesets:
             includePaths:
-              - "scopes/core/docker-images/go-rte/**"
+              - "projects/core/docker-images/go-rte/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "scopes/core/docker-images/go-rte"
-          - ./scripts/docker-image test "scopes/core/docker-images/go-rte"
-          - ./scripts/docker-image pre-publish "scopes/core/docker-images/go-rte"
-          - ./scripts/docker-image show "scopes/core/docker-images/go-rte"
-    - step: &publish-scopes-core-docker-images-go-rte
-        name: publish scopes/core/docker-images/go-rte
+          - ./scripts/docker-image build "projects/core/docker-images/go-rte"
+          - ./scripts/docker-image test "projects/core/docker-images/go-rte"
+          - ./scripts/docker-image pre-publish "projects/core/docker-images/go-rte"
+          - ./scripts/docker-image show "projects/core/docker-images/go-rte"
+    - step: &publish-projects-core-docker-images-go-rte
+        name: publish projects/core/docker-images/go-rte
         condition:
           changesets:
             includePaths:
-              - "scopes/core/docker-images/go-rte/**"
+              - "projects/core/docker-images/go-rte/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "scopes/core/docker-images/go-rte"
-          - ./scripts/docker-image test "scopes/core/docker-images/go-rte"
-          - ./scripts/docker-image publish "scopes/core/docker-images/go-rte"
-          - ./scripts/docker-image show "scopes/core/docker-images/go-rte"
-    - step: &test-scopes-core-docker-images-go-sdk
-        name: test scopes/core/docker-images/go-sdk
+          - ./scripts/docker-image build "projects/core/docker-images/go-rte"
+          - ./scripts/docker-image test "projects/core/docker-images/go-rte"
+          - ./scripts/docker-image publish "projects/core/docker-images/go-rte"
+          - ./scripts/docker-image show "projects/core/docker-images/go-rte"
+    - step: &test-projects-core-docker-images-go-sdk
+        name: test projects/core/docker-images/go-sdk
         condition:
           changesets:
             includePaths:
-              - "scopes/core/docker-images/go-sdk/**"
+              - "projects/core/docker-images/go-sdk/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "scopes/core/docker-images/go-sdk"
-          - ./scripts/docker-image test "scopes/core/docker-images/go-sdk"
-          - ./scripts/docker-image pre-publish "scopes/core/docker-images/go-sdk"
-          - ./scripts/docker-image show "scopes/core/docker-images/go-sdk"
-    - step: &publish-scopes-core-docker-images-go-sdk
-        name: publish scopes/core/docker-images/go-sdk
+          - ./scripts/docker-image build "projects/core/docker-images/go-sdk"
+          - ./scripts/docker-image test "projects/core/docker-images/go-sdk"
+          - ./scripts/docker-image pre-publish "projects/core/docker-images/go-sdk"
+          - ./scripts/docker-image show "projects/core/docker-images/go-sdk"
+    - step: &publish-projects-core-docker-images-go-sdk
+        name: publish projects/core/docker-images/go-sdk
         condition:
           changesets:
             includePaths:
-              - "scopes/core/docker-images/go-sdk/**"
+              - "projects/core/docker-images/go-sdk/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "scopes/core/docker-images/go-sdk"
-          - ./scripts/docker-image test "scopes/core/docker-images/go-sdk"
-          - ./scripts/docker-image publish "scopes/core/docker-images/go-sdk"
-          - ./scripts/docker-image show "scopes/core/docker-images/go-sdk"
-    - step: &validate-scopes-core-terraform-modules-main
-        name: validate scopes/core/terraform-modules/main
+          - ./scripts/docker-image build "projects/core/docker-images/go-sdk"
+          - ./scripts/docker-image test "projects/core/docker-images/go-sdk"
+          - ./scripts/docker-image publish "projects/core/docker-images/go-sdk"
+          - ./scripts/docker-image show "projects/core/docker-images/go-sdk"
+    - step: &validate-projects-core-terraform-modules-main
+        name: validate projects/core/terraform-modules/main
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-modules/main/**"
+              - "projects/core/terraform-modules/main/**"
         caches:
-          - scopes-core-terraform-modules-main
+          - projects-core-terraform-modules-main
         script:
           - *auth
-          - ./scripts/terraform-module test "scopes/core/terraform-modules/main"
-    - step: &plan-scopes-core-terraform-modules-main
-        name: plan scopes/core/terraform-modules/main
+          - ./scripts/terraform-module test "projects/core/terraform-modules/main"
+    - step: &plan-projects-core-terraform-modules-main
+        name: plan projects/core/terraform-modules/main
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-modules/main/**"
+              - "projects/core/terraform-modules/main/**"
         caches:
-          - scopes-core-terraform-modules-main
+          - projects-core-terraform-modules-main
         script:
           - *auth
-          - terraform -chdir="scopes/core/terraform-modules/main" init -input="false"
-          - terraform -chdir="scopes/core/terraform-modules/main" plan -input="false"
-    - step: &apply-scopes-core-terraform-modules-main
-        name: apply scopes/core/terraform-modules/main
+          - terraform -chdir="projects/core/terraform-modules/main" init -input="false"
+          - terraform -chdir="projects/core/terraform-modules/main" plan -input="false"
+    - step: &apply-projects-core-terraform-modules-main
+        name: apply projects/core/terraform-modules/main
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-modules/main/**"
+              - "projects/core/terraform-modules/main/**"
         caches:
-          - scopes-core-terraform-modules-main
+          - projects-core-terraform-modules-main
         script:
           - *auth
-          - terraform -chdir="scopes/core/terraform-modules/main" init -input="false"
-          - terraform -chdir="scopes/core/terraform-modules/main" apply -input="false" -auto-approve
+          - terraform -chdir="projects/core/terraform-modules/main" init -input="false"
+          - terraform -chdir="projects/core/terraform-modules/main" apply -input="false" -auto-approve
         trigger: manual
-    - step: &validate-scopes-core-terraform-modules-prod
-        name: validate scopes/core/terraform-modules/prod
+    - step: &validate-projects-core-terraform-modules-prod
+        name: validate projects/core/terraform-modules/prod
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-modules/prod/**"
+              - "projects/core/terraform-modules/prod/**"
         caches:
-          - scopes-core-terraform-modules-prod
+          - projects-core-terraform-modules-prod
         script:
           - *auth
-          - ./scripts/terraform-module test "scopes/core/terraform-modules/prod"
-    - step: &plan-scopes-core-terraform-modules-prod
-        name: plan scopes/core/terraform-modules/prod
+          - ./scripts/terraform-module test "projects/core/terraform-modules/prod"
+    - step: &plan-projects-core-terraform-modules-prod
+        name: plan projects/core/terraform-modules/prod
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-modules/prod/**"
+              - "projects/core/terraform-modules/prod/**"
         caches:
-          - scopes-core-terraform-modules-prod
+          - projects-core-terraform-modules-prod
         script:
           - *auth
-          - terraform -chdir="scopes/core/terraform-modules/prod" init -input="false"
-          - terraform -chdir="scopes/core/terraform-modules/prod" plan -input="false"
-    - step: &apply-scopes-core-terraform-modules-prod
-        name: apply scopes/core/terraform-modules/prod
+          - terraform -chdir="projects/core/terraform-modules/prod" init -input="false"
+          - terraform -chdir="projects/core/terraform-modules/prod" plan -input="false"
+    - step: &apply-projects-core-terraform-modules-prod
+        name: apply projects/core/terraform-modules/prod
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-modules/prod/**"
+              - "projects/core/terraform-modules/prod/**"
         caches:
-          - scopes-core-terraform-modules-prod
+          - projects-core-terraform-modules-prod
         script:
           - *auth
-          - terraform -chdir="scopes/core/terraform-modules/prod" init -input="false"
-          - terraform -chdir="scopes/core/terraform-modules/prod" apply -input="false" -auto-approve
+          - terraform -chdir="projects/core/terraform-modules/prod" init -input="false"
+          - terraform -chdir="projects/core/terraform-modules/prod" apply -input="false" -auto-approve
         trigger: manual
-    - step: &validate-scopes-core-terraform-modules-test
-        name: validate scopes/core/terraform-modules/test
+    - step: &validate-projects-core-terraform-modules-test
+        name: validate projects/core/terraform-modules/test
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-modules/test/**"
+              - "projects/core/terraform-modules/test/**"
         caches:
-          - scopes-core-terraform-modules-test
+          - projects-core-terraform-modules-test
         script:
           - *auth
-          - ./scripts/terraform-module test "scopes/core/terraform-modules/test"
-    - step: &plan-scopes-core-terraform-modules-test
-        name: plan scopes/core/terraform-modules/test
+          - ./scripts/terraform-module test "projects/core/terraform-modules/test"
+    - step: &plan-projects-core-terraform-modules-test
+        name: plan projects/core/terraform-modules/test
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-modules/test/**"
+              - "projects/core/terraform-modules/test/**"
         caches:
-          - scopes-core-terraform-modules-test
+          - projects-core-terraform-modules-test
         script:
           - *auth
-          - terraform -chdir="scopes/core/terraform-modules/test" init -input="false"
-          - terraform -chdir="scopes/core/terraform-modules/test" plan -input="false"
-    - step: &apply-scopes-core-terraform-modules-test
-        name: apply scopes/core/terraform-modules/test
+          - terraform -chdir="projects/core/terraform-modules/test" init -input="false"
+          - terraform -chdir="projects/core/terraform-modules/test" plan -input="false"
+    - step: &apply-projects-core-terraform-modules-test
+        name: apply projects/core/terraform-modules/test
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-modules/test/**"
+              - "projects/core/terraform-modules/test/**"
         caches:
-          - scopes-core-terraform-modules-test
+          - projects-core-terraform-modules-test
         script:
           - *auth
-          - terraform -chdir="scopes/core/terraform-modules/test" init -input="false"
-          - terraform -chdir="scopes/core/terraform-modules/test" apply -input="false" -auto-approve
+          - terraform -chdir="projects/core/terraform-modules/test" init -input="false"
+          - terraform -chdir="projects/core/terraform-modules/test" apply -input="false" -auto-approve
         trigger: manual
-    - step: &test-scopes-core-terraform-submodules-gcp-docker-images-registry
-        name: test scopes/core/terraform-submodules/gcp-docker-images-registry
+    - step: &test-projects-core-terraform-submodules-gcp-docker-images-registry
+        name: test projects/core/terraform-submodules/gcp-docker-images-registry
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gcp-docker-images-registry/**"
+              - "projects/core/terraform-submodules/gcp-docker-images-registry/**"
         caches:
-          - scopes-core-terraform-submodules-gcp-docker-images-registry
+          - projects-core-terraform-submodules-gcp-docker-images-registry
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gcp-docker-images-registry"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gcp-docker-images-registry"
-          - ./scripts/terraform-submodule pre-publish "scopes/core/terraform-submodules/gcp-docker-images-registry"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gcp-docker-images-registry"
-    - step: &publish-scopes-core-terraform-submodules-gcp-docker-images-registry
-        name: publish scopes/core/terraform-submodules/gcp-docker-images-registry
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-docker-images-registry"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-docker-images-registry"
+          - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gcp-docker-images-registry"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-docker-images-registry"
+    - step: &publish-projects-core-terraform-submodules-gcp-docker-images-registry
+        name: publish projects/core/terraform-submodules/gcp-docker-images-registry
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gcp-docker-images-registry/**"
+              - "projects/core/terraform-submodules/gcp-docker-images-registry/**"
         caches:
-          - scopes-core-terraform-submodules-gcp-docker-images-registry
+          - projects-core-terraform-submodules-gcp-docker-images-registry
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gcp-docker-images-registry"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gcp-docker-images-registry"
-          - ./scripts/terraform-submodule publish "scopes/core/terraform-submodules/gcp-docker-images-registry"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gcp-docker-images-registry"
-    - step: &test-scopes-core-terraform-submodules-gcp-helm-charts-registry
-        name: test scopes/core/terraform-submodules/gcp-helm-charts-registry
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-docker-images-registry"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-docker-images-registry"
+          - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gcp-docker-images-registry"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-docker-images-registry"
+    - step: &test-projects-core-terraform-submodules-gcp-helm-charts-registry
+        name: test projects/core/terraform-submodules/gcp-helm-charts-registry
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gcp-helm-charts-registry/**"
+              - "projects/core/terraform-submodules/gcp-helm-charts-registry/**"
         caches:
-          - scopes-core-terraform-submodules-gcp-helm-charts-registry
+          - projects-core-terraform-submodules-gcp-helm-charts-registry
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gcp-helm-charts-registry"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gcp-helm-charts-registry"
-          - ./scripts/terraform-submodule pre-publish "scopes/core/terraform-submodules/gcp-helm-charts-registry"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gcp-helm-charts-registry"
-    - step: &publish-scopes-core-terraform-submodules-gcp-helm-charts-registry
-        name: publish scopes/core/terraform-submodules/gcp-helm-charts-registry
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-helm-charts-registry"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-helm-charts-registry"
+          - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gcp-helm-charts-registry"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-helm-charts-registry"
+    - step: &publish-projects-core-terraform-submodules-gcp-helm-charts-registry
+        name: publish projects/core/terraform-submodules/gcp-helm-charts-registry
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gcp-helm-charts-registry/**"
+              - "projects/core/terraform-submodules/gcp-helm-charts-registry/**"
         caches:
-          - scopes-core-terraform-submodules-gcp-helm-charts-registry
+          - projects-core-terraform-submodules-gcp-helm-charts-registry
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gcp-helm-charts-registry"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gcp-helm-charts-registry"
-          - ./scripts/terraform-submodule publish "scopes/core/terraform-submodules/gcp-helm-charts-registry"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gcp-helm-charts-registry"
-    - step: &test-scopes-core-terraform-submodules-gcp-project
-        name: test scopes/core/terraform-submodules/gcp-project
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-helm-charts-registry"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-helm-charts-registry"
+          - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gcp-helm-charts-registry"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-helm-charts-registry"
+    - step: &test-projects-core-terraform-submodules-gcp-project
+        name: test projects/core/terraform-submodules/gcp-project
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gcp-project/**"
+              - "projects/core/terraform-submodules/gcp-project/**"
         caches:
-          - scopes-core-terraform-submodules-gcp-project
+          - projects-core-terraform-submodules-gcp-project
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gcp-project"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gcp-project"
-          - ./scripts/terraform-submodule pre-publish "scopes/core/terraform-submodules/gcp-project"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gcp-project"
-    - step: &publish-scopes-core-terraform-submodules-gcp-project
-        name: publish scopes/core/terraform-submodules/gcp-project
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-project"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-project"
+          - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gcp-project"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-project"
+    - step: &publish-projects-core-terraform-submodules-gcp-project
+        name: publish projects/core/terraform-submodules/gcp-project
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gcp-project/**"
+              - "projects/core/terraform-submodules/gcp-project/**"
         caches:
-          - scopes-core-terraform-submodules-gcp-project
+          - projects-core-terraform-submodules-gcp-project
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gcp-project"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gcp-project"
-          - ./scripts/terraform-submodule publish "scopes/core/terraform-submodules/gcp-project"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gcp-project"
-    - step: &test-scopes-core-terraform-submodules-gcp-terraform-modules-registry
-        name: test scopes/core/terraform-submodules/gcp-terraform-modules-registry
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-project"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-project"
+          - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gcp-project"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-project"
+    - step: &test-projects-core-terraform-submodules-gcp-terraform-modules-registry
+        name: test projects/core/terraform-submodules/gcp-terraform-modules-registry
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gcp-terraform-modules-registry/**"
+              - "projects/core/terraform-submodules/gcp-terraform-modules-registry/**"
         caches:
-          - scopes-core-terraform-submodules-gcp-terraform-modules-registry
+          - projects-core-terraform-submodules-gcp-terraform-modules-registry
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gcp-terraform-modules-registry"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gcp-terraform-modules-registry"
-          - ./scripts/terraform-submodule pre-publish "scopes/core/terraform-submodules/gcp-terraform-modules-registry"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gcp-terraform-modules-registry"
-    - step: &publish-scopes-core-terraform-submodules-gcp-terraform-modules-registry
-        name: publish scopes/core/terraform-submodules/gcp-terraform-modules-registry
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+          - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+    - step: &publish-projects-core-terraform-submodules-gcp-terraform-modules-registry
+        name: publish projects/core/terraform-submodules/gcp-terraform-modules-registry
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gcp-terraform-modules-registry/**"
+              - "projects/core/terraform-submodules/gcp-terraform-modules-registry/**"
         caches:
-          - scopes-core-terraform-submodules-gcp-terraform-modules-registry
+          - projects-core-terraform-submodules-gcp-terraform-modules-registry
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gcp-terraform-modules-registry"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gcp-terraform-modules-registry"
-          - ./scripts/terraform-submodule publish "scopes/core/terraform-submodules/gcp-terraform-modules-registry"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gcp-terraform-modules-registry"
-    - step: &test-scopes-core-terraform-submodules-gcp-terraform-state-bucket
-        name: test scopes/core/terraform-submodules/gcp-terraform-state-bucket
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+          - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+    - step: &test-projects-core-terraform-submodules-gcp-terraform-state-bucket
+        name: test projects/core/terraform-submodules/gcp-terraform-state-bucket
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gcp-terraform-state-bucket/**"
+              - "projects/core/terraform-submodules/gcp-terraform-state-bucket/**"
         caches:
-          - scopes-core-terraform-submodules-gcp-terraform-state-bucket
+          - projects-core-terraform-submodules-gcp-terraform-state-bucket
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
-          - ./scripts/terraform-submodule pre-publish "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
-    - step: &publish-scopes-core-terraform-submodules-gcp-terraform-state-bucket
-        name: publish scopes/core/terraform-submodules/gcp-terraform-state-bucket
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+          - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+    - step: &publish-projects-core-terraform-submodules-gcp-terraform-state-bucket
+        name: publish projects/core/terraform-submodules/gcp-terraform-state-bucket
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gcp-terraform-state-bucket/**"
+              - "projects/core/terraform-submodules/gcp-terraform-state-bucket/**"
         caches:
-          - scopes-core-terraform-submodules-gcp-terraform-state-bucket
+          - projects-core-terraform-submodules-gcp-terraform-state-bucket
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
-          - ./scripts/terraform-submodule publish "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gcp-terraform-state-bucket"
-    - step: &test-scopes-core-terraform-submodules-gke-gateway-redirect
-        name: test scopes/core/terraform-submodules/gke-gateway-redirect
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+          - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+    - step: &test-projects-core-terraform-submodules-gke-gateway-redirect
+        name: test projects/core/terraform-submodules/gke-gateway-redirect
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gke-gateway-redirect/**"
+              - "projects/core/terraform-submodules/gke-gateway-redirect/**"
         caches:
-          - scopes-core-terraform-submodules-gke-gateway-redirect
+          - projects-core-terraform-submodules-gke-gateway-redirect
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gke-gateway-redirect"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gke-gateway-redirect"
-          - ./scripts/terraform-submodule pre-publish "scopes/core/terraform-submodules/gke-gateway-redirect"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gke-gateway-redirect"
-    - step: &publish-scopes-core-terraform-submodules-gke-gateway-redirect
-        name: publish scopes/core/terraform-submodules/gke-gateway-redirect
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-gateway-redirect"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gke-gateway-redirect"
+          - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gke-gateway-redirect"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gke-gateway-redirect"
+    - step: &publish-projects-core-terraform-submodules-gke-gateway-redirect
+        name: publish projects/core/terraform-submodules/gke-gateway-redirect
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gke-gateway-redirect/**"
+              - "projects/core/terraform-submodules/gke-gateway-redirect/**"
         caches:
-          - scopes-core-terraform-submodules-gke-gateway-redirect
+          - projects-core-terraform-submodules-gke-gateway-redirect
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gke-gateway-redirect"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gke-gateway-redirect"
-          - ./scripts/terraform-submodule publish "scopes/core/terraform-submodules/gke-gateway-redirect"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gke-gateway-redirect"
-    - step: &test-scopes-core-terraform-submodules-gke-gateway-route
-        name: test scopes/core/terraform-submodules/gke-gateway-route
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-gateway-redirect"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gke-gateway-redirect"
+          - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gke-gateway-redirect"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gke-gateway-redirect"
+    - step: &test-projects-core-terraform-submodules-gke-gateway-route
+        name: test projects/core/terraform-submodules/gke-gateway-route
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gke-gateway-route/**"
+              - "projects/core/terraform-submodules/gke-gateway-route/**"
         caches:
-          - scopes-core-terraform-submodules-gke-gateway-route
+          - projects-core-terraform-submodules-gke-gateway-route
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gke-gateway-route"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gke-gateway-route"
-          - ./scripts/terraform-submodule pre-publish "scopes/core/terraform-submodules/gke-gateway-route"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gke-gateway-route"
-    - step: &publish-scopes-core-terraform-submodules-gke-gateway-route
-        name: publish scopes/core/terraform-submodules/gke-gateway-route
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-gateway-route"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gke-gateway-route"
+          - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gke-gateway-route"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gke-gateway-route"
+    - step: &publish-projects-core-terraform-submodules-gke-gateway-route
+        name: publish projects/core/terraform-submodules/gke-gateway-route
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gke-gateway-route/**"
+              - "projects/core/terraform-submodules/gke-gateway-route/**"
         caches:
-          - scopes-core-terraform-submodules-gke-gateway-route
+          - projects-core-terraform-submodules-gke-gateway-route
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gke-gateway-route"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gke-gateway-route"
-          - ./scripts/terraform-submodule publish "scopes/core/terraform-submodules/gke-gateway-route"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gke-gateway-route"
-    - step: &test-scopes-core-terraform-submodules-gke-platform
-        name: test scopes/core/terraform-submodules/gke-platform
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-gateway-route"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gke-gateway-route"
+          - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gke-gateway-route"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gke-gateway-route"
+    - step: &test-projects-core-terraform-submodules-gke-platform
+        name: test projects/core/terraform-submodules/gke-platform
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gke-platform/**"
+              - "projects/core/terraform-submodules/gke-platform/**"
         caches:
-          - scopes-core-terraform-submodules-gke-platform
+          - projects-core-terraform-submodules-gke-platform
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gke-platform"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gke-platform"
-          - ./scripts/terraform-submodule pre-publish "scopes/core/terraform-submodules/gke-platform"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gke-platform"
-    - step: &publish-scopes-core-terraform-submodules-gke-platform
-        name: publish scopes/core/terraform-submodules/gke-platform
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-platform"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gke-platform"
+          - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gke-platform"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gke-platform"
+    - step: &publish-projects-core-terraform-submodules-gke-platform
+        name: publish projects/core/terraform-submodules/gke-platform
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gke-platform/**"
+              - "projects/core/terraform-submodules/gke-platform/**"
         caches:
-          - scopes-core-terraform-submodules-gke-platform
+          - projects-core-terraform-submodules-gke-platform
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gke-platform"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gke-platform"
-          - ./scripts/terraform-submodule publish "scopes/core/terraform-submodules/gke-platform"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gke-platform"
-    - step: &test-scopes-core-terraform-submodules-gke-service-account
-        name: test scopes/core/terraform-submodules/gke-service-account
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-platform"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gke-platform"
+          - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gke-platform"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gke-platform"
+    - step: &test-projects-core-terraform-submodules-gke-service-account
+        name: test projects/core/terraform-submodules/gke-service-account
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gke-service-account/**"
+              - "projects/core/terraform-submodules/gke-service-account/**"
         caches:
-          - scopes-core-terraform-submodules-gke-service-account
+          - projects-core-terraform-submodules-gke-service-account
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gke-service-account"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gke-service-account"
-          - ./scripts/terraform-submodule pre-publish "scopes/core/terraform-submodules/gke-service-account"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gke-service-account"
-    - step: &publish-scopes-core-terraform-submodules-gke-service-account
-        name: publish scopes/core/terraform-submodules/gke-service-account
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-service-account"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gke-service-account"
+          - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gke-service-account"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gke-service-account"
+    - step: &publish-projects-core-terraform-submodules-gke-service-account
+        name: publish projects/core/terraform-submodules/gke-service-account
         condition:
           changesets:
             includePaths:
-              - "scopes/core/terraform-submodules/gke-service-account/**"
+              - "projects/core/terraform-submodules/gke-service-account/**"
         caches:
-          - scopes-core-terraform-submodules-gke-service-account
+          - projects-core-terraform-submodules-gke-service-account
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/core/terraform-submodules/gke-service-account"
-          - ./scripts/terraform-submodule test "scopes/core/terraform-submodules/gke-service-account"
-          - ./scripts/terraform-submodule publish "scopes/core/terraform-submodules/gke-service-account"
-          - ./scripts/terraform-submodule show "scopes/core/terraform-submodules/gke-service-account"
-    - step: &test-scopes-kuard-docker-images-kuard
-        name: test scopes/kuard/docker-images/kuard
+          - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-service-account"
+          - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gke-service-account"
+          - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gke-service-account"
+          - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gke-service-account"
+    - step: &test-projects-kuard-docker-images-kuard
+        name: test projects/kuard/docker-images/kuard
         condition:
           changesets:
             includePaths:
-              - "scopes/kuard/docker-images/kuard/**"
+              - "projects/kuard/docker-images/kuard/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "scopes/kuard/docker-images/kuard"
-          - ./scripts/docker-image test "scopes/kuard/docker-images/kuard"
-          - ./scripts/docker-image pre-publish "scopes/kuard/docker-images/kuard"
-          - ./scripts/docker-image show "scopes/kuard/docker-images/kuard"
-    - step: &publish-scopes-kuard-docker-images-kuard
-        name: publish scopes/kuard/docker-images/kuard
+          - ./scripts/docker-image build "projects/kuard/docker-images/kuard"
+          - ./scripts/docker-image test "projects/kuard/docker-images/kuard"
+          - ./scripts/docker-image pre-publish "projects/kuard/docker-images/kuard"
+          - ./scripts/docker-image show "projects/kuard/docker-images/kuard"
+    - step: &publish-projects-kuard-docker-images-kuard
+        name: publish projects/kuard/docker-images/kuard
         condition:
           changesets:
             includePaths:
-              - "scopes/kuard/docker-images/kuard/**"
+              - "projects/kuard/docker-images/kuard/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "scopes/kuard/docker-images/kuard"
-          - ./scripts/docker-image test "scopes/kuard/docker-images/kuard"
-          - ./scripts/docker-image publish "scopes/kuard/docker-images/kuard"
-          - ./scripts/docker-image show "scopes/kuard/docker-images/kuard"
-    - step: &test-scopes-kuard-helm-charts-stateful-kuard
-        name: test scopes/kuard/helm-charts/stateful-kuard
+          - ./scripts/docker-image build "projects/kuard/docker-images/kuard"
+          - ./scripts/docker-image test "projects/kuard/docker-images/kuard"
+          - ./scripts/docker-image publish "projects/kuard/docker-images/kuard"
+          - ./scripts/docker-image show "projects/kuard/docker-images/kuard"
+    - step: &test-projects-kuard-helm-charts-stateful-kuard
+        name: test projects/kuard/helm-charts/stateful-kuard
         condition:
           changesets:
             includePaths:
-              - "scopes/kuard/helm-charts/stateful-kuard/**"
+              - "projects/kuard/helm-charts/stateful-kuard/**"
         script:
           - *auth
-          - ./scripts/helm-chart build "scopes/kuard/helm-charts/stateful-kuard"
-          - ./scripts/helm-chart test "scopes/kuard/helm-charts/stateful-kuard"
-          - ./scripts/helm-chart pre-publish "scopes/kuard/helm-charts/stateful-kuard"
-          - ./scripts/helm-chart show "scopes/kuard/helm-charts/stateful-kuard"
-    - step: &publish-scopes-kuard-helm-charts-stateful-kuard
-        name: publish scopes/kuard/helm-charts/stateful-kuard
+          - ./scripts/helm-chart build "projects/kuard/helm-charts/stateful-kuard"
+          - ./scripts/helm-chart test "projects/kuard/helm-charts/stateful-kuard"
+          - ./scripts/helm-chart pre-publish "projects/kuard/helm-charts/stateful-kuard"
+          - ./scripts/helm-chart show "projects/kuard/helm-charts/stateful-kuard"
+    - step: &publish-projects-kuard-helm-charts-stateful-kuard
+        name: publish projects/kuard/helm-charts/stateful-kuard
         condition:
           changesets:
             includePaths:
-              - "scopes/kuard/helm-charts/stateful-kuard/**"
+              - "projects/kuard/helm-charts/stateful-kuard/**"
         script:
           - *auth
-          - ./scripts/helm-chart build "scopes/kuard/helm-charts/stateful-kuard"
-          - ./scripts/helm-chart test "scopes/kuard/helm-charts/stateful-kuard"
-          - ./scripts/helm-chart publish "scopes/kuard/helm-charts/stateful-kuard"
-          - ./scripts/helm-chart show "scopes/kuard/helm-charts/stateful-kuard"
-    - step: &test-scopes-kuard-helm-charts-stateless-kuard
-        name: test scopes/kuard/helm-charts/stateless-kuard
+          - ./scripts/helm-chart build "projects/kuard/helm-charts/stateful-kuard"
+          - ./scripts/helm-chart test "projects/kuard/helm-charts/stateful-kuard"
+          - ./scripts/helm-chart publish "projects/kuard/helm-charts/stateful-kuard"
+          - ./scripts/helm-chart show "projects/kuard/helm-charts/stateful-kuard"
+    - step: &test-projects-kuard-helm-charts-stateless-kuard
+        name: test projects/kuard/helm-charts/stateless-kuard
         condition:
           changesets:
             includePaths:
-              - "scopes/kuard/helm-charts/stateless-kuard/**"
+              - "projects/kuard/helm-charts/stateless-kuard/**"
         script:
           - *auth
-          - ./scripts/helm-chart build "scopes/kuard/helm-charts/stateless-kuard"
-          - ./scripts/helm-chart test "scopes/kuard/helm-charts/stateless-kuard"
-          - ./scripts/helm-chart pre-publish "scopes/kuard/helm-charts/stateless-kuard"
-          - ./scripts/helm-chart show "scopes/kuard/helm-charts/stateless-kuard"
-    - step: &publish-scopes-kuard-helm-charts-stateless-kuard
-        name: publish scopes/kuard/helm-charts/stateless-kuard
+          - ./scripts/helm-chart build "projects/kuard/helm-charts/stateless-kuard"
+          - ./scripts/helm-chart test "projects/kuard/helm-charts/stateless-kuard"
+          - ./scripts/helm-chart pre-publish "projects/kuard/helm-charts/stateless-kuard"
+          - ./scripts/helm-chart show "projects/kuard/helm-charts/stateless-kuard"
+    - step: &publish-projects-kuard-helm-charts-stateless-kuard
+        name: publish projects/kuard/helm-charts/stateless-kuard
         condition:
           changesets:
             includePaths:
-              - "scopes/kuard/helm-charts/stateless-kuard/**"
+              - "projects/kuard/helm-charts/stateless-kuard/**"
         script:
           - *auth
-          - ./scripts/helm-chart build "scopes/kuard/helm-charts/stateless-kuard"
-          - ./scripts/helm-chart test "scopes/kuard/helm-charts/stateless-kuard"
-          - ./scripts/helm-chart publish "scopes/kuard/helm-charts/stateless-kuard"
-          - ./scripts/helm-chart show "scopes/kuard/helm-charts/stateless-kuard"
-    - step: &validate-scopes-kuard-terraform-modules-kuard
-        name: validate scopes/kuard/terraform-modules/kuard
+          - ./scripts/helm-chart build "projects/kuard/helm-charts/stateless-kuard"
+          - ./scripts/helm-chart test "projects/kuard/helm-charts/stateless-kuard"
+          - ./scripts/helm-chart publish "projects/kuard/helm-charts/stateless-kuard"
+          - ./scripts/helm-chart show "projects/kuard/helm-charts/stateless-kuard"
+    - step: &validate-projects-kuard-terraform-modules-kuard
+        name: validate projects/kuard/terraform-modules/kuard
         condition:
           changesets:
             includePaths:
-              - "scopes/kuard/terraform-modules/kuard/**"
+              - "projects/kuard/terraform-modules/kuard/**"
         caches:
-          - scopes-kuard-terraform-modules-kuard
+          - projects-kuard-terraform-modules-kuard
         script:
           - *auth
-          - ./scripts/terraform-module test "scopes/kuard/terraform-modules/kuard"
-    - step: &plan-scopes-kuard-terraform-modules-kuard
-        name: plan scopes/kuard/terraform-modules/kuard
+          - ./scripts/terraform-module test "projects/kuard/terraform-modules/kuard"
+    - step: &plan-projects-kuard-terraform-modules-kuard
+        name: plan projects/kuard/terraform-modules/kuard
         condition:
           changesets:
             includePaths:
-              - "scopes/kuard/terraform-modules/kuard/**"
+              - "projects/kuard/terraform-modules/kuard/**"
         caches:
-          - scopes-kuard-terraform-modules-kuard
+          - projects-kuard-terraform-modules-kuard
         script:
           - *auth
-          - terraform -chdir="scopes/kuard/terraform-modules/kuard" init -input="false"
-          - terraform -chdir="scopes/kuard/terraform-modules/kuard" plan -input="false"
-    - step: &apply-scopes-kuard-terraform-modules-kuard
-        name: apply scopes/kuard/terraform-modules/kuard
+          - terraform -chdir="projects/kuard/terraform-modules/kuard" init -input="false"
+          - terraform -chdir="projects/kuard/terraform-modules/kuard" plan -input="false"
+    - step: &apply-projects-kuard-terraform-modules-kuard
+        name: apply projects/kuard/terraform-modules/kuard
         condition:
           changesets:
             includePaths:
-              - "scopes/kuard/terraform-modules/kuard/**"
+              - "projects/kuard/terraform-modules/kuard/**"
         caches:
-          - scopes-kuard-terraform-modules-kuard
+          - projects-kuard-terraform-modules-kuard
         script:
           - *auth
-          - terraform -chdir="scopes/kuard/terraform-modules/kuard" init -input="false"
-          - terraform -chdir="scopes/kuard/terraform-modules/kuard" apply -input="false" -auto-approve
+          - terraform -chdir="projects/kuard/terraform-modules/kuard" init -input="false"
+          - terraform -chdir="projects/kuard/terraform-modules/kuard" apply -input="false" -auto-approve
         trigger: manual
-    - step: &test-scopes-kuard-terraform-submodules-helm-release
-        name: test scopes/kuard/terraform-submodules/helm-release
+    - step: &test-projects-kuard-terraform-submodules-helm-release
+        name: test projects/kuard/terraform-submodules/helm-release
         condition:
           changesets:
             includePaths:
-              - "scopes/kuard/terraform-submodules/helm-release/**"
+              - "projects/kuard/terraform-submodules/helm-release/**"
         caches:
-          - scopes-kuard-terraform-submodules-helm-release
+          - projects-kuard-terraform-submodules-helm-release
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/kuard/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule test "scopes/kuard/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule pre-publish "scopes/kuard/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule show "scopes/kuard/terraform-submodules/helm-release"
-    - step: &publish-scopes-kuard-terraform-submodules-helm-release
-        name: publish scopes/kuard/terraform-submodules/helm-release
+          - ./scripts/terraform-submodule build "projects/kuard/terraform-submodules/helm-release"
+          - ./scripts/terraform-submodule test "projects/kuard/terraform-submodules/helm-release"
+          - ./scripts/terraform-submodule pre-publish "projects/kuard/terraform-submodules/helm-release"
+          - ./scripts/terraform-submodule show "projects/kuard/terraform-submodules/helm-release"
+    - step: &publish-projects-kuard-terraform-submodules-helm-release
+        name: publish projects/kuard/terraform-submodules/helm-release
         condition:
           changesets:
             includePaths:
-              - "scopes/kuard/terraform-submodules/helm-release/**"
+              - "projects/kuard/terraform-submodules/helm-release/**"
         caches:
-          - scopes-kuard-terraform-submodules-helm-release
+          - projects-kuard-terraform-submodules-helm-release
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/kuard/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule test "scopes/kuard/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule publish "scopes/kuard/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule show "scopes/kuard/terraform-submodules/helm-release"
-    - step: &test-scopes-kuard-terraform-submodules-kuard
-        name: test scopes/kuard/terraform-submodules/kuard
+          - ./scripts/terraform-submodule build "projects/kuard/terraform-submodules/helm-release"
+          - ./scripts/terraform-submodule test "projects/kuard/terraform-submodules/helm-release"
+          - ./scripts/terraform-submodule publish "projects/kuard/terraform-submodules/helm-release"
+          - ./scripts/terraform-submodule show "projects/kuard/terraform-submodules/helm-release"
+    - step: &test-projects-kuard-terraform-submodules-kuard
+        name: test projects/kuard/terraform-submodules/kuard
         condition:
           changesets:
             includePaths:
-              - "scopes/kuard/terraform-submodules/kuard/**"
+              - "projects/kuard/terraform-submodules/kuard/**"
         caches:
-          - scopes-kuard-terraform-submodules-kuard
+          - projects-kuard-terraform-submodules-kuard
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/kuard/terraform-submodules/kuard"
-          - ./scripts/terraform-submodule test "scopes/kuard/terraform-submodules/kuard"
-          - ./scripts/terraform-submodule pre-publish "scopes/kuard/terraform-submodules/kuard"
-          - ./scripts/terraform-submodule show "scopes/kuard/terraform-submodules/kuard"
-    - step: &publish-scopes-kuard-terraform-submodules-kuard
-        name: publish scopes/kuard/terraform-submodules/kuard
+          - ./scripts/terraform-submodule build "projects/kuard/terraform-submodules/kuard"
+          - ./scripts/terraform-submodule test "projects/kuard/terraform-submodules/kuard"
+          - ./scripts/terraform-submodule pre-publish "projects/kuard/terraform-submodules/kuard"
+          - ./scripts/terraform-submodule show "projects/kuard/terraform-submodules/kuard"
+    - step: &publish-projects-kuard-terraform-submodules-kuard
+        name: publish projects/kuard/terraform-submodules/kuard
         condition:
           changesets:
             includePaths:
-              - "scopes/kuard/terraform-submodules/kuard/**"
+              - "projects/kuard/terraform-submodules/kuard/**"
         caches:
-          - scopes-kuard-terraform-submodules-kuard
+          - projects-kuard-terraform-submodules-kuard
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/kuard/terraform-submodules/kuard"
-          - ./scripts/terraform-submodule test "scopes/kuard/terraform-submodules/kuard"
-          - ./scripts/terraform-submodule publish "scopes/kuard/terraform-submodules/kuard"
-          - ./scripts/terraform-submodule show "scopes/kuard/terraform-submodules/kuard"
-    - step: &validate-scopes-o11y-terraform-modules-test-monitor
-        name: validate scopes/o11y/terraform-modules/test-monitor
+          - ./scripts/terraform-submodule build "projects/kuard/terraform-submodules/kuard"
+          - ./scripts/terraform-submodule test "projects/kuard/terraform-submodules/kuard"
+          - ./scripts/terraform-submodule publish "projects/kuard/terraform-submodules/kuard"
+          - ./scripts/terraform-submodule show "projects/kuard/terraform-submodules/kuard"
+    - step: &validate-projects-o11y-terraform-modules-test-monitor
+        name: validate projects/o11y/terraform-modules/test-monitor
         condition:
           changesets:
             includePaths:
-              - "scopes/o11y/terraform-modules/test-monitor/**"
+              - "projects/o11y/terraform-modules/test-monitor/**"
         caches:
-          - scopes-o11y-terraform-modules-test-monitor
+          - projects-o11y-terraform-modules-test-monitor
         script:
           - *auth
-          - ./scripts/terraform-module test "scopes/o11y/terraform-modules/test-monitor"
-    - step: &plan-scopes-o11y-terraform-modules-test-monitor
-        name: plan scopes/o11y/terraform-modules/test-monitor
+          - ./scripts/terraform-module test "projects/o11y/terraform-modules/test-monitor"
+    - step: &plan-projects-o11y-terraform-modules-test-monitor
+        name: plan projects/o11y/terraform-modules/test-monitor
         condition:
           changesets:
             includePaths:
-              - "scopes/o11y/terraform-modules/test-monitor/**"
+              - "projects/o11y/terraform-modules/test-monitor/**"
         caches:
-          - scopes-o11y-terraform-modules-test-monitor
+          - projects-o11y-terraform-modules-test-monitor
         script:
           - *auth
-          - terraform -chdir="scopes/o11y/terraform-modules/test-monitor" init -input="false"
-          - terraform -chdir="scopes/o11y/terraform-modules/test-monitor" plan -input="false"
-    - step: &apply-scopes-o11y-terraform-modules-test-monitor
-        name: apply scopes/o11y/terraform-modules/test-monitor
+          - terraform -chdir="projects/o11y/terraform-modules/test-monitor" init -input="false"
+          - terraform -chdir="projects/o11y/terraform-modules/test-monitor" plan -input="false"
+    - step: &apply-projects-o11y-terraform-modules-test-monitor
+        name: apply projects/o11y/terraform-modules/test-monitor
         condition:
           changesets:
             includePaths:
-              - "scopes/o11y/terraform-modules/test-monitor/**"
+              - "projects/o11y/terraform-modules/test-monitor/**"
         caches:
-          - scopes-o11y-terraform-modules-test-monitor
+          - projects-o11y-terraform-modules-test-monitor
         script:
           - *auth
-          - terraform -chdir="scopes/o11y/terraform-modules/test-monitor" init -input="false"
-          - terraform -chdir="scopes/o11y/terraform-modules/test-monitor" apply -input="false" -auto-approve
+          - terraform -chdir="projects/o11y/terraform-modules/test-monitor" init -input="false"
+          - terraform -chdir="projects/o11y/terraform-modules/test-monitor" apply -input="false" -auto-approve
         trigger: manual
-    - step: &test-scopes-o11y-terraform-submodules-gcp-availability-monitor
-        name: test scopes/o11y/terraform-submodules/gcp-availability-monitor
+    - step: &test-projects-o11y-terraform-submodules-gcp-availability-monitor
+        name: test projects/o11y/terraform-submodules/gcp-availability-monitor
         condition:
           changesets:
             includePaths:
-              - "scopes/o11y/terraform-submodules/gcp-availability-monitor/**"
+              - "projects/o11y/terraform-submodules/gcp-availability-monitor/**"
         caches:
-          - scopes-o11y-terraform-submodules-gcp-availability-monitor
+          - projects-o11y-terraform-submodules-gcp-availability-monitor
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/o11y/terraform-submodules/gcp-availability-monitor"
-          - ./scripts/terraform-submodule test "scopes/o11y/terraform-submodules/gcp-availability-monitor"
-          - ./scripts/terraform-submodule pre-publish "scopes/o11y/terraform-submodules/gcp-availability-monitor"
-          - ./scripts/terraform-submodule show "scopes/o11y/terraform-submodules/gcp-availability-monitor"
-    - step: &publish-scopes-o11y-terraform-submodules-gcp-availability-monitor
-        name: publish scopes/o11y/terraform-submodules/gcp-availability-monitor
+          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gcp-availability-monitor"
+          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gcp-availability-monitor"
+          - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/gcp-availability-monitor"
+          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gcp-availability-monitor"
+    - step: &publish-projects-o11y-terraform-submodules-gcp-availability-monitor
+        name: publish projects/o11y/terraform-submodules/gcp-availability-monitor
         condition:
           changesets:
             includePaths:
-              - "scopes/o11y/terraform-submodules/gcp-availability-monitor/**"
+              - "projects/o11y/terraform-submodules/gcp-availability-monitor/**"
         caches:
-          - scopes-o11y-terraform-submodules-gcp-availability-monitor
+          - projects-o11y-terraform-submodules-gcp-availability-monitor
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/o11y/terraform-submodules/gcp-availability-monitor"
-          - ./scripts/terraform-submodule test "scopes/o11y/terraform-submodules/gcp-availability-monitor"
-          - ./scripts/terraform-submodule publish "scopes/o11y/terraform-submodules/gcp-availability-monitor"
-          - ./scripts/terraform-submodule show "scopes/o11y/terraform-submodules/gcp-availability-monitor"
-    - step: &test-scopes-o11y-terraform-submodules-gke-lgtm-stack
-        name: test scopes/o11y/terraform-submodules/gke-lgtm-stack
+          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gcp-availability-monitor"
+          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gcp-availability-monitor"
+          - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/gcp-availability-monitor"
+          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gcp-availability-monitor"
+    - step: &test-projects-o11y-terraform-submodules-gke-lgtm-stack
+        name: test projects/o11y/terraform-submodules/gke-lgtm-stack
         condition:
           changesets:
             includePaths:
-              - "scopes/o11y/terraform-submodules/gke-lgtm-stack/**"
+              - "projects/o11y/terraform-submodules/gke-lgtm-stack/**"
         caches:
-          - scopes-o11y-terraform-submodules-gke-lgtm-stack
+          - projects-o11y-terraform-submodules-gke-lgtm-stack
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/o11y/terraform-submodules/gke-lgtm-stack"
-          - ./scripts/terraform-submodule test "scopes/o11y/terraform-submodules/gke-lgtm-stack"
-          - ./scripts/terraform-submodule pre-publish "scopes/o11y/terraform-submodules/gke-lgtm-stack"
-          - ./scripts/terraform-submodule show "scopes/o11y/terraform-submodules/gke-lgtm-stack"
-    - step: &publish-scopes-o11y-terraform-submodules-gke-lgtm-stack
-        name: publish scopes/o11y/terraform-submodules/gke-lgtm-stack
+          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-lgtm-stack"
+          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gke-lgtm-stack"
+          - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/gke-lgtm-stack"
+          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gke-lgtm-stack"
+    - step: &publish-projects-o11y-terraform-submodules-gke-lgtm-stack
+        name: publish projects/o11y/terraform-submodules/gke-lgtm-stack
         condition:
           changesets:
             includePaths:
-              - "scopes/o11y/terraform-submodules/gke-lgtm-stack/**"
+              - "projects/o11y/terraform-submodules/gke-lgtm-stack/**"
         caches:
-          - scopes-o11y-terraform-submodules-gke-lgtm-stack
+          - projects-o11y-terraform-submodules-gke-lgtm-stack
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/o11y/terraform-submodules/gke-lgtm-stack"
-          - ./scripts/terraform-submodule test "scopes/o11y/terraform-submodules/gke-lgtm-stack"
-          - ./scripts/terraform-submodule publish "scopes/o11y/terraform-submodules/gke-lgtm-stack"
-          - ./scripts/terraform-submodule show "scopes/o11y/terraform-submodules/gke-lgtm-stack"
-    - step: &test-scopes-o11y-terraform-submodules-k8s-otel-collectors
-        name: test scopes/o11y/terraform-submodules/k8s-otel-collectors
+          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-lgtm-stack"
+          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gke-lgtm-stack"
+          - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/gke-lgtm-stack"
+          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gke-lgtm-stack"
+    - step: &test-projects-o11y-terraform-submodules-k8s-otel-collectors
+        name: test projects/o11y/terraform-submodules/k8s-otel-collectors
         condition:
           changesets:
             includePaths:
-              - "scopes/o11y/terraform-submodules/k8s-otel-collectors/**"
+              - "projects/o11y/terraform-submodules/k8s-otel-collectors/**"
         caches:
-          - scopes-o11y-terraform-submodules-k8s-otel-collectors
+          - projects-o11y-terraform-submodules-k8s-otel-collectors
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/o11y/terraform-submodules/k8s-otel-collectors"
-          - ./scripts/terraform-submodule test "scopes/o11y/terraform-submodules/k8s-otel-collectors"
-          - ./scripts/terraform-submodule pre-publish "scopes/o11y/terraform-submodules/k8s-otel-collectors"
-          - ./scripts/terraform-submodule show "scopes/o11y/terraform-submodules/k8s-otel-collectors"
-    - step: &publish-scopes-o11y-terraform-submodules-k8s-otel-collectors
-        name: publish scopes/o11y/terraform-submodules/k8s-otel-collectors
+          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-otel-collectors"
+          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-otel-collectors"
+          - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/k8s-otel-collectors"
+          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-otel-collectors"
+    - step: &publish-projects-o11y-terraform-submodules-k8s-otel-collectors
+        name: publish projects/o11y/terraform-submodules/k8s-otel-collectors
         condition:
           changesets:
             includePaths:
-              - "scopes/o11y/terraform-submodules/k8s-otel-collectors/**"
+              - "projects/o11y/terraform-submodules/k8s-otel-collectors/**"
         caches:
-          - scopes-o11y-terraform-submodules-k8s-otel-collectors
+          - projects-o11y-terraform-submodules-k8s-otel-collectors
         script:
           - *auth
-          - ./scripts/terraform-submodule build "scopes/o11y/terraform-submodules/k8s-otel-collectors"
-          - ./scripts/terraform-submodule test "scopes/o11y/terraform-submodules/k8s-otel-collectors"
-          - ./scripts/terraform-submodule publish "scopes/o11y/terraform-submodules/k8s-otel-collectors"
-          - ./scripts/terraform-submodule show "scopes/o11y/terraform-submodules/k8s-otel-collectors"
+          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-otel-collectors"
+          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-otel-collectors"
+          - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/k8s-otel-collectors"
+          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-otel-collectors"
 
 pipelines:
   pull-requests:
     "**":
       - parallel:
-          - step: *test-scopes-core-docker-images-devcontainer
-          - step: *test-scopes-core-docker-images-go-rte
-          - step: *test-scopes-core-docker-images-go-sdk
-          - step: *validate-scopes-core-terraform-modules-main
-          - step: *validate-scopes-core-terraform-modules-prod
-          - step: *validate-scopes-core-terraform-modules-test
-          - step: *test-scopes-core-terraform-submodules-gcp-docker-images-registry
-          - step: *test-scopes-core-terraform-submodules-gcp-helm-charts-registry
-          - step: *test-scopes-core-terraform-submodules-gcp-project
-          - step: *test-scopes-core-terraform-submodules-gcp-terraform-modules-registry
-          - step: *test-scopes-core-terraform-submodules-gcp-terraform-state-bucket
-          - step: *test-scopes-core-terraform-submodules-gke-gateway-redirect
-          - step: *test-scopes-core-terraform-submodules-gke-gateway-route
-          - step: *test-scopes-core-terraform-submodules-gke-platform
-          - step: *test-scopes-core-terraform-submodules-gke-service-account
-          - step: *test-scopes-kuard-docker-images-kuard
-          - step: *test-scopes-kuard-helm-charts-stateful-kuard
-          - step: *test-scopes-kuard-helm-charts-stateless-kuard
-          - step: *validate-scopes-kuard-terraform-modules-kuard
-          - step: *test-scopes-kuard-terraform-submodules-helm-release
-          - step: *test-scopes-kuard-terraform-submodules-kuard
-          - step: *validate-scopes-o11y-terraform-modules-test-monitor
-          - step: *test-scopes-o11y-terraform-submodules-gcp-availability-monitor
-          - step: *test-scopes-o11y-terraform-submodules-gke-lgtm-stack
-          - step: *test-scopes-o11y-terraform-submodules-k8s-otel-collectors
+          - step: *test-projects-core-docker-images-devcontainer
+          - step: *test-projects-core-docker-images-go-rte
+          - step: *test-projects-core-docker-images-go-sdk
+          - step: *validate-projects-core-terraform-modules-main
+          - step: *validate-projects-core-terraform-modules-prod
+          - step: *validate-projects-core-terraform-modules-test
+          - step: *test-projects-core-terraform-submodules-gcp-docker-images-registry
+          - step: *test-projects-core-terraform-submodules-gcp-helm-charts-registry
+          - step: *test-projects-core-terraform-submodules-gcp-project
+          - step: *test-projects-core-terraform-submodules-gcp-terraform-modules-registry
+          - step: *test-projects-core-terraform-submodules-gcp-terraform-state-bucket
+          - step: *test-projects-core-terraform-submodules-gke-gateway-redirect
+          - step: *test-projects-core-terraform-submodules-gke-gateway-route
+          - step: *test-projects-core-terraform-submodules-gke-platform
+          - step: *test-projects-core-terraform-submodules-gke-service-account
+          - step: *test-projects-kuard-docker-images-kuard
+          - step: *test-projects-kuard-helm-charts-stateful-kuard
+          - step: *test-projects-kuard-helm-charts-stateless-kuard
+          - step: *validate-projects-kuard-terraform-modules-kuard
+          - step: *test-projects-kuard-terraform-submodules-helm-release
+          - step: *test-projects-kuard-terraform-submodules-kuard
+          - step: *validate-projects-o11y-terraform-modules-test-monitor
+          - step: *test-projects-o11y-terraform-submodules-gcp-availability-monitor
+          - step: *test-projects-o11y-terraform-submodules-gke-lgtm-stack
+          - step: *test-projects-o11y-terraform-submodules-k8s-otel-collectors
       - parallel:
-          - step: *plan-scopes-core-terraform-modules-main
-          - step: *plan-scopes-core-terraform-modules-prod
-          - step: *plan-scopes-core-terraform-modules-test
-          - step: *plan-scopes-kuard-terraform-modules-kuard
-          - step: *plan-scopes-o11y-terraform-modules-test-monitor
+          - step: *plan-projects-core-terraform-modules-main
+          - step: *plan-projects-core-terraform-modules-prod
+          - step: *plan-projects-core-terraform-modules-test
+          - step: *plan-projects-kuard-terraform-modules-kuard
+          - step: *plan-projects-o11y-terraform-modules-test-monitor
   branches:
     main:
       - parallel:
-          - step: *publish-scopes-core-docker-images-devcontainer
-          - step: *publish-scopes-core-docker-images-go-rte
-          - step: *publish-scopes-core-docker-images-go-sdk
-          - step: *publish-scopes-core-terraform-submodules-gcp-docker-images-registry
-          - step: *publish-scopes-core-terraform-submodules-gcp-helm-charts-registry
-          - step: *publish-scopes-core-terraform-submodules-gcp-project
-          - step: *publish-scopes-core-terraform-submodules-gcp-terraform-modules-registry
-          - step: *publish-scopes-core-terraform-submodules-gcp-terraform-state-bucket
-          - step: *publish-scopes-core-terraform-submodules-gke-gateway-redirect
-          - step: *publish-scopes-core-terraform-submodules-gke-gateway-route
-          - step: *publish-scopes-core-terraform-submodules-gke-platform
-          - step: *publish-scopes-core-terraform-submodules-gke-service-account
-          - step: *publish-scopes-kuard-docker-images-kuard
-          - step: *publish-scopes-kuard-helm-charts-stateful-kuard
-          - step: *publish-scopes-kuard-helm-charts-stateless-kuard
-          - step: *publish-scopes-kuard-terraform-submodules-helm-release
-          - step: *publish-scopes-kuard-terraform-submodules-kuard
-          - step: *publish-scopes-o11y-terraform-submodules-gcp-availability-monitor
-          - step: *publish-scopes-o11y-terraform-submodules-gke-lgtm-stack
-          - step: *publish-scopes-o11y-terraform-submodules-k8s-otel-collectors
+          - step: *publish-projects-core-docker-images-devcontainer
+          - step: *publish-projects-core-docker-images-go-rte
+          - step: *publish-projects-core-docker-images-go-sdk
+          - step: *publish-projects-core-terraform-submodules-gcp-docker-images-registry
+          - step: *publish-projects-core-terraform-submodules-gcp-helm-charts-registry
+          - step: *publish-projects-core-terraform-submodules-gcp-project
+          - step: *publish-projects-core-terraform-submodules-gcp-terraform-modules-registry
+          - step: *publish-projects-core-terraform-submodules-gcp-terraform-state-bucket
+          - step: *publish-projects-core-terraform-submodules-gke-gateway-redirect
+          - step: *publish-projects-core-terraform-submodules-gke-gateway-route
+          - step: *publish-projects-core-terraform-submodules-gke-platform
+          - step: *publish-projects-core-terraform-submodules-gke-service-account
+          - step: *publish-projects-kuard-docker-images-kuard
+          - step: *publish-projects-kuard-helm-charts-stateful-kuard
+          - step: *publish-projects-kuard-helm-charts-stateless-kuard
+          - step: *publish-projects-kuard-terraform-submodules-helm-release
+          - step: *publish-projects-kuard-terraform-submodules-kuard
+          - step: *publish-projects-o11y-terraform-submodules-gcp-availability-monitor
+          - step: *publish-projects-o11y-terraform-submodules-gke-lgtm-stack
+          - step: *publish-projects-o11y-terraform-submodules-k8s-otel-collectors
       - parallel:
-          - step: *plan-scopes-core-terraform-modules-main
-          - step: *plan-scopes-core-terraform-modules-prod
-          - step: *plan-scopes-core-terraform-modules-test
-          - step: *plan-scopes-kuard-terraform-modules-kuard
-          - step: *plan-scopes-o11y-terraform-modules-test-monitor
+          - step: *plan-projects-core-terraform-modules-main
+          - step: *plan-projects-core-terraform-modules-prod
+          - step: *plan-projects-core-terraform-modules-test
+          - step: *plan-projects-kuard-terraform-modules-kuard
+          - step: *plan-projects-o11y-terraform-modules-test-monitor
       - parallel:
-          - step: *apply-scopes-core-terraform-modules-main
-          - step: *apply-scopes-core-terraform-modules-prod
-          - step: *apply-scopes-core-terraform-modules-test
-          - step: *apply-scopes-kuard-terraform-modules-kuard
-          - step: *apply-scopes-o11y-terraform-modules-test-monitor
+          - step: *apply-projects-core-terraform-modules-main
+          - step: *apply-projects-core-terraform-modules-prod
+          - step: *apply-projects-core-terraform-modules-test
+          - step: *apply-projects-kuard-terraform-modules-kuard
+          - step: *apply-projects-o11y-terraform-modules-test-monitor
