@@ -261,6 +261,30 @@ resource "google_container_node_pool" "this" {
 }
 
 #######################################
+### cert-manager
+#######################################
+
+resource "kubernetes_namespace" "cert_manager" {
+  depends_on = [
+    google_container_cluster.this,
+  ]
+
+  metadata {
+    name = "cert-manager"
+  }
+}
+
+resource "helm_release" "cert_manager" {
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "cert-manager"
+  version    = "v1.16.3"
+
+  name      = "cert-manager"
+  namespace = kubernetes_namespace.cert_manager.metadata[0].name
+  values    = [file("${path.module}/assets/cert_manager.yaml")]
+}
+
+#######################################
 ### Internet ingress
 #######################################
 
@@ -293,4 +317,202 @@ resource "google_dns_record_set" "ingress_internet" {
   type     = "A"
   ttl      = 300
   rrdatas  = [google_compute_address.ingress_internet.address]
+}
+
+#######################################
+### Prometheus Operator (CRDs)
+#######################################
+
+resource "kubernetes_namespace" "prometheus_operator" {
+  depends_on = [
+    google_container_cluster.this,
+  ]
+
+  metadata {
+    name = "prometheus-operator"
+  }
+}
+
+resource "helm_release" "prometheus_operator_crds" {
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "prometheus-operator-crds"
+  version    = "17.0.2"
+
+  name      = "prometheus-operator-crds"
+  namespace = kubernetes_namespace.prometheus_operator.metadata[0].name
+}
+
+#######################################
+### OpenTelemetry Operator
+#######################################
+
+resource "kubernetes_namespace" "opentelemetry_operator" {
+  depends_on = [
+    google_container_cluster.this,
+  ]
+
+  metadata {
+    name = "opentelemetry-operator"
+  }
+}
+
+resource "helm_release" "opentelemetry_operator" {
+  depends_on = [
+    helm_release.cert_manager,
+    helm_release.prometheus_operator_crds,
+  ]
+
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "opentelemetry-operator"
+  version    = "0.76.0"
+
+  name      = "opentelemetry-operator"
+  namespace = kubernetes_namespace.opentelemetry_operator.metadata[0].name
+  values    = [file("${path.module}/assets/opentelemetry_operator.yaml")]
+}
+
+resource "kubernetes_cluster_role" "opentelemetry_collector" { # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/README.md#role-based-access-control
+  metadata {
+    name = "opentelemetry-collector"
+  }
+  rule {
+    api_groups = [""]
+    resources  = ["namespaces", "nodes", "pods"]
+    verbs      = ["get", "list", "watch"]
+  }
+  rule {
+    api_groups = ["apps"]
+    resources  = ["daemonsets", "deployments", "replicasets", "statefulsets"]
+    verbs      = ["get", "list", "watch"]
+  }
+  rule {
+    api_groups = ["batch"]
+    resources  = ["cronjobs", "jobs"]
+    verbs      = ["get", "list", "watch"]
+  }
+}
+
+resource "kubernetes_cluster_role" "opentelemetry_targetallocator" { # https://github.com/open-telemetry/opentelemetry-operator/tree/main/cmd/otel-allocator#rbac
+  metadata {
+    name = "opentelemetry-targetallocator"
+  }
+  rule {
+    api_groups = [""]
+    resources  = ["configmaps", "endpoints", "namespaces", "nodes", "nodes/metrics", "pods", "serviceaccounts", "services"]
+    verbs      = ["get", "list", "watch"]
+  }
+  rule {
+    api_groups = ["discovery.k8s.io"]
+    resources  = ["endpointslices"]
+    verbs      = ["get", "list", "watch"]
+  }
+  rule {
+    api_groups = ["networking.k8s.io"]
+    resources  = ["ingresses"]
+    verbs      = ["get", "list", "watch"]
+  }
+  rule {
+    api_groups = ["monitoring.coreos.com"]
+    resources  = ["podmonitors", "probes", "scrapeconfigs", "servicemonitors"]
+    verbs      = ["*"]
+  }
+  rule {
+    non_resource_urls = ["/metrics"]
+    verbs             = ["get"]
+  }
+}
+
+#######################################
+### Workspaces
+#######################################
+
+resource "kubernetes_namespace" "this" {
+  depends_on = [
+    google_container_cluster.this,
+  ]
+  for_each = local.all_namespace_names
+
+  metadata {
+    name = each.value
+    labels = {
+      "istio-injection" = "enabled"
+    }
+  }
+}
+
+resource "google_project_iam_member" "cluster_viewers" {
+  for_each = local.all_iam_namespace_members
+
+  project = var.google_project.project_id
+  role    = "roles/container.clusterViewer"
+  member  = each.value
+}
+
+resource "kubernetes_cluster_role_binding" "cluster_viewers" {
+  metadata {
+    name = "custom:cluster-viewers"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = kubernetes_cluster_role.cluster_viewer.metadata[0].name
+  }
+  dynamic "subject" {
+    for_each = local.all_iam_namespace_members
+
+    content {
+      api_group = "rbac.authorization.k8s.io"
+      kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
+      name      = split(":", subject.value)[1]
+      namespace = kubernetes_namespace.gke_security_groups.metadata[0].name
+    }
+  }
+}
+
+resource "kubernetes_role_binding" "namespace_testers" {
+  for_each = var.iam_namespace_testers
+
+  metadata {
+    namespace = kubernetes_namespace.this[each.key].metadata[0].name
+    name      = "custom:namespace-testers"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = kubernetes_cluster_role.namespace_tester.metadata[0].name
+  }
+  dynamic "subject" {
+    for_each = each.value
+
+    content {
+      api_group = "rbac.authorization.k8s.io"
+      kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
+      name      = split(":", subject.value)[1]
+      namespace = kubernetes_namespace.gke_security_groups.metadata[0].name
+    }
+  }
+}
+
+resource "kubernetes_role_binding" "namespace_developers" {
+  for_each = var.iam_namespace_developers
+
+  metadata {
+    namespace = kubernetes_namespace.this[each.key].metadata[0].name
+    name      = "custom:namespace-developers"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = kubernetes_cluster_role.namespace_developer.metadata[0].name
+  }
+  dynamic "subject" {
+    for_each = each.value
+
+    content {
+      api_group = "rbac.authorization.k8s.io"
+      kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
+      name      = split(":", subject.value)[1]
+      namespace = kubernetes_namespace.gke_security_groups.metadata[0].name
+    }
+  }
 }

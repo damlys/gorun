@@ -96,9 +96,4 @@ resource "kubernetes_cluster_role" "namespace_tester" {
   #   resources  = []
   #   verbs      = ["get", "list", "watch"]
   # }
-  # rule {
-  #   api_groups = ["cert-manager.io"]
-  #   resources  = []
-  #   verbs      = ["get", "list", "watch"]
-  # }
 }
