@@ -2,6 +2,7 @@ resource "kubernetes_cluster_role" "namespace_developer" {
   metadata {
     name = "custom:namespace-developer"
   }
+
   rule {
     api_groups = [""]
     resources  = ["serviceaccounts"]
@@ -17,6 +18,7 @@ resource "kubernetes_cluster_role" "namespace_developer" {
     resources  = ["secrets"]
     verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
   }
+
   rule {
     api_groups = [""]
     resources  = ["pods", "pods/status"]
@@ -57,11 +59,13 @@ resource "kubernetes_cluster_role" "namespace_developer" {
     resources  = ["poddisruptionbudgets", "poddisruptionbudgets/status"]
     verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
   }
+
   rule {
     api_groups = [""]
     resources  = ["persistentvolumeclaims", "persistentvolumeclaims/status"]
     verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
   }
+
   rule {
     api_groups = [""]
     resources  = ["endpoints", "services", "services/status"]
@@ -72,11 +76,11 @@ resource "kubernetes_cluster_role" "namespace_developer" {
     resources  = ["serviceexports", "serviceimports"]
     verbs      = ["get", "list", "watch"]
   }
-  rule {
-    api_groups = ["networking.gke.io"]
-    resources  = []
-    verbs      = ["get", "list", "watch"]
-  }
+  # rule {
+  #   api_groups = ["networking.gke.io"]
+  #   resources  = []
+  #   verbs      = ["get", "list", "watch"]
+  # }
   rule {
     api_groups = ["networking.k8s.io"]
     resources  = ["ingresses", "ingresses/status"]
@@ -87,9 +91,14 @@ resource "kubernetes_cluster_role" "namespace_developer" {
     resources  = ["gateways", "gateways/status", "httproutes", "httproutes/status"]
     verbs      = ["get", "list", "watch"]
   }
-  rule {
-    api_groups = ["networking.istio.io"]
-    resources  = []
-    verbs      = ["get", "list", "watch"]
-  }
+  # rule {
+  #   api_groups = ["networking.istio.io"]
+  #   resources  = []
+  #   verbs      = ["get", "list", "watch"]
+  # }
+  # rule {
+  #   api_groups = ["cert-manager.io"]
+  #   resources  = []
+  #   verbs      = ["get", "list", "watch"]
+  # }
 }

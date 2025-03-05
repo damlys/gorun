@@ -2,11 +2,13 @@ resource "kubernetes_cluster_role" "cluster_viewer" {
   metadata {
     name = "custom:cluster-viewer"
   }
+
   rule {
     api_groups = [""]
     resources  = ["namespaces"]
     verbs      = ["get", "list", "watch"]
   }
+
   rule {
     api_groups = [""]
     resources  = ["persistentvolumes", "persistentvolumes/status"]
@@ -17,6 +19,7 @@ resource "kubernetes_cluster_role" "cluster_viewer" {
     resources  = ["storageclasses"]
     verbs      = ["get", "list", "watch"]
   }
+
   rule {
     api_groups = ["networking.k8s.io"]
     resources  = ["ingressclasses"]
