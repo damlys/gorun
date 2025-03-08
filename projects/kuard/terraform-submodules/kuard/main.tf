@@ -57,6 +57,8 @@ module "stateless_kuard_availability_monitor" {
 module "stateless_kuard_gateway_redirect" {
   source = "../../../core/terraform-submodules/k8s-gateway-redirect" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/k8s-gateway-redirect/0.2.0.zip"
 
+  kubernetes_namespace = var.kubernetes_namespace
+
   old_domain = "kuard.${var.platform_domain}"
   new_domain = "stateless-kuard.${var.platform_domain}"
 }

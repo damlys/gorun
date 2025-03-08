@@ -3,16 +3,16 @@ resource "kubernetes_manifest" "http_route" {
     apiVersion = "gateway.networking.k8s.io/v1"
     kind       = "HTTPRoute"
     metadata = {
-      namespace = "gke-gateway-redirect"
+      namespace = var.kubernetes_namespace.metadata[0].name
       name      = join("-", reverse(split(".", var.old_domain)))
     }
     spec = {
       parentRefs = [{
         group       = "gateway.networking.k8s.io"
         kind        = "Gateway"
-        name        = "gke-gateway"
-        namespace   = "gke-gateway"
-        sectionName = "https"
+        name        = "istio-ingress"
+        namespace   = "istio-ingress"
+        sectionName = "https-wildcard"
       }]
       hostnames = [var.old_domain]
       rules = [{

@@ -1,7 +1,7 @@
 resource "kubernetes_manifest" "http_route" {
   manifest = {
     apiVersion = "gateway.networking.k8s.io/v1"
-    kind       = "HTTPRoute" # https://gateway-api.sigs.k8s.io/reference/spec/#gateway.networking.k8s.io/v1.HTTPRoute
+    kind       = "HTTPRoute"
     metadata = {
       name      = var.kubernetes_service.metadata[0].name
       namespace = var.kubernetes_service.metadata[0].namespace
@@ -10,9 +10,9 @@ resource "kubernetes_manifest" "http_route" {
       parentRefs = [{
         group       = "gateway.networking.k8s.io"
         kind        = "Gateway"
-        name        = "gke-gateway"
-        namespace   = "gke-gateway"
-        sectionName = "https"
+        name        = "istio-ingress"
+        namespace   = "istio-ingress"
+        sectionName = "https-wildcard"
       }]
       hostnames = [var.domain]
       rules = [{

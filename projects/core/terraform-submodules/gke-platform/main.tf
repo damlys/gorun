@@ -284,34 +284,6 @@ resource "helm_release" "prometheus_operator_crds" {
 }
 
 #######################################
-### cert-manager
-#######################################
-
-resource "kubernetes_namespace" "cert_manager" {
-  depends_on = [
-    google_container_cluster.this,
-  ]
-
-  metadata {
-    name = "cert-manager"
-  }
-}
-
-resource "helm_release" "cert_manager" {
-  depends_on = [
-    helm_release.prometheus_operator_crds,
-  ]
-
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
-  chart      = "cert-manager"
-  version    = "v1.16.3"
-
-  name      = "cert-manager"
-  namespace = kubernetes_namespace.cert_manager.metadata[0].name
-  values    = [file("${path.module}/assets/cert_manager.yaml")]
-}
-
-#######################################
 ### Istio
 #######################################
 
@@ -390,6 +362,46 @@ resource "kubernetes_manifest" "istio_telemetry_mesh_default" {
 }
 
 #######################################
+### cert-manager
+#######################################
+
+resource "kubernetes_namespace" "cert_manager" {
+  depends_on = [
+    google_container_cluster.this,
+  ]
+
+  metadata {
+    name = "cert-manager"
+  }
+}
+
+module "cert_manager_service_account" {
+  source = "../gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-service-account/0.2.0.zip"
+
+  google_project           = var.google_project
+  google_container_cluster = google_container_cluster.this
+  kubernetes_namespace     = kubernetes_namespace.cert_manager
+  service_account_name     = "cert-manager"
+}
+
+resource "helm_release" "cert_manager" {
+  depends_on = [
+    helm_release.prometheus_operator_crds,
+  ]
+
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "cert-manager"
+  version    = "v1.16.3"
+
+  name      = "cert-manager"
+  namespace = kubernetes_namespace.cert_manager.metadata[0].name
+
+  values = [templatefile("${path.module}/assets/cert_manager.yaml.tftpl", {
+    cert_manager_service_account_name = module.cert_manager_service_account.kubernetes_service_account.metadata[0].name
+  })]
+}
+
+#######################################
 ### Internet ingress
 #######################################
 
@@ -413,6 +425,13 @@ resource "google_dns_managed_zone" "ingress_internet" { # console.cloud.google.c
   description = "-"
 }
 
+resource "google_dns_managed_zone_iam_member" "cert_manager_dns_admin" {
+  project      = var.google_project.project_id
+  managed_zone = google_dns_managed_zone.ingress_internet.name
+  role         = "roles/dns.admin"
+  member       = module.cert_manager_service_account.google_service_account.member
+}
+
 resource "google_dns_record_set" "ingress_internet" {
   project      = var.google_project.project_id
   managed_zone = google_dns_managed_zone.ingress_internet.name
@@ -422,6 +441,189 @@ resource "google_dns_record_set" "ingress_internet" {
   type     = "A"
   ttl      = 300
   rrdatas  = [google_compute_address.ingress_internet.address]
+}
+
+resource "kubernetes_namespace" "istio_ingress" {
+  depends_on = [
+    google_container_cluster.this,
+  ]
+
+  metadata {
+    name = "istio-ingress"
+  }
+}
+
+resource "kubernetes_manifest" "istio_ingress" { # console.cloud.google.com/net-services/loadbalancing/list/loadBalancers
+  depends_on = [
+    helm_release.istiod,
+  ]
+
+  manifest = {
+    apiVersion = "gateway.networking.k8s.io/v1"
+    kind       = "Gateway" # https://gateway-api.sigs.k8s.io/reference/spec/#gateway.networking.k8s.io/v1.Gateway
+    metadata = {
+      namespace = kubernetes_namespace.istio_ingress.metadata[0].name
+      name      = "istio-ingress"
+      annotations = {
+        "cloud.google.com/network-tier" = "Standard"
+        "cert-manager.io/issuer"        = "letsencrypt-production"
+      }
+    }
+    spec = {
+      gatewayClassName = "istio"
+      listeners = [
+        {
+          name     = "http"
+          port     = 80
+          protocol = "HTTP"
+          allowedRoutes = {
+            kinds      = [{ kind = "HTTPRoute" }]
+            namespaces = { from = "Same" }
+          }
+        },
+        {
+          name     = "https"
+          hostname = var.platform_domain
+          port     = 443
+          protocol = "HTTPS"
+          tls = {
+            mode = "Terminate"
+            certificateRefs = [{
+              group = ""
+              kind  = "Secret"
+              name  = "tls-${join("-", reverse(split(".", var.platform_domain)))}"
+            }]
+          }
+          allowedRoutes = {
+            kinds      = [{ kind = "HTTPRoute" }]
+            namespaces = { from = "All" }
+          }
+        },
+        {
+          name     = "https-wildcard"
+          hostname = "*.${var.platform_domain}"
+          port     = 443
+          protocol = "HTTPS"
+          tls = {
+            mode = "Terminate"
+            certificateRefs = [{
+              group = ""
+              kind  = "Secret"
+              name  = "tls-${join("-", reverse(split(".", var.platform_domain)))}"
+            }]
+          }
+          allowedRoutes = {
+            kinds      = [{ kind = "HTTPRoute" }]
+            namespaces = { from = "All" }
+          }
+        },
+      ]
+      addresses = [{
+        type  = "IPAddress"
+        value = google_compute_address.ingress_internet.address
+      }]
+    }
+  }
+}
+
+resource "kubernetes_manifest" "istio_ingress_http_to_https" {
+  manifest = {
+    apiVersion = "gateway.networking.k8s.io/v1"
+    kind       = "HTTPRoute" # https://gateway-api.sigs.k8s.io/reference/spec/#gateway.networking.k8s.io/v1.HTTPRoute
+    metadata = {
+      name      = "http-to-https"
+      namespace = kubernetes_namespace.istio_ingress.metadata[0].name
+    }
+    spec = {
+      parentRefs = [{
+        group       = "gateway.networking.k8s.io"
+        kind        = "Gateway"
+        namespace   = kubernetes_manifest.istio_ingress.manifest.metadata.namespace
+        name        = kubernetes_manifest.istio_ingress.manifest.metadata.name
+        sectionName = "http"
+      }]
+      rules = [{
+        filters = [{
+          type = "RequestRedirect"
+          requestRedirect = {
+            scheme = "https"
+          }
+        }]
+      }]
+    }
+  }
+}
+
+resource "kubernetes_manifest" "letsencrypt_production" {
+  depends_on = [
+    helm_release.cert_manager,
+  ]
+
+  manifest = {
+    apiVersion = "cert-manager.io/v1"
+    kind       = "Issuer" # https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Issuer
+    metadata = {
+      name      = "letsencrypt-production"
+      namespace = kubernetes_namespace.istio_ingress.metadata[0].name
+    }
+    spec = {
+      acme = {
+        server = "https://acme-v02.api.letsencrypt.org/directory"
+        email  = "damlys.test@gmail.com"
+        privateKeySecretRef = {
+          name = "letsencrypt-production-issuer-account-key"
+        }
+        solvers = [
+          {
+            dns01 = {
+              cloudDNS = {
+                project        = var.google_project.project_id
+                hostedZoneName = google_dns_managed_zone.ingress_internet.name
+              }
+            }
+          },
+          {
+            http01 = {
+              gatewayHTTPRoute = {
+                parentRefs = [{
+                  group       = "gateway.networking.k8s.io"
+                  kind        = "Gateway"
+                  name        = kubernetes_manifest.istio_ingress.manifest.metadata.name
+                  namespace   = kubernetes_manifest.istio_ingress.manifest.metadata.namespace
+                  sectionName = "http"
+                }]
+              }
+            }
+          },
+        ]
+      }
+    }
+  }
+}
+
+resource "kubernetes_manifest" "letsencrypt_staging" {
+  depends_on = [
+    helm_release.cert_manager,
+  ]
+
+  manifest = {
+    apiVersion = "cert-manager.io/v1"
+    kind       = "Issuer"
+    metadata = {
+      name      = "letsencrypt-staging"
+      namespace = kubernetes_namespace.istio_ingress.metadata[0].name
+    }
+    spec = {
+      acme = {
+        server = "https://acme-staging-v02.api.letsencrypt.org/directory"
+        email  = "damlys.test@gmail.com"
+        privateKeySecretRef = {
+          name = "letsencrypt-staging-issuer-account-key"
+        }
+        solvers = kubernetes_manifest.letsencrypt_production.manifest.spec.acme.solvers
+      }
+    }
+  }
 }
 
 #######################################
