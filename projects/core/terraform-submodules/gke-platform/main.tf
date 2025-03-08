@@ -261,6 +261,29 @@ resource "google_container_node_pool" "this" {
 }
 
 #######################################
+### Prometheus Operator (CRDs only)
+#######################################
+
+resource "kubernetes_namespace" "prometheus_operator" {
+  depends_on = [
+    google_container_cluster.this,
+  ]
+
+  metadata {
+    name = "prometheus-operator"
+  }
+}
+
+resource "helm_release" "prometheus_operator_crds" {
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "prometheus-operator-crds"
+  version    = "17.0.2"
+
+  name      = "prometheus-operator-crds"
+  namespace = kubernetes_namespace.prometheus_operator.metadata[0].name
+}
+
+#######################################
 ### cert-manager
 #######################################
 
@@ -275,6 +298,10 @@ resource "kubernetes_namespace" "cert_manager" {
 }
 
 resource "helm_release" "cert_manager" {
+  depends_on = [
+    helm_release.prometheus_operator_crds,
+  ]
+
   repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
   chart      = "cert-manager"
   version    = "v1.16.3"
@@ -282,6 +309,84 @@ resource "helm_release" "cert_manager" {
   name      = "cert-manager"
   namespace = kubernetes_namespace.cert_manager.metadata[0].name
   values    = [file("${path.module}/assets/cert_manager.yaml")]
+}
+
+#######################################
+### Istio
+#######################################
+
+resource "kubernetes_namespace" "istio_system" {
+  depends_on = [
+    google_container_cluster.this,
+  ]
+
+  metadata {
+    name = "istio-system"
+  }
+}
+
+resource "helm_release" "istio_base" {
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "base"
+  version    = "1.24.2"
+
+  name      = "istio-base"
+  namespace = kubernetes_namespace.istio_system.metadata[0].name
+  values    = [file("${path.module}/assets/istio_base.yaml")]
+}
+
+resource "google_compute_firewall" "istiod" { # https://istio.io/latest/docs/setup/platform-setup/gke/
+  project = var.google_project.project_id
+  network = google_compute_network.this.name
+  name    = "${var.platform_name}-istiod"
+
+  direction               = "INGRESS"
+  source_ranges           = [google_container_cluster.this.private_cluster_config[0].master_ipv4_cidr_block]
+  target_service_accounts = [google_service_account.gke_node.email]
+  priority                = 1000
+
+  allow {
+    protocol = "tcp"
+    ports    = ["15017"]
+  }
+}
+
+resource "helm_release" "istiod" {
+  depends_on = [
+    google_compute_firewall.istiod,
+    helm_release.istio_base,
+  ]
+
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "istiod"
+  version    = "1.24.2"
+
+  name      = "istiod"
+  namespace = kubernetes_namespace.istio_system.metadata[0].name
+  values    = [file("${path.module}/assets/istiod.yaml")]
+}
+
+resource "kubernetes_manifest" "istio_telemetry_mesh_default" {
+  depends_on = [
+    helm_release.istio_base,
+    helm_release.istiod,
+  ]
+
+  manifest = {
+    apiVersion = "telemetry.istio.io/v1"
+    kind       = "Telemetry" # https://istio.io/latest/docs/reference/config/telemetry/
+    metadata = {
+      name      = "mesh-default"
+      namespace = kubernetes_namespace.istio_system.metadata[0].name
+    }
+    spec = {
+      tracing = [{
+        providers = [{
+          name = "otel-tracing"
+        }]
+      }]
+    }
+  }
 }
 
 #######################################
@@ -317,29 +422,6 @@ resource "google_dns_record_set" "ingress_internet" {
   type     = "A"
   ttl      = 300
   rrdatas  = [google_compute_address.ingress_internet.address]
-}
-
-#######################################
-### Prometheus Operator (CRDs)
-#######################################
-
-resource "kubernetes_namespace" "prometheus_operator" {
-  depends_on = [
-    google_container_cluster.this,
-  ]
-
-  metadata {
-    name = "prometheus-operator"
-  }
-}
-
-resource "helm_release" "prometheus_operator_crds" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
-  chart      = "prometheus-operator-crds"
-  version    = "17.0.2"
-
-  name      = "prometheus-operator-crds"
-  namespace = kubernetes_namespace.prometheus_operator.metadata[0].name
 }
 
 #######################################

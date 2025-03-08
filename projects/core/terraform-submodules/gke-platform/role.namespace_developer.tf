@@ -96,4 +96,21 @@ resource "kubernetes_cluster_role" "namespace_developer" {
   #   resources  = []
   #   verbs      = ["get", "list", "watch"]
   # }
+
+  # rule {
+  #   api_groups = ["cert-manager.io"]
+  #   resources  = []
+  #   verbs      = ["get", "list", "watch"]
+  # }
+
+  # rule {
+  #   api_groups = ["opentelemetry.io"]
+  #   resources  = []
+  #   verbs      = ["get", "list", "watch"]
+  # }
+  rule {
+    api_groups = ["monitoring.coreos.com"]
+    resources  = ["podmonitors", "servicemonitors"]
+    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
+  }
 }

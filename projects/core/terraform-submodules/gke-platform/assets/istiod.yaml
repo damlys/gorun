@@ -6,9 +6,9 @@ meshConfig: # https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/
     tracing:
       sampling: 100.0 # default is "1.0"
   extensionProviders:
-    - name: opentelemetry
+    - name: otel-tracing
       opentelemetry:
-        service: "${opentelemetry_service}"
-        port: "${opentelemetry_port}"
+        service: otlp-collector.otel-otlp-collector.svc.cluster.local
+        port: 4317
         resource_detectors:
           environment: {}
