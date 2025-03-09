@@ -17,7 +17,7 @@ jobs:
       - name: git clone
         uses: actions/checkout@v4
       - name: git clone fix
-        run: git config --system --add safe.directory /__w/gogcp/gogcp
+        run: git config --system --add safe.directory /__w/gorun/gorun
 
       - name: format check
         run: shfmt --indent=2 --diff ./scripts

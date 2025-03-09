@@ -17,7 +17,7 @@ jobs:
       - name: git clone
         uses: actions/checkout@v4
       - name: git clone fix
-        run: git config --system --add safe.directory /__w/gogcp/gogcp
+        run: git config --system --add safe.directory /__w/gorun/gorun
 
       - name: format check
         run: files="$(gofmt -l ./go)" && echo "$files" && test -z "$files"
