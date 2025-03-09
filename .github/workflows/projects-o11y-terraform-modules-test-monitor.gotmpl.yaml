@@ -41,7 +41,7 @@ jobs:
         run: ./scripts/terraform-module test "projects/o11y/terraform-modules/test-monitor"
       - name: init
         run: terraform -chdir="projects/o11y/terraform-modules/test-monitor" init -input=false
-      - if: github.event_name == 'pull_request' && github.base_ref == 'refs/heads/main'
+      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
         name: plan
         run: terraform -chdir="projects/o11y/terraform-modules/test-monitor" plan -input=false
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'

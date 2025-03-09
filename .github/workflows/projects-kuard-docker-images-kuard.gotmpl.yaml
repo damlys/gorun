@@ -52,7 +52,7 @@ jobs:
         run: ./scripts/docker-image build "projects/kuard/docker-images/kuard"
       - name: test
         run: ./scripts/docker-image test "projects/kuard/docker-images/kuard"
-      - if: github.event_name == 'pull_request' && github.base_ref == 'refs/heads/main'
+      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
         name: pre-publish
         run: ./scripts/docker-image pre-publish "projects/kuard/docker-images/kuard"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'

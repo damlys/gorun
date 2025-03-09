@@ -42,7 +42,7 @@ jobs:
         run: ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-lgtm-stack"
       - name: test
         run: ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gke-lgtm-stack"
-      - if: github.event_name == 'pull_request' && github.base_ref == 'refs/heads/main'
+      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
         name: pre-publish
         run: ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/gke-lgtm-stack"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'

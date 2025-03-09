@@ -37,7 +37,7 @@ jobs:
         run: ./scripts/helm-chart build "projects/kuard/helm-charts/stateful-kuard"
       - name: test
         run: ./scripts/helm-chart test "projects/kuard/helm-charts/stateful-kuard"
-      - if: github.event_name == 'pull_request' && github.base_ref == 'refs/heads/main'
+      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
         name: pre-publish
         run: ./scripts/helm-chart pre-publish "projects/kuard/helm-charts/stateful-kuard"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'

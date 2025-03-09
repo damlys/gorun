@@ -52,7 +52,7 @@ jobs:
         run: ./scripts/docker-image build "projects/core/docker-images/devcontainer"
       - name: test
         run: ./scripts/docker-image test "projects/core/docker-images/devcontainer"
-      - if: github.event_name == 'pull_request' && github.base_ref == 'refs/heads/main'
+      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
         name: pre-publish
         run: ./scripts/docker-image pre-publish "projects/core/docker-images/devcontainer"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'

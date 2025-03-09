@@ -41,7 +41,7 @@ jobs:
         run: ./scripts/terraform-module test "projects/core/terraform-modules/main"
       - name: init
         run: terraform -chdir="projects/core/terraform-modules/main" init -input=false
-      - if: github.event_name == 'pull_request' && github.base_ref == 'refs/heads/main'
+      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
         name: plan
         run: terraform -chdir="projects/core/terraform-modules/main" plan -input=false
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
