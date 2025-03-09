@@ -9,10 +9,6 @@ resource "kubernetes_namespace" "opentelemetry_operator" {
 }
 
 resource "helm_release" "opentelemetry_operator" {
-  depends_on = [
-    helm_release.cert_manager,
-  ]
-
   repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
   chart      = "opentelemetry-operator"
   version    = "0.76.0"
@@ -90,6 +86,9 @@ module "test_lgtm_stack" {
 
 module "test_otel_collectors" {
   source = "../../terraform-submodules/k8s-otel-collectors" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/o11y/k8s-otel-collectors/0.2.0.zip"
+  depends_on = [
+    helm_release.opentelemetry_operator,
+  ]
 
   loki_entrypoint  = module.test_lgtm_stack.loki_entrypoint
   mimir_entrypoint = module.test_lgtm_stack.mimir_entrypoint
@@ -116,7 +115,11 @@ resource "helm_release" "istio_base" {
   values    = [file("${path.module}/assets/istio_base.yaml")]
 }
 
-resource "helm_release" "istiod" {
+resource "helm_release" "istio_discovery" {
+  depends_on = [
+    helm_release.istio_base,
+  ]
+
   repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
   chart      = "istiod"
   version    = "1.24.2"
@@ -124,24 +127,50 @@ resource "helm_release" "istiod" {
   name      = "istiod"
   namespace = kubernetes_namespace.istio_system.metadata[0].name
 
-  values = [templatefile("${path.module}/assets/istiod.yaml.tftpl", {
+  values = [templatefile("${path.module}/assets/istio_discovery.yaml.tftpl", {
     opentelemetry_service = module.test_otel_collectors.otlp_grpc_host
     opentelemetry_port    = module.test_otel_collectors.otlp_grpc_port
   })]
 }
 
-resource "kubernetes_manifest" "istio_telemetry_mesh_default" {
+resource "kubernetes_manifest" "istio_security_peer_authentication_default" {
   depends_on = [
-    helm_release.istiod,
+    helm_release.istio_discovery,
+  ]
+
+  manifest = {
+    apiVersion = "security.istio.io/v1"
+    kind       = "PeerAuthentication"
+    metadata = {
+      name      = "default"
+      namespace = kubernetes_namespace.istio_system.metadata[0].name
+    }
+    spec = {
+      mtls = {
+        mode = "DISABLE" # mutual TLS is not needed as Istio is used only to collect tracking data
+      }
+    }
+  }
+}
+
+resource "kubernetes_manifest" "istio_telemetry_default" {
+  depends_on = [
+    helm_release.istio_discovery,
   ]
 
   manifest = {
     apiVersion = "telemetry.istio.io/v1"
     kind       = "Telemetry" # https://istio.io/latest/docs/reference/config/telemetry/
     metadata = {
-      name      = "mesh-default"
+      name      = "default"
       namespace = kubernetes_namespace.istio_system.metadata[0].name
     }
-    spec = yamldecode(file("${path.module}/assets/istio_telemetry_mesh_default.yaml"))
+    spec = {
+      tracing = [{
+        providers = [{
+          name = "otel-tracing"
+        }]
+      }]
+    }
   }
 }

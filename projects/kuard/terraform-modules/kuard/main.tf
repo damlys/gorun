@@ -1,9 +1,3 @@
-data "kubernetes_namespace" "this" {
-  metadata {
-    name = "kuard"
-  }
-}
-
 resource "kubernetes_resource_quota" "pods" {
   metadata {
     namespace = data.kubernetes_namespace.this.metadata[0].name
@@ -17,7 +11,7 @@ resource "kubernetes_resource_quota" "pods" {
 }
 
 module "this" {
-  source = "../../terraform-submodules/kuard" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/kuard/kuard/0.2.0.zip"
+  source = "../../terraform-submodules/kuard" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/kuard/kuard/0.2.1.zip"
 
   google_project           = data.google_project.this
   google_container_cluster = data.google_container_cluster.this

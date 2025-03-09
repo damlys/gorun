@@ -31,3 +31,9 @@ provider "helm" {
     password = data.google_client_config.oauth2.access_token
   }
 }
+
+data "kubernetes_namespace" "this" {
+  metadata {
+    name = "kuard"
+  }
+}

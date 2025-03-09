@@ -5,7 +5,7 @@ resource "kubernetes_labels" "namespace" {
     name = var.kubernetes_namespace.metadata[0].name
   }
   labels = {
-    istio-injection = "disabled" # or "enabled"
+    istio-injection = "enabled" # or "disabled"
   }
 
   force = true

@@ -1,3 +1,0 @@
-tracing:
-  - providers:
-      - name: otel-tracing

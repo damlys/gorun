@@ -481,7 +481,7 @@ resource "kubernetes_manifest" "gke_gateway" { # console.cloud.google.com/net-se
           }
         },
         {
-          name     = "https"
+          name     = "https-root"
           hostname = var.platform_domain
           port     = 443
           protocol = "HTTPS"
