@@ -34,6 +34,7 @@ resource "google_compute_address" "egress_internet" { # console.cloud.google.com
   region  = var.platform_region
 
   address_type = "EXTERNAL"
+  network_tier = "STANDARD"
 }
 
 resource "google_compute_router" "egress_internet" { # console.cloud.google.com/hybrid/routers/list
@@ -211,7 +212,17 @@ resource "google_service_account" "gke_node" { # console.cloud.google.com/iam-ad
   account_id = "${var.platform_name}-gke-node"
 }
 
+resource "google_project_iam_member" "gke_node" {
+  project = var.google_project.project_id
+  role    = "roles/container.defaultNodeServiceAccount"
+  member  = google_service_account.gke_node.member
+}
+
 resource "google_container_node_pool" "this" {
+  depends_on = [
+    google_project_iam_member.gke_node,
+  ]
+
   project        = var.google_project.project_id
   cluster        = google_container_cluster.this.id
   name           = var.platform_name
@@ -254,7 +265,291 @@ resource "google_container_node_pool" "this" {
   lifecycle {
     ignore_changes = [
       node_count,
+      node_config[0].resource_labels,
     ]
+  }
+}
+
+#######################################
+### Prometheus Operator (CRDs only)
+#######################################
+
+resource "kubernetes_namespace" "prometheus_operator" {
+  depends_on = [
+    google_container_cluster.this,
+  ]
+
+  metadata {
+    name = "prometheus-operator"
+  }
+}
+
+resource "helm_release" "prometheus_operator_crds" {
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "prometheus-operator-crds"
+  version    = "17.0.2"
+
+  name      = "prometheus-operator-crds"
+  namespace = kubernetes_namespace.prometheus_operator.metadata[0].name
+}
+
+#######################################
+### cert-manager
+#######################################
+
+resource "kubernetes_namespace" "cert_manager" {
+  depends_on = [
+    google_container_cluster.this,
+  ]
+
+  metadata {
+    name = "cert-manager"
+  }
+}
+
+module "cert_manager_service_account" {
+  source = "../gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-service-account/0.2.0.zip"
+
+  google_project           = var.google_project
+  google_container_cluster = google_container_cluster.this
+  kubernetes_namespace     = kubernetes_namespace.cert_manager
+  service_account_name     = "cert-manager"
+}
+
+resource "helm_release" "cert_manager" {
+  depends_on = [
+    helm_release.prometheus_operator_crds,
+  ]
+
+  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  chart      = "cert-manager"
+  version    = "v1.16.3"
+
+  name      = "cert-manager"
+  namespace = kubernetes_namespace.cert_manager.metadata[0].name
+
+  values = [templatefile("${path.module}/assets/cert_manager.yaml.tftpl", {
+    cert_manager_service_account_name = module.cert_manager_service_account.kubernetes_service_account.metadata[0].name
+  })]
+}
+
+#######################################
+### Internet ingress
+#######################################
+
+resource "google_compute_subnetwork" "ingress_internet" {
+  project = var.google_project.project_id
+  network = google_compute_network.this.name
+  name    = "${var.platform_name}-ingress-internet"
+  region  = var.platform_region
+
+  ip_cidr_range = local.vpc_proxy_cidr
+  purpose       = "REGIONAL_MANAGED_PROXY" # a proxy-only subnet for regional GKE Gateway (https://cloud.google.com/kubernetes-engine/docs/how-to/deploying-gateways#configure_a_proxy-only_subnet)
+  role          = "ACTIVE"
+}
+
+resource "google_compute_address" "ingress_internet" { # console.cloud.google.com/networking/addresses/list
+  project = var.google_project.project_id
+  name    = "${var.platform_name}-ingress-internet"
+  region  = var.platform_region
+
+  address_type = "EXTERNAL"
+  network_tier = "STANDARD"
+}
+
+resource "google_dns_managed_zone" "ingress_internet" { # console.cloud.google.com/net-services/dns/zones
+  project  = var.google_project.project_id
+  name     = "${var.platform_name}-ingress-internet"
+  dns_name = "${var.platform_domain}."
+
+  visibility = "public"
+
+  # override default description
+  description = "-"
+}
+
+resource "google_dns_managed_zone_iam_member" "cert_manager_dns_admin" {
+  project      = var.google_project.project_id
+  managed_zone = google_dns_managed_zone.ingress_internet.name
+  role         = "roles/dns.admin"
+  member       = module.cert_manager_service_account.google_service_account.member
+}
+
+resource "google_dns_record_set" "ingress_internet" {
+  project      = var.google_project.project_id
+  managed_zone = google_dns_managed_zone.ingress_internet.name
+
+  for_each = toset([google_dns_managed_zone.ingress_internet.dns_name, "*.${google_dns_managed_zone.ingress_internet.dns_name}"])
+  name     = each.value
+  type     = "A"
+  ttl      = 300
+  rrdatas  = [google_compute_address.ingress_internet.address]
+}
+
+resource "kubernetes_namespace" "gke_gateway" {
+  depends_on = [
+    google_container_cluster.this,
+  ]
+
+  metadata {
+    name = "gke-gateway"
+  }
+}
+
+resource "kubernetes_manifest" "letsencrypt_production" {
+  depends_on = [
+    helm_release.cert_manager,
+  ]
+
+  manifest = {
+    apiVersion = "cert-manager.io/v1"
+    kind       = "Issuer" # https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Issuer
+    metadata = {
+      name      = "letsencrypt-production"
+      namespace = kubernetes_namespace.gke_gateway.metadata[0].name
+    }
+    spec = {
+      acme = {
+        server = "https://acme-v02.api.letsencrypt.org/directory"
+        email  = "damlys.test@gmail.com"
+        privateKeySecretRef = {
+          name = "letsencrypt-production-issuer-account-key"
+        }
+        solvers = [{
+          dns01 = {
+            cloudDNS = { # https://cert-manager.io/docs/configuration/acme/dns01/google/
+              project        = var.google_project.project_id
+              hostedZoneName = google_dns_managed_zone.ingress_internet.name
+            }
+          }
+        }]
+      }
+    }
+  }
+}
+
+resource "kubernetes_manifest" "letsencrypt_staging" {
+  depends_on = [
+    helm_release.cert_manager,
+  ]
+
+  manifest = {
+    apiVersion = "cert-manager.io/v1"
+    kind       = "Issuer"
+    metadata = {
+      name      = "letsencrypt-staging"
+      namespace = kubernetes_namespace.gke_gateway.metadata[0].name
+    }
+    spec = {
+      acme = {
+        server = "https://acme-staging-v02.api.letsencrypt.org/directory"
+        email  = "damlys.test@gmail.com"
+        privateKeySecretRef = {
+          name = "letsencrypt-staging-issuer-account-key"
+        }
+        solvers = kubernetes_manifest.letsencrypt_production.manifest.spec.acme.solvers
+      }
+    }
+  }
+}
+
+resource "kubernetes_manifest" "gke_gateway" { # console.cloud.google.com/net-services/loadbalancing/list/loadBalancers
+  depends_on = [
+    google_compute_subnetwork.ingress_internet,
+  ]
+
+  manifest = {
+    apiVersion = "gateway.networking.k8s.io/v1"
+    kind       = "Gateway"
+    metadata = {
+      namespace = kubernetes_namespace.gke_gateway.metadata[0].name
+      name      = "gke-gateway"
+      annotations = {
+        "cert-manager.io/issuer" = kubernetes_manifest.letsencrypt_production.manifest.metadata.name
+      }
+    }
+    spec = {
+      gatewayClassName = "gke-l7-regional-external-managed" # regional external Application Load Balancer
+      listeners = [
+        {
+          name     = "http"
+          port     = 80
+          protocol = "HTTP"
+          allowedRoutes = {
+            kinds      = [{ kind = "HTTPRoute" }]
+            namespaces = { from = "Same" }
+          }
+        },
+        {
+          name     = "https"
+          hostname = var.platform_domain
+          port     = 443
+          protocol = "HTTPS"
+          tls = {
+            mode = "Terminate"
+            certificateRefs = [{
+              group = ""
+              kind  = "Secret"
+              name  = "tls-${join("-", reverse(split(".", var.platform_domain)))}"
+            }]
+          }
+          allowedRoutes = {
+            kinds      = [{ kind = "HTTPRoute" }]
+            namespaces = { from = "All" }
+          }
+        },
+        {
+          name     = "https-wildcard"
+          hostname = "*.${var.platform_domain}"
+          port     = 443
+          protocol = "HTTPS"
+          tls = {
+            mode = "Terminate"
+            certificateRefs = [{
+              group = ""
+              kind  = "Secret"
+              name  = "tls-${join("-", reverse(split(".", var.platform_domain)))}"
+            }]
+          }
+          allowedRoutes = {
+            kinds      = [{ kind = "HTTPRoute" }]
+            namespaces = { from = "All" }
+          }
+        },
+      ]
+      addresses = [{
+        type  = "NamedAddress"
+        value = google_compute_address.ingress_internet.name
+      }]
+    }
+  }
+}
+
+resource "kubernetes_manifest" "gke_gateway_http_to_https" {
+  manifest = {
+    apiVersion = "gateway.networking.k8s.io/v1"
+    kind       = "HTTPRoute"
+    metadata = {
+      namespace = kubernetes_namespace.gke_gateway.metadata[0].name
+      name      = "http-to-https"
+    }
+    spec = {
+      parentRefs = [{
+        group       = "gateway.networking.k8s.io"
+        kind        = "Gateway"
+        name        = kubernetes_manifest.gke_gateway.manifest.metadata.name
+        namespace   = kubernetes_manifest.gke_gateway.manifest.metadata.namespace
+        sectionName = "http"
+      }]
+      rules = [{
+        filters = [{
+          type = "RequestRedirect"
+          requestRedirect = {
+            scheme = "https"
+          }
+        }]
+      }]
+    }
   }
 }
 
@@ -352,186 +647,6 @@ resource "kubernetes_role_binding" "namespace_developers" {
       kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
       name      = split(":", subject.value)[1]
       namespace = kubernetes_namespace.gke_security_groups.metadata[0].name
-    }
-  }
-}
-
-#######################################
-### Internet ingress
-#######################################
-
-resource "google_compute_global_address" "ingress_internet" { # console.cloud.google.com/networking/addresses/list
-  project = var.google_project.project_id
-  name    = "${var.platform_name}-ingress-internet"
-
-  address_type = "EXTERNAL"
-}
-
-resource "google_dns_managed_zone" "ingress_internet" { # console.cloud.google.com/net-services/dns/zones
-  project  = var.google_project.project_id
-  name     = "${var.platform_name}-ingress-internet"
-  dns_name = "${var.platform_domain}."
-
-  visibility = "public"
-
-  # override default description
-  description = "-"
-}
-
-resource "google_dns_record_set" "ingress_internet" {
-  project      = var.google_project.project_id
-  managed_zone = google_dns_managed_zone.ingress_internet.name
-
-  for_each = toset([google_dns_managed_zone.ingress_internet.dns_name, "*.${google_dns_managed_zone.ingress_internet.dns_name}"])
-  name     = each.value
-  type     = "A"
-  ttl      = 300
-  rrdatas  = [google_compute_global_address.ingress_internet.address]
-}
-
-resource "google_certificate_manager_dns_authorization" "ingress_internet" {
-  project  = var.google_project.project_id
-  name     = "${var.platform_name}-ingress-internet"
-  location = "global"
-
-  domain = var.platform_domain
-}
-
-resource "google_dns_record_set" "ingress_internet_dns_authorization" {
-  project      = var.google_project.project_id
-  managed_zone = google_dns_managed_zone.ingress_internet.name
-
-  name    = google_certificate_manager_dns_authorization.ingress_internet.dns_resource_record[0].name
-  type    = google_certificate_manager_dns_authorization.ingress_internet.dns_resource_record[0].type
-  ttl     = 300
-  rrdatas = [google_certificate_manager_dns_authorization.ingress_internet.dns_resource_record[0].data]
-}
-
-resource "google_certificate_manager_certificate" "ingress_internet" { # console.cloud.google.com/security/ccm/list/certificates
-  project  = var.google_project.project_id
-  name     = "${var.platform_name}-ingress-internet"
-  location = "global"
-
-  scope = "DEFAULT"
-
-  managed {
-    domains            = [var.platform_domain, "*.${var.platform_domain}"]
-    dns_authorizations = [google_certificate_manager_dns_authorization.ingress_internet.id]
-  }
-}
-
-resource "google_certificate_manager_certificate_map" "ingress_internet" {
-  project = var.google_project.project_id
-  name    = "${var.platform_name}-ingress-internet"
-}
-
-resource "google_certificate_manager_certificate_map_entry" "ingress_internet" {
-  project = var.google_project.project_id
-  map     = google_certificate_manager_certificate_map.ingress_internet.name
-  name    = "${var.platform_name}-ingress-internet-${substr(sha256(each.value), 0, 5)}"
-
-  for_each     = toset(google_certificate_manager_certificate.ingress_internet.managed[0].domains)
-  hostname     = each.value
-  certificates = [google_certificate_manager_certificate.ingress_internet.id]
-}
-
-resource "kubernetes_namespace" "gke_gateway" {
-  depends_on = [
-    google_container_cluster.this,
-  ]
-
-  metadata {
-    name = "gke-gateway"
-  }
-}
-
-resource "kubernetes_namespace" "gke_gateway_redirect" {
-  depends_on = [
-    google_container_cluster.this,
-  ]
-
-  metadata {
-    name = "gke-gateway-redirect"
-    labels = {
-      name = "gke-gateway-redirect"
-    }
-  }
-}
-
-resource "kubernetes_manifest" "gke_gateway" { # console.cloud.google.com/net-services/loadbalancing/list/loadBalancers
-  manifest = {
-    apiVersion = "gateway.networking.k8s.io/v1"
-    kind       = "Gateway"
-    metadata = {
-      namespace = kubernetes_namespace.gke_gateway.metadata[0].name
-      name      = "gke-gateway"
-      annotations = {
-        "networking.gke.io/certmap" = google_certificate_manager_certificate_map.ingress_internet.name
-      }
-    }
-    spec = {
-      gatewayClassName = "gke-l7-global-external-managed" # global external Application Load Balancer
-      listeners = [
-        {
-          name     = "http"
-          port     = 80
-          protocol = "HTTP"
-          allowedRoutes = {
-            kinds = [{
-              kind = "HTTPRoute"
-            }]
-            namespaces = {
-              from     = "Selector"
-              selector = { matchLabels = kubernetes_namespace.gke_gateway_redirect.metadata[0].labels }
-            }
-          }
-        },
-        {
-          name     = "https"
-          port     = 443
-          protocol = "HTTPS"
-          allowedRoutes = {
-            kinds = [{
-              kind = "HTTPRoute"
-            }]
-            namespaces = {
-              from = "All"
-            }
-          }
-        },
-      ]
-      addresses = [{
-        type  = "NamedAddress"
-        value = google_compute_global_address.ingress_internet.name
-      }]
-    }
-  }
-}
-
-resource "kubernetes_manifest" "gke_gateway_redirect_http_to_https" {
-  manifest = {
-    apiVersion = "gateway.networking.k8s.io/v1"
-    kind       = "HTTPRoute"
-    metadata = {
-      namespace = kubernetes_namespace.gke_gateway_redirect.metadata[0].name
-      name      = "http-to-https"
-    }
-    spec = {
-      parentRefs = [{
-        group       = "gateway.networking.k8s.io"
-        kind        = "Gateway"
-        namespace   = kubernetes_manifest.gke_gateway.manifest.metadata.namespace
-        name        = kubernetes_manifest.gke_gateway.manifest.metadata.name
-        sectionName = "http"
-      }]
-      rules = [{
-        filters = [{
-          type = "RequestRedirect"
-          requestRedirect = {
-            scheme = "https"
-          }
-        }]
-      }]
     }
   }
 }

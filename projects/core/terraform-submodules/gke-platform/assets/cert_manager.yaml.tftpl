@@ -1,0 +1,18 @@
+crds:
+  enabled: true
+
+serviceAccount:
+  create: false
+  name: "${cert_manager_service_account_name}"
+
+extraArgs:
+  - --enable-gateway-api
+  # https://cert-manager.io/docs/configuration/acme/dns01/google/#enable-ambient-credential-usage
+  - --issuer-ambient-credentials
+
+prometheus:
+  enabled: true
+  servicemonitor:
+    enabled: true
+  podmonitor:
+    enabled: false

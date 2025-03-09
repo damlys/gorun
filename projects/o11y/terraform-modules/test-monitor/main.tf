@@ -1,43 +1,4 @@
 #######################################
-### cert-manager
-#######################################
-
-resource "kubernetes_namespace" "cert_manager" {
-  metadata {
-    name = "cert-manager"
-  }
-}
-
-resource "helm_release" "cert_manager" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
-  chart      = "cert-manager"
-  version    = "v1.16.3"
-
-  name      = "cert-manager"
-  namespace = kubernetes_namespace.cert_manager.metadata[0].name
-  values    = [file("${path.module}/assets/cert_manager.yaml")]
-}
-
-#######################################
-### Prometheus Operator (CRDs)
-#######################################
-
-resource "kubernetes_namespace" "prometheus_operator" {
-  metadata {
-    name = "prometheus-operator"
-  }
-}
-
-resource "helm_release" "prometheus_operator_crds" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
-  chart      = "prometheus-operator-crds"
-  version    = "17.0.2"
-
-  name      = "prometheus-operator-crds"
-  namespace = kubernetes_namespace.prometheus_operator.metadata[0].name
-}
-
-#######################################
 ### OpenTelemetry Operator
 #######################################
 
