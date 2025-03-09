@@ -47,8 +47,7 @@ function main {
       return 1
     fi
     if ! changelog::contains_version "${project_path}" "${module_version}"; then
-      log::error "changelog does not contain header with the module version: ${project_path}"
-      #return 1
+      log::warning "changelog does not contain header with the module version: ${project_path}"
     fi
     if git::tag_exists "${project_path}/v${module_version}"; then
       log::error "git tag with module version already exists: ${module_version}"

@@ -18,7 +18,7 @@ jobs:
   {{ .ProjectSlug }}:
     name: {{ .ProjectPath }}
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gogcp-devcontainer:0.2.0
+    container: ghcr.io/damlys/gogcp-devcontainer:0.2.3
     permissions:
       contents: write
       id-token: write
@@ -46,7 +46,7 @@ jobs:
         TODO: remove this workaround when the issue is fixed
         https://github.com/actions/checkout/issues/1169
         */}}
-        run: git config --system --add safe.directory /__w/gorun/gorun
+        run: git config --system --add safe.directory $GITHUB_WORKSPACE
       - name: gcloud auth
         uses: google-github-actions/auth@v2
         with:
@@ -74,7 +74,7 @@ jobs:
         run: ./scripts/docker-image build "{{ .ProjectPath }}"
       - name: test
         run: ./scripts/docker-image test "{{ .ProjectPath }}"
-      - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
+      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
         name: pre-publish
         run: ./scripts/docker-image pre-publish "{{ .ProjectPath }}"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -91,7 +91,7 @@ jobs:
         run: ./scripts/helm-chart build "{{ .ProjectPath }}"
       - name: test
         run: ./scripts/helm-chart test "{{ .ProjectPath }}"
-      - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
+      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
         name: pre-publish
         run: ./scripts/helm-chart pre-publish "{{ .ProjectPath }}"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -119,7 +119,7 @@ jobs:
         run: ./scripts/terraform-submodule build "{{ .ProjectPath }}"
       - name: test
         run: ./scripts/terraform-submodule test "{{ .ProjectPath }}"
-      - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
+      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
         name: pre-publish
         run: ./scripts/terraform-submodule pre-publish "{{ .ProjectPath }}"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -140,7 +140,7 @@ jobs:
         run: ./scripts/terraform-module test "{{ .ProjectPath }}"
       - name: init
         run: terraform -chdir="{{ .ProjectPath }}" init -input=false
-      - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
+      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
         name: plan
         run: terraform -chdir="{{ .ProjectPath }}" plan -input=false
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'

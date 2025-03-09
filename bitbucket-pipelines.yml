@@ -1,4 +1,4 @@
-image: damlys/gogcp-devcontainer:0.2.0
+image: damlys/gogcp-devcontainer:0.2.3
 definitions:
   caches:
     projects-core-terraform-modules-main: projects/core/terraform-modules/main/.terraform

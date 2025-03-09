@@ -6,12 +6,13 @@ jobs:
   dev-stop:
     name: dev-stop
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gogcp-devcontainer:0.2.0
+    container: ghcr.io/damlys/gogcp-devcontainer:0.2.3
     steps:
       - name: git clone
         uses: actions/checkout@v4
       - name: git clone fix
-        run: git config --system --add safe.directory /__w/gorun/gorun
+        run: git config --system --add safe.directory $GITHUB_WORKSPACE
+
       - name: gcloud auth
         uses: google-github-actions/auth@v2
         with:
