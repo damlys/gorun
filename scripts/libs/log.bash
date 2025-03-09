@@ -6,6 +6,12 @@ function log::error {
   printf "Error: %s\n" "${msg}"
 }
 
+function log::warning {
+  local msg="$1"
+
+  printf "Warning: %s\n" "${msg}"
+}
+
 function log::info {
   local msg="$1"
 
