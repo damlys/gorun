@@ -14,7 +14,7 @@ jobs:
   projects-core-terraform-modules-test:
     name: projects/core/terraform-modules/test
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gogcp-devcontainer:0.2.0
+    container: ghcr.io/damlys/gogcp-devcontainer:0.2.3
     permissions:
       contents: write
       id-token: write
@@ -24,7 +24,7 @@ jobs:
       - name: git clone
         uses: actions/checkout@v4
       - name: git clone fix
-        run: git config --system --add safe.directory /__w/gorun/gorun
+        run: git config --system --add safe.directory $GITHUB_WORKSPACE
       - name: gcloud auth
         uses: google-github-actions/auth@v2
         with:
@@ -41,7 +41,7 @@ jobs:
         run: ./scripts/terraform-module test "projects/core/terraform-modules/test"
       - name: init
         run: terraform -chdir="projects/core/terraform-modules/test" init -input=false
-      - if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
+      - if: github.event_name == 'pull_request' && github.base_ref == 'refs/heads/main'
         name: plan
         run: terraform -chdir="projects/core/terraform-modules/test" plan -input=false
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
