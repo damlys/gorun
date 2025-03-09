@@ -5,7 +5,7 @@ resource "kubernetes_labels" "namespace" {
     name = var.kubernetes_namespace.metadata[0].name
   }
   labels = {
-    istio-injection = "disabled" # or "enabled"
+    istio-injection = "enabled" # or "disabled"
   }
 
   force = true
@@ -48,7 +48,7 @@ data "kubernetes_service" "stateless_kuard" {
 }
 
 module "stateless_kuard_gateway_route" {
-  source = "../../../core/terraform-submodules/gke-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-gateway-route/0.2.0.zip"
+  source = "../../../core/terraform-submodules/gke-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-gateway-route/0.2.1.zip"
 
   kubernetes_service = data.kubernetes_service.stateless_kuard
 
@@ -68,7 +68,9 @@ module "stateless_kuard_availability_monitor" {
 }
 
 module "stateless_kuard_gateway_redirect" {
-  source = "../../../core/terraform-submodules/gke-gateway-redirect" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-gateway-redirect/0.2.0.zip"
+  source = "../../../core/terraform-submodules/gke-gateway-redirect" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-gateway-redirect/0.2.1.zip"
+
+  kubernetes_namespace = var.kubernetes_namespace
 
   old_domain = "kuard.${var.platform_domain}"
   new_domain = "stateless-kuard.${var.platform_domain}"
@@ -109,7 +111,7 @@ data "kubernetes_service" "stateful_kuard" {
 }
 
 module "stateful_kuard_gateway_route" {
-  source = "../../../core/terraform-submodules/gke-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-gateway-route/0.2.0.zip"
+  source = "../../../core/terraform-submodules/gke-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-gateway-route/0.2.1.zip"
 
   kubernetes_service = data.kubernetes_service.stateful_kuard
 

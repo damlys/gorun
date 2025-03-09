@@ -8,9 +8,9 @@ data "google_client_config" "oauth2" {
 data "google_project" "this" {
 }
 
-data "google_container_cluster" "this" { # gke_gogke-test-0_europe-central2-a_gogke-test-7
+data "google_container_cluster" "this" { # gke_gogke-test-0_europe-central2-a_gogke-test-9
   location = "europe-central2-a"
-  name     = "gogke-test-7"
+  name     = "gogke-test-9"
 }
 
 provider "kubernetes" {
@@ -29,5 +29,11 @@ provider "helm" {
     url      = "oci://europe-central2-docker.pkg.dev"
     username = "oauth2accesstoken"
     password = data.google_client_config.oauth2.access_token
+  }
+}
+
+data "kubernetes_namespace" "this" {
+  metadata {
+    name = "kuard"
   }
 }

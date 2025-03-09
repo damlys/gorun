@@ -3,7 +3,7 @@
 #######################################
 
 module "main_project" {
-  source = "../../terraform-submodules/gcp-project" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-project/0.2.0.zip"
+  source = "../../terraform-submodules/gcp-project" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-project/0.2.1.zip"
 
   project_id   = "gogke-main-0"
   project_name = "gogke-main-0"
@@ -14,7 +14,7 @@ module "main_project" {
 }
 
 module "test_project" {
-  source = "../../terraform-submodules/gcp-project" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-project/0.2.0.zip"
+  source = "../../terraform-submodules/gcp-project" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-project/0.2.1.zip"
 
   project_id   = "gogke-test-0"
   project_name = "gogke-test-0"
@@ -25,7 +25,7 @@ module "test_project" {
 }
 
 module "prod_project" {
-  source = "../../terraform-submodules/gcp-project" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-project/0.2.0.zip"
+  source = "../../terraform-submodules/gcp-project" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gcp-project/0.2.1.zip"
 
   project_id   = "gogke-prod-0"
   project_name = "gogke-prod-0"
@@ -73,7 +73,7 @@ module "private_docker_images_registry" {
   registry_name  = "private-docker-images"
 
   iam_readers = [
-    "serviceAccount:gogke-test-7-gke-node@gogke-test-0.iam.gserviceaccount.com",
+    "serviceAccount:gogke-test-9-gke-node@gogke-test-0.iam.gserviceaccount.com",
   ]
   iam_writers = [
     "serviceAccount:gha-damlys-gogcp@gogke-main-0.iam.gserviceaccount.com",

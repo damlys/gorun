@@ -2,6 +2,7 @@ resource "kubernetes_cluster_role" "namespace_tester" {
   metadata {
     name = "custom:namespace-tester"
   }
+
   rule {
     api_groups = [""]
     resources  = ["serviceaccounts"]
@@ -17,6 +18,7 @@ resource "kubernetes_cluster_role" "namespace_tester" {
   #   resources  = ["secrets"]
   #   verbs      = [] # WARNING! "list" can't be used! it allows accessing full object content
   # }
+
   rule {
     api_groups = [""]
     resources  = ["pods", "pods/status"]
@@ -57,11 +59,13 @@ resource "kubernetes_cluster_role" "namespace_tester" {
     resources  = ["poddisruptionbudgets", "poddisruptionbudgets/status"]
     verbs      = ["get", "list", "watch"]
   }
+
   rule {
     api_groups = [""]
     resources  = ["persistentvolumeclaims", "persistentvolumeclaims/status"]
     verbs      = ["get", "list", "watch"]
   }
+
   rule {
     api_groups = [""]
     resources  = ["endpoints", "services", "services/status"]
@@ -72,9 +76,41 @@ resource "kubernetes_cluster_role" "namespace_tester" {
     resources  = ["serviceexports", "serviceimports"]
     verbs      = ["get", "list", "watch"]
   }
+  # rule {
+  #   api_groups = ["networking.gke.io"]
+  #   resources  = []
+  #   verbs      = ["get", "list", "watch"]
+  # }
   rule {
-    api_groups = ["networking.k8s.io", "gateway.networking.k8s.io", "cloud.google.com"]
-    resources  = ["ingresses", "ingresses/status", "frontendconfigs", "backendconfigs", "lbpolicies", "lbpolicies/status", "gateways", "gateways/status", "httproutes", "httproutes/status", "healthcheckpolicies", "healthcheckpolicies/status", "gcpgatewaypolicies", "gcpgatewaypolicies/status", "gcpbackendpolicies", "gcpbackendpolicies/status"]
+    api_groups = ["networking.k8s.io"]
+    resources  = ["ingresses", "ingresses/status"]
+    verbs      = ["get", "list", "watch"]
+  }
+  rule {
+    api_groups = ["gateway.networking.k8s.io"]
+    resources  = ["gateways", "gateways/status", "httproutes", "httproutes/status"]
+    verbs      = ["get", "list", "watch"]
+  }
+  # rule {
+  #   api_groups = ["networking.istio.io"]
+  #   resources  = []
+  #   verbs      = ["get", "list", "watch"]
+  # }
+
+  # rule {
+  #   api_groups = ["cert-manager.io"]
+  #   resources  = []
+  #   verbs      = ["get", "list", "watch"]
+  # }
+
+  # rule {
+  #   api_groups = ["opentelemetry.io"]
+  #   resources  = []
+  #   verbs      = ["get", "list", "watch"]
+  # }
+  rule {
+    api_groups = ["monitoring.coreos.com"]
+    resources  = ["podmonitors", "servicemonitors"]
     verbs      = ["get", "list", "watch"]
   }
 }
