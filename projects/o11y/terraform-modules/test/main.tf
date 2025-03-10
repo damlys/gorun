@@ -9,7 +9,7 @@ resource "kubernetes_namespace" "opentelemetry_operator" {
 }
 
 resource "helm_release" "opentelemetry_operator" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "opentelemetry-operator"
   version    = "0.76.0"
 
@@ -76,16 +76,16 @@ resource "kubernetes_cluster_role" "opentelemetry_targetallocator" {
 #######################################
 
 module "test_lgtm_stack" {
-  source = "../../terraform-submodules/gke-lgtm-stack" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/o11y/gke-lgtm-stack/0.2.0.zip"
+  source = "../../terraform-submodules/gke-lgtm-stack" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/o11y/gke-lgtm-stack/0.2.100.zip"
 
   google_project           = data.google_project.this
   google_container_cluster = data.google_container_cluster.this
 
-  grafana_domain = "grafana.gogke-test-9.damlys.pl"
+  grafana_domain = "grafana.gogke-test-2.damlys.pl"
 }
 
 module "test_otel_collectors" {
-  source = "../../terraform-submodules/k8s-otel-collectors" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/o11y/k8s-otel-collectors/0.2.0.zip"
+  source = "../../terraform-submodules/k8s-otel-collectors" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/o11y/k8s-otel-collectors/0.2.100.zip"
   depends_on = [
     helm_release.opentelemetry_operator,
   ]
@@ -106,7 +106,7 @@ resource "kubernetes_namespace" "istio_system" {
 }
 
 resource "helm_release" "istio_base" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "base"
   version    = "1.24.2"
 
@@ -120,7 +120,7 @@ resource "helm_release" "istio_discovery" {
     helm_release.istio_base,
   ]
 
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "istiod"
   version    = "1.24.2"
 

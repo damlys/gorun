@@ -30,7 +30,7 @@ variable "cluster_location" {
   default = "europe-central2-a"
 }
 
-variable "cluster_version" { # gcloud container get-server-config --project="gogke-main-0" --region="europe-central2" --flatten="channels" --filter="channels.channel=STABLE" --format="value(channels.defaultVersion)"
+variable "cluster_version" { # gcloud container get-server-config --project="gogcp-main-2" --region="europe-central2" --flatten="channels" --filter="channels.channel=STABLE" --format="value(channels.defaultVersion)"
   type    = string
   default = null
 }

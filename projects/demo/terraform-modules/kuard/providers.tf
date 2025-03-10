@@ -1,5 +1,5 @@
 provider "google" {
-  project = "gogke-test-0"
+  project = "gogcp-test-2"
 }
 
 data "google_client_config" "oauth2" {
@@ -8,9 +8,9 @@ data "google_client_config" "oauth2" {
 data "google_project" "this" {
 }
 
-data "google_container_cluster" "this" { # gke_gogke-test-0_europe-central2-a_gogke-test-9
+data "google_container_cluster" "this" { # gke_gogcp-test-2_europe-central2-a_gogke-test-2
   location = "europe-central2-a"
-  name     = "gogke-test-9"
+  name     = "gogke-test-2"
 }
 
 provider "kubernetes" {

@@ -285,7 +285,7 @@ resource "kubernetes_namespace" "prometheus_operator" {
 }
 
 resource "helm_release" "prometheus_operator_crds" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "prometheus-operator-crds"
   version    = "17.0.2"
 
@@ -308,7 +308,7 @@ resource "kubernetes_namespace" "cert_manager" {
 }
 
 module "cert_manager_service_account" {
-  source = "../gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-service-account/0.2.0.zip"
+  source = "../gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.2.100.zip"
 
   google_project           = var.google_project
   google_container_cluster = google_container_cluster.this
@@ -321,7 +321,7 @@ resource "helm_release" "cert_manager" {
     helm_release.prometheus_operator_crds,
   ]
 
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "cert-manager"
   version    = "v1.16.3"
 

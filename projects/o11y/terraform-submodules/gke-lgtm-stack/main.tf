@@ -9,7 +9,7 @@ resource "kubernetes_namespace" "grafana" {
 }
 
 module "grafana_service_account" {
-  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-service-account/0.2.0.zip"
+  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.2.100.zip"
 
   google_project           = var.google_project
   google_container_cluster = var.google_container_cluster
@@ -32,7 +32,7 @@ resource "google_project_iam_member" "grafana_gcp_datasources" {
 }
 
 resource "helm_release" "grafana_postgresql" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "postgresql"
   version    = "16.3.5"
 
@@ -45,7 +45,7 @@ resource "helm_release" "grafana_postgresql" {
 }
 
 resource "helm_release" "grafana" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "grafana"
   version    = "8.8.2"
 
@@ -81,7 +81,7 @@ data "kubernetes_service" "grafana" {
 }
 
 module "grafana_gateway_route" {
-  source = "../../../core/terraform-submodules/gke-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-gateway-route/0.2.1.zip"
+  source = "../../../core/terraform-submodules/gke-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-gateway-route/0.2.100.zip"
 
   kubernetes_service = data.kubernetes_service.grafana
 
@@ -92,7 +92,7 @@ module "grafana_gateway_route" {
 }
 
 module "grafana_availability_monitor" {
-  source = "../gcp-availability-monitor" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/o11y/gcp-availability-monitor/0.2.0.zip"
+  source = "../gcp-availability-monitor" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/o11y/gcp-availability-monitor/0.2.100.zip"
 
   google_project = var.google_project
 
@@ -114,7 +114,7 @@ resource "kubernetes_namespace" "loki" {
 }
 
 module "loki_service_account" {
-  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-service-account/0.2.0.zip"
+  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.2.100.zip"
 
   google_project           = var.google_project
   google_container_cluster = var.google_container_cluster
@@ -147,7 +147,7 @@ resource "google_storage_bucket_iam_member" "loki_service_account" {
 }
 
 resource "helm_release" "loki" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "loki"
   version    = "6.24.0"
 
@@ -176,7 +176,7 @@ resource "kubernetes_namespace" "mimir" {
 }
 
 module "mimir_service_account" {
-  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-service-account/0.2.0.zip"
+  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.2.100.zip"
 
   google_project           = var.google_project
   google_container_cluster = var.google_container_cluster
@@ -209,7 +209,7 @@ resource "google_storage_bucket_iam_member" "mimir_service_account" {
 }
 
 resource "helm_release" "mimir" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "mimir-distributed"
   version    = "5.5.1"
 
@@ -238,7 +238,7 @@ resource "kubernetes_namespace" "tempo" {
 }
 
 module "tempo_service_account" {
-  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-service-account/0.2.0.zip"
+  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.2.100.zip"
 
   google_project           = var.google_project
   google_container_cluster = var.google_container_cluster
@@ -271,7 +271,7 @@ resource "google_storage_bucket_iam_member" "tempo_service_account" {
 }
 
 resource "helm_release" "tempo" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "tempo-distributed"
   version    = "1.28.0"
 

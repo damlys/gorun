@@ -1,2 +1,2 @@
-repository: gogke-main-0-private-terraform-modules/gogke/core/gcp-terraform-state-bucket
-version: 0.2.0
+repository: gogcp-main-2-private-terraform-modules/gorun/core/gcp-terraform-state-bucket
+version: 0.2.100

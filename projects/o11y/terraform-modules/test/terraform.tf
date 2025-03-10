@@ -17,7 +17,7 @@ terraform {
   }
 
   backend "gcs" {
-    bucket = "gogke-main-0-terraform-state"
-    prefix = "github.com/gogcp/gogke/projects/o11y/terraform-modules/test-monitor"
+    bucket = "gogcp-main-2-terraform-state"
+    prefix = "github.com/damlys/gorun/projects/o11y/terraform-modules/test"
   }
 }

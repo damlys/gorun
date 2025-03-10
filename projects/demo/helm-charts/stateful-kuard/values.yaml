@@ -1,6 +1,6 @@
 image:
-  repository: europe-central2-docker.pkg.dev/gogke-main-0/private-docker-images/gogke/kuard/kuard
-  tag: 0.2.0
+  repository: europe-central2-docker.pkg.dev/gogcp-main-2/private-docker-images/gorun/demo/kuard
+  tag: 0.2.100
 
 serviceAccountName: ""
 

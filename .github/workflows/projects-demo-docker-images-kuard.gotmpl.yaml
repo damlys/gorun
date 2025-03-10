@@ -1,21 +1,21 @@
-name: projects/kuard/docker-images/kuard
+name: projects/demo/docker-images/kuard
 on:
   pull_request:
     paths:
-      - "projects/kuard/docker-images/kuard/**"
-      - "!projects/kuard/docker-images/kuard/README.md"
+      - "projects/demo/docker-images/kuard/**"
+      - "!projects/demo/docker-images/kuard/README.md"
   push:
     branches:
       - main
     paths:
-      - "projects/kuard/docker-images/kuard/**"
-      - "!projects/kuard/docker-images/kuard/README.md"
-      - "!projects/kuard/docker-images/kuard/container-structure-test.yaml"
+      - "projects/demo/docker-images/kuard/**"
+      - "!projects/demo/docker-images/kuard/README.md"
+      - "!projects/demo/docker-images/kuard/container-structure-test.yaml"
 jobs:
-  projects-kuard-docker-images-kuard:
-    name: projects/kuard/docker-images/kuard
+  projects-demo-docker-images-kuard:
+    name: projects/demo/docker-images/kuard
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gogcp-devcontainer:0.2.3
+    container: ghcr.io/damlys/gorun-devcontainer:0.2.100
     permissions:
       contents: write
       id-token: write
@@ -49,14 +49,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: build
-        run: ./scripts/docker-image build "projects/kuard/docker-images/kuard"
+        run: ./scripts/docker-image build "projects/demo/docker-images/kuard"
       - name: test
-        run: ./scripts/docker-image test "projects/kuard/docker-images/kuard"
+        run: ./scripts/docker-image test "projects/demo/docker-images/kuard"
       - if: github.event_name == 'pull_request' && github.base_ref == 'main'
         name: pre-publish
-        run: ./scripts/docker-image pre-publish "projects/kuard/docker-images/kuard"
+        run: ./scripts/docker-image pre-publish "projects/demo/docker-images/kuard"
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         name: publish
-        run: ./scripts/docker-image publish "projects/kuard/docker-images/kuard"
+        run: ./scripts/docker-image publish "projects/demo/docker-images/kuard"
       - name: show
-        run: ./scripts/docker-image show "projects/kuard/docker-images/kuard"
+        run: ./scripts/docker-image show "projects/demo/docker-images/kuard"

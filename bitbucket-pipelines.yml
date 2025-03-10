@@ -1,4 +1,4 @@
-image: damlys/gogcp-devcontainer:0.2.3
+image: damlys/gorun-devcontainer:0.2.100
 definitions:
   caches:
     projects-core-terraform-modules-main: projects/core/terraform-modules/main/.terraform
@@ -13,10 +13,10 @@ definitions:
     projects-core-terraform-submodules-gke-gateway-route: projects/core/terraform-submodules/gke-gateway-route/.terraform
     projects-core-terraform-submodules-gke-platform: projects/core/terraform-submodules/gke-platform/.terraform
     projects-core-terraform-submodules-gke-service-account: projects/core/terraform-submodules/gke-service-account/.terraform
-    projects-kuard-terraform-modules-kuard: projects/kuard/terraform-modules/kuard/.terraform
-    projects-kuard-terraform-submodules-helm-release: projects/kuard/terraform-submodules/helm-release/.terraform
-    projects-kuard-terraform-submodules-kuard: projects/kuard/terraform-submodules/kuard/.terraform
-    projects-o11y-terraform-modules-test-monitor: projects/o11y/terraform-modules/test-monitor/.terraform
+    projects-demo-terraform-modules-kuard: projects/demo/terraform-modules/kuard/.terraform
+    projects-demo-terraform-submodules-helm-release: projects/demo/terraform-submodules/helm-release/.terraform
+    projects-demo-terraform-submodules-kuard: projects/demo/terraform-submodules/kuard/.terraform
+    projects-o11y-terraform-modules-test: projects/o11y/terraform-modules/test/.terraform
     projects-o11y-terraform-submodules-gcp-availability-monitor: projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform
     projects-o11y-terraform-submodules-gke-lgtm-stack: projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform
     projects-o11y-terraform-submodules-k8s-otel-collectors: projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform
@@ -484,213 +484,213 @@ definitions:
           - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gke-service-account"
           - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gke-service-account"
           - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gke-service-account"
-    - step: &test-projects-kuard-docker-images-kuard
-        name: test projects/kuard/docker-images/kuard
+    - step: &test-projects-demo-docker-images-kuard
+        name: test projects/demo/docker-images/kuard
         condition:
           changesets:
             includePaths:
-              - "projects/kuard/docker-images/kuard/**"
+              - "projects/demo/docker-images/kuard/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "projects/kuard/docker-images/kuard"
-          - ./scripts/docker-image test "projects/kuard/docker-images/kuard"
-          - ./scripts/docker-image pre-publish "projects/kuard/docker-images/kuard"
-          - ./scripts/docker-image show "projects/kuard/docker-images/kuard"
-    - step: &publish-projects-kuard-docker-images-kuard
-        name: publish projects/kuard/docker-images/kuard
+          - ./scripts/docker-image build "projects/demo/docker-images/kuard"
+          - ./scripts/docker-image test "projects/demo/docker-images/kuard"
+          - ./scripts/docker-image pre-publish "projects/demo/docker-images/kuard"
+          - ./scripts/docker-image show "projects/demo/docker-images/kuard"
+    - step: &publish-projects-demo-docker-images-kuard
+        name: publish projects/demo/docker-images/kuard
         condition:
           changesets:
             includePaths:
-              - "projects/kuard/docker-images/kuard/**"
+              - "projects/demo/docker-images/kuard/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "projects/kuard/docker-images/kuard"
-          - ./scripts/docker-image test "projects/kuard/docker-images/kuard"
-          - ./scripts/docker-image publish "projects/kuard/docker-images/kuard"
-          - ./scripts/docker-image show "projects/kuard/docker-images/kuard"
-    - step: &test-projects-kuard-helm-charts-stateful-kuard
-        name: test projects/kuard/helm-charts/stateful-kuard
+          - ./scripts/docker-image build "projects/demo/docker-images/kuard"
+          - ./scripts/docker-image test "projects/demo/docker-images/kuard"
+          - ./scripts/docker-image publish "projects/demo/docker-images/kuard"
+          - ./scripts/docker-image show "projects/demo/docker-images/kuard"
+    - step: &test-projects-demo-helm-charts-stateful-kuard
+        name: test projects/demo/helm-charts/stateful-kuard
         condition:
           changesets:
             includePaths:
-              - "projects/kuard/helm-charts/stateful-kuard/**"
+              - "projects/demo/helm-charts/stateful-kuard/**"
         script:
           - *auth
-          - ./scripts/helm-chart build "projects/kuard/helm-charts/stateful-kuard"
-          - ./scripts/helm-chart test "projects/kuard/helm-charts/stateful-kuard"
-          - ./scripts/helm-chart pre-publish "projects/kuard/helm-charts/stateful-kuard"
-          - ./scripts/helm-chart show "projects/kuard/helm-charts/stateful-kuard"
-    - step: &publish-projects-kuard-helm-charts-stateful-kuard
-        name: publish projects/kuard/helm-charts/stateful-kuard
+          - ./scripts/helm-chart build "projects/demo/helm-charts/stateful-kuard"
+          - ./scripts/helm-chart test "projects/demo/helm-charts/stateful-kuard"
+          - ./scripts/helm-chart pre-publish "projects/demo/helm-charts/stateful-kuard"
+          - ./scripts/helm-chart show "projects/demo/helm-charts/stateful-kuard"
+    - step: &publish-projects-demo-helm-charts-stateful-kuard
+        name: publish projects/demo/helm-charts/stateful-kuard
         condition:
           changesets:
             includePaths:
-              - "projects/kuard/helm-charts/stateful-kuard/**"
+              - "projects/demo/helm-charts/stateful-kuard/**"
         script:
           - *auth
-          - ./scripts/helm-chart build "projects/kuard/helm-charts/stateful-kuard"
-          - ./scripts/helm-chart test "projects/kuard/helm-charts/stateful-kuard"
-          - ./scripts/helm-chart publish "projects/kuard/helm-charts/stateful-kuard"
-          - ./scripts/helm-chart show "projects/kuard/helm-charts/stateful-kuard"
-    - step: &test-projects-kuard-helm-charts-stateless-kuard
-        name: test projects/kuard/helm-charts/stateless-kuard
+          - ./scripts/helm-chart build "projects/demo/helm-charts/stateful-kuard"
+          - ./scripts/helm-chart test "projects/demo/helm-charts/stateful-kuard"
+          - ./scripts/helm-chart publish "projects/demo/helm-charts/stateful-kuard"
+          - ./scripts/helm-chart show "projects/demo/helm-charts/stateful-kuard"
+    - step: &test-projects-demo-helm-charts-stateless-kuard
+        name: test projects/demo/helm-charts/stateless-kuard
         condition:
           changesets:
             includePaths:
-              - "projects/kuard/helm-charts/stateless-kuard/**"
+              - "projects/demo/helm-charts/stateless-kuard/**"
         script:
           - *auth
-          - ./scripts/helm-chart build "projects/kuard/helm-charts/stateless-kuard"
-          - ./scripts/helm-chart test "projects/kuard/helm-charts/stateless-kuard"
-          - ./scripts/helm-chart pre-publish "projects/kuard/helm-charts/stateless-kuard"
-          - ./scripts/helm-chart show "projects/kuard/helm-charts/stateless-kuard"
-    - step: &publish-projects-kuard-helm-charts-stateless-kuard
-        name: publish projects/kuard/helm-charts/stateless-kuard
+          - ./scripts/helm-chart build "projects/demo/helm-charts/stateless-kuard"
+          - ./scripts/helm-chart test "projects/demo/helm-charts/stateless-kuard"
+          - ./scripts/helm-chart pre-publish "projects/demo/helm-charts/stateless-kuard"
+          - ./scripts/helm-chart show "projects/demo/helm-charts/stateless-kuard"
+    - step: &publish-projects-demo-helm-charts-stateless-kuard
+        name: publish projects/demo/helm-charts/stateless-kuard
         condition:
           changesets:
             includePaths:
-              - "projects/kuard/helm-charts/stateless-kuard/**"
+              - "projects/demo/helm-charts/stateless-kuard/**"
         script:
           - *auth
-          - ./scripts/helm-chart build "projects/kuard/helm-charts/stateless-kuard"
-          - ./scripts/helm-chart test "projects/kuard/helm-charts/stateless-kuard"
-          - ./scripts/helm-chart publish "projects/kuard/helm-charts/stateless-kuard"
-          - ./scripts/helm-chart show "projects/kuard/helm-charts/stateless-kuard"
-    - step: &validate-projects-kuard-terraform-modules-kuard
-        name: validate projects/kuard/terraform-modules/kuard
+          - ./scripts/helm-chart build "projects/demo/helm-charts/stateless-kuard"
+          - ./scripts/helm-chart test "projects/demo/helm-charts/stateless-kuard"
+          - ./scripts/helm-chart publish "projects/demo/helm-charts/stateless-kuard"
+          - ./scripts/helm-chart show "projects/demo/helm-charts/stateless-kuard"
+    - step: &validate-projects-demo-terraform-modules-kuard
+        name: validate projects/demo/terraform-modules/kuard
         condition:
           changesets:
             includePaths:
-              - "projects/kuard/terraform-modules/kuard/**"
+              - "projects/demo/terraform-modules/kuard/**"
         caches:
-          - projects-kuard-terraform-modules-kuard
+          - projects-demo-terraform-modules-kuard
         script:
           - *auth
-          - ./scripts/terraform-module test "projects/kuard/terraform-modules/kuard"
-    - step: &plan-projects-kuard-terraform-modules-kuard
-        name: plan projects/kuard/terraform-modules/kuard
+          - ./scripts/terraform-module test "projects/demo/terraform-modules/kuard"
+    - step: &plan-projects-demo-terraform-modules-kuard
+        name: plan projects/demo/terraform-modules/kuard
         condition:
           changesets:
             includePaths:
-              - "projects/kuard/terraform-modules/kuard/**"
+              - "projects/demo/terraform-modules/kuard/**"
         caches:
-          - projects-kuard-terraform-modules-kuard
+          - projects-demo-terraform-modules-kuard
         script:
           - *auth
-          - terraform -chdir="projects/kuard/terraform-modules/kuard" init -input="false"
-          - terraform -chdir="projects/kuard/terraform-modules/kuard" plan -input="false"
-    - step: &apply-projects-kuard-terraform-modules-kuard
-        name: apply projects/kuard/terraform-modules/kuard
+          - terraform -chdir="projects/demo/terraform-modules/kuard" init -input="false"
+          - terraform -chdir="projects/demo/terraform-modules/kuard" plan -input="false"
+    - step: &apply-projects-demo-terraform-modules-kuard
+        name: apply projects/demo/terraform-modules/kuard
         condition:
           changesets:
             includePaths:
-              - "projects/kuard/terraform-modules/kuard/**"
+              - "projects/demo/terraform-modules/kuard/**"
         caches:
-          - projects-kuard-terraform-modules-kuard
+          - projects-demo-terraform-modules-kuard
         script:
           - *auth
-          - terraform -chdir="projects/kuard/terraform-modules/kuard" init -input="false"
-          - terraform -chdir="projects/kuard/terraform-modules/kuard" apply -input="false" -auto-approve
+          - terraform -chdir="projects/demo/terraform-modules/kuard" init -input="false"
+          - terraform -chdir="projects/demo/terraform-modules/kuard" apply -input="false" -auto-approve
         trigger: manual
-    - step: &test-projects-kuard-terraform-submodules-helm-release
-        name: test projects/kuard/terraform-submodules/helm-release
+    - step: &test-projects-demo-terraform-submodules-helm-release
+        name: test projects/demo/terraform-submodules/helm-release
         condition:
           changesets:
             includePaths:
-              - "projects/kuard/terraform-submodules/helm-release/**"
+              - "projects/demo/terraform-submodules/helm-release/**"
         caches:
-          - projects-kuard-terraform-submodules-helm-release
+          - projects-demo-terraform-submodules-helm-release
         script:
           - *auth
-          - ./scripts/terraform-submodule build "projects/kuard/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule test "projects/kuard/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule pre-publish "projects/kuard/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule show "projects/kuard/terraform-submodules/helm-release"
-    - step: &publish-projects-kuard-terraform-submodules-helm-release
-        name: publish projects/kuard/terraform-submodules/helm-release
+          - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-release"
+          - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-release"
+          - ./scripts/terraform-submodule pre-publish "projects/demo/terraform-submodules/helm-release"
+          - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-release"
+    - step: &publish-projects-demo-terraform-submodules-helm-release
+        name: publish projects/demo/terraform-submodules/helm-release
         condition:
           changesets:
             includePaths:
-              - "projects/kuard/terraform-submodules/helm-release/**"
+              - "projects/demo/terraform-submodules/helm-release/**"
         caches:
-          - projects-kuard-terraform-submodules-helm-release
+          - projects-demo-terraform-submodules-helm-release
         script:
           - *auth
-          - ./scripts/terraform-submodule build "projects/kuard/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule test "projects/kuard/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule publish "projects/kuard/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule show "projects/kuard/terraform-submodules/helm-release"
-    - step: &test-projects-kuard-terraform-submodules-kuard
-        name: test projects/kuard/terraform-submodules/kuard
+          - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-release"
+          - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-release"
+          - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/helm-release"
+          - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-release"
+    - step: &test-projects-demo-terraform-submodules-kuard
+        name: test projects/demo/terraform-submodules/kuard
         condition:
           changesets:
             includePaths:
-              - "projects/kuard/terraform-submodules/kuard/**"
+              - "projects/demo/terraform-submodules/kuard/**"
         caches:
-          - projects-kuard-terraform-submodules-kuard
+          - projects-demo-terraform-submodules-kuard
         script:
           - *auth
-          - ./scripts/terraform-submodule build "projects/kuard/terraform-submodules/kuard"
-          - ./scripts/terraform-submodule test "projects/kuard/terraform-submodules/kuard"
-          - ./scripts/terraform-submodule pre-publish "projects/kuard/terraform-submodules/kuard"
-          - ./scripts/terraform-submodule show "projects/kuard/terraform-submodules/kuard"
-    - step: &publish-projects-kuard-terraform-submodules-kuard
-        name: publish projects/kuard/terraform-submodules/kuard
+          - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/kuard"
+          - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/kuard"
+          - ./scripts/terraform-submodule pre-publish "projects/demo/terraform-submodules/kuard"
+          - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/kuard"
+    - step: &publish-projects-demo-terraform-submodules-kuard
+        name: publish projects/demo/terraform-submodules/kuard
         condition:
           changesets:
             includePaths:
-              - "projects/kuard/terraform-submodules/kuard/**"
+              - "projects/demo/terraform-submodules/kuard/**"
         caches:
-          - projects-kuard-terraform-submodules-kuard
+          - projects-demo-terraform-submodules-kuard
         script:
           - *auth
-          - ./scripts/terraform-submodule build "projects/kuard/terraform-submodules/kuard"
-          - ./scripts/terraform-submodule test "projects/kuard/terraform-submodules/kuard"
-          - ./scripts/terraform-submodule publish "projects/kuard/terraform-submodules/kuard"
-          - ./scripts/terraform-submodule show "projects/kuard/terraform-submodules/kuard"
-    - step: &validate-projects-o11y-terraform-modules-test-monitor
-        name: validate projects/o11y/terraform-modules/test-monitor
+          - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/kuard"
+          - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/kuard"
+          - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/kuard"
+          - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/kuard"
+    - step: &validate-projects-o11y-terraform-modules-test
+        name: validate projects/o11y/terraform-modules/test
         condition:
           changesets:
             includePaths:
-              - "projects/o11y/terraform-modules/test-monitor/**"
+              - "projects/o11y/terraform-modules/test/**"
         caches:
-          - projects-o11y-terraform-modules-test-monitor
+          - projects-o11y-terraform-modules-test
         script:
           - *auth
-          - ./scripts/terraform-module test "projects/o11y/terraform-modules/test-monitor"
-    - step: &plan-projects-o11y-terraform-modules-test-monitor
-        name: plan projects/o11y/terraform-modules/test-monitor
+          - ./scripts/terraform-module test "projects/o11y/terraform-modules/test"
+    - step: &plan-projects-o11y-terraform-modules-test
+        name: plan projects/o11y/terraform-modules/test
         condition:
           changesets:
             includePaths:
-              - "projects/o11y/terraform-modules/test-monitor/**"
+              - "projects/o11y/terraform-modules/test/**"
         caches:
-          - projects-o11y-terraform-modules-test-monitor
+          - projects-o11y-terraform-modules-test
         script:
           - *auth
-          - terraform -chdir="projects/o11y/terraform-modules/test-monitor" init -input="false"
-          - terraform -chdir="projects/o11y/terraform-modules/test-monitor" plan -input="false"
-    - step: &apply-projects-o11y-terraform-modules-test-monitor
-        name: apply projects/o11y/terraform-modules/test-monitor
+          - terraform -chdir="projects/o11y/terraform-modules/test" init -input="false"
+          - terraform -chdir="projects/o11y/terraform-modules/test" plan -input="false"
+    - step: &apply-projects-o11y-terraform-modules-test
+        name: apply projects/o11y/terraform-modules/test
         condition:
           changesets:
             includePaths:
-              - "projects/o11y/terraform-modules/test-monitor/**"
+              - "projects/o11y/terraform-modules/test/**"
         caches:
-          - projects-o11y-terraform-modules-test-monitor
+          - projects-o11y-terraform-modules-test
         script:
           - *auth
-          - terraform -chdir="projects/o11y/terraform-modules/test-monitor" init -input="false"
-          - terraform -chdir="projects/o11y/terraform-modules/test-monitor" apply -input="false" -auto-approve
+          - terraform -chdir="projects/o11y/terraform-modules/test" init -input="false"
+          - terraform -chdir="projects/o11y/terraform-modules/test" apply -input="false" -auto-approve
         trigger: manual
     - step: &test-projects-o11y-terraform-submodules-gcp-availability-monitor
         name: test projects/o11y/terraform-submodules/gcp-availability-monitor
@@ -796,13 +796,13 @@ pipelines:
           - step: *test-projects-core-terraform-submodules-gke-gateway-route
           - step: *test-projects-core-terraform-submodules-gke-platform
           - step: *test-projects-core-terraform-submodules-gke-service-account
-          - step: *test-projects-kuard-docker-images-kuard
-          - step: *test-projects-kuard-helm-charts-stateful-kuard
-          - step: *test-projects-kuard-helm-charts-stateless-kuard
-          - step: *validate-projects-kuard-terraform-modules-kuard
-          - step: *test-projects-kuard-terraform-submodules-helm-release
-          - step: *test-projects-kuard-terraform-submodules-kuard
-          - step: *validate-projects-o11y-terraform-modules-test-monitor
+          - step: *test-projects-demo-docker-images-kuard
+          - step: *test-projects-demo-helm-charts-stateful-kuard
+          - step: *test-projects-demo-helm-charts-stateless-kuard
+          - step: *validate-projects-demo-terraform-modules-kuard
+          - step: *test-projects-demo-terraform-submodules-helm-release
+          - step: *test-projects-demo-terraform-submodules-kuard
+          - step: *validate-projects-o11y-terraform-modules-test
           - step: *test-projects-o11y-terraform-submodules-gcp-availability-monitor
           - step: *test-projects-o11y-terraform-submodules-gke-lgtm-stack
           - step: *test-projects-o11y-terraform-submodules-k8s-otel-collectors
@@ -810,8 +810,8 @@ pipelines:
           - step: *plan-projects-core-terraform-modules-main
           - step: *plan-projects-core-terraform-modules-prod
           - step: *plan-projects-core-terraform-modules-test
-          - step: *plan-projects-kuard-terraform-modules-kuard
-          - step: *plan-projects-o11y-terraform-modules-test-monitor
+          - step: *plan-projects-demo-terraform-modules-kuard
+          - step: *plan-projects-o11y-terraform-modules-test
   branches:
     main:
       - parallel:
@@ -827,11 +827,11 @@ pipelines:
           - step: *publish-projects-core-terraform-submodules-gke-gateway-route
           - step: *publish-projects-core-terraform-submodules-gke-platform
           - step: *publish-projects-core-terraform-submodules-gke-service-account
-          - step: *publish-projects-kuard-docker-images-kuard
-          - step: *publish-projects-kuard-helm-charts-stateful-kuard
-          - step: *publish-projects-kuard-helm-charts-stateless-kuard
-          - step: *publish-projects-kuard-terraform-submodules-helm-release
-          - step: *publish-projects-kuard-terraform-submodules-kuard
+          - step: *publish-projects-demo-docker-images-kuard
+          - step: *publish-projects-demo-helm-charts-stateful-kuard
+          - step: *publish-projects-demo-helm-charts-stateless-kuard
+          - step: *publish-projects-demo-terraform-submodules-helm-release
+          - step: *publish-projects-demo-terraform-submodules-kuard
           - step: *publish-projects-o11y-terraform-submodules-gcp-availability-monitor
           - step: *publish-projects-o11y-terraform-submodules-gke-lgtm-stack
           - step: *publish-projects-o11y-terraform-submodules-k8s-otel-collectors
@@ -839,11 +839,11 @@ pipelines:
           - step: *plan-projects-core-terraform-modules-main
           - step: *plan-projects-core-terraform-modules-prod
           - step: *plan-projects-core-terraform-modules-test
-          - step: *plan-projects-kuard-terraform-modules-kuard
-          - step: *plan-projects-o11y-terraform-modules-test-monitor
+          - step: *plan-projects-demo-terraform-modules-kuard
+          - step: *plan-projects-o11y-terraform-modules-test
       - parallel:
           - step: *apply-projects-core-terraform-modules-main
           - step: *apply-projects-core-terraform-modules-prod
           - step: *apply-projects-core-terraform-modules-test
-          - step: *apply-projects-kuard-terraform-modules-kuard
-          - step: *apply-projects-o11y-terraform-modules-test-monitor
+          - step: *apply-projects-demo-terraform-modules-kuard
+          - step: *apply-projects-o11y-terraform-modules-test
