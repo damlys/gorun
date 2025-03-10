@@ -4,7 +4,7 @@ for lib in "$(dirname "$0")"/libs/*.bash; do source "${lib}"; done
 
 function main {
   local cmd="$1"
-  local registry="oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  local registry="oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
 
   case "${cmd}" in
   "download")

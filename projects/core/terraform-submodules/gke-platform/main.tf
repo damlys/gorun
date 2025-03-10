@@ -200,6 +200,7 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
 resource "kubernetes_namespace" "gke_security_groups" {
   depends_on = [
     google_container_cluster.this,
+    google_container_node_pool.this,
   ]
 
   metadata {
@@ -277,6 +278,7 @@ resource "google_container_node_pool" "this" {
 resource "kubernetes_namespace" "prometheus_operator" {
   depends_on = [
     google_container_cluster.this,
+    google_container_node_pool.this,
   ]
 
   metadata {
@@ -285,9 +287,9 @@ resource "kubernetes_namespace" "prometheus_operator" {
 }
 
 resource "helm_release" "prometheus_operator_crds" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "prometheus-operator-crds"
-  version    = "17.0.2"
+  version    = "18.0.1"
 
   name      = "prometheus-operator-crds"
   namespace = kubernetes_namespace.prometheus_operator.metadata[0].name
@@ -300,6 +302,7 @@ resource "helm_release" "prometheus_operator_crds" {
 resource "kubernetes_namespace" "cert_manager" {
   depends_on = [
     google_container_cluster.this,
+    google_container_node_pool.this,
   ]
 
   metadata {
@@ -308,7 +311,7 @@ resource "kubernetes_namespace" "cert_manager" {
 }
 
 module "cert_manager_service_account" {
-  source = "../gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogke-main-0-private-terraform-modules/gogke/core/gke-service-account/0.2.0.zip"
+  source = "../gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.2.100.zip"
 
   google_project           = var.google_project
   google_container_cluster = google_container_cluster.this
@@ -321,9 +324,9 @@ resource "helm_release" "cert_manager" {
     helm_release.prometheus_operator_crds,
   ]
 
-  repository = "oci://europe-central2-docker.pkg.dev/gogke-main-0/external-helm-charts/gogcp"
+  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "cert-manager"
-  version    = "v1.16.3"
+  version    = "v1.17.1"
 
   name      = "cert-manager"
   namespace = kubernetes_namespace.cert_manager.metadata[0].name
@@ -389,6 +392,7 @@ resource "google_dns_record_set" "ingress_internet" {
 resource "kubernetes_namespace" "gke_gateway" {
   depends_on = [
     google_container_cluster.this,
+    google_container_node_pool.this,
   ]
 
   metadata {
@@ -560,6 +564,7 @@ resource "kubernetes_manifest" "gke_gateway_http_to_https" {
 resource "kubernetes_namespace" "this" {
   depends_on = [
     google_container_cluster.this,
+    google_container_node_pool.this,
   ]
   for_each = local.all_namespace_names
 

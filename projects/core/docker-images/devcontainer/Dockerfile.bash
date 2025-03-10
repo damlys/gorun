@@ -31,7 +31,7 @@ apt install --yes \
 echo "ALL ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers
 
 # golang: https://go.dev/dl/
-go_version="1.23.4"
+go_version="1.24.1"
 wget https://go.dev/dl/go${go_version}.${TARGETOS}-${TARGETARCH}.tar.gz \
   --output-document=/tmp/go.tar.gz
 tar --directory=/usr/local -zxvf go.tar.gz
@@ -87,7 +87,7 @@ wget https://github.com/GoogleContainerTools/container-structure-test/releases/d
   --output-document=/usr/local/bin/container-structure-test
 
 # golangci-lint: https://github.com/golangci/golangci-lint/releases
-golangci_lint_version="1.62.2"
+golangci_lint_version="1.64.6"
 wget https://github.com/golangci/golangci-lint/releases/download/v${golangci_lint_version}/golangci-lint-${golangci_lint_version}-${TARGETOS}-${TARGETARCH}.tar.gz \
   --output-document=/tmp/golangci-lint.tar.gz
 tar -zxvf golangci-lint.tar.gz
@@ -99,32 +99,32 @@ wget https://github.com/mattolenik/hclq/releases/download/${hclq_version}/hclq-$
   --output-document=/usr/local/bin/hclq
 
 # helm: https://github.com/helm/helm/releases
-helm_version="3.16.3"
+helm_version="3.17.1"
 wget https://get.helm.sh/helm-v${helm_version}-${TARGETOS}-${TARGETARCH}.tar.gz \
   --output-document=/tmp/helm.tar.gz
 tar -zxvf helm.tar.gz
 mv ${TARGETOS}-${TARGETARCH}/helm /usr/local/bin/helm
 
 # istioctl: https://github.com/istio/istio/releases
-istioctl_version="1.24.2"
+istioctl_version="1.25.0"
 export ISTIO_VERSION="${istioctl_version}" && curl -L https://istio.io/downloadIstio | sh -
 mv istio-${istioctl_version}/bin/istioctl /usr/local/bin/istioctl
 mv istio-${istioctl_version}/tools/istioctl.bash /etc/bash_completion.d/istioctl
 
 # shfmt: https://github.com/mvdan/sh/releases
-shfmt_version="3.10.0"
+shfmt_version="3.11.0"
 wget https://github.com/mvdan/sh/releases/download/v${shfmt_version}/shfmt_v${shfmt_version}_${TARGETOS}_${TARGETARCH} \
   --output-document=/usr/local/bin/shfmt
 
 # terraform: https://developer.hashicorp.com/terraform/downloads
-terraform_version="1.9.8"
+terraform_version="1.11.1"
 wget https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_${TARGETOS}_${TARGETARCH}.zip \
   --output-document=/tmp/terraform.zip
 unzip terraform.zip
 mv terraform /usr/local/bin/terraform
 
 # yq: https://github.com/mikefarah/yq/releases
-yq_version="4.44.5"
+yq_version="4.45.1"
 wget https://github.com/mikefarah/yq/releases/download/v${yq_version}/yq_${TARGETOS}_${TARGETARCH} \
   --output-document=/usr/local/bin/yq
 

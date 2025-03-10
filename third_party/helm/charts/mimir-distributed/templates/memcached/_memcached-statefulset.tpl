@@ -3,7 +3,7 @@ memcached StatefulSet
 */}}
 {{- define "mimir.memcached.statefulSet" -}}
 {{ with (index $.ctx.Values $.component) }}
-{{- if .enabled -}}
+{{- if and .enabled (not $.ctx.Values.federation_frontend.disableOtherComponents) -}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -105,7 +105,7 @@ spec:
               name: client
           args:
             - -m {{ .allocatedMemory }}
-            - --extended=modern,track_sizes{{ with .extraExtendedOptions }},{{ . }}{{ end }}
+            - --extended=modern{{ with .extraExtendedOptions }},{{ . }}{{ end }}
             - -I {{ .maxItemMemory }}m
             - -c {{ .connectionLimit }}
             - -v
@@ -163,4 +163,3 @@ spec:
 {{- end -}}
 {{- end -}}
 {{- end -}}
-

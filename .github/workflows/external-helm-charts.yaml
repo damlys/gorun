@@ -9,7 +9,7 @@ jobs:
   external-helm-charts:
     name: external-helm-charts
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gogcp-devcontainer:0.2.3
+    container: ghcr.io/damlys/gorun-devcontainer:0.2.100
     permissions:
       contents: write
       id-token: write

@@ -90,7 +90,7 @@ commandTests:
     args:
       - version
     expectedOutput:
-      - go version go1\.23\.
+      - go version go1\.24\.
   - name: go installation
     command: which
     args:

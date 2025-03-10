@@ -1,3 +1,3 @@
-module github.com/damlys/gogcp/go
+module github.com/damlys/gorun/go
 
-go 1.23
+go 1.24

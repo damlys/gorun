@@ -14,7 +14,7 @@ function main {
   project_scope="$(echo "${project_path}" | cut -d '/' -f 2)"
   project_name="$(echo "${project_path}" | cut -d '/' -f 4)"
 
-  chart_repository="$(yq '.annotations.repository' "${project_path}/Chart.yaml")"
+  chart_repository="$(yq '.repository' "${project_path}/.project.yaml")"
   chart_name="$(yq '.name' "${project_path}/Chart.yaml")"
   chart_version="$(yq '.version' "${project_path}/Chart.yaml")"
 

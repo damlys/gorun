@@ -1,12 +1,12 @@
 name: dev-stop
 on:
   schedule:
-    - cron: "0 12,14,16,18,20,22 * * *"
+    - cron: "0 12,20 * * *" # UTC
 jobs:
   dev-stop:
     name: dev-stop
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gogcp-devcontainer:0.2.3
+    container: ghcr.io/damlys/gorun-devcontainer:0.2.100
     steps:
       - name: git clone
         uses: actions/checkout@v4

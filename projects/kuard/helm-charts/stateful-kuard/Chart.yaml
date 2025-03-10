@@ -1,5 +1,0 @@
-apiVersion: v2
-name: stateful-kuard
-version: 0.2.0
-annotations:
-  repository: oci://europe-central2-docker.pkg.dev/gogke-main-0/private-helm-charts/gogke/kuard

@@ -1,0 +1,7 @@
+repository: europe-central2-docker.pkg.dev/gogcp-main-2/private-docker-images/gorun/demo/kuard
+tag: 0.2.100
+aliases:
+  - # https://hub.docker.com/r/damlys/gorun-kuard
+    repository: damlys/gorun-kuard
+  - # https://github.com/users/damlys/packages/container/package/gogcp-kuard
+    repository: ghcr.io/damlys/gorun-kuard

@@ -1,3 +1,4 @@
+{{- if and .Values.compactor.enabled (not .Values.federation_frontend.disableOtherComponents) }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -121,7 +122,7 @@ spec:
             - "-config.expand-env=true"
             - "-config.file=/etc/mimir/mimir.yaml"
             {{- range $key, $value := .Values.compactor.extraArgs }}
-            - "-{{ $key }}={{ $value }}"
+            - -{{ $key }}={{ $value }}
             {{- end }}
           volumeMounts:
             {{- if .Values.compactor.extraVolumeMounts }}
@@ -186,3 +187,4 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
           {{- end }}
+{{- end }}

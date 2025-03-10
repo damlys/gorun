@@ -206,6 +206,13 @@ gr-metricname-cache:
       cpu: 1m
       memory: 1Mi
     limits: {}
+federation_frontend:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
 continuous_test:
   replicas: 1
   resources:

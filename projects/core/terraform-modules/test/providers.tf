@@ -1,5 +1,5 @@
 provider "google" {
-  project = "gogke-test-0"
+  project = "gogcp-test-2"
 }
 
 data "google_client_config" "oauth2" {
