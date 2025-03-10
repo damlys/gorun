@@ -34,7 +34,7 @@ resource "google_project_iam_member" "grafana_gcp_datasources" {
 resource "helm_release" "grafana_postgresql" {
   repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "postgresql"
-  version    = "16.3.5"
+  version    = "16.4.16"
 
   name      = "postgresql"
   namespace = kubernetes_namespace.grafana.metadata[0].name
@@ -47,7 +47,7 @@ resource "helm_release" "grafana_postgresql" {
 resource "helm_release" "grafana" {
   repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "grafana"
-  version    = "8.8.2"
+  version    = "8.10.2"
 
   name      = "grafana"
   namespace = kubernetes_namespace.grafana.metadata[0].name
@@ -149,7 +149,7 @@ resource "google_storage_bucket_iam_member" "loki_service_account" {
 resource "helm_release" "loki" {
   repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "loki"
-  version    = "6.24.0"
+  version    = "6.27.0"
 
   name      = "loki"
   namespace = kubernetes_namespace.loki.metadata[0].name
@@ -211,7 +211,7 @@ resource "google_storage_bucket_iam_member" "mimir_service_account" {
 resource "helm_release" "mimir" {
   repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "mimir-distributed"
-  version    = "5.5.1"
+  version    = "5.6.0"
 
   name      = "mimir"
   namespace = kubernetes_namespace.mimir.metadata[0].name
@@ -273,7 +273,7 @@ resource "google_storage_bucket_iam_member" "tempo_service_account" {
 resource "helm_release" "tempo" {
   repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
   chart      = "tempo-distributed"
-  version    = "1.28.0"
+  version    = "1.32.3"
 
   name      = "tempo"
   namespace = kubernetes_namespace.tempo.metadata[0].name

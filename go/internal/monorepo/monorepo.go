@@ -6,7 +6,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/damlys/gogcp/go/internal/slug"
+	"github.com/damlys/gorun/go/internal/slug"
 )
 
 type Project struct {
