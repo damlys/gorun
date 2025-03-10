@@ -7,14 +7,19 @@ function main {
 
   case "${cmd}" in
   "stop")
-    log::info "destroying test node pool"
-    gcloud --quiet container node-pools delete "gogke-test-2" --location="europe-central2-a" --cluster="gogke-test-2" --project="gogcp-test-2" || true
+    log::info "destroying test node pools"
+    local gcp_project="gogcp-test-2"
+    local gke_cluster="gogke-test-2"
+    local gke_location="europe-central2-a"
+    for gke_node_pool in $(gcloud --quiet container node-pools list --cluster="${gke_cluster}" --location="${gke_location}" --project="${gcp_project}" --format="value(name)"); do
+      gcloud --quiet container node-pools delete "${gke_node_pool}" --cluster="${gke_cluster}" --location="${gke_location}" --project="${gcp_project}"
+    done
 
     log::info "done"
     ;;
 
   "start")
-    log::info "creating test node pool"
+    log::info "creating test node pools"
     terraform -chdir="projects/core/terraform-modules/test" init -input=false
     terraform -chdir="projects/core/terraform-modules/test" apply -input=false -auto-approve -target=module.test_platform.google_container_node_pool.this
 

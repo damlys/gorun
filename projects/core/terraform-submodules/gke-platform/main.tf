@@ -200,6 +200,7 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
 resource "kubernetes_namespace" "gke_security_groups" {
   depends_on = [
     google_container_cluster.this,
+    google_container_node_pool.this,
   ]
 
   metadata {
@@ -277,6 +278,7 @@ resource "google_container_node_pool" "this" {
 resource "kubernetes_namespace" "prometheus_operator" {
   depends_on = [
     google_container_cluster.this,
+    google_container_node_pool.this,
   ]
 
   metadata {
@@ -300,6 +302,7 @@ resource "helm_release" "prometheus_operator_crds" {
 resource "kubernetes_namespace" "cert_manager" {
   depends_on = [
     google_container_cluster.this,
+    google_container_node_pool.this,
   ]
 
   metadata {
@@ -389,6 +392,7 @@ resource "google_dns_record_set" "ingress_internet" {
 resource "kubernetes_namespace" "gke_gateway" {
   depends_on = [
     google_container_cluster.this,
+    google_container_node_pool.this,
   ]
 
   metadata {
@@ -560,6 +564,7 @@ resource "kubernetes_manifest" "gke_gateway_http_to_https" {
 resource "kubernetes_namespace" "this" {
   depends_on = [
     google_container_cluster.this,
+    google_container_node_pool.this,
   ]
   for_each = local.all_namespace_names
 

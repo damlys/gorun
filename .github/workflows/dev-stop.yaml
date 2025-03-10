@@ -1,7 +1,7 @@
 name: dev-stop
 on:
   schedule:
-    - cron: "0 12,14,16,18,20,22 * * *"
+    - cron: "0 12,20 * * *" # UTC
 jobs:
   dev-stop:
     name: dev-stop
