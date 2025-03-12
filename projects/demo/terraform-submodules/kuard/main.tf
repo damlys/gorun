@@ -133,6 +133,18 @@ resource "kubernetes_manifest" "stateful_kuard_istio_request_authentication" {
         {
           issuer  = "https://accounts.google.com"
           jwksUri = "https://www.googleapis.com/oauth2/v3/certs"
+
+          forwardOriginalToken = true
+          outputClaimToHeaders = [
+            {
+              claim  = "email"
+              header = "X-Forwarded-Email"
+            },
+            {
+              claim  = "sub"
+              header = "X-Forwarded-User"
+            },
+          ]
         },
       ]
     }
