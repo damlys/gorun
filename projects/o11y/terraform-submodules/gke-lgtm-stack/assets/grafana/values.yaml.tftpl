@@ -2,6 +2,9 @@ serviceAccount:
   create: false
   name: "${grafana_service_account_name}"
 
+podLabels:
+  sidecar.istio.io/inject: "true"
+
 grafana.ini:
   server:
     domain: "${grafana_domain}"
@@ -18,15 +21,20 @@ grafana.ini:
     name: grafana
 
   auth:
-    disable_login_form: false
-    disable_signout_menu: false
+    disable_login_form: true
+    disable_signout_menu: true
+  auth.proxy: # https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/auth-proxy/
+    enabled: true
+    header_name: X-Forwarded-Email
+    header_property: email
+    auto_sign_up: true
   users:
     verify_email_enabled: false
-    allow_sign_up: true
+    allow_sign_up: false
     allow_org_create: true
     auto_assign_org: true
     auto_assign_org_id: 1
-    auto_assign_org_role: Viewer
+    auto_assign_org_role: Admin
   security:
     disable_initial_admin_creation: false
     admin_email: "${grafana_admin_email}"

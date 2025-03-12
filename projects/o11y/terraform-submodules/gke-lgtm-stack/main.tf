@@ -91,6 +91,12 @@ module "grafana_gateway_route" {
   health_check_path = "/healthz"
 }
 
+module "grafana_istio_auth" {
+  source = "../k8s-istio-auth"
+
+  kubernetes_service = data.kubernetes_service.grafana
+}
+
 module "grafana_availability_monitor" {
   source = "../gcp-availability-monitor" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/o11y/gcp-availability-monitor/0.2.100.zip"
 
