@@ -50,6 +50,15 @@ resource "kubernetes_manifest" "istio_authorization_policy" {
               requestPrincipals = ["https://accounts.google.com/*"]
             }
           }]
+          when = [{
+            key = "request.auth.claims[email]"
+            values = [
+              "*@gogcp-main-2.iam.gserviceaccount.com",
+              "*@gogcp-prod-2.iam.gserviceaccount.com",
+              "*@gogcp-test-2.iam.gserviceaccount.com",
+              "damian.lysiak@gmail.com",
+            ]
+          }]
         },
         { # unprotected paths
           to = [{
