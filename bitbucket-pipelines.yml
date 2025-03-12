@@ -19,6 +19,7 @@ definitions:
     projects-o11y-terraform-modules-test: projects/o11y/terraform-modules/test/.terraform
     projects-o11y-terraform-submodules-gcp-availability-monitor: projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform
     projects-o11y-terraform-submodules-gke-lgtm-stack: projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform
+    projects-o11y-terraform-submodules-k8s-istio-auth: projects/o11y/terraform-submodules/k8s-istio-auth/.terraform
     projects-o11y-terraform-submodules-k8s-otel-collectors: projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform
   scripts:
     - &auth |
@@ -748,6 +749,34 @@ definitions:
           - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gke-lgtm-stack"
           - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/gke-lgtm-stack"
           - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gke-lgtm-stack"
+    - step: &test-projects-o11y-terraform-submodules-k8s-istio-auth
+        name: test projects/o11y/terraform-submodules/k8s-istio-auth
+        condition:
+          changesets:
+            includePaths:
+              - "projects/o11y/terraform-submodules/k8s-istio-auth/**"
+        caches:
+          - projects-o11y-terraform-submodules-k8s-istio-auth
+        script:
+          - *auth
+          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-istio-auth"
+          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-istio-auth"
+          - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/k8s-istio-auth"
+          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-istio-auth"
+    - step: &publish-projects-o11y-terraform-submodules-k8s-istio-auth
+        name: publish projects/o11y/terraform-submodules/k8s-istio-auth
+        condition:
+          changesets:
+            includePaths:
+              - "projects/o11y/terraform-submodules/k8s-istio-auth/**"
+        caches:
+          - projects-o11y-terraform-submodules-k8s-istio-auth
+        script:
+          - *auth
+          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-istio-auth"
+          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-istio-auth"
+          - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/k8s-istio-auth"
+          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-istio-auth"
     - step: &test-projects-o11y-terraform-submodules-k8s-otel-collectors
         name: test projects/o11y/terraform-submodules/k8s-otel-collectors
         condition:
@@ -805,6 +834,7 @@ pipelines:
           - step: *validate-projects-o11y-terraform-modules-test
           - step: *test-projects-o11y-terraform-submodules-gcp-availability-monitor
           - step: *test-projects-o11y-terraform-submodules-gke-lgtm-stack
+          - step: *test-projects-o11y-terraform-submodules-k8s-istio-auth
           - step: *test-projects-o11y-terraform-submodules-k8s-otel-collectors
       - parallel:
           - step: *plan-projects-core-terraform-modules-main
@@ -834,6 +864,7 @@ pipelines:
           - step: *publish-projects-demo-terraform-submodules-kuard
           - step: *publish-projects-o11y-terraform-submodules-gcp-availability-monitor
           - step: *publish-projects-o11y-terraform-submodules-gke-lgtm-stack
+          - step: *publish-projects-o11y-terraform-submodules-k8s-istio-auth
           - step: *publish-projects-o11y-terraform-submodules-k8s-otel-collectors
       - parallel:
           - step: *plan-projects-core-terraform-modules-main
