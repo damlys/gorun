@@ -117,3 +117,77 @@ module "stateful_kuard_gateway_route" {
 
   domain = "stateful-kuard.${var.platform_domain}"
 }
+
+resource "kubernetes_manifest" "stateful_kuard_istio_request_authentication" {
+  manifest = {
+    apiVersion = "security.istio.io/v1"
+    kind       = "RequestAuthentication" # https://istio.io/latest/docs/reference/config/security/request_authentication/
+    metadata = {
+      name      = data.kubernetes_service.stateful_kuard.metadata[0].name
+      namespace = data.kubernetes_service.stateful_kuard.metadata[0].namespace
+    }
+    spec = {
+      selector = { matchLabels = data.kubernetes_service.stateful_kuard.spec[0].selector }
+
+      jwtRules = [
+        {
+          issuer  = "https://accounts.google.com"
+          jwksUri = "https://www.googleapis.com/oauth2/v3/certs"
+
+          forwardOriginalToken = true
+          outputClaimToHeaders = [
+            {
+              claim  = "email"
+              header = "X-Forwarded-Email"
+            },
+            {
+              claim  = "sub"
+              header = "X-Forwarded-User"
+            },
+          ]
+        },
+      ]
+    }
+  }
+}
+
+resource "kubernetes_manifest" "stateful_kuard_istio_authorization_policy" {
+  manifest = {
+    apiVersion = "security.istio.io/v1"
+    kind       = "AuthorizationPolicy" # https://istio.io/latest/docs/reference/config/security/authorization-policy/
+    metadata = {
+      name      = data.kubernetes_service.stateful_kuard.metadata[0].name
+      namespace = data.kubernetes_service.stateful_kuard.metadata[0].namespace
+    }
+    spec = {
+      selector = { matchLabels = data.kubernetes_service.stateful_kuard.spec[0].selector }
+
+      action = "ALLOW"
+      rules = [
+        {
+          from = [{
+            source = {
+              requestPrincipals = ["https://accounts.google.com/*"]
+            }
+          }]
+        },
+        { # unprotected paths
+          to = [{
+            operation = {
+              paths = [
+                "/_healthy",
+                "/_healthz",
+                "/-/healthy",
+                "/-/healthz",
+                "/api/healthy",
+                "/api/healthz",
+                "/healthy",
+                "/healthz",
+              ]
+            }
+          }]
+        },
+      ]
+    }
+  }
+}
