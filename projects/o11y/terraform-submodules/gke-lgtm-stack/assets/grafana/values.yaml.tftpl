@@ -20,6 +20,15 @@ grafana.ini:
     password: Secret123
     name: grafana
 
+  security:
+    disable_initial_admin_creation: true
+  users:
+    allow_sign_up: false
+    verify_email_enabled: false
+    allow_org_create: true
+    auto_assign_org: true
+    auto_assign_org_id: 1
+    auto_assign_org_role: Admin
   auth:
     disable_login_form: true
     disable_signout_menu: true
@@ -28,24 +37,5 @@ grafana.ini:
     header_name: X-Forwarded-Email
     header_property: email
     auto_sign_up: true
-  users:
-    verify_email_enabled: false
-    allow_sign_up: false
-    allow_org_create: true
-    auto_assign_org: true
-    auto_assign_org_id: 1
-    auto_assign_org_role: Admin
-  security:
-    disable_initial_admin_creation: false
-    admin_email: "${grafana_admin_email}"
-    admin_user: admin
-    admin_password: Secret123
-
-adminUser: admin
-adminPassword: Secret123
-admin:
-  existingSecret: ""
-  userKey: admin-user
-  passwordKey: admin-password
 
 assertNoLeakedSecrets: false
