@@ -47,14 +47,6 @@ data "kubernetes_service" "stateless_kuard" {
   }
 }
 
-module "stateless_kuard_gateway_route" {
-  source = "../../../core/terraform-submodules/gke-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-gateway-route/0.2.100.zip"
-
-  kubernetes_service = data.kubernetes_service.stateless_kuard
-
-  domain = "stateless-kuard.${var.platform_domain}"
-}
-
 module "stateless_kuard_availability_monitor" {
   source = "../../../o11y/terraform-submodules/gcp-availability-monitor" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/o11y/gcp-availability-monitor/0.2.100.zip"
 
