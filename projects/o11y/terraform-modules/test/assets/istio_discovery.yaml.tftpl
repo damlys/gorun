@@ -12,3 +12,36 @@ meshConfig: # https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/
         port: "${opentelemetry_port}"
         resource_detectors:
           environment: {}
+    - name: stateless-kuard-oauth2-proxy
+      envoyExtAuthzHttp: # https://istio.io/latest/docs/tasks/security/authorization/authz-custom/#define-the-external-authorizer
+        service: "${stateless_kuard_oauth2_proxy_host}"
+        port: 80
+        includeRequestHeadersInCheck: # headers sent to the oauth2-proxy in the check request
+          - authorization
+          - cookie
+        headersToUpstreamOnAllow: # headers sent to backend application when request is allowed
+          - authorization
+          - cf-connecting-ip
+          - path
+          - x-auth-request-access-token
+          - x-auth-request-email
+          - x-auth-request-groups
+          - x-auth-request-preferred-username
+          - x-auth-request-user
+          - x-envoy-external-address
+          - x-forwarded-access-token
+          - x-forwarded-email
+          - x-forwarded-for
+          - x-forwarded-groups
+          - x-forwarded-host
+          - x-forwarded-preferred-username
+          - x-forwarded-proto
+          - x-forwarded-uri
+          - x-forwarded-user
+          - x-proxyuser-ip
+          - x-real-ip
+        headersToDownstreamOnAllow: # headers sent back to the client when request is allowed
+          - set-cookie
+        headersToDownstreamOnDeny: # headers sent back to the client when request is denied
+          - content-type
+          - set-cookie

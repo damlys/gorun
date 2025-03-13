@@ -96,6 +96,43 @@ module "test_otel_collectors" {
 }
 
 #######################################
+### oauth2-proxy
+#######################################
+
+resource "helm_release" "stateless_kuard_oauth2_proxy" {
+  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
+  chart      = "oauth2-proxy"
+  version    = "7.12.6"
+
+  name      = "stateless-kuard-oauth2-proxy"
+  namespace = "kuard"
+
+  set {
+    name  = "config.clientID" # toml: client_id
+    type  = "string"
+    value = "583672822209-2rd2f2bf5780m8faej9us2nhl4mgme7q.apps.googleusercontent.com"
+  }
+  set_sensitive {
+    name  = "config.clientSecret" # toml: client_secret
+    type  = "string"
+    value = "XXX"
+  }
+  set_sensitive {
+    name  = "config.cookieSecret" # toml: cookie_secret
+    type  = "string"
+    value = "XXX"
+  }
+  set {
+    name = "config.configFile"
+    type = "string"
+    value = templatefile("${path.module}/assets/stateless_kuard_oauth2_proxy.cfg.tftpl", {
+    })
+  }
+  values = [templatefile("${path.module}/assets/stateless_kuard_oauth2_proxy.yaml.tftpl", {
+  })]
+}
+
+#######################################
 ### Istio
 #######################################
 
@@ -130,6 +167,8 @@ resource "helm_release" "istio_discovery" {
   values = [templatefile("${path.module}/assets/istio_discovery.yaml.tftpl", {
     opentelemetry_service = module.test_otel_collectors.otlp_grpc_host
     opentelemetry_port    = module.test_otel_collectors.otlp_grpc_port
+
+    stateless_kuard_oauth2_proxy_host = "${helm_release.stateless_kuard_oauth2_proxy.name}.${helm_release.stateless_kuard_oauth2_proxy.namespace}.svc.cluster.local"
   })]
 }
 

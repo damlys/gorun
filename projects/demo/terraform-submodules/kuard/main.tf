@@ -47,6 +47,41 @@ data "kubernetes_service" "stateless_kuard" {
   }
 }
 
+resource "kubernetes_manifest" "stateless_kuard_istio_authorization_policy" {
+  manifest = {
+    apiVersion = "security.istio.io/v1"
+    kind       = "AuthorizationPolicy" # https://istio.io/latest/docs/reference/config/security/authorization-policy/
+    metadata = {
+      name      = data.kubernetes_service.stateless_kuard.metadata[0].name
+      namespace = data.kubernetes_service.stateless_kuard.metadata[0].namespace
+    }
+    spec = {
+      selector = { matchLabels = data.kubernetes_service.stateless_kuard.spec[0].selector }
+
+      action = "CUSTOM"
+      provider = {
+        name = "stateless-kuard-oauth2-proxy"
+      }
+      rules = [{
+        to = [{
+          operation = {
+            notPaths = [ # unprotected paths
+              "/_healthy",
+              "/_healthz",
+              "/-/healthy",
+              "/-/healthz",
+              "/api/healthy",
+              "/api/healthz",
+              "/healthy",
+              "/healthz",
+            ]
+          }
+        }]
+      }]
+    }
+  }
+}
+
 module "stateless_kuard_gateway_route" {
   source = "../../../core/terraform-submodules/gke-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-gateway-route/0.2.100.zip"
 

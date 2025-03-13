@@ -1,0 +1,25 @@
+http_address = "0.0.0.0:4180"
+silence_ping_logging = true
+upstreams = [ "static://200" ]
+
+redirect_url = "https://stateless-kuard.gogke-test-2.damlys.pl/oauth2/callback"
+provider = "google"
+oidc_issuer_url = "https://accounts.google.com" # https://accounts.google.com/.well-known/openid-configuration
+jwt_key = "https://www.googleapis.com/oauth2/v3/certs"
+email_domains = [ "*" ]
+
+cookie_name = "_oauth2_proxy"
+cookie_domains = [ ".stateless-kuard.gogke-test-2.damlys.pl" ]
+cookie_samesite = "lax"
+cookie_secure = true
+cookie_refresh = "1h"
+cookie_expire = "8h"
+
+pass_access_token = true
+pass_authorization_header = true
+pass_user_headers = true
+set_authorization_header = true
+set_xauthrequest = true
+skip_auth_strip_headers = true
+skip_jwt_bearer_tokens = false
+skip_provider_button = false
