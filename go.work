@@ -1,3 +1,5 @@
 go 1.24
 
 use ./go
+
+use ./projects/demo/go-modules/kuard-tests
