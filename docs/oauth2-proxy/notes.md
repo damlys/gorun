@@ -8,4 +8,5 @@ https://console.cloud.google.com/auth/clients/583672822209-2rd2f2bf5780m8faej9us
 
 ```
 $ terraform -chdir="projects/demo/terraform-modules/kuard" apply -target=module.this -auto-approve
+$ ./docs/istio/test.bash
 ```
