@@ -76,6 +76,12 @@ commandTests:
     command: terraform
     args:
       - version
+  - # https://velero.io/
+    name: velero
+    command: velero
+    args:
+      - version
+      - --client-only
 
   # Golang tools
 
@@ -249,6 +255,9 @@ fileExistenceTests:
     shouldExist: true
   - name: kubectl shell completion
     path: /etc/bash_completion.d/kubectl
+    shouldExist: true
+  - name: velero shell completion
+    path: /etc/bash_completion.d/velero
     shouldExist: true
   - name: yq shell completion
     path: /etc/bash_completion.d/yq

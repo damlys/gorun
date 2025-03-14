@@ -5,5 +5,8 @@ dependencies:
 - name: prometheus-operator-crds
   repository: https://prometheus-community.github.io/helm-charts
   version: 18.0.1
-digest: sha256:67e11fc0fd89214a0536bfe220486a42512d4da730fab148bd236ff8e3fe7ffa
-generated: "2025-03-14T06:44:02.801728506Z"
+- name: velero
+  repository: https://vmware-tanzu.github.io/helm-charts
+  version: 8.5.0
+digest: sha256:f2990d6e8776d62d12828f79bc90c09154f376ae7b17cf5aa7fb9f1fa245a520
+generated: "2025-03-14T19:43:57.628719218Z"

@@ -123,6 +123,13 @@ wget https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${t
 unzip terraform.zip
 mv terraform /usr/local/bin/terraform
 
+# velero: https://github.com/vmware-tanzu/velero/releases
+velero_version="1.15.2"
+wget https://github.com/vmware-tanzu/velero/releases/download/v${velero_version}/velero-v${velero_version}-${TARGETOS}-${TARGETARCH}.tar.gz \
+  --output-document=/tmp/velero.tar.gz
+tar -zxvf velero.tar.gz
+mv velero-v${velero_version}-${TARGETOS}-${TARGETARCH}/velero /usr/local/bin/velero
+
 # yq: https://github.com/mikefarah/yq/releases
 yq_version="4.45.1"
 wget https://github.com/mikefarah/yq/releases/download/v${yq_version}/yq_${TARGETOS}_${TARGETARCH} \
@@ -138,6 +145,7 @@ golangci-lint completion bash >/etc/bash_completion.d/golangci-lint
 goreleaser completion bash >/etc/bash_completion.d/goreleaser
 helm completion bash >/etc/bash_completion.d/helm
 kubectl completion bash >/etc/bash_completion.d/kubectl
+velero completion bash >/etc/bash_completion.d/velero
 yq shell-completion bash >/etc/bash_completion.d/yq
 
 # cleanup
