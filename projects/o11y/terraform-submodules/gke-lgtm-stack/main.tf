@@ -32,10 +32,7 @@ resource "google_project_iam_member" "grafana_gcp_datasources" {
 }
 
 resource "helm_release" "grafana_postgresql" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
-  chart      = "postgresql"
-  version    = "16.4.16"
-
+  chart     = "${path.module}/helm/charts/postgresql"
   name      = "postgresql"
   namespace = kubernetes_namespace.grafana.metadata[0].name
 
@@ -45,10 +42,7 @@ resource "helm_release" "grafana_postgresql" {
 }
 
 resource "helm_release" "grafana" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
-  chart      = "grafana"
-  version    = "8.10.2"
-
+  chart     = "${path.module}/helm/charts/grafana"
   name      = "grafana"
   namespace = kubernetes_namespace.grafana.metadata[0].name
 
@@ -147,10 +141,7 @@ resource "google_storage_bucket_iam_member" "loki_service_account" {
 }
 
 resource "helm_release" "loki" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
-  chart      = "loki"
-  version    = "6.27.0"
-
+  chart     = "${path.module}/helm/charts/loki"
   name      = "loki"
   namespace = kubernetes_namespace.loki.metadata[0].name
 
@@ -209,10 +200,7 @@ resource "google_storage_bucket_iam_member" "mimir_service_account" {
 }
 
 resource "helm_release" "mimir" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
-  chart      = "mimir-distributed"
-  version    = "5.6.0"
-
+  chart     = "${path.module}/helm/charts/mimir-distributed"
   name      = "mimir"
   namespace = kubernetes_namespace.mimir.metadata[0].name
 
@@ -271,10 +259,7 @@ resource "google_storage_bucket_iam_member" "tempo_service_account" {
 }
 
 resource "helm_release" "tempo" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
-  chart      = "tempo-distributed"
-  version    = "1.32.3"
-
+  chart     = "${path.module}/helm/charts/tempo-distributed"
   name      = "tempo"
   namespace = kubernetes_namespace.tempo.metadata[0].name
 

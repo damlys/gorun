@@ -9,10 +9,7 @@ resource "kubernetes_namespace" "opentelemetry_operator" {
 }
 
 resource "helm_release" "opentelemetry_operator" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
-  chart      = "opentelemetry-operator"
-  version    = "0.82.0"
-
+  chart     = "${path.module}/helm/charts/opentelemetry-operator"
   name      = "opentelemetry-operator"
   namespace = kubernetes_namespace.opentelemetry_operator.metadata[0].name
   values    = [file("${path.module}/assets/opentelemetry_operator.yaml")]
@@ -106,10 +103,7 @@ resource "kubernetes_namespace" "istio_system" {
 }
 
 resource "helm_release" "istio_base" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
-  chart      = "base"
-  version    = "1.25.0"
-
+  chart     = "${path.module}/helm/charts/base"
   name      = "istio-base"
   namespace = kubernetes_namespace.istio_system.metadata[0].name
   values    = [file("${path.module}/assets/istio_base.yaml")]
@@ -120,10 +114,7 @@ resource "helm_release" "istio_discovery" {
     helm_release.istio_base,
   ]
 
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
-  chart      = "istiod"
-  version    = "1.25.0"
-
+  chart     = "${path.module}/helm/charts/istiod"
   name      = "istiod"
   namespace = kubernetes_namespace.istio_system.metadata[0].name
 

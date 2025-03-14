@@ -2,4 +2,4 @@
 
 /.github/workflows/*.gotmpl.yaml linguist-generated=true
 /bitbucket-pipelines.yml linguist-generated=true
-/third_party/helm/charts/**/* linguist-generated=true
+/projects/*/*/*/helm/charts/**/* linguist-generated=true

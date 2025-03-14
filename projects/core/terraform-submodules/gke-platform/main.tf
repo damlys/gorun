@@ -287,10 +287,7 @@ resource "kubernetes_namespace" "prometheus_operator" {
 }
 
 resource "helm_release" "prometheus_operator_crds" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
-  chart      = "prometheus-operator-crds"
-  version    = "18.0.1"
-
+  chart     = "${path.module}/helm/charts/prometheus-operator-crds"
   name      = "prometheus-operator-crds"
   namespace = kubernetes_namespace.prometheus_operator.metadata[0].name
 }
@@ -324,10 +321,7 @@ resource "helm_release" "cert_manager" {
     helm_release.prometheus_operator_crds,
   ]
 
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
-  chart      = "cert-manager"
-  version    = "v1.17.1"
-
+  chart     = "${path.module}/helm/charts/cert-manager"
   name      = "cert-manager"
   namespace = kubernetes_namespace.cert_manager.metadata[0].name
 

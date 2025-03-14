@@ -1,8 +1,7 @@
 External Helm charts
 
 ```
-$ ./scripts/external-helm-charts download
-$ ./scripts/external-helm-charts push
+$ ./scripts/external-helm-charts download "projects/demo/terraform-submodules/kuard"
 ```
 
 Sources:
