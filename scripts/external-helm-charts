@@ -4,45 +4,63 @@ for lib in "$(dirname "$0")"/libs/*.bash; do source "${lib}"; done
 
 function main {
   local cmd="$1"
-  local registry="oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
+  local project_path="$2"
+  # local registry="oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
 
   case "${cmd}" in
   "download")
-    rm -rf ./third_party/helm/charts/*
+    rm -rf "${project_path}/helm/charts"/*
 
     log::info "downloading"
-    yq --inplace ".dependencies |= sort_by(.name)" ./third_party/helm/Chart.yaml
-    helm dependency update ./third_party/helm
+    yq --inplace ".dependencies |= sort_by(.name)" "${project_path}/helm/Chart.yaml"
+    helm dependency update "${project_path}/helm"
 
-    for filename in ./third_party/helm/charts/*.tgz; do
+    for filename in "${project_path}/helm/charts"/*.tgz; do
       log::info "unpackaging: ${filename}"
-      tar --directory=./third_party/helm/charts -xf "$filename"
+      tar --directory="${project_path}/helm/charts" -xf "$filename"
     done
 
-    rm -f ./third_party/helm/charts/*.tgz
+    rm -f "${project_path}/helm/charts"/*.tgz
 
     log::info "done"
     ;;
 
-  "push")
-    rm -f ./third_party/helm/charts/*.tgz
+  # "download")
+  #   rm -rf ./third_party/helm/charts/*
 
-    for filename in ./third_party/helm/charts/*; do
-      if file::is_dir "$filename"; then
-        log::info "packaging: ${filename}"
-        helm package "${filename}" --destination="${filename}/.."
-      fi
-    done
+  #   log::info "downloading"
+  #   yq --inplace ".dependencies |= sort_by(.name)" ./third_party/helm/Chart.yaml
+  #   helm dependency update ./third_party/helm
 
-    for filename in ./third_party/helm/charts/*.tgz; do
-      log::info "pushing: ${filename}"
-      helm push "${filename}" "${registry}"
-    done
+  #   for filename in ./third_party/helm/charts/*.tgz; do
+  #     log::info "unpackaging: ${filename}"
+  #     tar --directory=./third_party/helm/charts -xf "$filename"
+  #   done
 
-    rm -f ./third_party/helm/charts/*.tgz
+  #   rm -f ./third_party/helm/charts/*.tgz
 
-    log::info "done"
-    ;;
+  #   log::info "done"
+  #   ;;
+
+  # "push")
+  #   rm -f ./third_party/helm/charts/*.tgz
+
+  #   for filename in ./third_party/helm/charts/*; do
+  #     if file::is_dir "$filename"; then
+  #       log::info "packaging: ${filename}"
+  #       helm package "${filename}" --destination="${filename}/.."
+  #     fi
+  #   done
+
+  #   for filename in ./third_party/helm/charts/*.tgz; do
+  #     log::info "pushing: ${filename}"
+  #     helm push "${filename}" "${registry}"
+  #   done
+
+  #   rm -f ./third_party/helm/charts/*.tgz
+
+  #   log::info "done"
+  #   ;;
 
   *)
     log::error "unknown command: ${cmd}"

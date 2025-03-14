@@ -1,0 +1,20 @@
+apiVersion: v2
+name: undefined
+version: 0.0.0
+dependencies:
+  - # https://github.com/istio/istio/tree/master/manifests/charts/base
+    repository: https://istio-release.storage.googleapis.com/charts
+    name: base
+    version: 1.25.0
+  - # https://github.com/istio/istio/tree/master/manifests/charts/istio-control/istio-discovery
+    repository: https://istio-release.storage.googleapis.com/charts
+    name: istiod
+    version: 1.25.0
+  - # https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector
+    repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+    name: opentelemetry-collector
+    version: 0.117.3
+  - # https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
+    repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+    name: opentelemetry-operator
+    version: 0.82.0
