@@ -17,7 +17,8 @@
     "type=volume,source=devcontainer-damlys-github,target=/root/.config/gh",
     "type=volume,source=devcontainer-damlys-helm,target=/root/.config/helm",
     "type=volume,source=devcontainer-damlys-kube,target=/root/.kube",
-    "type=volume,source=devcontainer-damlys-terraform,target=/root/.terraform.d"
+    "type=volume,source=devcontainer-damlys-terraform,target=/root/.terraform.d",
+    "type=volume,source=devcontainer-damlys-velero,target=/root/.config/velero"
   ],
 
   "customizations": {
