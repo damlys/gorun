@@ -32,12 +32,10 @@ resource "google_project_iam_member" "grafana_gcp_datasources" {
 }
 
 resource "helm_release" "grafana_postgresql" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
+  repository = "${path.module}/helm/charts"
   chart      = "postgresql"
-  version    = "16.4.16"
-
-  name      = "postgresql"
-  namespace = kubernetes_namespace.grafana.metadata[0].name
+  name       = "postgresql"
+  namespace  = kubernetes_namespace.grafana.metadata[0].name
 
   values = [
     file("${path.module}/assets/grafana_postgresql/values.yaml"),
@@ -45,12 +43,10 @@ resource "helm_release" "grafana_postgresql" {
 }
 
 resource "helm_release" "grafana" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
+  repository = "${path.module}/helm/charts"
   chart      = "grafana"
-  version    = "8.10.2"
-
-  name      = "grafana"
-  namespace = kubernetes_namespace.grafana.metadata[0].name
+  name       = "grafana"
+  namespace  = kubernetes_namespace.grafana.metadata[0].name
 
   values = [
     file("${path.module}/assets/grafana/scale.yaml"),
@@ -147,12 +143,10 @@ resource "google_storage_bucket_iam_member" "loki_service_account" {
 }
 
 resource "helm_release" "loki" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
+  repository = "${path.module}/helm/charts"
   chart      = "loki"
-  version    = "6.27.0"
-
-  name      = "loki"
-  namespace = kubernetes_namespace.loki.metadata[0].name
+  name       = "loki"
+  namespace  = kubernetes_namespace.loki.metadata[0].name
 
   values = [
     file("${path.module}/assets/loki/scale.yaml"),
@@ -209,12 +203,10 @@ resource "google_storage_bucket_iam_member" "mimir_service_account" {
 }
 
 resource "helm_release" "mimir" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
+  repository = "${path.module}/helm/charts"
   chart      = "mimir-distributed"
-  version    = "5.6.0"
-
-  name      = "mimir"
-  namespace = kubernetes_namespace.mimir.metadata[0].name
+  name       = "mimir"
+  namespace  = kubernetes_namespace.mimir.metadata[0].name
 
   values = [
     file("${path.module}/assets/mimir/scale.yaml"),
@@ -271,12 +263,10 @@ resource "google_storage_bucket_iam_member" "tempo_service_account" {
 }
 
 resource "helm_release" "tempo" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
+  repository = "${path.module}/helm/charts"
   chart      = "tempo-distributed"
-  version    = "1.32.3"
-
-  name      = "tempo"
-  namespace = kubernetes_namespace.tempo.metadata[0].name
+  name       = "tempo"
+  namespace  = kubernetes_namespace.tempo.metadata[0].name
 
   values = [
     file("${path.module}/assets/tempo/scale.yaml"),

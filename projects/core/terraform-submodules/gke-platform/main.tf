@@ -287,12 +287,10 @@ resource "kubernetes_namespace" "prometheus_operator" {
 }
 
 resource "helm_release" "prometheus_operator_crds" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
+  repository = "${path.module}/helm/charts"
   chart      = "prometheus-operator-crds"
-  version    = "18.0.1"
-
-  name      = "prometheus-operator-crds"
-  namespace = kubernetes_namespace.prometheus_operator.metadata[0].name
+  name       = "prometheus-operator-crds"
+  namespace  = kubernetes_namespace.prometheus_operator.metadata[0].name
 }
 
 #######################################
@@ -324,12 +322,10 @@ resource "helm_release" "cert_manager" {
     helm_release.prometheus_operator_crds,
   ]
 
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
+  repository = "${path.module}/helm/charts"
   chart      = "cert-manager"
-  version    = "v1.17.1"
-
-  name      = "cert-manager"
-  namespace = kubernetes_namespace.cert_manager.metadata[0].name
+  name       = "cert-manager"
+  namespace  = kubernetes_namespace.cert_manager.metadata[0].name
 
   values = [templatefile("${path.module}/assets/cert_manager.yaml.tftpl", {
     cert_manager_service_account_name = module.cert_manager_service_account.kubernetes_service_account.metadata[0].name

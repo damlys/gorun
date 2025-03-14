@@ -1,0 +1,34 @@
+#!/bin/bash
+set -e
+for lib in "$(dirname "$0")"/libs/*.bash; do source "${lib}"; done
+
+function main {
+  local cmd="$1"
+  local project_path="$2"
+
+  case "${cmd}" in
+  "download-helm-charts")
+    rm -rf "${project_path}/helm/charts"/*
+
+    log::info "downloading"
+    yq --inplace ".dependencies |= sort_by(.name)" "${project_path}/helm/Chart.yaml"
+    helm dependency update "${project_path}/helm"
+
+    for package_path in "${project_path}/helm/charts"/*.tgz; do
+      log::info "unpackaging: ${package_path}"
+      tar --directory="${project_path}/helm/charts" -xf "${package_path}"
+    done
+
+    rm -f "${project_path}/helm/charts"/*.tgz
+
+    log::info "done"
+    ;;
+
+  *)
+    log::error "unknown command: ${cmd}"
+    return 127
+    ;;
+  esac
+}
+
+main "$@"
