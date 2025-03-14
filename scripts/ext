@@ -7,16 +7,16 @@ function main {
   local project_path="$2"
 
   case "${cmd}" in
-  "download")
+  "download-helm-charts")
     rm -rf "${project_path}/helm/charts"/*
 
     log::info "downloading"
     yq --inplace ".dependencies |= sort_by(.name)" "${project_path}/helm/Chart.yaml"
     helm dependency update "${project_path}/helm"
 
-    for filename in "${project_path}/helm/charts"/*.tgz; do
-      log::info "unpackaging: ${filename}"
-      tar --directory="${project_path}/helm/charts" -xf "$filename"
+    for package_path in "${project_path}/helm/charts"/*.tgz; do
+      log::info "unpackaging: ${package_path}"
+      tar --directory="${project_path}/helm/charts" -xf "${package_path}"
     done
 
     rm -f "${project_path}/helm/charts"/*.tgz
