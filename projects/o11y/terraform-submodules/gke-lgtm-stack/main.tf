@@ -32,9 +32,10 @@ resource "google_project_iam_member" "grafana_gcp_datasources" {
 }
 
 resource "helm_release" "grafana_postgresql" {
-  chart     = "${path.module}/helm/charts/postgresql"
-  name      = "postgresql"
-  namespace = kubernetes_namespace.grafana.metadata[0].name
+  repository = "${path.module}/helm/charts"
+  chart      = "postgresql"
+  name       = "postgresql"
+  namespace  = kubernetes_namespace.grafana.metadata[0].name
 
   values = [
     file("${path.module}/assets/grafana_postgresql/values.yaml"),
@@ -42,9 +43,10 @@ resource "helm_release" "grafana_postgresql" {
 }
 
 resource "helm_release" "grafana" {
-  chart     = "${path.module}/helm/charts/grafana"
-  name      = "grafana"
-  namespace = kubernetes_namespace.grafana.metadata[0].name
+  repository = "${path.module}/helm/charts"
+  chart      = "grafana"
+  name       = "grafana"
+  namespace  = kubernetes_namespace.grafana.metadata[0].name
 
   values = [
     file("${path.module}/assets/grafana/scale.yaml"),
@@ -141,9 +143,10 @@ resource "google_storage_bucket_iam_member" "loki_service_account" {
 }
 
 resource "helm_release" "loki" {
-  chart     = "${path.module}/helm/charts/loki"
-  name      = "loki"
-  namespace = kubernetes_namespace.loki.metadata[0].name
+  repository = "${path.module}/helm/charts"
+  chart      = "loki"
+  name       = "loki"
+  namespace  = kubernetes_namespace.loki.metadata[0].name
 
   values = [
     file("${path.module}/assets/loki/scale.yaml"),
@@ -200,9 +203,10 @@ resource "google_storage_bucket_iam_member" "mimir_service_account" {
 }
 
 resource "helm_release" "mimir" {
-  chart     = "${path.module}/helm/charts/mimir-distributed"
-  name      = "mimir"
-  namespace = kubernetes_namespace.mimir.metadata[0].name
+  repository = "${path.module}/helm/charts"
+  chart      = "mimir-distributed"
+  name       = "mimir"
+  namespace  = kubernetes_namespace.mimir.metadata[0].name
 
   values = [
     file("${path.module}/assets/mimir/scale.yaml"),
@@ -259,9 +263,10 @@ resource "google_storage_bucket_iam_member" "tempo_service_account" {
 }
 
 resource "helm_release" "tempo" {
-  chart     = "${path.module}/helm/charts/tempo-distributed"
-  name      = "tempo"
-  namespace = kubernetes_namespace.tempo.metadata[0].name
+  repository = "${path.module}/helm/charts"
+  chart      = "tempo-distributed"
+  name       = "tempo"
+  namespace  = kubernetes_namespace.tempo.metadata[0].name
 
   values = [
     file("${path.module}/assets/tempo/scale.yaml"),

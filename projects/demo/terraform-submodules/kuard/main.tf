@@ -25,15 +25,17 @@ module "stateless_kuard_service_account" {
 }
 
 module "stateless_kuard_helm_release" {
-  source = "../helm-release" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/demo/helm-release/0.2.100.zip"
+  source = "../helm-release" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/demo/helm-release/0.2.101.zip"
 
-  # repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/private-helm-charts/gorun/demo"
-  chart = "../../helm-charts/stateless-kuard" # "stateless-kuard"
-  # chart_version = "0.2.100"
+  repository = "../../helm-charts" # "oci://europe-central2-docker.pkg.dev/gogcp-main-2/private-helm-charts/gorun/demo"
+  chart      = "stateless-kuard"
+  _version   = "0.2.100"
+  name       = "stateless-kuard"
+  namespace  = var.kubernetes_namespace.metadata[0].name
 
-  namespace = var.kubernetes_namespace.metadata[0].name
-  name      = "stateless-kuard"
-  values    = [templatefile("${path.module}/assets/values.yaml.tftpl", { service_account_name = module.stateless_kuard_service_account.kubernetes_service_account.metadata[0].name })]
+  values = [templatefile("${path.module}/assets/values.yaml.tftpl", {
+    service_account_name = module.stateless_kuard_service_account.kubernetes_service_account.metadata[0].name
+  })]
 }
 
 data "kubernetes_service" "stateless_kuard" {
@@ -90,13 +92,15 @@ module "stateful_kuard_service_account" {
 }
 
 resource "helm_release" "stateful_kuard" {
-  # repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/private-helm-charts/gorun/demo"
-  chart = "../../helm-charts/stateful-kuard" # "stateful-kuard"
-  # version = "0.2.100"
+  repository = "../../helm-charts" # "oci://europe-central2-docker.pkg.dev/gogcp-main-2/private-helm-charts/gorun/demo"
+  chart      = "stateful-kuard"
+  version    = "0.2.100"
+  name       = "stateful-kuard"
+  namespace  = var.kubernetes_namespace.metadata[0].name
 
-  namespace = var.kubernetes_namespace.metadata[0].name
-  name      = "stateful-kuard"
-  values    = [templatefile("${path.module}/assets/values.yaml.tftpl", { service_account_name = module.stateful_kuard_service_account.kubernetes_service_account.metadata[0].name })]
+  values = [templatefile("${path.module}/assets/values.yaml.tftpl", {
+    service_account_name = module.stateful_kuard_service_account.kubernetes_service_account.metadata[0].name
+  })]
 }
 
 data "kubernetes_service" "stateful_kuard" {

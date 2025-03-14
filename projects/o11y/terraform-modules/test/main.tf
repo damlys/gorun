@@ -9,10 +9,12 @@ resource "kubernetes_namespace" "opentelemetry_operator" {
 }
 
 resource "helm_release" "opentelemetry_operator" {
-  chart     = "${path.module}/helm/charts/opentelemetry-operator"
-  name      = "opentelemetry-operator"
-  namespace = kubernetes_namespace.opentelemetry_operator.metadata[0].name
-  values    = [file("${path.module}/assets/opentelemetry_operator.yaml")]
+  repository = "${path.module}/helm/charts"
+  chart      = "opentelemetry-operator"
+  name       = "opentelemetry-operator"
+  namespace  = kubernetes_namespace.opentelemetry_operator.metadata[0].name
+
+  values = [file("${path.module}/assets/opentelemetry_operator.yaml")]
 }
 
 # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/README.md#role-based-access-control
@@ -103,10 +105,12 @@ resource "kubernetes_namespace" "istio_system" {
 }
 
 resource "helm_release" "istio_base" {
-  chart     = "${path.module}/helm/charts/base"
-  name      = "istio-base"
-  namespace = kubernetes_namespace.istio_system.metadata[0].name
-  values    = [file("${path.module}/assets/istio_base.yaml")]
+  repository = "${path.module}/helm/charts"
+  chart      = "base"
+  name       = "istio-base"
+  namespace  = kubernetes_namespace.istio_system.metadata[0].name
+
+  values = [file("${path.module}/assets/istio_base.yaml")]
 }
 
 resource "helm_release" "istio_discovery" {
@@ -114,9 +118,10 @@ resource "helm_release" "istio_discovery" {
     helm_release.istio_base,
   ]
 
-  chart     = "${path.module}/helm/charts/istiod"
-  name      = "istiod"
-  namespace = kubernetes_namespace.istio_system.metadata[0].name
+  repository = "${path.module}/helm/charts"
+  chart      = "istiod"
+  name       = "istiod"
+  namespace  = kubernetes_namespace.istio_system.metadata[0].name
 
   values = [templatefile("${path.module}/assets/istio_discovery.yaml.tftpl", {
     opentelemetry_service = module.test_otel_collectors.otlp_grpc_host
