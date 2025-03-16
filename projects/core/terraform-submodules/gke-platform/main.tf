@@ -129,7 +129,7 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
   min_master_version = var.cluster_version
   maintenance_policy {
     daily_maintenance_window {
-      start_time = "03:00" # UTC
+      start_time = "04:00" # UTC
     }
   }
 
@@ -796,7 +796,7 @@ resource "kubernetes_manifest" "velero_schedule_backup" { # console.cloud.google
       namespace = helm_release.velero.namespace
     }
     spec = {
-      schedule = "0 3 * * *" # UTC
+      schedule = "30 3 * * *" # UTC
       template = {
         ttl = "72h0m0s" # 3 days
 
