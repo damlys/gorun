@@ -129,7 +129,7 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
   min_master_version = var.cluster_version
   maintenance_policy {
     daily_maintenance_window {
-      start_time = "01:00" # UTC
+      start_time = "03:00" # UTC
     }
   }
 
@@ -358,12 +358,11 @@ resource "google_storage_bucket" "velero_backups" {
   storage_class = "REGIONAL"
   force_destroy = true
 
-  uniform_bucket_level_access = true
-  public_access_prevention    = "enforced"
-
   encryption {
     default_kms_key_name = google_kms_crypto_key.velero_backups.id
   }
+  uniform_bucket_level_access = true
+  public_access_prevention    = "enforced"
 }
 
 resource "google_storage_bucket_iam_member" "velero_service_account" {
@@ -797,15 +796,15 @@ resource "kubernetes_manifest" "velero_schedule_backup" { # console.cloud.google
       namespace = helm_release.velero.namespace
     }
     spec = {
-      schedule = "9 * * * *" # TODO every hour for now
+      schedule = "0 3 * * *" # UTC
       template = {
-        ttl = "6h0m0s" # TODO
+        ttl = "72h0m0s" # 3 days
 
         includedNamespaces = [each.value.metadata[0].name]
         includedResources  = ["secrets", "pvc", "pv"]
 
-        snapshotVolumes         = true
         storageLocation         = "default"
+        snapshotVolumes         = true
         volumeSnapshotLocations = ["default"]
       }
     }
