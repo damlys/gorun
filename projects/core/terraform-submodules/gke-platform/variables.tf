@@ -35,6 +35,11 @@ variable "cluster_version" { # gcloud container get-server-config --project="gog
   default = null
 }
 
+variable "kubectl_image_tag" { # https://hub.docker.com/r/bitnami/kubectl/tags
+  type    = string
+  default = null
+}
+
 variable "node_locations" {
   type    = set(string)
   default = ["europe-central2-a"]
