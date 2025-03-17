@@ -24,7 +24,7 @@ function main {
   local velero_restore="${velero_schedule}-${datetime}-manual"
   local velero_namespace="${kube_namespace}-restore-${datetime}"
 
-  log::info "xyz: starting"
+  log::info "starting"
   echo "datetime=${datetime}"
   echo "kube_context=${kube_context}"
   echo "kube_namespace=${kube_namespace}"
@@ -37,69 +37,84 @@ function main {
   echo "velero_restore=${velero_restore}"
   echo "velero_namespace=${velero_namespace}"
 
-  log::info "xyz: switching Kubernetes context: ${kube_context}"
+  echo ""
+  log::info "switching Kubernetes context: ${kube_context}"
   kubectl config use-context "${kube_context}"
 
-  log::info "xyz: switching Kubernetes namespace: ${kube_namespace}"
+  echo ""
+  log::info "switching Kubernetes namespace: ${kube_namespace}"
   kubectl config set-context --current --namespace="${kube_namespace}"
 
-  log::info "run: updating Kubernetes secret: ${kube_secret}"
+  echo ""
+  log::info "work: updating Kubernetes secret: ${kube_secret}"
   kubectl patch secrets "${kube_secret}" --type="merge" --patch="{\"stringData\":{\"BOOM_${datetime}_SAFE_KEY\":\"boom ${datetime} safe value 1\"}}"
   kubectl patch secrets "${kube_secret}" --type="merge" --patch="{\"stringData\":{\"BOOM_${datetime}_LOST_KEY\":\"boom ${datetime} lost value 2\"}}"
 
-  log::info "run: generating new Kubernetes secrets"
+  echo ""
+  log::info "work: generating new Kubernetes secrets"
   kubectl create secret generic "boom-${datetime}-safe-secret" --from-literal="BOOM_${datetime}_SAFE_KEY=boom ${datetime} safe value 3"
   kubectl create secret generic "boom-${datetime}-lost-secret" --from-literal="BOOM_${datetime}_LOST_KEY=boom ${datetime} lost value 4"
 
-  log::info "run: generating persistent volume data"
+  echo ""
+  log::info "work: generating persistent volume data"
   kubectl exec "${kube_pod}" --container="${kube_container}" -- sh -c "echo 'boom ${datetime} safe content 5' >'/var/lib/kuard/boom-${datetime}-safe-file.txt'"
   kubectl exec "${kube_pod}" --container="${kube_container}" -- sh -c "echo 'boom ${datetime} lost content 6' >'/var/lib/kuard/boom-${datetime}-lost-file.txt'"
 
   wait_for_enter
 
-  log::info "xyz: restarting Kubernetes pod: ${kube_pod}"
+  echo ""
+  log::info "restarting Kubernetes pod: ${kube_pod}"
   kubectl delete pod "${kube_pod}" --wait
   kubectl rollout status "statefulsets.apps/${kube_statefulset}"
 
   wait_for_enter
 
+  echo ""
   log::info "backup: creating Velero backup"
   velero backup create "${velero_backup}" --from-schedule="${velero_schedule}" --wait
 
   wait_for_enter
 
+  echo ""
   log::info "disaster: lose Kubernetes secret key: ${kube_secret}"
   kubectl patch secrets "${kube_secret}" --type="merge" --patch="{\"stringData\":{\"BOOM_${datetime}_LOST_KEY\":\"err 7\"}}"
 
+  echo ""
   log::info "disaster: lose new Kubernetes secret"
   kubectl delete secrets "boom-${datetime}-lost-secret"
 
+  echo ""
   log::info "disaster: lose persistent volume data"
   kubectl exec "${kube_pod}" --container="${kube_container}" -- sh -c "rm '/var/lib/kuard/boom-${datetime}-lost-file.txt'"
 
   wait_for_enter
 
-  log::info "xyz: restarting Kubernetes pod: ${kube_pod}"
+  echo ""
+  log::info "restarting Kubernetes pod: ${kube_pod}"
   kubectl delete pod "${kube_pod}" --wait
   kubectl rollout status "statefulsets.apps/${kube_statefulset}"
 
   wait_for_enter
 
+  echo ""
   log::info "restore: restoring Velero backup: ${velero_namespace}"
   velero restore create "${velero_restore}" --from-backup="${velero_backup}" --namespace-mappings="${kube_namespace}:${velero_namespace}" --wait
 
   wait_for_enter
 
-  log::info "xyz: deleting Kubernetes namespace: ${velero_namespace}"
+  echo ""
+  log::info "deleting Kubernetes namespace: ${velero_namespace}"
   kubectl delete namespaces "${velero_namespace}" --wait
 
-  log::info "xyz: restarting Kubernetes pod: ${kube_pod}"
+  echo ""
+  log::info "restarting Kubernetes pod: ${kube_pod}"
   kubectl delete pod "${kube_pod}" --wait
   kubectl rollout status "statefulsets.apps/${kube_statefulset}"
 
   wait_for_enter
 
-  log::info "xyz: done"
+  echo ""
+  log::info "done"
 }
 
 main "$@"
