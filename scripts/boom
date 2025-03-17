@@ -21,7 +21,7 @@ function main {
   local kube_pod="${kube_statefulset}-0"
   local kube_container="http-server"
   local kube_secret="stateful-kuard-config-envs"
-  local kube_pvc="data-${kube_statefulset}-0"
+  local kube_pvc="data-${kube_pod}"
   local velero_schedule="backup-kuard"
   local velero_backup="${velero_schedule}-${datetime}-manual"
   local velero_restore="${velero_schedule}-${datetime}-manual"
@@ -48,25 +48,25 @@ function main {
   kubectl config set-context --current --namespace="${kube_namespace}"
 
   echo ""
-  log::info "work: updating Kubernetes secret: ${kube_secret}"
+  log::info "ok: updating Kubernetes secret: ${kube_secret}"
   kubectl patch secret "${kube_secret}" --type="merge" --patch="{\"stringData\":{\"BOOM_${datetime}_FINE_KEY\":\"boom ${datetime} fine value 1\"}}"
   kubectl patch secret "${kube_secret}" --type="merge" --patch="{\"stringData\":{\"BOOM_${datetime}_LOST_KEY\":\"boom ${datetime} lost value 2\"}}"
 
   echo ""
-  log::info "work: creating new Kubernetes secrets"
+  log::info "ok: creating new Kubernetes secrets"
   kubectl create secret generic "boom-${datetime}-fine-secret" --from-literal="BOOM_${datetime}_FINE_KEY=boom ${datetime} fine value 3"
   kubectl create secret generic "boom-${datetime}-lost-secret" --from-literal="BOOM_${datetime}_LOST_KEY=boom ${datetime} lost value 4"
 
   echo ""
-  log::info "work: creating persistent volume data"
+  log::info "ok: creating persistent volume data"
   kubectl exec "${kube_pod}" --container="${kube_container}" -- sh -c "echo 'boom ${datetime} fine content 5' >'/var/lib/kuard/boom-${datetime}-fine-file.txt'"
   kubectl exec "${kube_pod}" --container="${kube_container}" -- sh -c "echo 'boom ${datetime} lost content 6' >'/var/lib/kuard/boom-${datetime}-lost-file.txt'"
 
   wait_for_keypress
 
   echo ""
-  log::info "restarting Kubernetes pod: ${kube_pod}"
-  kubectl delete pod "${kube_pod}" --wait
+  log::info "restarting Kubernetes statefulset: ${kube_statefulset}"
+  kubectl rollout restart "statefulset/${kube_statefulset}"
   kubectl rollout status "statefulset/${kube_statefulset}"
 
   wait_for_keypress
@@ -100,15 +100,15 @@ function main {
   wait_for_keypress
 
   echo ""
-  log::info "restarting Kubernetes pod: ${kube_pod}"
-  kubectl delete pod "${kube_pod}" --wait
+  log::info "restarting Kubernetes statefulset: ${kube_statefulset}"
+  kubectl rollout restart "statefulset/${kube_statefulset}"
   kubectl rollout status "statefulset/${kube_statefulset}"
 
   wait_for_keypress
 
   echo ""
   log::info "restore: scaling statefulset down: ${kube_statefulset}"
-  kubectl scale statefulset "${kube_statefulset}" --replicas="0"
+  kubectl scale "statefulset/${kube_statefulset}" --replicas="0"
   kubectl rollout status "statefulset/${kube_statefulset}"
 
   echo ""
@@ -129,7 +129,7 @@ function main {
 
   echo ""
   log::info "restore: scaling statefulset up: ${kube_statefulset}"
-  kubectl scale statefulset "${kube_statefulset}" --replicas="1"
+  kubectl scale "statefulset/${kube_statefulset}" --replicas="1"
   kubectl rollout status "statefulset/${kube_statefulset}"
 
   wait_for_keypress
