@@ -5,7 +5,7 @@ for lib in "$(dirname "$0")"/libs/*.bash; do source "${lib}"; done
 function wait_for_enter {
   echo ""
   echo "Waiting..."
-  read -p "Press [Enter] to continue or [Ctrl+C] to exit."
+  read -r -p "Press [Enter] to continue or [Ctrl+C] to exit."
   echo "Continuing..."
 }
 
@@ -15,27 +15,27 @@ function main {
 
   local kube_context="gke_gogcp-test-2_europe-central2-a_gogke-test-2"
   local kube_namespace="kuard"
-  local kube_secret="stateful-kuard-config-envs"
   local kube_statefulset="stateful-kuard-http-server"
   local kube_pod="${kube_statefulset}-0"
   local kube_container="http-server"
+  local kube_secret="stateful-kuard-config-envs"
+  local kube_pvc="data-${kube_statefulset}-0"
   local velero_schedule="backup-kuard"
   local velero_backup="${velero_schedule}-${datetime}-manual"
   local velero_restore="${velero_schedule}-${datetime}-manual"
-  local velero_namespace="${kube_namespace}-restore-${datetime}"
 
   log::info "starting"
   echo "datetime=${datetime}"
   echo "kube_context=${kube_context}"
   echo "kube_namespace=${kube_namespace}"
-  echo "kube_secret=${kube_secret}"
   echo "kube_statefulset=${kube_statefulset}"
   echo "kube_pod=${kube_pod}"
   echo "kube_container=${kube_container}"
+  echo "kube_secret=${kube_secret}"
+  echo "kube_pvc=${kube_pvc}"
   echo "velero_schedule=${velero_schedule}"
   echo "velero_backup=${velero_backup}"
   echo "velero_restore=${velero_restore}"
-  echo "velero_namespace=${velero_namespace}"
 
   echo ""
   log::info "switching Kubernetes context: ${kube_context}"
@@ -47,17 +47,17 @@ function main {
 
   echo ""
   log::info "work: updating Kubernetes secret: ${kube_secret}"
-  kubectl patch secrets "${kube_secret}" --type="merge" --patch="{\"stringData\":{\"BOOM_${datetime}_SAFE_KEY\":\"boom ${datetime} safe value 1\"}}"
+  kubectl patch secrets "${kube_secret}" --type="merge" --patch="{\"stringData\":{\"BOOM_${datetime}_FINE_KEY\":\"boom ${datetime} fine value 1\"}}"
   kubectl patch secrets "${kube_secret}" --type="merge" --patch="{\"stringData\":{\"BOOM_${datetime}_LOST_KEY\":\"boom ${datetime} lost value 2\"}}"
 
   echo ""
   log::info "work: generating new Kubernetes secrets"
-  kubectl create secret generic "boom-${datetime}-safe-secret" --from-literal="BOOM_${datetime}_SAFE_KEY=boom ${datetime} safe value 3"
+  kubectl create secret generic "boom-${datetime}-fine-secret" --from-literal="BOOM_${datetime}_FINE_KEY=boom ${datetime} fine value 3"
   kubectl create secret generic "boom-${datetime}-lost-secret" --from-literal="BOOM_${datetime}_LOST_KEY=boom ${datetime} lost value 4"
 
   echo ""
   log::info "work: generating persistent volume data"
-  kubectl exec "${kube_pod}" --container="${kube_container}" -- sh -c "echo 'boom ${datetime} safe content 5' >'/var/lib/kuard/boom-${datetime}-safe-file.txt'"
+  kubectl exec "${kube_pod}" --container="${kube_container}" -- sh -c "echo 'boom ${datetime} fine content 5' >'/var/lib/kuard/boom-${datetime}-fine-file.txt'"
   kubectl exec "${kube_pod}" --container="${kube_container}" -- sh -c "echo 'boom ${datetime} lost content 6' >'/var/lib/kuard/boom-${datetime}-lost-file.txt'"
 
   wait_for_enter
@@ -65,7 +65,7 @@ function main {
   echo ""
   log::info "restarting Kubernetes pod: ${kube_pod}"
   kubectl delete pod "${kube_pod}" --wait
-  kubectl rollout status "statefulsets.apps/${kube_statefulset}"
+  kubectl rollout status "statefulset/${kube_statefulset}"
 
   wait_for_enter
 
@@ -92,29 +92,37 @@ function main {
   echo ""
   log::info "restarting Kubernetes pod: ${kube_pod}"
   kubectl delete pod "${kube_pod}" --wait
-  kubectl rollout status "statefulsets.apps/${kube_statefulset}"
+  kubectl rollout status "statefulset/${kube_statefulset}"
 
   wait_for_enter
 
   echo ""
-  log::info "restore: restoring Velero backup: ${velero_namespace}"
-  velero restore create "${velero_restore}" --from-backup="${velero_backup}" --namespace-mappings="${kube_namespace}:${velero_namespace}" --wait
-
-  wait_for_enter
-
-  echo ""
-  log::info "deleting Kubernetes namespace: ${velero_namespace}"
-  kubectl delete namespaces "${velero_namespace}" --wait
+  log::info "restore: scale statefulset down: ${kube_statefulset}"
+  kubectl scale statefulset "${kube_statefulset}" --replicas="0"
+  kubectl rollout status "statefulset/${kube_statefulset}"
 
   echo ""
-  log::info "restarting Kubernetes pod: ${kube_pod}"
-  kubectl delete pod "${kube_pod}" --wait
-  kubectl rollout status "statefulsets.apps/${kube_statefulset}"
+  log::info "restore: delete Kubernetes secret: ${kube_secret}"
+  kubectl delete secrets "${kube_secret}" --wait
+
+  echo ""
+  log::info "restore: delete persistent volume claim: ${kube_pvc}"
+  kubectl delete pvc "${kube_pvc}" --wait
+
+  echo ""
+  log::info "restore: restoring Velero backup"
+  velero restore create "${velero_restore}" --from-backup="${velero_backup}" --wait
+
+  echo ""
+  log::info "restore: scale statefulset up: ${kube_statefulset}"
+  kubectl scale statefulset "${kube_statefulset}" --replicas="1"
+  kubectl rollout status "statefulset/${kube_statefulset}"
 
   wait_for_enter
 
   echo ""
   log::info "done"
+  echo "datetime=${datetime}"
 }
 
 main "$@"
