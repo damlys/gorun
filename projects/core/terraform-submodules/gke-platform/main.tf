@@ -801,7 +801,7 @@ resource "kubernetes_manifest" "velero_schedule_backup" { # console.cloud.google
         ttl = "72h0m0s" # 3 days
 
         includedNamespaces = [each.value.metadata[0].name]
-        includedResources  = ["secrets", "pvc", "pv"]
+        includedResources  = ["secrets", "persistentvolumeclaims", "persistentvolumes"]
 
         storageLocation         = "default"
         snapshotVolumes         = true
