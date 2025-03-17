@@ -10,3 +10,7 @@ dependencies:
     repository: https://prometheus-community.github.io/helm-charts
     name: prometheus-operator-crds
     version: 18.0.1
+  - # https://github.com/vmware-tanzu/helm-charts/tree/main/charts/velero
+    repository: https://vmware-tanzu.github.io/helm-charts
+    name: velero
+    version: 8.5.0

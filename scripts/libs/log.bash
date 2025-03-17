@@ -3,17 +3,17 @@ set -e
 function log::error {
   local msg="$1"
 
-  printf "Error: %s\n" "${msg}"
+  printf "error: %s\n" "${msg}"
 }
 
 function log::warning {
   local msg="$1"
 
-  printf "Warning: %s\n" "${msg}"
+  printf "warning: %s\n" "${msg}"
 }
 
 function log::info {
   local msg="$1"
 
-  printf "Info: %s\n" "${msg}"
+  printf "info: %s\n" "${msg}"
 }

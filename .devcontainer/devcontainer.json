@@ -1,7 +1,7 @@
 {
   "name": "devcontainer-damlys-gorun",
 
-  "image": "europe-central2-docker.pkg.dev/gogcp-main-2/private-docker-images/gorun/core/devcontainer:0.2.100",
+  "image": "europe-central2-docker.pkg.dev/gogcp-main-2/private-docker-images/gorun/core/devcontainer:0.2.101",
   "runArgs": [
     "--name=devcontainer-damlys-gorun",
     "--env-file=${localEnv:HOME}${localEnv:USERPROFILE}/workspace/devcontainer-damlys.env"
@@ -17,7 +17,8 @@
     "type=volume,source=devcontainer-damlys-github,target=/root/.config/gh",
     "type=volume,source=devcontainer-damlys-helm,target=/root/.config/helm",
     "type=volume,source=devcontainer-damlys-kube,target=/root/.kube",
-    "type=volume,source=devcontainer-damlys-terraform,target=/root/.terraform.d"
+    "type=volume,source=devcontainer-damlys-terraform,target=/root/.terraform.d",
+    "type=volume,source=devcontainer-damlys-velero,target=/root/.config/velero"
   ],
 
   "customizations": {

@@ -1,5 +1,5 @@
 repository: europe-central2-docker.pkg.dev/gogcp-main-2/private-docker-images/gorun/core/devcontainer
-tag: 0.2.100
+tag: 0.2.101
 aliases:
   - # https://hub.docker.com/r/damlys/gorun-devcontainer
     repository: damlys/gorun-devcontainer
