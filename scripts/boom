@@ -24,7 +24,7 @@ function main {
   local velero_restore="${velero_schedule}-${datetime}-manual"
   local velero_namespace="${kube_namespace}-restore-${datetime}"
 
-  log::info "debug: starting"
+  log::info "xyz: starting"
   echo "datetime=${datetime}"
   echo "kube_context=${kube_context}"
   echo "kube_namespace=${kube_namespace}"
@@ -35,28 +35,29 @@ function main {
   echo "velero_schedule=${velero_schedule}"
   echo "velero_backup=${velero_backup}"
   echo "velero_restore=${velero_restore}"
+  echo "velero_namespace=${velero_namespace}"
 
-  log::info "debug: switching Kubernetes context: ${kube_context}"
+  log::info "xyz: switching Kubernetes context: ${kube_context}"
   kubectl config use-context "${kube_context}"
 
-  log::info "debug: switching Kubernetes namespace: ${kube_namespace}"
+  log::info "xyz: switching Kubernetes namespace: ${kube_namespace}"
   kubectl config set-context --current --namespace="${kube_namespace}"
 
-  log::info "prepare: updating Kubernetes secret: ${kube_secret}"
+  log::info "run: updating Kubernetes secret: ${kube_secret}"
   kubectl patch secrets "${kube_secret}" --type="merge" --patch="{\"stringData\":{\"BOOM_${datetime}_SAFE_KEY\":\"boom ${datetime} safe value 1\"}}"
   kubectl patch secrets "${kube_secret}" --type="merge" --patch="{\"stringData\":{\"BOOM_${datetime}_LOST_KEY\":\"boom ${datetime} lost value 2\"}}"
 
-  log::info "prepare: generating new Kubernetes secrets"
+  log::info "run: generating new Kubernetes secrets"
   kubectl create secret generic "boom-${datetime}-safe-secret" --from-literal="BOOM_${datetime}_SAFE_KEY=boom ${datetime} safe value 3"
   kubectl create secret generic "boom-${datetime}-lost-secret" --from-literal="BOOM_${datetime}_LOST_KEY=boom ${datetime} lost value 4"
 
-  log::info "prepare: generating persistent volume data"
+  log::info "run: generating persistent volume data"
   kubectl exec "${kube_pod}" --container="${kube_container}" -- sh -c "echo 'boom ${datetime} safe content 5' >'/var/lib/kuard/boom-${datetime}-safe-file.txt'"
   kubectl exec "${kube_pod}" --container="${kube_container}" -- sh -c "echo 'boom ${datetime} lost content 6' >'/var/lib/kuard/boom-${datetime}-lost-file.txt'"
 
   wait_for_enter
 
-  log::info "debug: restarting Kubernetes pod: ${kube_pod}"
+  log::info "xyz: restarting Kubernetes pod: ${kube_pod}"
   kubectl delete pod "${kube_pod}" --wait
   kubectl rollout status "statefulsets.apps/${kube_statefulset}"
 
@@ -78,7 +79,7 @@ function main {
 
   wait_for_enter
 
-  log::info "debug: restarting Kubernetes pod: ${kube_pod}"
+  log::info "xyz: restarting Kubernetes pod: ${kube_pod}"
   kubectl delete pod "${kube_pod}" --wait
   kubectl rollout status "statefulsets.apps/${kube_statefulset}"
 
@@ -89,16 +90,16 @@ function main {
 
   wait_for_enter
 
-  log::info "debug: deleting Kubernetes namespace: ${velero_namespace}"
+  log::info "xyz: deleting Kubernetes namespace: ${velero_namespace}"
   kubectl delete namespaces "${velero_namespace}" --wait
 
-  log::info "debug: restarting Kubernetes pod: ${kube_pod}"
+  log::info "xyz: restarting Kubernetes pod: ${kube_pod}"
   kubectl delete pod "${kube_pod}" --wait
   kubectl rollout status "statefulsets.apps/${kube_statefulset}"
 
   wait_for_enter
 
-  log::info "debug: done"
+  log::info "xyz: done"
 }
 
 main "$@"
