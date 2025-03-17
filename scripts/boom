@@ -13,6 +13,8 @@ function main {
   local datetime
   datetime="$(date --utc '+%Y%m%d%H%M%S')" # yyyymmddHHMMSS
 
+  # https://stateful-kuard.gogke-test-2.damlys.pl/-/env
+  # https://stateful-kuard.gogke-test-2.damlys.pl/fs/var/lib/kuard/
   local kube_context="gke_gogcp-test-2_europe-central2-a_gogke-test-2"
   local kube_namespace="kuard"
   local kube_statefulset="stateful-kuard-http-server"
@@ -72,6 +74,10 @@ function main {
   echo ""
   log::info "backup: creating Velero backup"
   velero backup create "${velero_backup}" --from-schedule="${velero_schedule}" --wait
+
+  echo ""
+  log::info "backup: waiting 60s"
+  sleep 60
 
   wait_for_enter
 
