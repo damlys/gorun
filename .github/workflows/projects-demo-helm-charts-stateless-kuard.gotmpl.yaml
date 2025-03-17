@@ -14,7 +14,7 @@ jobs:
   projects-demo-helm-charts-stateless-kuard:
     name: projects/demo/helm-charts/stateless-kuard
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gorun-devcontainer:0.2.100
+    container: ghcr.io/damlys/gorun-devcontainer:0.2.101
     permissions:
       contents: write
       id-token: write
@@ -37,11 +37,11 @@ jobs:
         run: ./scripts/helm-chart build "projects/demo/helm-charts/stateless-kuard"
       - name: test
         run: ./scripts/helm-chart test "projects/demo/helm-charts/stateless-kuard"
-      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
-        name: pre-publish
+      - name: pre-publish
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
         run: ./scripts/helm-chart pre-publish "projects/demo/helm-charts/stateless-kuard"
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        name: publish
+      - name: publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: ./scripts/helm-chart publish "projects/demo/helm-charts/stateless-kuard"
       - name: show
         run: ./scripts/helm-chart show "projects/demo/helm-charts/stateless-kuard"
