@@ -5,7 +5,7 @@ module "test_platform" {
   google_project       = data.google_project.this
 
   platform_name   = "gogke-test-2"
-  platform_domain = "gogke-test-2.damlys.pl"
+  platform_domain = "gogke-test-2.damlys.dev"
 
   node_spot_instances = true
 

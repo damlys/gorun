@@ -497,7 +497,7 @@ resource "google_dns_managed_zone" "ingress_internet" { # console.cloud.google.c
   visibility = "public"
 
   dnssec_config {
-    state = "on"
+    state = var.platform_domain_dnssec_enabled ? "on" : "off"
   }
 
   # override default description
@@ -523,7 +523,7 @@ resource "google_dns_record_set" "ingress_internet" {
   for_each = toset([google_dns_managed_zone.ingress_internet.dns_name, "*.${google_dns_managed_zone.ingress_internet.dns_name}"])
   name     = each.value
   type     = "A"
-  ttl      = 300
+  ttl      = 3600
   rrdatas  = [google_compute_address.ingress_internet.address]
 }
 

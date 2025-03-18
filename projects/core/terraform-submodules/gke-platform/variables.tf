@@ -20,6 +20,11 @@ variable "platform_domain" {
   type = string
 }
 
+variable "platform_domain_dnssec_enabled" {
+  type    = bool
+  default = false
+}
+
 variable "platform_region" {
   type    = string
   default = "europe-central2"
