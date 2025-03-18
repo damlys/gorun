@@ -181,6 +181,10 @@ commandTests:
     command: curl
     args:
       - --version
+  - name: dig
+    command: dig
+    args:
+      - -v
   - # https://git-scm.com/
     name: git
     command: git

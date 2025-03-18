@@ -11,6 +11,7 @@ apt install --yes \
   build-essential \
   ca-certificates \
   curl \
+  dnsutils \
   git \
   gnupg \
   htop \
