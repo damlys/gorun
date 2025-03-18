@@ -25,7 +25,7 @@ resource "google_compute_subnetwork" "this" {
 }
 
 #######################################
-### Internet egress
+### VPC egress
 #######################################
 
 resource "google_compute_address" "egress_internet" { # console.cloud.google.com/networking/addresses/list
@@ -466,7 +466,7 @@ resource "helm_release" "cert_manager" {
 }
 
 #######################################
-### Internet ingress
+### VPC ingress
 #######################################
 
 resource "google_compute_subnetwork" "ingress_internet" {
@@ -496,8 +496,17 @@ resource "google_dns_managed_zone" "ingress_internet" { # console.cloud.google.c
 
   visibility = "public"
 
+  dnssec_config {
+    state = "on"
+  }
+
   # override default description
   description = "-"
+}
+
+data "google_dns_keys" "ingress_internet" {
+  project      = var.google_project.project_id
+  managed_zone = google_dns_managed_zone.ingress_internet.id
 }
 
 resource "google_dns_managed_zone_iam_member" "cert_manager_dns_admin" {
