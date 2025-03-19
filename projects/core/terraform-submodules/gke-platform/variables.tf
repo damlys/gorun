@@ -22,7 +22,7 @@ variable "platform_domain" {
 
 variable "platform_dnssec_enabled" {
   type    = bool
-  default = false
+  default = true
 }
 
 variable "platform_region" {
