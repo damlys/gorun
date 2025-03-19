@@ -227,6 +227,10 @@ commandTests:
     command: wget
     args:
       - --version
+  - name: whois
+    command: whois
+    args:
+      - --version
 
 #######################################
 ### Shell completion

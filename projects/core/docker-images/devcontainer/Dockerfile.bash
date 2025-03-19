@@ -27,6 +27,7 @@ apt install --yes \
   unzip \
   vim \
   wget \
+  whois \
   zip
 
 echo "ALL ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers
