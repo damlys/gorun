@@ -17,5 +17,5 @@ module "this" {
   google_container_cluster = data.google_container_cluster.this
   kubernetes_namespace     = data.kubernetes_namespace.this
 
-  platform_domain = "gogke-test-2.damlys.pl"
+  platform_domain = "gogke-test-2.damlys.dev"
 }

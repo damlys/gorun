@@ -13,8 +13,8 @@ function main {
   local datetime
   datetime="$(date --utc '+%Y%m%d%H%M%S')" # yyyymmddHHMMSS
 
-  # https://stateful-kuard.gogke-test-2.damlys.pl/-/env
-  # https://stateful-kuard.gogke-test-2.damlys.pl/fs/var/lib/kuard/
+  # https://stateful-kuard.gogke-test-2.damlys.dev/-/env
+  # https://stateful-kuard.gogke-test-2.damlys.dev/fs/var/lib/kuard/
   local kube_context="gke_gogcp-test-2_europe-central2-a_gogke-test-2"
   local kube_namespace="kuard"
   local kube_statefulset="stateful-kuard-http-server"

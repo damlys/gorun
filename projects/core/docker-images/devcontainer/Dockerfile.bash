@@ -11,6 +11,7 @@ apt install --yes \
   build-essential \
   ca-certificates \
   curl \
+  dnsutils \
   git \
   gnupg \
   htop \
@@ -26,6 +27,7 @@ apt install --yes \
   unzip \
   vim \
   wget \
+  whois \
   zip
 
 echo "ALL ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers

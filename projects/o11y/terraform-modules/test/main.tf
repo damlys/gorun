@@ -80,7 +80,7 @@ module "test_lgtm_stack" {
   google_project           = data.google_project.this
   google_container_cluster = data.google_container_cluster.this
 
-  grafana_domain = "grafana.gogke-test-2.damlys.pl"
+  grafana_domain = "grafana.gogke-test-2.damlys.dev"
 }
 
 module "test_otel_collectors" {
