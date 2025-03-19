@@ -497,7 +497,7 @@ resource "google_dns_managed_zone" "ingress_internet" { # console.cloud.google.c
   visibility = "public"
 
   dnssec_config {
-    state = var.platform_domain_dnssec_enabled ? "on" : "off"
+    state = var.platform_dnssec_enabled ? "on" : "off"
   }
 
   # override default description

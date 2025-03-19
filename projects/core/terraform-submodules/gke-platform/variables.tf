@@ -20,7 +20,7 @@ variable "platform_domain" {
   type = string
 }
 
-variable "platform_domain_dnssec_enabled" {
+variable "platform_dnssec_enabled" {
   type    = bool
   default = false
 }
