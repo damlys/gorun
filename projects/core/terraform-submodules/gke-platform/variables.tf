@@ -50,24 +50,21 @@ variable "node_locations" {
   default = ["europe-central2-a"]
 }
 
-variable "node_machine_type" {
-  type    = string
-  default = "n2d-standard-2"
-}
-
-variable "node_spot_instances" {
-  type    = bool
-  default = false
-}
-
-variable "node_min_instances" {
-  type    = number
-  default = 1
-}
-
-variable "node_max_instances" {
-  type    = number
-  default = 1
+variable "node_pools" {
+  type = map(object({
+    node_machine_type   = string
+    node_spot_instances = bool
+    node_min_instances  = number
+    node_max_instances  = number
+  }))
+  default = {
+    "main-pool-1" = {
+      node_machine_type   = "n2d-standard-2"
+      node_spot_instances = false
+      node_min_instances  = 1
+      node_max_instances  = 1
+    }
+  }
 }
 
 variable "namespace_names" {

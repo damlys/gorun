@@ -200,9 +200,11 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
   # allow to destroy resource
   deletion_protection = false
 
-  # do not track node version updates
+  # do not track node updates
   lifecycle {
     ignore_changes = [
+      node_config,
+      node_pool,
       node_version,
     ]
   }
@@ -234,10 +236,11 @@ resource "google_container_node_pool" "this" {
   depends_on = [
     google_project_iam_member.gke_node,
   ]
+  for_each = var.node_pools
 
   project        = var.google_project.project_id
   cluster        = google_container_cluster.this.id
-  name           = var.platform_name
+  name           = each.key
   node_locations = var.node_locations
 
   version = var.cluster_version
@@ -246,16 +249,16 @@ resource "google_container_node_pool" "this" {
     auto_repair  = true
   }
 
-  node_count = var.node_min_instances
+  node_count = each.value.node_min_instances
   autoscaling {
-    min_node_count  = var.node_min_instances
-    max_node_count  = var.node_max_instances
-    location_policy = var.node_spot_instances ? "ANY" : "BALANCED"
+    total_min_node_count = each.value.node_min_instances
+    total_max_node_count = each.value.node_max_instances
+    location_policy      = each.value.node_spot_instances ? "ANY" : "BALANCED"
   }
 
   node_config {
-    machine_type = var.node_machine_type
-    spot         = var.node_spot_instances
+    machine_type = each.value.node_machine_type
+    spot         = each.value.node_spot_instances
     disk_type    = "pd-standard"
     disk_size_gb = 100
 
