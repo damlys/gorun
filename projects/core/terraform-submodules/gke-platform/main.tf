@@ -240,8 +240,8 @@ resource "google_container_node_pool" "this" {
 
   project        = var.google_project.project_id
   cluster        = google_container_cluster.this.id
-  node_locations = var.node_locations
   name           = each.key
+  node_locations = var.node_locations
 
   version = var.cluster_version
   management {
