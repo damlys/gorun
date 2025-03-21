@@ -827,7 +827,7 @@ resource "kubernetes_manifest" "velero_schedule_backup" { # console.cloud.google
 ### Vaults
 #######################################
 
-resource "kubernetes_namespace" "vaults" {
+resource "kubernetes_namespace" "vault" {
   depends_on = [
     google_container_cluster.this,
     google_container_node_pool.this,
@@ -843,7 +843,7 @@ resource "kubernetes_role_binding" "vault_viewers" {
   for_each = var.iam_vault_viewers
 
   metadata {
-    namespace = kubernetes_namespace.vaults[each.key].metadata[0].name
+    namespace = kubernetes_namespace.vault[each.key].metadata[0].name
     name      = "custom:vault-viewers"
   }
   role_ref {
@@ -867,7 +867,7 @@ resource "kubernetes_role_binding" "vault_editors" {
   for_each = var.iam_vault_editors
 
   metadata {
-    namespace = kubernetes_namespace.vaults[each.key].metadata[0].name
+    namespace = kubernetes_namespace.vault[each.key].metadata[0].name
     name      = "custom:vault-editors"
   }
   role_ref {
@@ -888,7 +888,7 @@ resource "kubernetes_role_binding" "vault_editors" {
 }
 
 resource "kubernetes_manifest" "vault_velero_schedule_backup" {
-  for_each = kubernetes_namespace.vaults
+  for_each = kubernetes_namespace.vault
 
   manifest = {
     apiVersion = "velero.io/v1"
@@ -913,7 +913,7 @@ resource "kubernetes_manifest" "vault_velero_schedule_backup" {
 }
 
 resource "kubernetes_resource_quota" "vault_disable_pods_scheduling" {
-  for_each = kubernetes_namespace.vaults
+  for_each = kubernetes_namespace.vault
 
   metadata {
     namespace = each.value.metadata[0].name
