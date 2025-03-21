@@ -6,13 +6,20 @@ grafana.ini:
   server:
     domain: "${grafana_domain}"
     root_url: "https://${grafana_domain}"
+  smtp:
+    enabled: true
+    host: "${grafana_smtp_host}"
+    user: "${grafana_smtp_username}"
+    #password: ""
+    from_name: Grafana
+    from_address: "${grafana_email}"
   log:
     mode: console
     level: error
 
   database:
     type: postgres
-    host: "${grafana_postgresql_host}:5432"
+    host: "${grafana_postgresql_host}"
     user: grafana
     password: Secret123
     name: grafana

@@ -80,3 +80,17 @@ variable "iam_namespace_developers" {
   type    = map(set(string))
   default = {}
 }
+
+variable "vault_names" {
+  type    = set(string)
+  default = []
+}
+
+variable "iam_vault_viewers" {
+  type    = map(set(string))
+  default = {}
+}
+variable "iam_vault_editors" {
+  type    = map(set(string))
+  default = {}
+}

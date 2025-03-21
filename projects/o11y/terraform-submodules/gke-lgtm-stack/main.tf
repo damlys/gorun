@@ -53,7 +53,10 @@ resource "helm_release" "grafana" {
     templatefile("${path.module}/assets/grafana/values.yaml.tftpl", {
       grafana_service_account_name = module.grafana_service_account.kubernetes_service_account.metadata[0].name
       grafana_domain               = var.grafana_domain
-      grafana_postgresql_host      = "${helm_release.grafana_postgresql.name}.${helm_release.grafana_postgresql.namespace}.svc.cluster.local"
+      grafana_smtp_host            = nonsensitive(data.kubernetes_secret.smtp.data["host"])
+      grafana_smtp_username        = nonsensitive(data.kubernetes_secret.smtp.data["username"])
+      grafana_email                = var.grafana_email
+      grafana_postgresql_host      = "${helm_release.grafana_postgresql.name}.${helm_release.grafana_postgresql.namespace}.svc.cluster.local:5432"
       grafana_admin_email          = "damlys.test@gmail.com"
     }),
     templatefile("${path.module}/assets/grafana/lgtm-datasources.yaml.tftpl", {
@@ -65,6 +68,12 @@ resource "helm_release" "grafana" {
       project_id = var.google_project.project_id
     }),
   ]
+
+  set_sensitive {
+    name  = "grafana\\.ini.smtp.password"
+    type  = "string"
+    value = data.kubernetes_secret.smtp.data["password"]
+  }
 
   timeout = 300
 }
