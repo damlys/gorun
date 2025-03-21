@@ -19,3 +19,7 @@ variable "platform_region" {
 variable "grafana_domain" {
   type = string
 }
+
+variable "grafana_email" {
+  type = string
+}

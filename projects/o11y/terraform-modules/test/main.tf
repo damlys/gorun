@@ -81,6 +81,7 @@ module "test_lgtm_stack" {
   google_container_cluster = data.google_container_cluster.this
 
   grafana_domain = "grafana.gogke-test-2.damlys.dev"
+  grafana_email  = "grafana@gogke-test-2.damlys.dev"
 }
 
 module "test_otel_collectors" {

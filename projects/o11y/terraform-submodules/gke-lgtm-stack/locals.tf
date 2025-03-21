@@ -13,3 +13,10 @@ locals {
   mimir_entrypoint = "http://${helm_release.mimir.name}-nginx.${helm_release.mimir.namespace}.svc.cluster.local:80"
   tempo_entrypoint = "http://${helm_release.tempo.name}-gateway.${helm_release.tempo.namespace}.svc.cluster.local:80"
 }
+
+data "kubernetes_secret" "smtp" {
+  metadata {
+    name      = "smtp"
+    namespace = "vault-grafana"
+  }
+}
