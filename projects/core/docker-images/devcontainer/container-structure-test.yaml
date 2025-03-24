@@ -71,6 +71,11 @@ commandTests:
       - version
       - --client
       - --output=yaml
+  - # https://kyverno.io/
+    name: kyverno
+    command: kyverno
+    args:
+      - version
   - # https://www.terraform.io/
     name: terraform
     command: terraform
@@ -263,6 +268,9 @@ fileExistenceTests:
     shouldExist: true
   - name: kubectl shell completion
     path: /etc/bash_completion.d/kubectl
+    shouldExist: true
+  - name: kyverno shell completion
+    path: /etc/bash_completion.d/kyverno
     shouldExist: true
   - name: velero shell completion
     path: /etc/bash_completion.d/velero
