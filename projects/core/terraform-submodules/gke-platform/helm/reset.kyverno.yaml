@@ -1,0 +1,69 @@
+crds:
+  migration:
+    resources:
+      requests:
+        cpu: 1m
+        memory: 1Mi
+      limits: {}
+test:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+admissionController:
+  replicas: 1
+  initContainer:
+    resources:
+      requests:
+        cpu: 1m
+        memory: 1Mi
+      limits: {}
+  container:
+    resources:
+      requests:
+        cpu: 1m
+        memory: 1Mi
+      limits: {}
+backgroundController:
+  rbac:
+    coreClusterRole:
+      extraResources:
+        "0":
+          resources:
+            requests:
+              cpu: 1m
+              memory: 1Mi
+            limits: {}
+        "1":
+          resources:
+            requests:
+              cpu: 1m
+              memory: 1Mi
+            limits: {}
+        "2":
+          resources:
+            requests:
+              cpu: 1m
+              memory: 1Mi
+            limits: {}
+  replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+cleanupController:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+reportsController:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}

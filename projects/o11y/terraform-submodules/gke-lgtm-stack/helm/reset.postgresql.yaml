@@ -1,0 +1,37 @@
+primary:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+readReplicas:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+backup:
+  cronjob:
+    resources:
+      requests:
+        cpu: 1m
+        memory: 1Mi
+      limits: {}
+passwordUpdateJob:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+volumePermissions:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+metrics:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
