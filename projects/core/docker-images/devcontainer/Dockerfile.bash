@@ -11,6 +11,7 @@ apt install --yes \
   build-essential \
   ca-certificates \
   curl \
+  dnsutils \
   git \
   gnupg \
   htop \
@@ -26,6 +27,7 @@ apt install --yes \
   unzip \
   vim \
   wget \
+  whois \
   zip
 
 echo "ALL ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers
@@ -111,6 +113,13 @@ export ISTIO_VERSION="${istioctl_version}" && curl -L https://istio.io/downloadI
 mv istio-${istioctl_version}/bin/istioctl /usr/local/bin/istioctl
 mv istio-${istioctl_version}/tools/istioctl.bash /etc/bash_completion.d/istioctl
 
+# kyverno: https://github.com/kyverno/kyverno/releases
+kyverno_version="1.13.4"
+wget https://github.com/kyverno/kyverno/releases/download/v${kyverno_version}/kyverno-cli_v${kyverno_version}_${TARGETOS}_$([ "$TARGETARCH" = "amd64" ] && echo "x86_64" || echo "$TARGETARCH").tar.gz \
+  --output-document=/tmp/kyverno.tar.gz
+tar -zxvf kyverno.tar.gz
+mv kyverno /usr/local/bin/kyverno
+
 # shfmt: https://github.com/mvdan/sh/releases
 shfmt_version="3.11.0"
 wget https://github.com/mvdan/sh/releases/download/v${shfmt_version}/shfmt_v${shfmt_version}_${TARGETOS}_${TARGETARCH} \
@@ -122,6 +131,13 @@ wget https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${t
   --output-document=/tmp/terraform.zip
 unzip terraform.zip
 mv terraform /usr/local/bin/terraform
+
+# velero: https://github.com/vmware-tanzu/velero/releases
+velero_version="1.15.2"
+wget https://github.com/vmware-tanzu/velero/releases/download/v${velero_version}/velero-v${velero_version}-${TARGETOS}-${TARGETARCH}.tar.gz \
+  --output-document=/tmp/velero.tar.gz
+tar -zxvf velero.tar.gz
+mv velero-v${velero_version}-${TARGETOS}-${TARGETARCH}/velero /usr/local/bin/velero
 
 # yq: https://github.com/mikefarah/yq/releases
 yq_version="4.45.1"
@@ -138,6 +154,8 @@ golangci-lint completion bash >/etc/bash_completion.d/golangci-lint
 goreleaser completion bash >/etc/bash_completion.d/goreleaser
 helm completion bash >/etc/bash_completion.d/helm
 kubectl completion bash >/etc/bash_completion.d/kubectl
+kyverno completion bash >/etc/bash_completion.d/kyverno
+velero completion bash >/etc/bash_completion.d/velero
 yq shell-completion bash >/etc/bash_completion.d/yq
 
 # cleanup

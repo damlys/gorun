@@ -18,7 +18,7 @@ jobs:
   {{ .ProjectSlug }}:
     name: {{ .ProjectPath }}
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gorun-devcontainer:0.2.100
+    container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:
       contents: write
       id-token: write
@@ -74,11 +74,11 @@ jobs:
         run: ./scripts/docker-image build "{{ .ProjectPath }}"
       - name: test
         run: ./scripts/docker-image test "{{ .ProjectPath }}"
-      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
-        name: pre-publish
+      - name: pre-publish
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
         run: ./scripts/docker-image pre-publish "{{ .ProjectPath }}"
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        name: publish
+      - name: publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: ./scripts/docker-image publish "{{ .ProjectPath }}"
       - name: show
         run: ./scripts/docker-image show "{{ .ProjectPath }}"
@@ -91,11 +91,11 @@ jobs:
         run: ./scripts/helm-chart build "{{ .ProjectPath }}"
       - name: test
         run: ./scripts/helm-chart test "{{ .ProjectPath }}"
-      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
-        name: pre-publish
+      - name: pre-publish
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
         run: ./scripts/helm-chart pre-publish "{{ .ProjectPath }}"
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        name: publish
+      - name: publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: ./scripts/helm-chart publish "{{ .ProjectPath }}"
       - name: show
         run: ./scripts/helm-chart show "{{ .ProjectPath }}"
@@ -119,11 +119,11 @@ jobs:
         run: ./scripts/terraform-submodule build "{{ .ProjectPath }}"
       - name: test
         run: ./scripts/terraform-submodule test "{{ .ProjectPath }}"
-      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
-        name: pre-publish
+      - name: pre-publish
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
         run: ./scripts/terraform-submodule pre-publish "{{ .ProjectPath }}"
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        name: publish
+      - name: publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: ./scripts/terraform-submodule publish "{{ .ProjectPath }}"
       - name: show
         run: ./scripts/terraform-submodule show "{{ .ProjectPath }}"
@@ -140,10 +140,10 @@ jobs:
         run: ./scripts/terraform-module test "{{ .ProjectPath }}"
       - name: init
         run: terraform -chdir="{{ .ProjectPath }}" init -input=false
-      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
-        name: plan
+      - name: plan
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
         run: terraform -chdir="{{ .ProjectPath }}" plan -input=false
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        name: apply
+      - name: apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: terraform -chdir="{{ .ProjectPath }}" apply -input=false -auto-approve
       {{- end }}

@@ -29,7 +29,6 @@ $ gcloud auth configure-docker "europe-central2-docker.pkg.dev"
 
 - [oci://europe-central2-docker.pkg.dev/gogcp-main-2/public-helm-charts](https://console.cloud.google.com/artifacts/docker/gogcp-main-2/europe-central2/public-helm-charts?project=gogcp-main-2)
 - [oci://europe-central2-docker.pkg.dev/gogcp-main-2/private-helm-charts](https://console.cloud.google.com/artifacts/docker/gogcp-main-2/europe-central2/private-helm-charts?project=gogcp-main-2)
-- [oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts](https://console.cloud.google.com/artifacts/docker/gogcp-main-2/europe-central2/external-helm-charts?project=gogcp-main-2)
 
 ```
 $ gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"

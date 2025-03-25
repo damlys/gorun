@@ -10,9 +10,9 @@ desktop.ini
 thumbs.db
 
 # helm
+/projects/*/*/*/helm/charts/*.tgz
+/projects/*/*/*/helm/tmpcharts*
 /projects/*/helm-charts/*.tgz
-/third_party/helm/charts/*.tgz
-/third_party/helm/tmpcharts*
 
 # terraform
 /projects/*/terraform-*/*/.terraform

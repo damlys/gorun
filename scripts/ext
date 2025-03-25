@@ -1,0 +1,94 @@
+#!/bin/bash
+set -e
+for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
+
+function extract_values {
+  local input_path="$1"
+  local output_path="$2"
+
+  echo "" >"${output_path}"
+
+  for key in $(yq eval '.. | select(key == "resources" or key == "replicas" or key == "replication_factor" or key == "zoneAwareReplication") | path | join(".")' "${input_path}"); do
+    local type
+    type="$(yq ".${key} | tag" "${input_path}")"
+
+    # set resources.requests=1m 1Mi
+    if str::ends_with ".${key}" ".resources"; then
+      # skip arrays
+      if str::equals "${type}" "!!seq"; then
+        continue
+      fi
+
+      # skip parts of RBAC
+      if str::contains ".${key}" ".rbac."; then
+        continue
+      fi
+
+      yq eval ".${key}.requests.cpu = \"1m\"" --inplace "${output_path}"
+      yq eval ".${key}.requests.memory = \"1Mi\"" --inplace "${output_path}"
+      yq eval ".${key}.limits = {}" --inplace "${output_path}"
+    fi
+
+    # set replicas=1
+    if str::ends_with ".${key}" ".replicas"; then
+      if [[ $(yq eval ".${key}" "${input_path}") == "0" ]]; then
+        yq eval ".${key} = 0" --inplace "${output_path}"
+      else
+        yq eval ".${key} = 1" --inplace "${output_path}"
+      fi
+    fi
+
+    # set replication_factor=1
+    if str::ends_with ".${key}" ".replication_factor"; then
+      yq eval ".${key} = 1" --inplace "${output_path}"
+    fi
+
+    # set zoneAwareReplication.enabled=false
+    if str::ends_with ".${key}" ".zoneAwareReplication"; then
+      yq eval ".${key}.enabled = false" --inplace "${output_path}"
+    fi
+  done
+}
+
+function main {
+  local cmd="$1"
+  local project_path="$2"
+
+  case "${cmd}" in
+  "download-helm-charts")
+    rm -rf "${project_path}/helm/charts"/*
+    mkdir -p "${project_path}/helm/values"
+    rm -f "${project_path}/helm"/values/*.yaml
+
+    log::info "downloading Helm charts"
+    yq --inplace ".dependencies |= sort_by(.name)" "${project_path}/helm/Chart.yaml"
+    helm dependency update "${project_path}/helm"
+
+    log::info "unpackaging Helm charts"
+    for package_path in "${project_path}/helm/charts"/*.tgz; do
+      log::info "unpackaging Helm chart: ${package_path}"
+      tar --directory="${project_path}/helm/charts" -xf "${package_path}"
+      rm "${package_path}"
+    done
+
+    log::info "extracting values files"
+    for chart_path in "${project_path}/helm/charts"/*; do
+      local chart_name
+      chart_name="$(basename "$chart_path")"
+
+      log::info "extracting values file: ${chart_path}"
+      extract_values "${chart_path}/values.yaml" "${project_path}/helm/values/${chart_name}.yaml"
+    done
+
+    rm -f "${project_path}/helm/charts"/*.tgz
+    log::info "done"
+    ;;
+
+  *)
+    log::error "unknown command: ${cmd}"
+    return 127
+    ;;
+  esac
+}
+
+main "$@"

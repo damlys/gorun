@@ -15,7 +15,7 @@ jobs:
   projects-demo-docker-images-kuard:
     name: projects/demo/docker-images/kuard
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gorun-devcontainer:0.2.100
+    container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:
       contents: write
       id-token: write
@@ -52,11 +52,11 @@ jobs:
         run: ./scripts/docker-image build "projects/demo/docker-images/kuard"
       - name: test
         run: ./scripts/docker-image test "projects/demo/docker-images/kuard"
-      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
-        name: pre-publish
+      - name: pre-publish
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
         run: ./scripts/docker-image pre-publish "projects/demo/docker-images/kuard"
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        name: publish
+      - name: publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: ./scripts/docker-image publish "projects/demo/docker-images/kuard"
       - name: show
         run: ./scripts/docker-image show "projects/demo/docker-images/kuard"

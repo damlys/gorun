@@ -14,7 +14,7 @@ jobs:
   projects-core-terraform-modules-test:
     name: projects/core/terraform-modules/test
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gorun-devcontainer:0.2.100
+    container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:
       contents: write
       id-token: write
@@ -41,9 +41,9 @@ jobs:
         run: ./scripts/terraform-module test "projects/core/terraform-modules/test"
       - name: init
         run: terraform -chdir="projects/core/terraform-modules/test" init -input=false
-      - if: github.event_name == 'pull_request' && github.base_ref == 'main'
-        name: plan
+      - name: plan
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
         run: terraform -chdir="projects/core/terraform-modules/test" plan -input=false
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        name: apply
+      - name: apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: terraform -chdir="projects/core/terraform-modules/test" apply -input=false -auto-approve

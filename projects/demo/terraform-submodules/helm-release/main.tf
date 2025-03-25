@@ -1,7 +1,7 @@
 data "helm_template" "this" {
   repository = var.repository
   chart      = var.chart
-  version    = var.chart_version
+  version    = var._version
 
   name      = var.name
   namespace = var.namespace

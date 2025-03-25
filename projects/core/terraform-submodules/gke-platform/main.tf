@@ -25,7 +25,7 @@ resource "google_compute_subnetwork" "this" {
 }
 
 #######################################
-### Internet egress
+### VPC egress
 #######################################
 
 resource "google_compute_address" "egress_internet" { # console.cloud.google.com/networking/addresses/list
@@ -86,7 +86,7 @@ resource "google_compute_firewall" "egress_internet" { # console.cloud.google.co
 }
 
 #######################################
-### GKE cluster
+### KMS crypto
 #######################################
 
 resource "google_kms_key_ring" "this" { # console.cloud.google.com/security/kms/keyrings
@@ -94,6 +94,10 @@ resource "google_kms_key_ring" "this" { # console.cloud.google.com/security/kms/
   name     = var.platform_name
   location = var.platform_region
 }
+
+#######################################
+### GKE cluster
+#######################################
 
 resource "google_kms_crypto_key" "gke_secrets" { # console.cloud.google.com/security/kms/keys
   key_ring = google_kms_key_ring.this.id
@@ -125,7 +129,7 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
   min_master_version = var.cluster_version
   maintenance_policy {
     daily_maintenance_window {
-      start_time = "01:00" # UTC
+      start_time = "04:00" # UTC
     }
   }
 
@@ -195,6 +199,15 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
 
   # allow to destroy resource
   deletion_protection = false
+
+  # do not track node updates
+  lifecycle {
+    ignore_changes = [
+      node_config,
+      node_pool,
+      node_version,
+    ]
+  }
 }
 
 resource "kubernetes_namespace" "gke_security_groups" {
@@ -205,6 +218,35 @@ resource "kubernetes_namespace" "gke_security_groups" {
 
   metadata {
     name = "gke-security-groups"
+  }
+}
+
+resource "google_project_iam_member" "cluster_viewers" {
+  for_each = local.all_cluster_iam_members
+
+  project = var.google_project.project_id
+  role    = "roles/container.clusterViewer"
+  member  = each.value
+}
+
+resource "kubernetes_cluster_role_binding" "cluster_viewers" {
+  metadata {
+    name = "custom:cluster-viewers"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = kubernetes_cluster_role.cluster_viewer.metadata[0].name
+  }
+  dynamic "subject" {
+    for_each = local.all_cluster_iam_members
+
+    content {
+      api_group = "rbac.authorization.k8s.io"
+      kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
+      name      = split(":", subject.value)[1]
+      namespace = kubernetes_namespace.gke_security_groups.metadata[0].name
+    }
   }
 }
 
@@ -223,10 +265,11 @@ resource "google_container_node_pool" "this" {
   depends_on = [
     google_project_iam_member.gke_node,
   ]
+  for_each = var.node_pools
 
   project        = var.google_project.project_id
   cluster        = google_container_cluster.this.id
-  name           = var.platform_name
+  name           = each.key
   node_locations = var.node_locations
 
   version = var.cluster_version
@@ -235,16 +278,16 @@ resource "google_container_node_pool" "this" {
     auto_repair  = true
   }
 
-  node_count = var.node_min_instances
+  node_count = each.value.node_min_instances
   autoscaling {
-    min_node_count  = var.node_min_instances
-    max_node_count  = var.node_max_instances
-    location_policy = var.node_spot_instances ? "ANY" : "BALANCED"
+    total_min_node_count = each.value.node_min_instances
+    total_max_node_count = each.value.node_max_instances
+    location_policy      = each.value.node_spot_instances ? "ANY" : "BALANCED"
   }
 
   node_config {
-    machine_type = var.node_machine_type
-    spot         = var.node_spot_instances
+    machine_type = each.value.node_machine_type
+    spot         = each.value.node_spot_instances
     disk_type    = "pd-standard"
     disk_size_gb = 100
 
@@ -287,12 +330,178 @@ resource "kubernetes_namespace" "prometheus_operator" {
 }
 
 resource "helm_release" "prometheus_operator_crds" {
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
+  repository = "${path.module}/helm/charts"
   chart      = "prometheus-operator-crds"
-  version    = "18.0.1"
+  name       = "prometheus-operator-crds"
+  namespace  = kubernetes_namespace.prometheus_operator.metadata[0].name
+}
 
-  name      = "prometheus-operator-crds"
-  namespace = kubernetes_namespace.prometheus_operator.metadata[0].name
+#######################################
+### Kyverno
+#######################################
+
+resource "kubernetes_namespace" "kyverno" {
+  depends_on = [
+    google_container_cluster.this,
+    google_container_node_pool.this,
+  ]
+
+  metadata {
+    name = "kyverno"
+  }
+}
+
+resource "helm_release" "kyverno" {
+  depends_on = [
+    helm_release.prometheus_operator_crds,
+  ]
+
+  repository = "${path.module}/helm/charts"
+  chart      = "kyverno"
+  name       = "kyverno"
+  namespace  = kubernetes_namespace.kyverno.metadata[0].name
+
+  values = [
+    file("${path.module}/helm/values/kyverno.yaml"),
+    templatefile("${path.module}/assets/kyverno.yaml.tftpl", {
+    }),
+  ]
+}
+
+resource "kubernetes_manifest" "kyverno_policies" {
+  depends_on = [
+    helm_release.kyverno,
+  ]
+
+  for_each = fileset("${path.module}/assets", "policy.*.yaml.tftpl")
+  manifest = yamldecode(templatefile("${path.module}/assets/${each.value}", {
+    kubernetes_version = join(".", slice(split(".", google_container_cluster.this.master_version), 0, 2))
+  }))
+}
+
+#######################################
+### Velero
+#######################################
+
+resource "google_kms_crypto_key" "velero_backups" {
+  key_ring = google_kms_key_ring.this.id
+  name     = "velero-backups"
+  purpose  = "ENCRYPT_DECRYPT"
+}
+
+resource "google_kms_crypto_key_iam_member" "velero_backups" {
+  crypto_key_id = google_kms_crypto_key.velero_backups.id
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  member        = data.google_storage_project_service_account.this.member
+}
+
+resource "kubernetes_namespace" "velero" {
+  depends_on = [
+    google_container_cluster.this,
+    google_container_node_pool.this,
+  ]
+
+  metadata {
+    name = "velero"
+  }
+}
+
+module "velero_service_account" {
+  source = "../gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.2.100.zip"
+
+  google_project           = var.google_project
+  google_container_cluster = google_container_cluster.this
+  kubernetes_namespace     = kubernetes_namespace.velero
+  service_account_name     = "velero"
+}
+
+resource "google_kms_crypto_key_iam_member" "velero_service_account" {
+  crypto_key_id = google_kms_crypto_key.velero_backups.id
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  member        = module.velero_service_account.google_service_account.member
+}
+
+resource "google_storage_bucket" "velero_backups" {
+  depends_on = [
+    google_kms_crypto_key_iam_member.velero_backups,
+  ]
+
+  project       = var.google_project.project_id
+  name          = "velero-backups-${local.velero_hash}"
+  labels        = local.velero_labels
+  location      = var.platform_region
+  storage_class = "REGIONAL"
+  force_destroy = true
+
+  encryption {
+    default_kms_key_name = google_kms_crypto_key.velero_backups.id
+  }
+  uniform_bucket_level_access = true
+  public_access_prevention    = "enforced"
+}
+
+resource "google_storage_bucket_iam_member" "velero_service_account" {
+  bucket = google_storage_bucket.velero_backups.name
+  role   = "roles/storage.objectAdmin"
+  member = module.velero_service_account.google_service_account.member
+}
+
+resource "google_project_iam_custom_role" "velero_server" {
+  project = var.google_project.project_id
+  role_id = "velero.server"
+  title   = "Velero Server"
+  permissions = [ # https://github.com/vmware-tanzu/velero-plugin-for-gcp?tab=readme-ov-file#create-custom-role-with-permissions-for-the-velero-gsa
+    "compute.disks.get",
+    "compute.disks.create",
+    "compute.disks.createSnapshot",
+    "compute.projects.get",
+    "compute.snapshots.get",
+    "compute.snapshots.create",
+    "compute.snapshots.useReadOnly",
+    "compute.snapshots.delete",
+    "compute.zones.get",
+    "storage.objects.create",
+    "storage.objects.delete",
+    "storage.objects.get",
+    "storage.objects.list",
+    "iam.serviceAccounts.signBlob",
+  ]
+}
+
+resource "google_project_iam_member" "velero_service_account" {
+  project = var.google_project.project_id
+  role    = google_project_iam_custom_role.velero_server.id
+  member  = module.velero_service_account.google_service_account.member
+}
+
+resource "helm_release" "velero" {
+  depends_on = [
+    helm_release.prometheus_operator_crds,
+    google_kms_crypto_key_iam_member.velero_backups,
+    google_kms_crypto_key_iam_member.velero_service_account,
+    google_storage_bucket_iam_member.velero_service_account,
+    google_project_iam_member.velero_service_account,
+  ]
+
+  repository = "${path.module}/helm/charts"
+  chart      = "velero"
+  name       = "velero"
+  namespace  = kubernetes_namespace.velero.metadata[0].name
+
+  values = [
+    file("${path.module}/helm/values/velero.yaml"),
+    templatefile("${path.module}/assets/velero.yaml.tftpl", {
+      project_id      = var.google_project.project_id
+      platform_region = var.platform_region
+
+      velero_service_account_email = module.velero_service_account.google_service_account.email
+      velero_service_account_name  = module.velero_service_account.kubernetes_service_account.metadata[0].name
+      velero_backups_bucket_name   = google_storage_bucket.velero_backups.name
+      velero_backups_kms_key_name  = google_kms_crypto_key.velero_backups.id
+
+      kubectl_image_tag = var.kubectl_image_tag == null ? "" : var.kubectl_image_tag
+    }),
+  ]
 }
 
 #######################################
@@ -324,20 +533,21 @@ resource "helm_release" "cert_manager" {
     helm_release.prometheus_operator_crds,
   ]
 
-  repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-2/external-helm-charts/gorun"
+  repository = "${path.module}/helm/charts"
   chart      = "cert-manager"
-  version    = "v1.17.1"
+  name       = "cert-manager"
+  namespace  = kubernetes_namespace.cert_manager.metadata[0].name
 
-  name      = "cert-manager"
-  namespace = kubernetes_namespace.cert_manager.metadata[0].name
-
-  values = [templatefile("${path.module}/assets/cert_manager.yaml.tftpl", {
-    cert_manager_service_account_name = module.cert_manager_service_account.kubernetes_service_account.metadata[0].name
-  })]
+  values = [
+    file("${path.module}/helm/values/cert-manager.yaml"),
+    templatefile("${path.module}/assets/cert_manager.yaml.tftpl", {
+      cert_manager_service_account_name = module.cert_manager_service_account.kubernetes_service_account.metadata[0].name
+    }),
+  ]
 }
 
 #######################################
-### Internet ingress
+### VPC ingress
 #######################################
 
 resource "google_compute_subnetwork" "ingress_internet" {
@@ -367,8 +577,17 @@ resource "google_dns_managed_zone" "ingress_internet" { # console.cloud.google.c
 
   visibility = "public"
 
+  dnssec_config {
+    state = var.platform_dnssec_enabled ? "on" : "off"
+  }
+
   # override default description
   description = "-"
+}
+
+data "google_dns_keys" "ingress_internet" {
+  project      = var.google_project.project_id
+  managed_zone = google_dns_managed_zone.ingress_internet.id
 }
 
 resource "google_dns_managed_zone_iam_member" "cert_manager_dns_admin" {
@@ -385,7 +604,7 @@ resource "google_dns_record_set" "ingress_internet" {
   for_each = toset([google_dns_managed_zone.ingress_internet.dns_name, "*.${google_dns_managed_zone.ingress_internet.dns_name}"])
   name     = each.value
   type     = "A"
-  ttl      = 300
+  ttl      = 3600
   rrdatas  = [google_compute_address.ingress_internet.address]
 }
 
@@ -579,35 +798,6 @@ resource "kubernetes_namespace" "this" {
   }
 }
 
-resource "google_project_iam_member" "cluster_viewers" {
-  for_each = local.all_iam_namespace_members
-
-  project = var.google_project.project_id
-  role    = "roles/container.clusterViewer"
-  member  = each.value
-}
-
-resource "kubernetes_cluster_role_binding" "cluster_viewers" {
-  metadata {
-    name = "custom:cluster-viewers"
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = kubernetes_cluster_role.cluster_viewer.metadata[0].name
-  }
-  dynamic "subject" {
-    for_each = local.all_iam_namespace_members
-
-    content {
-      api_group = "rbac.authorization.k8s.io"
-      kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
-      name      = split(":", subject.value)[1]
-      namespace = kubernetes_namespace.gke_security_groups.metadata[0].name
-    }
-  }
-}
-
 resource "kubernetes_role_binding" "namespace_testers" {
   for_each = var.iam_namespace_testers
 
@@ -652,6 +842,135 @@ resource "kubernetes_role_binding" "namespace_developers" {
       kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
       name      = split(":", subject.value)[1]
       namespace = kubernetes_namespace.gke_security_groups.metadata[0].name
+    }
+  }
+}
+
+resource "kubernetes_manifest" "velero_schedule_backup" { # console.cloud.google.com/compute/snapshots
+  for_each = kubernetes_namespace.this
+
+  manifest = {
+    apiVersion = "velero.io/v1"
+    kind       = "Schedule" # https://velero.io/docs/main/api-types/schedule/
+    metadata = {
+      name      = "backup-${each.value.metadata[0].name}"
+      namespace = helm_release.velero.namespace
+    }
+    spec = {
+      schedule = "30 3 * * *" # UTC
+      template = {
+        ttl = "72h0m0s" # 3 days
+
+        includedNamespaces = [each.value.metadata[0].name]
+        includedResources  = ["configmaps", "secrets", "persistentvolumeclaims", "persistentvolumes"]
+
+        storageLocation         = "default"
+        snapshotVolumes         = true
+        volumeSnapshotLocations = ["default"]
+      }
+    }
+  }
+}
+
+#######################################
+### Vaults
+#######################################
+
+resource "kubernetes_namespace" "vault" {
+  depends_on = [
+    google_container_cluster.this,
+    google_container_node_pool.this,
+  ]
+  for_each = local.all_vault_names
+
+  metadata {
+    name = "vault-${each.value}"
+  }
+}
+
+resource "kubernetes_role_binding" "vault_viewers" {
+  for_each = var.iam_vault_viewers
+
+  metadata {
+    namespace = kubernetes_namespace.vault[each.key].metadata[0].name
+    name      = "custom:vault-viewers"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = kubernetes_cluster_role.vault_viewer.metadata[0].name
+  }
+  dynamic "subject" {
+    for_each = each.value
+
+    content {
+      api_group = "rbac.authorization.k8s.io"
+      kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
+      name      = split(":", subject.value)[1]
+      namespace = kubernetes_namespace.gke_security_groups.metadata[0].name
+    }
+  }
+}
+
+resource "kubernetes_role_binding" "vault_editors" {
+  for_each = var.iam_vault_editors
+
+  metadata {
+    namespace = kubernetes_namespace.vault[each.key].metadata[0].name
+    name      = "custom:vault-editors"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = kubernetes_cluster_role.vault_editor.metadata[0].name
+  }
+  dynamic "subject" {
+    for_each = each.value
+
+    content {
+      api_group = "rbac.authorization.k8s.io"
+      kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
+      name      = split(":", subject.value)[1]
+      namespace = kubernetes_namespace.gke_security_groups.metadata[0].name
+    }
+  }
+}
+
+resource "kubernetes_manifest" "vault_velero_schedule_backup" {
+  for_each = kubernetes_namespace.vault
+
+  manifest = {
+    apiVersion = "velero.io/v1"
+    kind       = "Schedule"
+    metadata = {
+      name      = "backup-${each.value.metadata[0].name}"
+      namespace = helm_release.velero.namespace
+    }
+    spec = {
+      schedule = "30 3 * * *" # UTC
+      template = {
+        ttl = "672h0m0s" # 28 days
+
+        includedNamespaces = [each.value.metadata[0].name]
+        includedResources  = ["configmaps", "secrets"]
+
+        storageLocation = "default"
+        snapshotVolumes = false
+      }
+    }
+  }
+}
+
+resource "kubernetes_resource_quota" "vault_disable_pods_scheduling" {
+  for_each = kubernetes_namespace.vault
+
+  metadata {
+    namespace = each.value.metadata[0].name
+    name      = "disable-pods-scheduling"
+  }
+  spec {
+    hard = {
+      pods = 0
     }
   }
 }

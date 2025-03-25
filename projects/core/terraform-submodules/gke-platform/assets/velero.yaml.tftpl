@@ -1,0 +1,51 @@
+serviceAccount:
+  server:
+    create: false
+    name: "${velero_service_account_name}"
+credentials:
+  useSecret: false # GCP workload identity
+
+initContainers:
+  - # https://github.com/vmware-tanzu/velero-plugin-for-gcp
+    # https://hub.docker.com/r/velero/velero-plugin-for-gcp
+    name: velero-plugin-for-gcp
+    image: velero/velero-plugin-for-gcp:v1.11.1
+    volumeMounts:
+      - name: plugins
+        mountPath: /target
+
+configuration:
+  # https://velero.io/docs/main/api-types/backupstoragelocation/
+  # https://github.com/vmware-tanzu/velero-plugin-for-gcp/blob/main/backupstoragelocation.md
+  backupStorageLocation:
+    - name: default
+      provider: velero.io/gcp
+      bucket: "${velero_backups_bucket_name}"
+      config:
+        serviceAccount: "${velero_service_account_email}" # GCP workload identity
+        kmsKeyName: "${velero_backups_kms_key_name}"
+  # https://velero.io/docs/main/api-types/volumesnapshotlocation/
+  # https://github.com/vmware-tanzu/velero-plugin-for-gcp/blob/main/volumesnapshotlocation.md
+  volumeSnapshotLocation:
+    - name: default
+      provider: velero.io/gcp
+      config:
+        project: "${project_id}"
+        volumeProject: "${project_id}"
+        snapshotLocation: "${platform_region}"
+        snapshotType: STANDARD
+
+metrics:
+  enabled: true
+  podAnnotations:
+    prometheus.io/scrape: "false"
+  serviceMonitor:
+    enabled: true
+  nodeAgentPodMonitor:
+    enabled: false
+
+%{ if kubectl_image_tag != "" }
+kubectl:
+  image:
+    tag: "${kubectl_image_tag}"
+%{ endif }

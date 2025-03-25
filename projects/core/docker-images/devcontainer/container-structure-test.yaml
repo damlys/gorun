@@ -71,11 +71,22 @@ commandTests:
       - version
       - --client
       - --output=yaml
+  - # https://kyverno.io/
+    name: kyverno
+    command: kyverno
+    args:
+      - version
   - # https://www.terraform.io/
     name: terraform
     command: terraform
     args:
       - version
+  - # https://velero.io/
+    name: velero
+    command: velero
+    args:
+      - version
+      - --client-only
 
   # Golang tools
 
@@ -175,6 +186,10 @@ commandTests:
     command: curl
     args:
       - --version
+  - name: dig
+    command: dig
+    args:
+      - -v
   - # https://git-scm.com/
     name: git
     command: git
@@ -217,6 +232,10 @@ commandTests:
     command: wget
     args:
       - --version
+  - name: whois
+    command: whois
+    args:
+      - --version
 
 #######################################
 ### Shell completion
@@ -249,6 +268,12 @@ fileExistenceTests:
     shouldExist: true
   - name: kubectl shell completion
     path: /etc/bash_completion.d/kubectl
+    shouldExist: true
+  - name: kyverno shell completion
+    path: /etc/bash_completion.d/kyverno
+    shouldExist: true
+  - name: velero shell completion
+    path: /etc/bash_completion.d/velero
     shouldExist: true
   - name: yq shell completion
     path: /etc/bash_completion.d/yq
