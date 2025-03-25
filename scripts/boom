@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-for lib in "$(dirname "$0")"/libs/*.bash; do source "${lib}"; done
+for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
 
 function wait_for_keypress {
   echo ""
@@ -107,6 +107,10 @@ function main {
   wait_for_keypress
 
   echo ""
+  log::info "restore: pause Velero schedule: ${velero_schedule}"
+  velero schedule pause "${velero_schedule}"
+
+  echo ""
   log::info "restore: scaling statefulset down: ${kube_statefulset}"
   kubectl scale "statefulset/${kube_statefulset}" --replicas="0"
   kubectl rollout status "statefulset/${kube_statefulset}"
@@ -131,6 +135,10 @@ function main {
   log::info "restore: scaling statefulset up: ${kube_statefulset}"
   kubectl scale "statefulset/${kube_statefulset}" --replicas="1"
   kubectl rollout status "statefulset/${kube_statefulset}"
+
+  echo ""
+  log::info "restore: unpause Velero schedule: ${velero_schedule}"
+  velero schedule unpause "${velero_schedule}"
 
   wait_for_keypress
 

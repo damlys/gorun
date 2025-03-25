@@ -15,7 +15,7 @@ jobs:
   projects-core-docker-images-devcontainer:
     name: projects/core/docker-images/devcontainer
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gorun-devcontainer:0.2.101
+    container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:
       contents: write
       id-token: write
