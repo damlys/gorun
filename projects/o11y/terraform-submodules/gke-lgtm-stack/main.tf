@@ -38,7 +38,9 @@ resource "helm_release" "grafana_postgresql" {
   namespace  = kubernetes_namespace.grafana.metadata[0].name
 
   values = [
-    file("${path.module}/assets/grafana_postgresql/values.yaml"),
+    file("${path.module}/helm/values/postgresql.yaml"),
+    templatefile("${path.module}/assets/grafana_postgresql/values.yaml.tftpl", {
+    }),
   ]
 }
 
@@ -49,7 +51,7 @@ resource "helm_release" "grafana" {
   namespace  = kubernetes_namespace.grafana.metadata[0].name
 
   values = [
-    file("${path.module}/assets/grafana/scale.yaml"),
+    file("${path.module}/helm/values/grafana.yaml"),
     templatefile("${path.module}/assets/grafana/values.yaml.tftpl", {
       grafana_service_account_name = module.grafana_service_account.kubernetes_service_account.metadata[0].name
       grafana_domain               = var.grafana_domain
@@ -158,7 +160,7 @@ resource "helm_release" "loki" {
   namespace  = kubernetes_namespace.loki.metadata[0].name
 
   values = [
-    file("${path.module}/assets/loki/scale.yaml"),
+    file("${path.module}/helm/values/loki.yaml"),
     templatefile("${path.module}/assets/loki/values.yaml.tftpl", {
       loki_service_account_name = module.loki_service_account.kubernetes_service_account.metadata[0].name
       loki_bucket_name          = google_storage_bucket.loki.name
@@ -218,7 +220,7 @@ resource "helm_release" "mimir" {
   namespace  = kubernetes_namespace.mimir.metadata[0].name
 
   values = [
-    file("${path.module}/assets/mimir/scale.yaml"),
+    file("${path.module}/helm/values/mimir-distributed.yaml"),
     templatefile("${path.module}/assets/mimir/values.yaml.tftpl", {
       mimir_service_account_name = module.mimir_service_account.kubernetes_service_account.metadata[0].name
       mimir_bucket_name          = google_storage_bucket.mimir.name
@@ -278,7 +280,7 @@ resource "helm_release" "tempo" {
   namespace  = kubernetes_namespace.tempo.metadata[0].name
 
   values = [
-    file("${path.module}/assets/tempo/scale.yaml"),
+    file("${path.module}/helm/values/tempo-distributed.yaml"),
     templatefile("${path.module}/assets/tempo/values.yaml.tftpl", {
       tempo_service_account_name = module.tempo_service_account.kubernetes_service_account.metadata[0].name
       tempo_bucket_name          = google_storage_bucket.tempo.name

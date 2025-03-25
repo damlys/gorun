@@ -11,7 +11,7 @@ resource "kubernetes_namespace" "otlp_collector" {
 resource "kubernetes_manifest" "otlp_collector" {
   manifest = {
     apiVersion = "opentelemetry.io/v1beta1"
-    kind       = "OpenTelemetryCollector"
+    kind       = "OpenTelemetryCollector" # https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api/opentelemetrycollectors.md
     metadata = {
       name      = "otlp"
       namespace = kubernetes_namespace.otlp_collector.metadata[0].name
@@ -20,6 +20,11 @@ resource "kubernetes_manifest" "otlp_collector" {
       mode   = "deployment"
       config = local.otlp_config
 
+      replicas = 1
+      resources = {
+        requests = { cpu = "1m", memory = "1Mi" }
+        limits   = {}
+      }
       observability = { metrics = { enableMetrics = true } }
     }
   }
@@ -52,7 +57,7 @@ resource "kubernetes_cluster_role_binding" "otlp_collector" {
 resource "kubernetes_manifest" "otlp_instrumentation" {
   manifest = {
     apiVersion = "opentelemetry.io/v1alpha1"
-    kind       = "Instrumentation"
+    kind       = "Instrumentation" # https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api/instrumentations.md
     metadata = {
       name      = "otlp-instrumentation"
       namespace = kubernetes_manifest.otlp_collector.manifest.metadata.namespace
@@ -107,6 +112,10 @@ resource "kubernetes_manifest" "file_collector" {
         { name = "varlogpods", mountPath = "/var/log/pods", readOnly = true },
       ]
 
+      resources = {
+        requests = { cpu = "1m", memory = "1Mi" }
+        limits   = {}
+      }
       observability = { metrics = { enableMetrics = true } }
     }
   }
@@ -182,7 +191,7 @@ resource "kubernetes_manifest" "prom_collector" {
       mode   = "statefulset"
       config = local.prom_config
 
-      targetAllocator = {
+      targetAllocator = { # https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api/opentelemetrycollectors.md#opentelemetrycollectorspectargetallocator-1
         enabled        = true
         serviceAccount = kubernetes_service_account.prom_targetallocator.metadata[0].name
         prometheusCR = {
@@ -192,8 +201,19 @@ resource "kubernetes_manifest" "prom_collector" {
           probeSelector          = {}
           scrapeConfigSelector   = {}
         }
+
+        replicas = 1
+        resources = {
+          requests = { cpu = "1m", memory = "1Mi" }
+          limits   = {}
+        }
+        observability = { metrics = { enableMetrics = true } }
       }
 
+      resources = {
+        requests = { cpu = "1m", memory = "1Mi" }
+        limits   = {}
+      }
       observability = { metrics = { enableMetrics = true } }
     }
   }

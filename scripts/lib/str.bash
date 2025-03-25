@@ -10,6 +10,17 @@ function str::is_empty {
   return 1
 }
 
+function str::equals {
+  local string="$1"
+  local substr="$2"
+
+  if [[ "${string}" == "${substr}" ]]; then
+    return 0
+  fi
+
+  return 1
+}
+
 function str::contains {
   local string="$1"
   local substr="$2"
