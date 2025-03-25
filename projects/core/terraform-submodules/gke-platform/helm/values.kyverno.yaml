@@ -1,10 +1,3 @@
-crds:
-  migration:
-    resources:
-      requests:
-        cpu: 1m
-        memory: 1Mi
-      limits: {}
 test:
   resources:
     requests:
@@ -26,27 +19,6 @@ admissionController:
         memory: 1Mi
       limits: {}
 backgroundController:
-  rbac:
-    coreClusterRole:
-      extraResources:
-        "0":
-          resources:
-            requests:
-              cpu: 1m
-              memory: 1Mi
-            limits: {}
-        "1":
-          resources:
-            requests:
-              cpu: 1m
-              memory: 1Mi
-            limits: {}
-        "2":
-          resources:
-            requests:
-              cpu: 1m
-              memory: 1Mi
-            limits: {}
   replicas: 1
   resources:
     requests:
