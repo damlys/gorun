@@ -25,8 +25,47 @@ function main {
     ;;
 
   "scale-helm-charts")
-    for helm_chart in "${project_path}/helm/charts"/*; do
-      echo $helm_chart
+    rm -f "${project_path}/helm"/reset.*.yaml
+
+    for chart_path in "${project_path}/helm/charts"/*; do
+      local chart_name
+      local input_path
+      local output_path
+      chart_name="$(basename "$chart_path")"
+      input_path="${chart_path}/values.yaml"
+      output_path="${chart_path}/../../reset.${chart_name}.yaml"
+
+      echo "" >"${output_path}"
+
+      for key in $(yq eval '.. | select(key == "replicas" or key == "replication_factor" or key == "zoneAwareReplication" or key == "resources") | path | join(".")' "${input_path}"); do
+        echo "debug: key=${key}"
+
+        # set replicas=1
+        if [[ ".${key}" == *".replicas" ]]; then
+          if [[ $(yq eval ".${key}" "${input_path}") == "0" ]]; then
+            yq eval ".${key} = 0" --inplace "${output_path}"
+          else
+            yq eval ".${key} = 1" --inplace "${output_path}"
+          fi
+        fi
+
+        # set replication_factor=1
+        if [[ ".${key}" == *".replication_factor" ]]; then
+          yq eval ".${key} = 1" --inplace "${output_path}"
+        fi
+
+        # set zoneAwareReplication.enabled=false
+        if [[ ".${key}" == *".zoneAwareReplication" ]]; then
+          yq eval ".${key}.enabled = false" --inplace "${output_path}"
+        fi
+
+        # set resources=1m 1Mi
+        if [[ ".${key}" == *".resources" ]]; then
+          yq eval ".${key}.requests.cpu = \"1m\"" --inplace "${output_path}"
+          yq eval ".${key}.requests.memory = \"1Mi\"" --inplace "${output_path}"
+          yq eval ".${key}.limits = {}" --inplace "${output_path}"
+        fi
+      done
     done
 
     log::info "done"
