@@ -337,6 +337,46 @@ resource "helm_release" "prometheus_operator_crds" {
 }
 
 #######################################
+### Kyverno
+#######################################
+
+resource "kubernetes_namespace" "kyverno" {
+  depends_on = [
+    google_container_cluster.this,
+    google_container_node_pool.this,
+  ]
+
+  metadata {
+    name = "kyverno"
+  }
+}
+
+resource "helm_release" "kyverno" {
+  depends_on = [
+    helm_release.prometheus_operator_crds,
+  ]
+
+  repository = "${path.module}/helm/charts"
+  chart      = "kyverno"
+  name       = "kyverno"
+  namespace  = kubernetes_namespace.kyverno.metadata[0].name
+
+  values = [templatefile("${path.module}/assets/kyverno.yaml.tftpl", {
+  })]
+}
+
+resource "kubernetes_manifest" "kyverno_policies" {
+  depends_on = [
+    helm_release.kyverno,
+  ]
+
+  for_each = fileset("${path.module}/assets", "policy.*.yaml.tftpl")
+  manifest = yamldecode(templatefile("${path.module}/assets/${each.value}", {
+    kubernetes_version = join(".", slice(split(".", google_container_cluster.this.master_version), 0, 2))
+  }))
+}
+
+#######################################
 ### Velero
 #######################################
 
