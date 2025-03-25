@@ -15,7 +15,7 @@ resource "helm_release" "opentelemetry_operator" {
   namespace  = kubernetes_namespace.opentelemetry_operator.metadata[0].name
 
   values = [
-    file("${path.module}/helm/values.opentelemetry-operator.yaml"),
+    file("${path.module}/helm/values/opentelemetry-operator.yaml"),
     templatefile("${path.module}/assets/opentelemetry_operator.yaml.tftpl", {
     }),
   ]
@@ -116,7 +116,7 @@ resource "helm_release" "istio_base" {
   namespace  = kubernetes_namespace.istio_system.metadata[0].name
 
   values = [
-    file("${path.module}/helm/values.base.yaml"),
+    file("${path.module}/helm/values/base.yaml"),
     templatefile("${path.module}/assets/istio_base.yaml.tftpl", {
     }),
   ]
@@ -133,7 +133,7 @@ resource "helm_release" "istio_discovery" {
   namespace  = kubernetes_namespace.istio_system.metadata[0].name
 
   values = [
-    file("${path.module}/helm/values.istiod.yaml"),
+    file("${path.module}/helm/values/istiod.yaml"),
     templatefile("${path.module}/assets/istio_discovery.yaml.tftpl", {
       opentelemetry_service = module.test_otel_collectors.otlp_grpc_host
       opentelemetry_port    = module.test_otel_collectors.otlp_grpc_port

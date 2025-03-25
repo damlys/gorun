@@ -362,7 +362,7 @@ resource "helm_release" "kyverno" {
   namespace  = kubernetes_namespace.kyverno.metadata[0].name
 
   values = [
-    file("${path.module}/helm/values.kyverno.yaml"),
+    file("${path.module}/helm/values/kyverno.yaml"),
     templatefile("${path.module}/assets/kyverno.yaml.tftpl", {
     }),
   ]
@@ -489,7 +489,7 @@ resource "helm_release" "velero" {
   namespace  = kubernetes_namespace.velero.metadata[0].name
 
   values = [
-    file("${path.module}/helm/values.velero.yaml"),
+    file("${path.module}/helm/values/velero.yaml"),
     templatefile("${path.module}/assets/velero.yaml.tftpl", {
       project_id      = var.google_project.project_id
       platform_region = var.platform_region
@@ -539,7 +539,7 @@ resource "helm_release" "cert_manager" {
   namespace  = kubernetes_namespace.cert_manager.metadata[0].name
 
   values = [
-    file("${path.module}/helm/values.cert-manager.yaml"),
+    file("${path.module}/helm/values/cert-manager.yaml"),
     templatefile("${path.module}/assets/cert_manager.yaml.tftpl", {
       cert_manager_service_account_name = module.cert_manager_service_account.kubernetes_service_account.metadata[0].name
     }),
