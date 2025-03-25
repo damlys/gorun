@@ -46,7 +46,7 @@ function main {
   case "${cmd}" in
   "download-helm-charts")
     rm -rf "${project_path}/helm/charts"/*
-    rm -f "${project_path}/helm"/reset.*.yaml
+    rm -f "${project_path}/helm"/values.*.yaml
 
     log::info "downloading Helm charts"
     yq --inplace ".dependencies |= sort_by(.name)" "${project_path}/helm/Chart.yaml"
@@ -65,7 +65,7 @@ function main {
       chart_name="$(basename "$chart_path")"
 
       log::info "extracting values file: ${chart_path}"
-      extract_values "${chart_path}/values.yaml" "${project_path}/helm/reset.${chart_name}.yaml"
+      extract_values "${chart_path}/values.yaml" "${project_path}/helm/values.${chart_name}.yaml"
     done
 
     rm -f "${project_path}/helm/charts"/*.tgz
