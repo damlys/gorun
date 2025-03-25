@@ -4,6 +4,7 @@
 
 ```
 $ ./scripts/ext download-helm-charts "projects/demo/terraform-submodules/kuard"
+$ ./scripts/ext scale-helm-charts "projects/demo/terraform-submodules/kuard"
 ```
 
 Sources:

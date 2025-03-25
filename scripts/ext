@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-for lib in "$(dirname "$0")"/libs/*.bash; do source "${lib}"; done
+for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
 
 function main {
   local cmd="$1"
@@ -20,6 +20,14 @@ function main {
     done
 
     rm -f "${project_path}/helm/charts"/*.tgz
+
+    log::info "done"
+    ;;
+
+  "scale-helm-charts")
+    for helm_chart in "${project_path}/helm/charts"/*; do
+      echo $helm_chart
+    done
 
     log::info "done"
     ;;
