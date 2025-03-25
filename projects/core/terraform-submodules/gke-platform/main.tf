@@ -361,8 +361,11 @@ resource "helm_release" "kyverno" {
   name       = "kyverno"
   namespace  = kubernetes_namespace.kyverno.metadata[0].name
 
-  values = [templatefile("${path.module}/assets/kyverno.yaml.tftpl", {
-  })]
+  values = [
+    file("${path.module}/helm/reset.kyverno.yaml"),
+    templatefile("${path.module}/assets/kyverno.yaml.tftpl", {
+    }),
+  ]
 }
 
 resource "kubernetes_manifest" "kyverno_policies" {
@@ -485,17 +488,20 @@ resource "helm_release" "velero" {
   name       = "velero"
   namespace  = kubernetes_namespace.velero.metadata[0].name
 
-  values = [templatefile("${path.module}/assets/velero.yaml.tftpl", {
-    project_id      = var.google_project.project_id
-    platform_region = var.platform_region
+  values = [
+    file("${path.module}/helm/reset.velero.yaml"),
+    templatefile("${path.module}/assets/velero.yaml.tftpl", {
+      project_id      = var.google_project.project_id
+      platform_region = var.platform_region
 
-    velero_service_account_email = module.velero_service_account.google_service_account.email
-    velero_service_account_name  = module.velero_service_account.kubernetes_service_account.metadata[0].name
-    velero_backups_bucket_name   = google_storage_bucket.velero_backups.name
-    velero_backups_kms_key_name  = google_kms_crypto_key.velero_backups.id
+      velero_service_account_email = module.velero_service_account.google_service_account.email
+      velero_service_account_name  = module.velero_service_account.kubernetes_service_account.metadata[0].name
+      velero_backups_bucket_name   = google_storage_bucket.velero_backups.name
+      velero_backups_kms_key_name  = google_kms_crypto_key.velero_backups.id
 
-    kubectl_image_tag = var.kubectl_image_tag == null ? "" : var.kubectl_image_tag
-  })]
+      kubectl_image_tag = var.kubectl_image_tag == null ? "" : var.kubectl_image_tag
+    }),
+  ]
 }
 
 #######################################
@@ -532,9 +538,12 @@ resource "helm_release" "cert_manager" {
   name       = "cert-manager"
   namespace  = kubernetes_namespace.cert_manager.metadata[0].name
 
-  values = [templatefile("${path.module}/assets/cert_manager.yaml.tftpl", {
-    cert_manager_service_account_name = module.cert_manager_service_account.kubernetes_service_account.metadata[0].name
-  })]
+  values = [
+    file("${path.module}/helm/reset.cert-manager.yaml"),
+    templatefile("${path.module}/assets/cert_manager.yaml.tftpl", {
+      cert_manager_service_account_name = module.cert_manager_service_account.kubernetes_service_account.metadata[0].name
+    }),
+  ]
 }
 
 #######################################

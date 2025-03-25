@@ -14,7 +14,11 @@ resource "helm_release" "opentelemetry_operator" {
   name       = "opentelemetry-operator"
   namespace  = kubernetes_namespace.opentelemetry_operator.metadata[0].name
 
-  values = [file("${path.module}/assets/opentelemetry_operator.yaml")]
+  values = [
+    file("${path.module}/helm/reset.opentelemetry-operator.yaml"),
+    templatefile("${path.module}/assets/opentelemetry_operator.yaml.tftpl", {
+    }),
+  ]
 }
 
 # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/README.md#role-based-access-control
@@ -111,7 +115,11 @@ resource "helm_release" "istio_base" {
   name       = "istio-base"
   namespace  = kubernetes_namespace.istio_system.metadata[0].name
 
-  values = [file("${path.module}/assets/istio_base.yaml")]
+  values = [
+    file("${path.module}/helm/reset.base.yaml"),
+    templatefile("${path.module}/assets/istio_base.yaml.tftpl", {
+    }),
+  ]
 }
 
 resource "helm_release" "istio_discovery" {
@@ -124,10 +132,13 @@ resource "helm_release" "istio_discovery" {
   name       = "istiod"
   namespace  = kubernetes_namespace.istio_system.metadata[0].name
 
-  values = [templatefile("${path.module}/assets/istio_discovery.yaml.tftpl", {
-    opentelemetry_service = module.test_otel_collectors.otlp_grpc_host
-    opentelemetry_port    = module.test_otel_collectors.otlp_grpc_port
-  })]
+  values = [
+    file("${path.module}/helm/reset.istiod.yaml"),
+    templatefile("${path.module}/assets/istio_discovery.yaml.tftpl", {
+      opentelemetry_service = module.test_otel_collectors.otlp_grpc_host
+      opentelemetry_port    = module.test_otel_collectors.otlp_grpc_port
+    }),
+  ]
 }
 
 resource "kubernetes_manifest" "istio_security_peer_authentication_default" {
