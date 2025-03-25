@@ -42,11 +42,11 @@ spec:
               mountPath: /var/lib/kuard
           resources:
             requests:
-              cpu: 25m
-              memory: 32Mi
+              cpu: 1m
+              memory: 1Mi
             limits:
               cpu: 100m
-              memory: 32Mi
+              memory: 128Mi
           securityContext:
             privileged: false
             capabilities:
