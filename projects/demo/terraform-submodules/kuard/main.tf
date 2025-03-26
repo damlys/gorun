@@ -11,6 +11,24 @@ resource "kubernetes_labels" "namespace" {
   force = true
 }
 
+module "helm_manifest" {
+  source = "../helm-manifest" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/demo/helm-manifest/0.2.100.zip"
+
+  manifest = {
+    apiVersion = "v1"
+    kind       = "ResourceQuota"
+    metadata = {
+      name      = "pods"
+      namespace = var.kubernetes_namespace.metadata[0].name
+    }
+    spec = {
+      hard = {
+        pods = 4
+      }
+    }
+  }
+}
+
 #######################################
 ### stateless kuard
 #######################################
@@ -24,12 +42,12 @@ module "stateless_kuard_service_account" {
   service_account_name     = "stateless-kuard"
 }
 
-module "stateless_kuard_helm_release" {
-  source = "../helm-release" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/demo/helm-release/0.2.101.zip"
+module "stateless_kuard_helm_template" {
+  source = "../helm-template" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/demo/helm-template/0.2.100.zip"
 
   repository = "../../helm-charts" # "oci://europe-central2-docker.pkg.dev/gogcp-main-2/private-helm-charts/gorun/demo"
   chart      = "stateless-kuard"
-  _version   = "0.2.100"
+  version_   = "0.2.100"
   name       = "stateless-kuard"
   namespace  = var.kubernetes_namespace.metadata[0].name
 
@@ -40,7 +58,7 @@ module "stateless_kuard_helm_release" {
 
 data "kubernetes_service" "stateless_kuard" {
   depends_on = [
-    module.stateless_kuard_helm_release,
+    module.stateless_kuard_helm_template,
   ]
 
   metadata {

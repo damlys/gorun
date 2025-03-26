@@ -1,15 +1,3 @@
-resource "kubernetes_resource_quota" "pods" {
-  metadata {
-    namespace = data.kubernetes_namespace.this.metadata[0].name
-    name      = "pods"
-  }
-  spec {
-    hard = {
-      pods = 4
-    }
-  }
-}
-
 module "this" {
   source = "../../terraform-submodules/kuard" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/demo/kuard/0.2.100.zip"
 

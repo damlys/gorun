@@ -14,7 +14,8 @@ definitions:
     projects-core-terraform-submodules-gke-platform: projects/core/terraform-submodules/gke-platform/.terraform
     projects-core-terraform-submodules-gke-service-account: projects/core/terraform-submodules/gke-service-account/.terraform
     projects-demo-terraform-modules-kuard: projects/demo/terraform-modules/kuard/.terraform
-    projects-demo-terraform-submodules-helm-release: projects/demo/terraform-submodules/helm-release/.terraform
+    projects-demo-terraform-submodules-helm-manifest: projects/demo/terraform-submodules/helm-manifest/.terraform
+    projects-demo-terraform-submodules-helm-template: projects/demo/terraform-submodules/helm-template/.terraform
     projects-demo-terraform-submodules-kuard: projects/demo/terraform-submodules/kuard/.terraform
     projects-o11y-terraform-modules-test: projects/o11y/terraform-modules/test/.terraform
     projects-o11y-terraform-submodules-gcp-availability-monitor: projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform
@@ -600,34 +601,62 @@ definitions:
           - terraform -chdir="projects/demo/terraform-modules/kuard" init -input="false"
           - terraform -chdir="projects/demo/terraform-modules/kuard" apply -input="false" -auto-approve
         trigger: manual
-    - step: &test-projects-demo-terraform-submodules-helm-release
-        name: test projects/demo/terraform-submodules/helm-release
+    - step: &test-projects-demo-terraform-submodules-helm-manifest
+        name: test projects/demo/terraform-submodules/helm-manifest
         condition:
           changesets:
             includePaths:
-              - "projects/demo/terraform-submodules/helm-release/**"
+              - "projects/demo/terraform-submodules/helm-manifest/**"
         caches:
-          - projects-demo-terraform-submodules-helm-release
+          - projects-demo-terraform-submodules-helm-manifest
         script:
           - *auth
-          - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule pre-publish "projects/demo/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-release"
-    - step: &publish-projects-demo-terraform-submodules-helm-release
-        name: publish projects/demo/terraform-submodules/helm-release
+          - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-manifest"
+          - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-manifest"
+          - ./scripts/terraform-submodule pre-publish "projects/demo/terraform-submodules/helm-manifest"
+          - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-manifest"
+    - step: &publish-projects-demo-terraform-submodules-helm-manifest
+        name: publish projects/demo/terraform-submodules/helm-manifest
         condition:
           changesets:
             includePaths:
-              - "projects/demo/terraform-submodules/helm-release/**"
+              - "projects/demo/terraform-submodules/helm-manifest/**"
         caches:
-          - projects-demo-terraform-submodules-helm-release
+          - projects-demo-terraform-submodules-helm-manifest
         script:
           - *auth
-          - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/helm-release"
-          - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-release"
+          - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-manifest"
+          - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-manifest"
+          - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/helm-manifest"
+          - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-manifest"
+    - step: &test-projects-demo-terraform-submodules-helm-template
+        name: test projects/demo/terraform-submodules/helm-template
+        condition:
+          changesets:
+            includePaths:
+              - "projects/demo/terraform-submodules/helm-template/**"
+        caches:
+          - projects-demo-terraform-submodules-helm-template
+        script:
+          - *auth
+          - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-template"
+          - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-template"
+          - ./scripts/terraform-submodule pre-publish "projects/demo/terraform-submodules/helm-template"
+          - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-template"
+    - step: &publish-projects-demo-terraform-submodules-helm-template
+        name: publish projects/demo/terraform-submodules/helm-template
+        condition:
+          changesets:
+            includePaths:
+              - "projects/demo/terraform-submodules/helm-template/**"
+        caches:
+          - projects-demo-terraform-submodules-helm-template
+        script:
+          - *auth
+          - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-template"
+          - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-template"
+          - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/helm-template"
+          - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-template"
     - step: &test-projects-demo-terraform-submodules-kuard
         name: test projects/demo/terraform-submodules/kuard
         condition:
@@ -800,7 +829,8 @@ pipelines:
           - step: *test-projects-demo-helm-charts-stateful-kuard
           - step: *test-projects-demo-helm-charts-stateless-kuard
           - step: *validate-projects-demo-terraform-modules-kuard
-          - step: *test-projects-demo-terraform-submodules-helm-release
+          - step: *test-projects-demo-terraform-submodules-helm-manifest
+          - step: *test-projects-demo-terraform-submodules-helm-template
           - step: *test-projects-demo-terraform-submodules-kuard
           - step: *validate-projects-o11y-terraform-modules-test
           - step: *test-projects-o11y-terraform-submodules-gcp-availability-monitor
@@ -830,7 +860,8 @@ pipelines:
           - step: *publish-projects-demo-docker-images-kuard
           - step: *publish-projects-demo-helm-charts-stateful-kuard
           - step: *publish-projects-demo-helm-charts-stateless-kuard
-          - step: *publish-projects-demo-terraform-submodules-helm-release
+          - step: *publish-projects-demo-terraform-submodules-helm-manifest
+          - step: *publish-projects-demo-terraform-submodules-helm-template
           - step: *publish-projects-demo-terraform-submodules-kuard
           - step: *publish-projects-o11y-terraform-submodules-gcp-availability-monitor
           - step: *publish-projects-o11y-terraform-submodules-gke-lgtm-stack

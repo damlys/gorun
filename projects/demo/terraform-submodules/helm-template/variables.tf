@@ -7,16 +7,16 @@ variable "chart" {
   type = string
 }
 
-variable "_version" { # the "version" attribute is reserved by Terraform and cannot be used here
+variable "version_" { # the "version" attribute is reserved by Terraform and cannot be used here
   type    = string
   default = null
 }
 
-variable "name" {
+variable "namespace" {
   type = string
 }
 
-variable "namespace" {
+variable "name" {
   type = string
 }
 
