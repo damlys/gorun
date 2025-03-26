@@ -60,6 +60,7 @@ resource "kubernetes_cluster_role_binding" "testers" {
     }
   }
 }
+
 resource "kubernetes_role_binding" "testers" {
   count = length(var.iam_testers) > 0 ? 1 : 0
 

@@ -4,6 +4,18 @@ resource "kubernetes_namespace" "this" {
   }
 }
 
+resource "kubernetes_resource_quota" "disable_pods_scheduling" {
+  metadata {
+    name      = "disable-pods-scheduling"
+    namespace = kubernetes_namespace.this.metadata[0].name
+  }
+  spec {
+    hard = {
+      pods = 0
+    }
+  }
+}
+
 resource "kubernetes_manifest" "velero_schedule" {
   manifest = {
     apiVersion = "velero.io/v1"
@@ -23,18 +35,6 @@ resource "kubernetes_manifest" "velero_schedule" {
         storageLocation = "default"
         snapshotVolumes = false
       }
-    }
-  }
-}
-
-resource "kubernetes_resource_quota" "disable_pods_scheduling" {
-  metadata {
-    name      = "disable-pods-scheduling"
-    namespace = kubernetes_namespace.this.metadata[0].name
-  }
-  spec {
-    hard = {
-      pods = 0
     }
   }
 }
