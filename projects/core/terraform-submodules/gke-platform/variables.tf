@@ -66,31 +66,3 @@ variable "node_pools" {
     }
   }
 }
-
-variable "namespace_names" {
-  type    = set(string)
-  default = []
-}
-
-variable "iam_namespace_testers" {
-  type    = map(set(string))
-  default = {}
-}
-variable "iam_namespace_developers" {
-  type    = map(set(string))
-  default = {}
-}
-
-variable "vault_names" {
-  type    = set(string)
-  default = []
-}
-
-variable "iam_vault_viewers" {
-  type    = map(set(string))
-  default = {}
-}
-variable "iam_vault_editors" {
-  type    = map(set(string))
-  default = {}
-}

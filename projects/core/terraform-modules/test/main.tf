@@ -15,30 +15,40 @@ module "test_platform" {
       node_max_instances  = 1
     }
   }
+}
 
-  namespace_names = [
-    "gomod-test-2",
-    "kuard",
-  ]
-  iam_namespace_testers = {
-    "gomod-test-2" = [
-      "user:damlys.test@gmail.com",
-    ]
-  }
-  iam_namespace_developers = {
-    "kuard" = [
-      "user:damlys.test@gmail.com",
-    ]
-  }
+module "test_workspace" {
+  source = "../../terraform-submodules/gke-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-workspace/0.2.100.zip"
 
-  vault_names = [
-    "grafana",
+  workspace_name = "gomod-test-2"
+
+  iam_testers = [
+    "user:damlys.test@gmail.com",
   ]
-  iam_vault_viewers = {
-    "grafana" = [
-      "user:damlys.test@gmail.com",
-    ]
-  }
-  iam_vault_editors = {
-  }
+  iam_developers = [
+  ]
+}
+
+module "kuard_workspace" {
+  source = "../../terraform-submodules/gke-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-workspace/0.2.100.zip"
+
+  workspace_name = "kuard"
+
+  iam_testers = [
+  ]
+  iam_developers = [
+    "user:damlys.test@gmail.com",
+  ]
+}
+
+module "grafana_vault" {
+  source = "../../terraform-submodules/gke-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-vault/0.2.100.zip"
+
+  vault_name = "grafana"
+
+  iam_viewers = [
+    "user:damlys.test@gmail.com",
+  ]
+  iam_editors = [
+  ]
 }
