@@ -1,10 +1,10 @@
 data "helm_template" "this" {
   repository = var.repository
   chart      = var.chart
-  version    = var._version
+  version    = var.version_
 
-  name      = var.name
   namespace = var.namespace
+  name      = var.name
   values    = var.values
 }
 
