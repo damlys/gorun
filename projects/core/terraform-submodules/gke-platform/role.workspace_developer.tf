@@ -1,6 +1,40 @@
-resource "kubernetes_cluster_role" "workspace_developer" {
+resource "kubernetes_cluster_role" "cluster_workspace_developer" {
   metadata {
-    name = "custom:workspace-developer"
+    name = "custom:workspace-developer:cluster"
+  }
+
+  rule {
+    api_groups = [""]
+    resources  = ["namespaces"]
+    verbs      = ["get", "list", "watch"]
+  }
+
+  rule {
+    api_groups = [""]
+    resources  = ["persistentvolumes", "persistentvolumes/status"]
+    verbs      = ["get", "list", "watch"]
+  }
+  rule {
+    api_groups = ["storage.k8s.io"]
+    resources  = ["storageclasses"]
+    verbs      = ["get", "list", "watch"]
+  }
+
+  rule {
+    api_groups = ["networking.k8s.io"]
+    resources  = ["ingressclasses"]
+    verbs      = ["get", "list", "watch"]
+  }
+  rule {
+    api_groups = ["gateway.networking.k8s.io"]
+    resources  = ["gatewayclasses", "gatewayclasses/status"]
+    verbs      = ["get", "list", "watch"]
+  }
+}
+
+resource "kubernetes_cluster_role" "namespace_workspace_developer" {
+  metadata {
+    name = "custom:workspace-developer:namespace"
   }
 
   rule {

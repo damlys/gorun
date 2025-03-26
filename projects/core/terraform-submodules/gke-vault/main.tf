@@ -39,6 +39,31 @@ resource "kubernetes_resource_quota" "disable_pods_scheduling" {
   }
 }
 
+#######################################
+### IAM
+#######################################
+
+resource "kubernetes_cluster_role_binding" "viewers" {
+  metadata {
+    name = "custom:vault-viewers:${kubernetes_namespace.this.metadata[0].name}"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "custom:vault-viewer:cluster"
+  }
+  dynamic "subject" {
+    for_each = var.iam_viewers
+
+    content {
+      api_group = "rbac.authorization.k8s.io"
+      kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
+      name      = split(":", subject.value)[1]
+      namespace = "gke-security-groups"
+    }
+  }
+}
+
 resource "kubernetes_role_binding" "viewers" {
   metadata {
     name      = "custom:vault-viewers"
@@ -47,10 +72,31 @@ resource "kubernetes_role_binding" "viewers" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = "custom:vault-viewer"
+    name      = "custom:vault-viewer:namespace"
   }
   dynamic "subject" {
     for_each = var.iam_viewers
+
+    content {
+      api_group = "rbac.authorization.k8s.io"
+      kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
+      name      = split(":", subject.value)[1]
+      namespace = "gke-security-groups"
+    }
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "editors" {
+  metadata {
+    name = "custom:vault-editors:${kubernetes_namespace.this.metadata[0].name}"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "custom:vault-editor:cluster"
+  }
+  dynamic "subject" {
+    for_each = var.iam_editors
 
     content {
       api_group = "rbac.authorization.k8s.io"
@@ -69,7 +115,7 @@ resource "kubernetes_role_binding" "editors" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = "custom:vault-editor"
+    name      = "custom:vault-editor:namespace"
   }
   dynamic "subject" {
     for_each = var.iam_editors

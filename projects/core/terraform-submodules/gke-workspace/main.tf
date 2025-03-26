@@ -34,6 +34,30 @@ resource "kubernetes_manifest" "velero_schedule" { # console.cloud.google.com/co
   }
 }
 
+#######################################
+### IAM
+#######################################
+
+resource "kubernetes_cluster_role_binding" "testers" {
+  metadata {
+    name = "custom:workspace-testers:${kubernetes_namespace.this.metadata[0].name}"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "custom:workspace-tester:cluster"
+  }
+  dynamic "subject" {
+    for_each = var.iam_testers
+
+    content {
+      api_group = "rbac.authorization.k8s.io"
+      kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
+      name      = split(":", subject.value)[1]
+      namespace = "gke-security-groups"
+    }
+  }
+}
 resource "kubernetes_role_binding" "testers" {
   metadata {
     name      = "custom:workspace-testers"
@@ -42,10 +66,31 @@ resource "kubernetes_role_binding" "testers" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = "custom:workspace-tester"
+    name      = "custom:workspace-tester:namespace"
   }
   dynamic "subject" {
     for_each = var.iam_testers
+
+    content {
+      api_group = "rbac.authorization.k8s.io"
+      kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
+      name      = split(":", subject.value)[1]
+      namespace = "gke-security-groups"
+    }
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "developers" {
+  metadata {
+    name = "custom:workspace-developers:${kubernetes_namespace.this.metadata[0].name}"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "custom:workspace-developer:cluster"
+  }
+  dynamic "subject" {
+    for_each = var.iam_developers
 
     content {
       api_group = "rbac.authorization.k8s.io"
@@ -64,7 +109,7 @@ resource "kubernetes_role_binding" "developers" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = "custom:workspace-developer"
+    name      = "custom:workspace-developer:namespace"
   }
   dynamic "subject" {
     for_each = var.iam_developers
