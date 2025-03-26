@@ -1,6 +1,6 @@
-resource "kubernetes_cluster_role" "cluster_vault_editor" {
+resource "kubernetes_cluster_role" "cluster_vault_writer" {
   metadata {
-    name = "custom:vault-editor:cluster"
+    name = "custom:vault-writer:cluster"
   }
 
   rule {
@@ -10,9 +10,9 @@ resource "kubernetes_cluster_role" "cluster_vault_editor" {
   }
 }
 
-resource "kubernetes_cluster_role" "namespace_vault_editor" {
+resource "kubernetes_cluster_role" "namespace_vault_writer" {
   metadata {
-    name = "custom:vault-editor:namespace"
+    name = "custom:vault-writer:namespace"
   }
 
   rule {

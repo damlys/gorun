@@ -59,9 +59,9 @@ module "grafana_vault" {
 
   vault_name = "grafana"
 
-  iam_viewers = [
+  iam_readers = [
     "user:damlys.test@gmail.com",
   ]
-  iam_editors = [
+  iam_writers = [
   ]
 }

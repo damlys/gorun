@@ -43,19 +43,19 @@ resource "kubernetes_manifest" "velero_schedule" {
 ### IAM
 #######################################
 
-resource "kubernetes_cluster_role_binding" "viewers" {
-  count = length(var.iam_viewers) > 0 ? 1 : 0
+resource "kubernetes_cluster_role_binding" "readers" {
+  count = length(var.iam_readers) > 0 ? 1 : 0
 
   metadata {
-    name = "custom:vault-viewers:${kubernetes_namespace.this.metadata[0].name}"
+    name = "custom:vault-readers:${kubernetes_namespace.this.metadata[0].name}"
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = "custom:vault-viewer:cluster"
+    name      = "custom:vault-reader:cluster"
   }
   dynamic "subject" {
-    for_each = var.iam_viewers
+    for_each = var.iam_readers
 
     content {
       api_group = "rbac.authorization.k8s.io"
@@ -66,20 +66,20 @@ resource "kubernetes_cluster_role_binding" "viewers" {
   }
 }
 
-resource "kubernetes_role_binding" "viewers" {
-  count = length(var.iam_viewers) > 0 ? 1 : 0
+resource "kubernetes_role_binding" "readers" {
+  count = length(var.iam_readers) > 0 ? 1 : 0
 
   metadata {
-    name      = "custom:vault-viewers"
+    name      = "custom:vault-readers"
     namespace = kubernetes_namespace.this.metadata[0].name
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = "custom:vault-viewer:namespace"
+    name      = "custom:vault-reader:namespace"
   }
   dynamic "subject" {
-    for_each = var.iam_viewers
+    for_each = var.iam_readers
 
     content {
       api_group = "rbac.authorization.k8s.io"
@@ -90,19 +90,19 @@ resource "kubernetes_role_binding" "viewers" {
   }
 }
 
-resource "kubernetes_cluster_role_binding" "editors" {
-  count = length(var.iam_editors) > 0 ? 1 : 0
+resource "kubernetes_cluster_role_binding" "writers" {
+  count = length(var.iam_writers) > 0 ? 1 : 0
 
   metadata {
-    name = "custom:vault-editors:${kubernetes_namespace.this.metadata[0].name}"
+    name = "custom:vault-writers:${kubernetes_namespace.this.metadata[0].name}"
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = "custom:vault-editor:cluster"
+    name      = "custom:vault-writer:cluster"
   }
   dynamic "subject" {
-    for_each = var.iam_editors
+    for_each = var.iam_writers
 
     content {
       api_group = "rbac.authorization.k8s.io"
@@ -113,20 +113,20 @@ resource "kubernetes_cluster_role_binding" "editors" {
   }
 }
 
-resource "kubernetes_role_binding" "editors" {
-  count = length(var.iam_editors) > 0 ? 1 : 0
+resource "kubernetes_role_binding" "writers" {
+  count = length(var.iam_writers) > 0 ? 1 : 0
 
   metadata {
-    name      = "custom:vault-editors"
+    name      = "custom:vault-writers"
     namespace = kubernetes_namespace.this.metadata[0].name
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = "custom:vault-editor:namespace"
+    name      = "custom:vault-writer:namespace"
   }
   dynamic "subject" {
-    for_each = var.iam_editors
+    for_each = var.iam_writers
 
     content {
       api_group = "rbac.authorization.k8s.io"
