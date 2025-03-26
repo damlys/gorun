@@ -19,6 +19,9 @@ module "test_platform" {
 
 module "test_workspace" {
   source = "../../terraform-submodules/gke-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-workspace/0.2.100.zip"
+  depends_on = [
+    module.test_platform,
+  ]
 
   workspace_name = "gomod-test-2"
 
@@ -31,6 +34,9 @@ module "test_workspace" {
 
 module "kuard_workspace" {
   source = "../../terraform-submodules/gke-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-workspace/0.2.100.zip"
+  depends_on = [
+    module.test_platform,
+  ]
 
   workspace_name = "kuard"
 
@@ -43,6 +49,9 @@ module "kuard_workspace" {
 
 module "grafana_vault" {
   source = "../../terraform-submodules/gke-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-vault/0.2.100.zip"
+  depends_on = [
+    module.test_platform,
+  ]
 
   vault_name = "grafana"
 
