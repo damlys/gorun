@@ -221,7 +221,7 @@ resource "kubernetes_namespace" "gke_security_groups" {
   }
 }
 
-resource "google_project_iam_member" "cluster_viewers" {
+resource "google_project_iam_member" "cluster_viewers" { # TODO
   for_each = local.all_cluster_iam_members
 
   project = var.google_project.project_id
@@ -229,7 +229,7 @@ resource "google_project_iam_member" "cluster_viewers" {
   member  = each.value
 }
 
-resource "kubernetes_cluster_role_binding" "cluster_viewers" {
+resource "kubernetes_cluster_role_binding" "cluster_viewers" { # TODO
   metadata {
     name = "custom:cluster-viewers"
   }
