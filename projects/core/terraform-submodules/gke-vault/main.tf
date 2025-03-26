@@ -1,79 +1,67 @@
-resource "kubernetes_namespace" "vault" {
-  depends_on = [
-    google_container_cluster.this,
-    google_container_node_pool.this,
-  ]
-  for_each = local.all_vault_names
-
+resource "kubernetes_namespace" "this" {
   metadata {
-    name = "vault-${each.value}"
+    name = "vault-${var.vault_name}"
   }
 }
 
-resource "kubernetes_role_binding" "vault_viewers" {
-  for_each = var.iam_vault_viewers
-
+resource "kubernetes_role_binding" "viewers" {
   metadata {
-    namespace = kubernetes_namespace.vault[each.key].metadata[0].name
     name      = "custom:vault-viewers"
+    namespace = kubernetes_namespace.this.metadata[0].name
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = kubernetes_cluster_role.vault_viewer.metadata[0].name
+    name      = "custom:vault-viewer"
   }
   dynamic "subject" {
-    for_each = each.value
+    for_each = var.iam_viewers
 
     content {
       api_group = "rbac.authorization.k8s.io"
       kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
       name      = split(":", subject.value)[1]
-      namespace = kubernetes_namespace.gke_security_groups.metadata[0].name
+      namespace = "gke-security-groups"
     }
   }
 }
 
-resource "kubernetes_role_binding" "vault_editors" {
-  for_each = var.iam_vault_editors
-
+resource "kubernetes_role_binding" "editors" {
   metadata {
-    namespace = kubernetes_namespace.vault[each.key].metadata[0].name
     name      = "custom:vault-editors"
+    namespace = kubernetes_namespace.this.metadata[0].name
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = kubernetes_cluster_role.vault_editor.metadata[0].name
+    name      = "custom:vault-editor"
   }
   dynamic "subject" {
-    for_each = each.value
+    for_each = var.iam_editors
 
     content {
       api_group = "rbac.authorization.k8s.io"
       kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
       name      = split(":", subject.value)[1]
-      namespace = kubernetes_namespace.gke_security_groups.metadata[0].name
+      namespace = "gke-security-groups"
     }
   }
 }
 
-resource "kubernetes_manifest" "vault_velero_schedule_backup" {
-  for_each = kubernetes_namespace.vault
-
+resource "kubernetes_manifest" "velero_schedule_backup" {
   manifest = {
     apiVersion = "velero.io/v1"
     kind       = "Schedule"
     metadata = {
-      name      = "backup-${each.value.metadata[0].name}"
-      namespace = helm_release.velero.namespace
+      name      = "backup-${kubernetes_namespace.this.metadata[0].name}"
+      namespace = "velero"
     }
     spec = {
       schedule = "30 3 * * *" # UTC
       template = {
         ttl = "672h0m0s" # 28 days
 
-        includedNamespaces = [each.value.metadata[0].name]
+        includedNamespaces = [kubernetes_namespace.this.metadata[0].name]
         includedResources  = ["configmaps", "secrets"]
 
         storageLocation = "default"
@@ -83,12 +71,10 @@ resource "kubernetes_manifest" "vault_velero_schedule_backup" {
   }
 }
 
-resource "kubernetes_resource_quota" "vault_disable_pods_scheduling" {
-  for_each = kubernetes_namespace.vault
-
+resource "kubernetes_resource_quota" "disable_pods_scheduling" {
   metadata {
-    namespace = each.value.metadata[0].name
     name      = "disable-pods-scheduling"
+    namespace = kubernetes_namespace.this.metadata[0].name
   }
   spec {
     hard = {
