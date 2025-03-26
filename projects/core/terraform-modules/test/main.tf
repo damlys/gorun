@@ -17,25 +17,6 @@ module "test_platform" {
   }
 }
 
-provider "kubernetes" {
-  host                   = "https://${module.test_platform.google_container_cluster.endpoint}"
-  token                  = data.google_client_config.oauth2.access_token
-  cluster_ca_certificate = base64decode(module.test_platform.google_container_cluster.master_auth[0].cluster_ca_certificate)
-}
-
-provider "helm" {
-  kubernetes {
-    host                   = "https://${module.test_platform.google_container_cluster.endpoint}"
-    token                  = data.google_client_config.oauth2.access_token
-    cluster_ca_certificate = base64decode(module.test_platform.google_container_cluster.master_auth[0].cluster_ca_certificate)
-  }
-  registry {
-    url      = "oci://europe-central2-docker.pkg.dev"
-    username = "oauth2accesstoken"
-    password = data.google_client_config.oauth2.access_token
-  }
-}
-
 module "test_workspace" {
   source = "../../terraform-submodules/gke-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-workspace/0.2.100.zip"
 

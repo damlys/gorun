@@ -10,6 +10,30 @@ resource "kubernetes_namespace" "this" {
   }
 }
 
+resource "kubernetes_manifest" "velero_schedule" { # console.cloud.google.com/compute/snapshots
+  manifest = {
+    apiVersion = "velero.io/v1"
+    kind       = "Schedule" # https://velero.io/docs/main/api-types/schedule/
+    metadata = {
+      name      = "backup-${kubernetes_namespace.this.metadata[0].name}"
+      namespace = "velero"
+    }
+    spec = {
+      schedule = "30 3 * * *" # UTC
+      template = {
+        ttl = "72h0m0s" # 3 days
+
+        includedNamespaces = [kubernetes_namespace.this.metadata[0].name]
+        includedResources  = ["configmaps", "secrets", "persistentvolumeclaims", "persistentvolumes"]
+
+        storageLocation         = "default"
+        snapshotVolumes         = true
+        volumeSnapshotLocations = ["default"]
+      }
+    }
+  }
+}
+
 resource "kubernetes_role_binding" "testers" {
   metadata {
     name      = "custom:workspace-testers"
@@ -50,30 +74,6 @@ resource "kubernetes_role_binding" "developers" {
       kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
       name      = split(":", subject.value)[1]
       namespace = "gke-security-groups"
-    }
-  }
-}
-
-resource "kubernetes_manifest" "velero_schedule_backup" { # console.cloud.google.com/compute/snapshots
-  manifest = {
-    apiVersion = "velero.io/v1"
-    kind       = "Schedule" # https://velero.io/docs/main/api-types/schedule/
-    metadata = {
-      name      = "backup-${kubernetes_namespace.this.metadata[0].name}"
-      namespace = "velero"
-    }
-    spec = {
-      schedule = "30 3 * * *" # UTC
-      template = {
-        ttl = "72h0m0s" # 3 days
-
-        includedNamespaces = [kubernetes_namespace.this.metadata[0].name]
-        includedResources  = ["configmaps", "secrets", "persistentvolumeclaims", "persistentvolumes"]
-
-        storageLocation         = "default"
-        snapshotVolumes         = true
-        volumeSnapshotLocations = ["default"]
-      }
     }
   }
 }

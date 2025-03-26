@@ -4,6 +4,41 @@ resource "kubernetes_namespace" "this" {
   }
 }
 
+resource "kubernetes_manifest" "velero_schedule" {
+  manifest = {
+    apiVersion = "velero.io/v1"
+    kind       = "Schedule"
+    metadata = {
+      name      = "backup-${kubernetes_namespace.this.metadata[0].name}"
+      namespace = "velero"
+    }
+    spec = {
+      schedule = "30 3 * * *" # UTC
+      template = {
+        ttl = "672h0m0s" # 28 days
+
+        includedNamespaces = [kubernetes_namespace.this.metadata[0].name]
+        includedResources  = ["configmaps", "secrets"]
+
+        storageLocation = "default"
+        snapshotVolumes = false
+      }
+    }
+  }
+}
+
+resource "kubernetes_resource_quota" "disable_pods_scheduling" {
+  metadata {
+    name      = "disable-pods-scheduling"
+    namespace = kubernetes_namespace.this.metadata[0].name
+  }
+  spec {
+    hard = {
+      pods = 0
+    }
+  }
+}
+
 resource "kubernetes_role_binding" "viewers" {
   metadata {
     name      = "custom:vault-viewers"
@@ -44,41 +79,6 @@ resource "kubernetes_role_binding" "editors" {
       kind      = startswith(subject.value, "user:") ? "User" : startswith(subject.value, "group:") ? "Group" : startswith(subject.value, "serviceAccount:") ? "User" : null
       name      = split(":", subject.value)[1]
       namespace = "gke-security-groups"
-    }
-  }
-}
-
-resource "kubernetes_manifest" "velero_schedule_backup" {
-  manifest = {
-    apiVersion = "velero.io/v1"
-    kind       = "Schedule"
-    metadata = {
-      name      = "backup-${kubernetes_namespace.this.metadata[0].name}"
-      namespace = "velero"
-    }
-    spec = {
-      schedule = "30 3 * * *" # UTC
-      template = {
-        ttl = "672h0m0s" # 28 days
-
-        includedNamespaces = [kubernetes_namespace.this.metadata[0].name]
-        includedResources  = ["configmaps", "secrets"]
-
-        storageLocation = "default"
-        snapshotVolumes = false
-      }
-    }
-  }
-}
-
-resource "kubernetes_resource_quota" "disable_pods_scheduling" {
-  metadata {
-    name      = "disable-pods-scheduling"
-    namespace = kubernetes_namespace.this.metadata[0].name
-  }
-  spec {
-    hard = {
-      pods = 0
     }
   }
 }
