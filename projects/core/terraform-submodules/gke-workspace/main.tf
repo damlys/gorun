@@ -39,6 +39,8 @@ resource "kubernetes_manifest" "velero_schedule" { # console.cloud.google.com/co
 #######################################
 
 resource "kubernetes_cluster_role_binding" "testers" {
+  count = length(var.iam_testers) > 0 ? 1 : 0
+
   metadata {
     name = "custom:workspace-testers:${kubernetes_namespace.this.metadata[0].name}"
   }
@@ -59,6 +61,8 @@ resource "kubernetes_cluster_role_binding" "testers" {
   }
 }
 resource "kubernetes_role_binding" "testers" {
+  count = length(var.iam_testers) > 0 ? 1 : 0
+
   metadata {
     name      = "custom:workspace-testers"
     namespace = kubernetes_namespace.this.metadata[0].name
@@ -81,6 +85,8 @@ resource "kubernetes_role_binding" "testers" {
 }
 
 resource "kubernetes_cluster_role_binding" "developers" {
+  count = length(var.iam_developers) > 0 ? 1 : 0
+
   metadata {
     name = "custom:workspace-developers:${kubernetes_namespace.this.metadata[0].name}"
   }
@@ -102,6 +108,8 @@ resource "kubernetes_cluster_role_binding" "developers" {
 }
 
 resource "kubernetes_role_binding" "developers" {
+  count = length(var.iam_developers) > 0 ? 1 : 0
+
   metadata {
     name      = "custom:workspace-developers"
     namespace = kubernetes_namespace.this.metadata[0].name

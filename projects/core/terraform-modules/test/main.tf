@@ -15,6 +15,10 @@ module "test_platform" {
       node_max_instances  = 1
     }
   }
+
+  iam_cluster_viewers = [
+    "user:damlys.test@gmail.com",
+  ]
 }
 
 module "test_workspace" {

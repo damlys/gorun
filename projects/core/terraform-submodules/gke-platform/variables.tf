@@ -66,3 +66,8 @@ variable "node_pools" {
     }
   }
 }
+
+variable "iam_cluster_viewers" {
+  type    = set(string)
+  default = []
+}

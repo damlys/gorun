@@ -44,6 +44,8 @@ resource "kubernetes_resource_quota" "disable_pods_scheduling" {
 #######################################
 
 resource "kubernetes_cluster_role_binding" "viewers" {
+  count = length(var.iam_viewers) > 0 ? 1 : 0
+
   metadata {
     name = "custom:vault-viewers:${kubernetes_namespace.this.metadata[0].name}"
   }
@@ -65,6 +67,8 @@ resource "kubernetes_cluster_role_binding" "viewers" {
 }
 
 resource "kubernetes_role_binding" "viewers" {
+  count = length(var.iam_viewers) > 0 ? 1 : 0
+
   metadata {
     name      = "custom:vault-viewers"
     namespace = kubernetes_namespace.this.metadata[0].name
@@ -87,6 +91,8 @@ resource "kubernetes_role_binding" "viewers" {
 }
 
 resource "kubernetes_cluster_role_binding" "editors" {
+  count = length(var.iam_editors) > 0 ? 1 : 0
+
   metadata {
     name = "custom:vault-editors:${kubernetes_namespace.this.metadata[0].name}"
   }
@@ -108,6 +114,8 @@ resource "kubernetes_cluster_role_binding" "editors" {
 }
 
 resource "kubernetes_role_binding" "editors" {
+  count = length(var.iam_editors) > 0 ? 1 : 0
+
   metadata {
     name      = "custom:vault-editors"
     namespace = kubernetes_namespace.this.metadata[0].name

@@ -746,3 +746,15 @@ resource "kubernetes_manifest" "gke_gateway_http_to_https" {
     }
   }
 }
+
+#######################################
+### IAM
+#######################################
+
+resource "google_project_iam_member" "cluster_viewers" {
+  for_each = var.iam_cluster_viewers
+
+  project = var.google_project.project_id
+  role    = "roles/container.clusterViewer"
+  member  = each.value
+}
