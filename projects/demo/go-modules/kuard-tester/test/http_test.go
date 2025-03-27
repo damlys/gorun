@@ -6,23 +6,20 @@ import (
 )
 
 func TestSuccess(t *testing.T) {
-	requestUrl := "https://stateless-kuard.gogke-test-2.damlys.dev/-/env"
-	statusCode := http.StatusOK
-
-	req, err := http.NewRequest("GET", requestUrl, nil)
+	req, err := http.NewRequest("GET", "https://stateless-kuard.gogke-test-2.damlys.dev/-/env", nil)
 	if err != nil {
-		t.Fatalf("could not create request: %v", err)
+		t.Fatalf("request create error: %v", err)
 	}
 
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		t.Fatalf("could not send request: %v", err)
+		t.Fatalf("request send error: %v", err)
 	}
 	defer res.Body.Close()
 
-	if res.StatusCode != statusCode {
-		t.Errorf("expected status %v, got %v", statusCode, res.StatusCode)
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("response status code %d, wanted %d", res.StatusCode, http.StatusOK)
 	}
 }
 
@@ -47,7 +44,7 @@ func TestRedirects(t *testing.T) {
 	for _, tc := range testcases {
 		req, err := http.NewRequest("GET", tc.requestUrl, nil)
 		if err != nil {
-			t.Fatalf("could not create request: %v", err)
+			t.Fatalf("request create error (%s): %v", tc.requestUrl, err)
 		}
 
 		client := &http.Client{
@@ -58,16 +55,16 @@ func TestRedirects(t *testing.T) {
 		}
 		res, err := client.Do(req)
 		if err != nil {
-			t.Fatalf("could not send request: %v", err)
+			t.Fatalf("request send error (%s): %v", tc.requestUrl, err)
 		}
 		defer res.Body.Close()
 
 		if res.StatusCode != tc.statusCode {
-			t.Errorf("expected status %v, got %v (%s)", tc.statusCode, res.StatusCode, tc.requestUrl)
+			t.Errorf("response (%s) status code %d, wanted %d", tc.requestUrl, res.StatusCode, tc.statusCode)
 		}
 
 		if got := res.Header.Get("location"); got != tc.redirectUrl {
-			t.Errorf("expected URL %s, got %s", tc.redirectUrl, got)
+			t.Errorf("response (%s) redirect URL %s, wanted %s", tc.requestUrl, got, tc.redirectUrl)
 		}
 	}
 }
