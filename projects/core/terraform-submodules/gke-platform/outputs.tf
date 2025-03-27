@@ -16,4 +16,5 @@ output "dnssec_DS_record" {
     type = "DS"
     data = try(data.google_dns_keys.ingress_internet.key_signing_keys[0].ds_record, "")
   }
+  sensitive = true
 }

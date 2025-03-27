@@ -344,7 +344,7 @@ resource "kubernetes_manifest" "kyverno_policies" {
     helm_release.kyverno,
   ]
 
-  for_each = fileset("${path.module}/assets", "policy.*.yaml.tftpl")
+  for_each = fileset("${path.module}/assets", "kyverno_policies/*.yaml.tftpl")
   manifest = yamldecode(templatefile("${path.module}/assets/${each.value}", {
     kubernetes_version = join(".", slice(split(".", google_container_cluster.this.master_version), 0, 2))
   }))
