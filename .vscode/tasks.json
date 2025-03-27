@@ -1,0 +1,19 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "create test node pools",
+      "command": "./scripts/dev start",
+      "type": "shell",
+      "problemMatcher": [],
+      "presentation": { "panel": "new", "close": true }
+    },
+    {
+      "label": "destroy test node pools",
+      "command": "./scripts/dev stop",
+      "type": "shell",
+      "problemMatcher": [],
+      "presentation": { "panel": "new", "close": true }
+    }
+  ]
+}

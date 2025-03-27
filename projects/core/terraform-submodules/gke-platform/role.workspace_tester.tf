@@ -1,6 +1,40 @@
-resource "kubernetes_cluster_role" "namespace_developer" {
+resource "kubernetes_cluster_role" "cluster_workspace_tester" {
   metadata {
-    name = "custom:namespace-developer"
+    name = "custom:workspace-tester:cluster"
+  }
+
+  rule {
+    api_groups = [""]
+    resources  = ["namespaces"]
+    verbs      = ["get", "list", "watch"]
+  }
+
+  rule {
+    api_groups = [""]
+    resources  = ["persistentvolumes", "persistentvolumes/status"]
+    verbs      = ["get", "list", "watch"]
+  }
+  rule {
+    api_groups = ["storage.k8s.io"]
+    resources  = ["storageclasses"]
+    verbs      = ["get", "list", "watch"]
+  }
+
+  rule {
+    api_groups = ["networking.k8s.io"]
+    resources  = ["ingressclasses"]
+    verbs      = ["get", "list", "watch"]
+  }
+  rule {
+    api_groups = ["gateway.networking.k8s.io"]
+    resources  = ["gatewayclasses", "gatewayclasses/status"]
+    verbs      = ["get", "list", "watch"]
+  }
+}
+
+resource "kubernetes_cluster_role" "namespace_workspace_tester" {
+  metadata {
+    name = "custom:workspace-tester:namespace"
   }
 
   rule {
@@ -11,18 +45,18 @@ resource "kubernetes_cluster_role" "namespace_developer" {
   rule {
     api_groups = [""]
     resources  = ["configmaps"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
+    verbs      = ["get", "list", "watch"]
   }
-  rule {
-    api_groups = [""]
-    resources  = ["secrets"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
-  }
+  # rule {
+  #   api_groups = [""]
+  #   resources  = ["secrets"]
+  #   verbs      = [] # WARNING! "list" can't be used! it allows accessing full object content
+  # }
 
   rule {
     api_groups = [""]
     resources  = ["pods", "pods/status"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
+    verbs      = ["get", "list", "watch", "delete", "deletecollection"] # WARNING! any workloads modifications could allow to exec printenv (or sth similar) and read secrets
   }
   rule {
     api_groups = [""]
@@ -31,13 +65,13 @@ resource "kubernetes_cluster_role" "namespace_developer" {
   }
   rule {
     api_groups = [""]
-    resources  = ["pods/portforward", "pods/exec"]
+    resources  = ["pods/portforward"] # WARNING! no "pods/exec" as it could allow to read secrets
     verbs      = ["get", "create"]
   }
   rule {
     api_groups = ["apps"]
     resources  = ["deployments", "deployments/status", "deployments/scale", "replicasets", "replicasets/status", "replicasets/scale", "statefulsets", "statefulsets/status", "statefulsets/scale"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
+    verbs      = ["get", "list", "watch"]
   }
   rule {
     api_groups = ["apps"]
@@ -47,29 +81,29 @@ resource "kubernetes_cluster_role" "namespace_developer" {
   rule {
     api_groups = ["batch"]
     resources  = ["jobs", "jobs/status", "cronjobs", "cronjobs/status"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
+    verbs      = ["get", "list", "watch"]
   }
   rule {
     api_groups = ["autoscaling", "autoscaling.k8s.io"]
     resources  = ["horizontalpodautoscalers", "horizontalpodautoscalers/status", "verticalpodautoscalers", "verticalpodautoscalers/status"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
+    verbs      = ["get", "list", "watch"]
   }
   rule {
     api_groups = ["policy"]
     resources  = ["poddisruptionbudgets", "poddisruptionbudgets/status"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
+    verbs      = ["get", "list", "watch"]
   }
 
   rule {
     api_groups = [""]
     resources  = ["persistentvolumeclaims", "persistentvolumeclaims/status"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
+    verbs      = ["get", "list", "watch"]
   }
 
   rule {
     api_groups = [""]
     resources  = ["endpoints", "services", "services/status"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
+    verbs      = ["get", "list", "watch"]
   }
   rule {
     api_groups = ["net.gke.io"]
@@ -111,6 +145,6 @@ resource "kubernetes_cluster_role" "namespace_developer" {
   rule {
     api_groups = ["monitoring.coreos.com"]
     resources  = ["podmonitors", "servicemonitors"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
+    verbs      = ["get", "list", "watch"]
   }
 }

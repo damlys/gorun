@@ -1,3 +1,7 @@
+#######################################
+### Platforms
+#######################################
+
 module "test_platform" {
   source = "../../terraform-submodules/gke-platform" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-platform/0.2.105.zip"
 
@@ -16,29 +20,75 @@ module "test_platform" {
     }
   }
 
-  namespace_names = [
-    "gomod-test-2",
-    "kuard",
+  iam_cluster_viewers = [
+    "user:damlys.test@gmail.com",
   ]
-  iam_namespace_testers = {
-    "gomod-test-2" = [
-      "user:damlys.test@gmail.com",
-    ]
-  }
-  iam_namespace_developers = {
-    "kuard" = [
-      "user:damlys.test@gmail.com",
-    ]
-  }
+}
 
-  vault_names = [
-    "grafana",
+#######################################
+### Vaults
+#######################################
+
+module "test_vault" {
+  source = "../../terraform-submodules/gke-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-vault/0.2.100.zip"
+  depends_on = [
+    module.test_platform,
   ]
-  iam_vault_viewers = {
-    "grafana" = [
-      "user:damlys.test@gmail.com",
-    ]
-  }
-  iam_vault_editors = {
-  }
+
+  vault_name = "gomod-test-2"
+
+  iam_readers = [
+  ]
+  iam_writers = [
+    "user:damlys.test@gmail.com",
+  ]
+}
+
+module "grafana_vault" {
+  source = "../../terraform-submodules/gke-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-vault/0.2.100.zip"
+  depends_on = [
+    module.test_platform,
+  ]
+
+  vault_name = "grafana"
+
+  iam_readers = [
+    "user:damlys.test@gmail.com",
+  ]
+  iam_writers = [
+  ]
+}
+
+#######################################
+### Workspaces
+#######################################
+
+module "test_workspace" {
+  source = "../../terraform-submodules/gke-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-workspace/0.2.100.zip"
+  depends_on = [
+    module.test_platform,
+  ]
+
+  workspace_name = "gomod-test-2"
+
+  iam_testers = [
+  ]
+  iam_developers = [
+    "user:damlys.test@gmail.com",
+  ]
+}
+
+module "kuard_workspace" {
+  source = "../../terraform-submodules/gke-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-workspace/0.2.100.zip"
+  depends_on = [
+    module.test_platform,
+  ]
+
+  workspace_name = "kuard"
+
+  iam_testers = [
+    "user:damlys.test@gmail.com",
+  ]
+  iam_developers = [
+  ]
 }

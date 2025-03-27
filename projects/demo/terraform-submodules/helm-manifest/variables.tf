@@ -1,0 +1,3 @@
+variable "manifest" {
+  type = any
+}
