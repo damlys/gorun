@@ -67,30 +67,7 @@ variable "node_pools" {
   }
 }
 
-variable "namespace_names" {
+variable "iam_cluster_viewers" {
   type    = set(string)
   default = []
-}
-
-variable "iam_namespace_testers" {
-  type    = map(set(string))
-  default = {}
-}
-variable "iam_namespace_developers" {
-  type    = map(set(string))
-  default = {}
-}
-
-variable "vault_names" {
-  type    = set(string)
-  default = []
-}
-
-variable "iam_vault_viewers" {
-  type    = map(set(string))
-  default = {}
-}
-variable "iam_vault_editors" {
-  type    = map(set(string))
-  default = {}
 }
