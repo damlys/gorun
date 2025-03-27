@@ -19,7 +19,7 @@ func TestSuccess(t *testing.T) {
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
-		t.Errorf("response status code %d, wanted %d", res.StatusCode, http.StatusOK)
+		t.Errorf("response status code: %d, wanted: %d", res.StatusCode, http.StatusOK)
 	}
 }
 
@@ -60,11 +60,11 @@ func TestRedirects(t *testing.T) {
 		defer res.Body.Close()
 
 		if res.StatusCode != tc.statusCode {
-			t.Errorf("response (%s) status code %d, wanted %d", tc.requestUrl, res.StatusCode, tc.statusCode)
+			t.Errorf("response status code (%s): %d, wanted: %d", tc.requestUrl, res.StatusCode, tc.statusCode)
 		}
 
 		if got := res.Header.Get("location"); got != tc.redirectUrl {
-			t.Errorf("response (%s) redirect URL %s, wanted %s", tc.requestUrl, got, tc.redirectUrl)
+			t.Errorf("response redirect URL (%s): %s, wanted: %s", tc.requestUrl, got, tc.redirectUrl)
 		}
 	}
 }
