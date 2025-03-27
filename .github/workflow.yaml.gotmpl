@@ -27,17 +27,9 @@ jobs:
       packages: write
       {{- end }}
     env:
-      {{- if eq .ProjectType "docker-images" }}
       DOCKER_BUILDKIT: 1
-      {{- end }}
-
-      {{- if or (eq .ProjectType "helm-charts") (eq .ProjectType "helm-releases") }}
       HELM_EXPERIMENTAL_OCI: 1
-      {{- end }}
-
-      {{- if or (eq .ProjectType "terraform-submodules") (eq .ProjectType "terraform-modules") }}
       TF_IN_AUTOMATION: 1
-      {{- end }}
     steps:
       - name: git clone
         uses: actions/checkout@v4
@@ -146,4 +138,9 @@ jobs:
       - name: apply
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: terraform -chdir="{{ .ProjectPath }}" apply -input=false -auto-approve
+      {{- end }}
+
+      {{- if eq .ProjectType "go-modules" }}
+      - name: test
+        run: ./scripts/go-module test "{{ .ProjectPath }}"
       {{- end }}

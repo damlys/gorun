@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e
+for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
+
+function main {
+  local cmd="$1"
+  local project_path="$2"
+  local module_name
+
+  module_name="$(sed -n 's/^module \(.*\)$/\1/p' "${project_path}/go.mod")"
+
+  case "${cmd}" in
+  "test")
+    if ! str::ends_with "${module_name}" "${project_path}"; then
+      log::error "go module does not match naming convention: ${project_path}"
+      return 1
+    fi
+
+    log::info "running format check"
+    files="$(gofmt -l "./${project_path}")" && echo "$files" && test -z "$files"
+
+    log::info "running lint check (go vet)"
+    go vet "./${project_path}/..."
+
+    log::info "running lint check (golangci-lint)"
+    golangci-lint run "./${project_path}/..."
+
+    log::info "running unit tests"
+    go test -v "./${project_path}/..."
+    ;;
+
+  *)
+    log::error "unknown command: ${cmd}"
+    return 127
+    ;;
+  esac
+}
+
+main "$@"

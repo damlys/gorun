@@ -127,8 +127,8 @@ definitions:
           - ./scripts/docker-image test "projects/core/docker-images/go-sdk"
           - ./scripts/docker-image publish "projects/core/docker-images/go-sdk"
           - ./scripts/docker-image show "projects/core/docker-images/go-sdk"
-    - step: &validate-projects-core-terraform-modules-main
-        name: validate projects/core/terraform-modules/main
+    - step: &test-projects-core-terraform-modules-main
+        name: test projects/core/terraform-modules/main
         condition:
           changesets:
             includePaths:
@@ -163,8 +163,8 @@ definitions:
           - terraform -chdir="projects/core/terraform-modules/main" init -input="false"
           - terraform -chdir="projects/core/terraform-modules/main" apply -input="false" -auto-approve
         trigger: manual
-    - step: &validate-projects-core-terraform-modules-prod
-        name: validate projects/core/terraform-modules/prod
+    - step: &test-projects-core-terraform-modules-prod
+        name: test projects/core/terraform-modules/prod
         condition:
           changesets:
             includePaths:
@@ -199,8 +199,8 @@ definitions:
           - terraform -chdir="projects/core/terraform-modules/prod" init -input="false"
           - terraform -chdir="projects/core/terraform-modules/prod" apply -input="false" -auto-approve
         trigger: manual
-    - step: &validate-projects-core-terraform-modules-test
-        name: validate projects/core/terraform-modules/test
+    - step: &test-projects-core-terraform-modules-test
+        name: test projects/core/terraform-modules/test
         condition:
           changesets:
             includePaths:
@@ -575,6 +575,15 @@ definitions:
           - ./scripts/docker-image test "projects/demo/docker-images/kuard"
           - ./scripts/docker-image publish "projects/demo/docker-images/kuard"
           - ./scripts/docker-image show "projects/demo/docker-images/kuard"
+    - step: &test-projects-demo-go-modules-kuard-tester
+        name: test projects/demo/go-modules/kuard-tester
+        condition:
+          changesets:
+            includePaths:
+              - "projects/demo/go-modules/kuard-tester/**"
+        script:
+          - *auth
+          - ./scripts/go-module test "projects/demo/go-modules/kuard-tester"
     - step: &test-projects-demo-helm-charts-stateful-kuard
         name: test projects/demo/helm-charts/stateful-kuard
         condition:
@@ -623,8 +632,8 @@ definitions:
           - ./scripts/helm-chart test "projects/demo/helm-charts/stateless-kuard"
           - ./scripts/helm-chart publish "projects/demo/helm-charts/stateless-kuard"
           - ./scripts/helm-chart show "projects/demo/helm-charts/stateless-kuard"
-    - step: &validate-projects-demo-terraform-modules-kuard
-        name: validate projects/demo/terraform-modules/kuard
+    - step: &test-projects-demo-terraform-modules-kuard
+        name: test projects/demo/terraform-modules/kuard
         condition:
           changesets:
             includePaths:
@@ -743,8 +752,8 @@ definitions:
           - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/kuard"
           - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/kuard"
           - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/kuard"
-    - step: &validate-projects-o11y-terraform-modules-test
-        name: validate projects/o11y/terraform-modules/test
+    - step: &test-projects-o11y-terraform-modules-test
+        name: test projects/o11y/terraform-modules/test
         condition:
           changesets:
             includePaths:
@@ -871,9 +880,9 @@ pipelines:
           - step: *test-projects-core-docker-images-devcontainer
           - step: *test-projects-core-docker-images-go-rte
           - step: *test-projects-core-docker-images-go-sdk
-          - step: *validate-projects-core-terraform-modules-main
-          - step: *validate-projects-core-terraform-modules-prod
-          - step: *validate-projects-core-terraform-modules-test
+          - step: *test-projects-core-terraform-modules-main
+          - step: *test-projects-core-terraform-modules-prod
+          - step: *test-projects-core-terraform-modules-test
           - step: *test-projects-core-terraform-submodules-gcp-docker-images-registry
           - step: *test-projects-core-terraform-submodules-gcp-helm-charts-registry
           - step: *test-projects-core-terraform-submodules-gcp-project
@@ -886,13 +895,14 @@ pipelines:
           - step: *test-projects-core-terraform-submodules-gke-vault
           - step: *test-projects-core-terraform-submodules-gke-workspace
           - step: *test-projects-demo-docker-images-kuard
+          - step: *test-projects-demo-go-modules-kuard-tester
           - step: *test-projects-demo-helm-charts-stateful-kuard
           - step: *test-projects-demo-helm-charts-stateless-kuard
-          - step: *validate-projects-demo-terraform-modules-kuard
+          - step: *test-projects-demo-terraform-modules-kuard
           - step: *test-projects-demo-terraform-submodules-helm-manifest
           - step: *test-projects-demo-terraform-submodules-helm-template
           - step: *test-projects-demo-terraform-submodules-kuard
-          - step: *validate-projects-o11y-terraform-modules-test
+          - step: *test-projects-o11y-terraform-modules-test
           - step: *test-projects-o11y-terraform-submodules-gcp-availability-monitor
           - step: *test-projects-o11y-terraform-submodules-gke-lgtm-stack
           - step: *test-projects-o11y-terraform-submodules-k8s-otel-collectors

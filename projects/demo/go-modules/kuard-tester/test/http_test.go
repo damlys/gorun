@@ -1,4 +1,4 @@
-package kuard
+package test
 
 import (
 	"net/http"

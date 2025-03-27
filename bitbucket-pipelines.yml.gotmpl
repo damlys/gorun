@@ -112,8 +112,8 @@ definitions:
     {{- end }}
 
     {{- if eq .ProjectType "terraform-modules" }}
-    - step: &validate-{{ .ProjectSlug }}
-        name: validate {{ .ProjectPath }}
+    - step: &test-{{ .ProjectSlug }}
+        name: test {{ .ProjectPath }}
         condition:
           changesets:
             includePaths:
@@ -150,6 +150,18 @@ definitions:
         trigger: manual
     {{- end }}
 
+    {{- if eq .ProjectType "go-modules" }}
+    - step: &test-{{ .ProjectSlug }}
+        name: test {{ .ProjectPath }}
+        condition:
+          changesets:
+            includePaths:
+              - "{{ .ProjectPath }}/**"
+        script:
+          - *auth
+          - ./scripts/go-module test "{{ .ProjectPath }}"
+    {{- end }}
+
     {{- end }}{{/* range . */}}
 
 pipelines:
@@ -163,7 +175,11 @@ pipelines:
           {{- end }}
 
           {{- if eq .ProjectType "terraform-modules" }}
-          - step: *validate-{{ .ProjectSlug }}
+          - step: *test-{{ .ProjectSlug }}
+          {{- end }}
+
+          {{- if eq .ProjectType "go-modules" }}
+          - step: *test-{{ .ProjectSlug }}
           {{- end }}
 
           {{- end }}{{/* range . */}}

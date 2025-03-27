@@ -22,6 +22,8 @@ jobs:
       packages: write
     env:
       DOCKER_BUILDKIT: 1
+      HELM_EXPERIMENTAL_OCI: 1
+      TF_IN_AUTOMATION: 1
     steps:
       - name: git clone
         uses: actions/checkout@v4
