@@ -11,8 +11,9 @@ function main {
 
   case "${cmd}" in
   "test")
+    log::info "checking module name: ${module_name}"
     if ! str::ends_with "${module_name}" "${project_path}"; then
-      log::error "go module does not match naming convention: ${project_path}"
+      log::error "module does not match naming convention: ${project_path}"
       return 1
     fi
 
