@@ -1,0 +1,49 @@
+name: projects/demo/helm-charts/stateful-kuard
+on:
+  pull_request:
+    paths:
+      - "projects/demo/helm-charts/stateful-kuard/**"
+      - "!projects/demo/helm-charts/stateful-kuard/README.md"
+  push:
+    branches:
+      - main
+    paths:
+      - "projects/demo/helm-charts/stateful-kuard/**"
+      - "!projects/demo/helm-charts/stateful-kuard/README.md"
+jobs:
+  demo-chart-stateful-kuard:
+    name: projects/demo/helm-charts/stateful-kuard
+    runs-on: ubuntu-24.04
+    container: ghcr.io/damlys/gorun-devcontainer:0.2.103
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      DOCKER_BUILDKIT: 1
+      HELM_EXPERIMENTAL_OCI: 1
+      TF_IN_AUTOMATION: 1
+    steps:
+      - name: git clone
+        uses: actions/checkout@v4
+      - name: git clone fix
+        run: git config --system --add safe.directory $GITHUB_WORKSPACE
+      - name: gcloud auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+          create_credentials_file: true
+          cleanup_credentials: true
+      - name: helm auth (Google Artifact Registry)
+        run: gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
+      - name: build
+        run: ./scripts/helm-chart build "projects/demo/helm-charts/stateful-kuard"
+      - name: test
+        run: ./scripts/helm-chart test "projects/demo/helm-charts/stateful-kuard"
+      - name: pre-publish
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        run: ./scripts/helm-chart pre-publish "projects/demo/helm-charts/stateful-kuard"
+      - name: publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: ./scripts/helm-chart publish "projects/demo/helm-charts/stateful-kuard"
+      - name: show
+        run: ./scripts/helm-chart show "projects/demo/helm-charts/stateful-kuard"

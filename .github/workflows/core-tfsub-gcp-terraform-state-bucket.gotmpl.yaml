@@ -1,0 +1,54 @@
+name: projects/core/terraform-submodules/gcp-terraform-state-bucket
+on:
+  pull_request:
+    paths:
+      - "projects/core/terraform-submodules/gcp-terraform-state-bucket/**"
+      - "!projects/core/terraform-submodules/gcp-terraform-state-bucket/README.md"
+  push:
+    branches:
+      - main
+    paths:
+      - "projects/core/terraform-submodules/gcp-terraform-state-bucket/**"
+      - "!projects/core/terraform-submodules/gcp-terraform-state-bucket/README.md"
+jobs:
+  core-tfsub-gcp-terraform-state-bucket:
+    name: projects/core/terraform-submodules/gcp-terraform-state-bucket
+    runs-on: ubuntu-24.04
+    container: ghcr.io/damlys/gorun-devcontainer:0.2.103
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      DOCKER_BUILDKIT: 1
+      HELM_EXPERIMENTAL_OCI: 1
+      TF_IN_AUTOMATION: 1
+    steps:
+      - name: git clone
+        uses: actions/checkout@v4
+      - name: git clone fix
+        run: git config --system --add safe.directory $GITHUB_WORKSPACE
+      - name: gcloud auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+          create_credentials_file: true
+          cleanup_credentials: true
+      - name: cache
+        uses: actions/cache@v4
+        with:
+          key: core-tfsub-gcp-terraform-state-bucket
+          path: |
+            projects/core/terraform-submodules/gcp-terraform-state-bucket/.terraform
+            projects/core/terraform-submodules/gcp-terraform-state-bucket/.terraform.lock.hcl
+      - name: build
+        run: ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+      - name: test
+        run: ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+      - name: pre-publish
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        run: ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+      - name: publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+      - name: show
+        run: ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-terraform-state-bucket"
