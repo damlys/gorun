@@ -6,6 +6,10 @@ resource "kubernetes_namespace" "grafana" {
   metadata {
     name = "lgtm-grafana"
   }
+
+  timeouts {
+    delete = "20m"
+  }
 }
 
 module "grafana_service_account" {

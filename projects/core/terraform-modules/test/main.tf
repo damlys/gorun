@@ -77,18 +77,3 @@ module "test_workspace" {
     "user:damlys.test@gmail.com",
   ]
 }
-
-module "kuard_workspace" {
-  source = "../../terraform-submodules/gke-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-workspace/0.2.100.zip"
-  depends_on = [
-    module.test_platform,
-  ]
-
-  workspace_name = "kuard"
-
-  iam_testers = [
-    "user:damlys.test@gmail.com",
-  ]
-  iam_developers = [
-  ]
-}
