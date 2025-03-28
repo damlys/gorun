@@ -22,6 +22,9 @@ func TestSlug(t *testing.T) {
 		{[]string{"projects", "core", "terraform-submodules", "gcp-docker-images-registry"}, "core-tfsub-gcp-docker-images-registry"},
 		{[]string{"projects", "core", "terraform-submodules", "gcp-helm-charts-registry"}, "core-tfsub-gcp-helm-charts-registry"},
 		{[]string{"projects", "core", "terraform-submodules", "gcp-terraform-modules-registry"}, "core-tfsub-gcp-terraform-modules-registry"},
+		{[]string{"projects", "core", "terraform-submodules", "docker-images"}, "core-tfsub-docker-images"},
+		{[]string{"projects", "core", "terraform-submodules", "helm-charts"}, "core-tfsub-helm-charts"},
+		{[]string{"projects", "core", "terraform-submodules", "terraform-modules"}, "core-tfsub-terraform-modules"},
 	}
 
 	for _, tc := range testcases {
