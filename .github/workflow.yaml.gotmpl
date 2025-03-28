@@ -121,12 +121,6 @@ jobs:
         run: ./scripts/terraform-submodule show "{{ .ProjectPath }}"
       {{- end }}
 
-      {{- if eq .ProjectType "kubernetes-manifests" }}
-      {{- end }}
-
-      {{- if eq .ProjectType "helm-releases" }}
-      {{- end }}
-
       {{- if eq .ProjectType "terraform-modules" }}
       - name: test
         run: ./scripts/terraform-module test "{{ .ProjectPath }}"
