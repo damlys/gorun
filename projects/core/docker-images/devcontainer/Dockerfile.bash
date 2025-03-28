@@ -113,13 +113,6 @@ export ISTIO_VERSION="${istioctl_version}" && curl -L https://istio.io/downloadI
 mv istio-${istioctl_version}/bin/istioctl /usr/local/bin/istioctl
 mv istio-${istioctl_version}/tools/istioctl.bash /etc/bash_completion.d/istioctl
 
-# kyverno: https://github.com/kyverno/kyverno/releases
-kyverno_version="1.13.4"
-wget https://github.com/kyverno/kyverno/releases/download/v${kyverno_version}/kyverno-cli_v${kyverno_version}_${TARGETOS}_$([ "$TARGETARCH" = "amd64" ] && echo "x86_64" || echo "$TARGETARCH").tar.gz \
-  --output-document=/tmp/kyverno.tar.gz
-tar -zxvf kyverno.tar.gz
-mv kyverno /usr/local/bin/kyverno
-
 # shfmt: https://github.com/mvdan/sh/releases
 shfmt_version="3.11.0"
 wget https://github.com/mvdan/sh/releases/download/v${shfmt_version}/shfmt_v${shfmt_version}_${TARGETOS}_${TARGETARCH} \
@@ -154,7 +147,6 @@ golangci-lint completion bash >/etc/bash_completion.d/golangci-lint
 goreleaser completion bash >/etc/bash_completion.d/goreleaser
 helm completion bash >/etc/bash_completion.d/helm
 kubectl completion bash >/etc/bash_completion.d/kubectl
-kyverno completion bash >/etc/bash_completion.d/kyverno
 velero completion bash >/etc/bash_completion.d/velero
 yq shell-completion bash >/etc/bash_completion.d/yq
 
