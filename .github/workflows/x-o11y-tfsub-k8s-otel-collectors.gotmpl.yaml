@@ -1,4 +1,4 @@
-name: projects/o11y/terraform-submodules/k8s-otel-collectors
+name: o11y-tfsub-k8s-otel-collectors
 on:
   pull_request:
     paths:
@@ -12,7 +12,7 @@ on:
       - "!projects/o11y/terraform-submodules/k8s-otel-collectors/README.md"
 jobs:
   o11y-tfsub-k8s-otel-collectors:
-    name: projects/o11y/terraform-submodules/k8s-otel-collectors
+    name: o11y-tfsub-k8s-otel-collectors
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:

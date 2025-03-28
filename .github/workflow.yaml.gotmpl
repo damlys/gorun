@@ -1,4 +1,4 @@
-name: {{ .ProjectPath }}
+name: {{ .ProjectSlug }}
 on:
   pull_request:
     paths:
@@ -16,7 +16,7 @@ on:
       {{- end }}
 jobs:
   {{ .ProjectSlug }}:
-    name: {{ .ProjectPath }}
+    name: {{ .ProjectSlug }}
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:

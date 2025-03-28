@@ -1,4 +1,4 @@
-name: projects/demo/go-modules/kuard-tester
+name: demo-gomod-kuard-tester
 on:
   pull_request:
     paths:
@@ -12,7 +12,7 @@ on:
       - "!projects/demo/go-modules/kuard-tester/README.md"
 jobs:
   demo-gomod-kuard-tester:
-    name: projects/demo/go-modules/kuard-tester
+    name: demo-gomod-kuard-tester
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:

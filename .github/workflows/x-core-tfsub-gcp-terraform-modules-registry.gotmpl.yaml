@@ -1,4 +1,4 @@
-name: projects/core/terraform-submodules/gcp-terraform-modules-registry
+name: core-tfsub-gcp-terraform-modules-registry
 on:
   pull_request:
     paths:
@@ -12,7 +12,7 @@ on:
       - "!projects/core/terraform-submodules/gcp-terraform-modules-registry/README.md"
 jobs:
   core-tfsub-gcp-terraform-modules-registry:
-    name: projects/core/terraform-submodules/gcp-terraform-modules-registry
+    name: core-tfsub-gcp-terraform-modules-registry
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:

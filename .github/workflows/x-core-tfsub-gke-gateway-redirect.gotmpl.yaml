@@ -1,4 +1,4 @@
-name: projects/core/terraform-submodules/gke-gateway-redirect
+name: core-tfsub-gke-gateway-redirect
 on:
   pull_request:
     paths:
@@ -12,7 +12,7 @@ on:
       - "!projects/core/terraform-submodules/gke-gateway-redirect/README.md"
 jobs:
   core-tfsub-gke-gateway-redirect:
-    name: projects/core/terraform-submodules/gke-gateway-redirect
+    name: core-tfsub-gke-gateway-redirect
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:

@@ -1,18 +1,18 @@
-name: projects/core/terraform-modules/prod
+name: demo-tfmod-kuard
 on:
   pull_request:
     paths:
-      - "projects/core/terraform-modules/prod/**"
-      - "!projects/core/terraform-modules/prod/README.md"
+      - "projects/demo/terraform-modules/kuard/**"
+      - "!projects/demo/terraform-modules/kuard/README.md"
   push:
     branches:
       - main
     paths:
-      - "projects/core/terraform-modules/prod/**"
-      - "!projects/core/terraform-modules/prod/README.md"
+      - "projects/demo/terraform-modules/kuard/**"
+      - "!projects/demo/terraform-modules/kuard/README.md"
 jobs:
-  core-tfmod-prod:
-    name: projects/core/terraform-modules/prod
+  demo-tfmod-kuard:
+    name: demo-tfmod-kuard
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:
@@ -36,16 +36,16 @@ jobs:
       - name: cache
         uses: actions/cache@v4
         with:
-          key: core-tfmod-prod
+          key: demo-tfmod-kuard
           path: |
-            projects/core/terraform-modules/prod/.terraform
+            projects/demo/terraform-modules/kuard/.terraform
       - name: test
-        run: ./scripts/terraform-module test "projects/core/terraform-modules/prod"
+        run: ./scripts/terraform-module test "projects/demo/terraform-modules/kuard"
       - name: init
-        run: terraform -chdir="projects/core/terraform-modules/prod" init -input=false
+        run: terraform -chdir="projects/demo/terraform-modules/kuard" init -input=false
       - name: plan
         if: github.event_name == 'pull_request' && github.base_ref == 'main'
-        run: terraform -chdir="projects/core/terraform-modules/prod" plan -input=false
+        run: terraform -chdir="projects/demo/terraform-modules/kuard" plan -input=false
       - name: apply
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: terraform -chdir="projects/core/terraform-modules/prod" apply -input=false -auto-approve
+        run: terraform -chdir="projects/demo/terraform-modules/kuard" apply -input=false -auto-approve

@@ -1,4 +1,4 @@
-name: projects/core/terraform-submodules/gcp-terraform-state-bucket
+name: core-tfsub-gcp-terraform-state-bucket
 on:
   pull_request:
     paths:
@@ -12,7 +12,7 @@ on:
       - "!projects/core/terraform-submodules/gcp-terraform-state-bucket/README.md"
 jobs:
   core-tfsub-gcp-terraform-state-bucket:
-    name: projects/core/terraform-submodules/gcp-terraform-state-bucket
+    name: core-tfsub-gcp-terraform-state-bucket
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:

@@ -1,4 +1,4 @@
-name: projects/core/terraform-submodules/gke-gateway-route
+name: core-tfsub-gke-gateway-route
 on:
   pull_request:
     paths:
@@ -12,7 +12,7 @@ on:
       - "!projects/core/terraform-submodules/gke-gateway-route/README.md"
 jobs:
   core-tfsub-gke-gateway-route:
-    name: projects/core/terraform-submodules/gke-gateway-route
+    name: core-tfsub-gke-gateway-route
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:

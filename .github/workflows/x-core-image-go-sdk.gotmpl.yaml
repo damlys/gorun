@@ -1,19 +1,19 @@
-name: projects/demo/docker-images/kuard
+name: core-image-go-sdk
 on:
   pull_request:
     paths:
-      - "projects/demo/docker-images/kuard/**"
-      - "!projects/demo/docker-images/kuard/README.md"
+      - "projects/core/docker-images/go-sdk/**"
+      - "!projects/core/docker-images/go-sdk/README.md"
   push:
     branches:
       - main
     paths:
-      - "projects/demo/docker-images/kuard/**"
-      - "!projects/demo/docker-images/kuard/README.md"
-      - "!projects/demo/docker-images/kuard/container-structure-test.yaml"
+      - "projects/core/docker-images/go-sdk/**"
+      - "!projects/core/docker-images/go-sdk/README.md"
+      - "!projects/core/docker-images/go-sdk/container-structure-test.yaml"
 jobs:
-  demo-image-kuard:
-    name: projects/demo/docker-images/kuard
+  core-image-go-sdk:
+    name: core-image-go-sdk
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:
@@ -51,14 +51,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: build
-        run: ./scripts/docker-image build "projects/demo/docker-images/kuard"
+        run: ./scripts/docker-image build "projects/core/docker-images/go-sdk"
       - name: test
-        run: ./scripts/docker-image test "projects/demo/docker-images/kuard"
+        run: ./scripts/docker-image test "projects/core/docker-images/go-sdk"
       - name: pre-publish
         if: github.event_name == 'pull_request' && github.base_ref == 'main'
-        run: ./scripts/docker-image pre-publish "projects/demo/docker-images/kuard"
+        run: ./scripts/docker-image pre-publish "projects/core/docker-images/go-sdk"
       - name: publish
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: ./scripts/docker-image publish "projects/demo/docker-images/kuard"
+        run: ./scripts/docker-image publish "projects/core/docker-images/go-sdk"
       - name: show
-        run: ./scripts/docker-image show "projects/demo/docker-images/kuard"
+        run: ./scripts/docker-image show "projects/core/docker-images/go-sdk"

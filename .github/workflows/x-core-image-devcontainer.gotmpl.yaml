@@ -1,4 +1,4 @@
-name: projects/core/docker-images/devcontainer
+name: core-image-devcontainer
 on:
   pull_request:
     paths:
@@ -13,7 +13,7 @@ on:
       - "!projects/core/docker-images/devcontainer/container-structure-test.yaml"
 jobs:
   core-image-devcontainer:
-    name: projects/core/docker-images/devcontainer
+    name: core-image-devcontainer
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:

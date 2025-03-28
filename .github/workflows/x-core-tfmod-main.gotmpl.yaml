@@ -1,18 +1,18 @@
-name: projects/core/terraform-modules/test
+name: core-tfmod-main
 on:
   pull_request:
     paths:
-      - "projects/core/terraform-modules/test/**"
-      - "!projects/core/terraform-modules/test/README.md"
+      - "projects/core/terraform-modules/main/**"
+      - "!projects/core/terraform-modules/main/README.md"
   push:
     branches:
       - main
     paths:
-      - "projects/core/terraform-modules/test/**"
-      - "!projects/core/terraform-modules/test/README.md"
+      - "projects/core/terraform-modules/main/**"
+      - "!projects/core/terraform-modules/main/README.md"
 jobs:
-  core-tfmod-test:
-    name: projects/core/terraform-modules/test
+  core-tfmod-main:
+    name: core-tfmod-main
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:
@@ -36,16 +36,16 @@ jobs:
       - name: cache
         uses: actions/cache@v4
         with:
-          key: core-tfmod-test
+          key: core-tfmod-main
           path: |
-            projects/core/terraform-modules/test/.terraform
+            projects/core/terraform-modules/main/.terraform
       - name: test
-        run: ./scripts/terraform-module test "projects/core/terraform-modules/test"
+        run: ./scripts/terraform-module test "projects/core/terraform-modules/main"
       - name: init
-        run: terraform -chdir="projects/core/terraform-modules/test" init -input=false
+        run: terraform -chdir="projects/core/terraform-modules/main" init -input=false
       - name: plan
         if: github.event_name == 'pull_request' && github.base_ref == 'main'
-        run: terraform -chdir="projects/core/terraform-modules/test" plan -input=false
+        run: terraform -chdir="projects/core/terraform-modules/main" plan -input=false
       - name: apply
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: terraform -chdir="projects/core/terraform-modules/test" apply -input=false -auto-approve
+        run: terraform -chdir="projects/core/terraform-modules/main" apply -input=false -auto-approve

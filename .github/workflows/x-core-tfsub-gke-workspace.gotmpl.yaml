@@ -1,4 +1,4 @@
-name: projects/core/terraform-submodules/gke-workspace
+name: core-tfsub-gke-workspace
 on:
   pull_request:
     paths:
@@ -12,7 +12,7 @@ on:
       - "!projects/core/terraform-submodules/gke-workspace/README.md"
 jobs:
   core-tfsub-gke-workspace:
-    name: projects/core/terraform-submodules/gke-workspace
+    name: core-tfsub-gke-workspace
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:
