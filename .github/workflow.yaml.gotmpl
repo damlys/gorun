@@ -1,4 +1,4 @@
-name: {{ .ProjectPath }}
+name: {{ .ProjectSlug }}
 on:
   pull_request:
     paths:
@@ -16,7 +16,7 @@ on:
       {{- end }}
 jobs:
   {{ .ProjectSlug }}:
-    name: {{ .ProjectPath }}
+    name: {{ .ProjectSlug }}
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:
@@ -119,12 +119,6 @@ jobs:
         run: ./scripts/terraform-submodule publish "{{ .ProjectPath }}"
       - name: show
         run: ./scripts/terraform-submodule show "{{ .ProjectPath }}"
-      {{- end }}
-
-      {{- if eq .ProjectType "kubernetes-manifests" }}
-      {{- end }}
-
-      {{- if eq .ProjectType "helm-releases" }}
       {{- end }}
 
       {{- if eq .ProjectType "terraform-modules" }}

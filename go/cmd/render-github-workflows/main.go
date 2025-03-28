@@ -25,7 +25,7 @@ func main() {
 
 	for _, p := range projects {
 		templateFilePath := path.Join(wd, ".github", "workflow.yaml.gotmpl")
-		outputFilePath := path.Join(wd, ".github", "workflows", fmt.Sprintf("%s.gotmpl.yaml", p.ProjectSlug))
+		outputFilePath := path.Join(wd, ".github", "workflows", fmt.Sprintf("workflow.%s.gotmpl.yaml", p.ProjectSlug))
 		log.Printf("rendering: %s\n", p.ProjectSlug)
 		err := tmpl.RenderTemplate(templateFilePath, outputFilePath, p)
 		if err != nil {

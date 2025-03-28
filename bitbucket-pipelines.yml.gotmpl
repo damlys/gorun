@@ -20,7 +20,7 @@ definitions:
 
     {{- if eq .ProjectType "docker-images" }}
     - step: &test-{{ .ProjectSlug }}
-        name: test {{ .ProjectPath }}
+        name: test {{ .ProjectSlug }}
         condition:
           changesets:
             includePaths:
@@ -36,7 +36,7 @@ definitions:
           - ./scripts/docker-image pre-publish "{{ .ProjectPath }}"
           - ./scripts/docker-image show "{{ .ProjectPath }}"
     - step: &publish-{{ .ProjectSlug }}
-        name: publish {{ .ProjectPath }}
+        name: publish {{ .ProjectSlug }}
         condition:
           changesets:
             includePaths:
@@ -55,7 +55,7 @@ definitions:
 
     {{- if eq .ProjectType "helm-charts" }}
     - step: &test-{{ .ProjectSlug }}
-        name: test {{ .ProjectPath }}
+        name: test {{ .ProjectSlug }}
         condition:
           changesets:
             includePaths:
@@ -67,7 +67,7 @@ definitions:
           - ./scripts/helm-chart pre-publish "{{ .ProjectPath }}"
           - ./scripts/helm-chart show "{{ .ProjectPath }}"
     - step: &publish-{{ .ProjectSlug }}
-        name: publish {{ .ProjectPath }}
+        name: publish {{ .ProjectSlug }}
         condition:
           changesets:
             includePaths:
@@ -82,7 +82,7 @@ definitions:
 
     {{- if eq .ProjectType "terraform-submodules" }}
     - step: &test-{{ .ProjectSlug }}
-        name: test {{ .ProjectPath }}
+        name: test {{ .ProjectSlug }}
         condition:
           changesets:
             includePaths:
@@ -96,7 +96,7 @@ definitions:
           - ./scripts/terraform-submodule pre-publish "{{ .ProjectPath }}"
           - ./scripts/terraform-submodule show "{{ .ProjectPath }}"
     - step: &publish-{{ .ProjectSlug }}
-        name: publish {{ .ProjectPath }}
+        name: publish {{ .ProjectSlug }}
         condition:
           changesets:
             includePaths:
@@ -113,7 +113,7 @@ definitions:
 
     {{- if eq .ProjectType "terraform-modules" }}
     - step: &test-{{ .ProjectSlug }}
-        name: test {{ .ProjectPath }}
+        name: test {{ .ProjectSlug }}
         condition:
           changesets:
             includePaths:
@@ -124,7 +124,7 @@ definitions:
           - *auth
           - ./scripts/terraform-module test "{{ .ProjectPath }}"
     - step: &plan-{{ .ProjectSlug }}
-        name: plan {{ .ProjectPath }}
+        name: plan {{ .ProjectSlug }}
         condition:
           changesets:
             includePaths:
@@ -136,7 +136,7 @@ definitions:
           - terraform -chdir="{{ .ProjectPath }}" init -input="false"
           - terraform -chdir="{{ .ProjectPath }}" plan -input="false"
     - step: &apply-{{ .ProjectSlug }}
-        name: apply {{ .ProjectPath }}
+        name: apply {{ .ProjectSlug }}
         condition:
           changesets:
             includePaths:
@@ -152,7 +152,7 @@ definitions:
 
     {{- if eq .ProjectType "go-modules" }}
     - step: &test-{{ .ProjectSlug }}
-        name: test {{ .ProjectPath }}
+        name: test {{ .ProjectSlug }}
         condition:
           changesets:
             includePaths:
