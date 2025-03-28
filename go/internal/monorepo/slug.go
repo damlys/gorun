@@ -5,21 +5,25 @@ import (
 )
 
 func slug(projectPath []string) string {
-	scope := projectPath[2]
-	switch scope {
+	projectScope := projectPath[1]
+
+	projectType := projectPath[2]
+	switch projectType {
 	case "docker-images":
-		scope = "image"
+		projectType = "image"
 	case "helm-charts":
-		scope = "chart"
+		projectType = "chart"
 	case "helm-releases":
-		scope = "release"
+		projectType = "release"
 	case "terraform-submodules":
-		scope = "tfsub"
+		projectType = "tfsub"
 	case "terraform-modules":
-		scope = "tfmod"
+		projectType = "tfmod"
 	case "go-modules":
-		scope = "gomod"
+		projectType = "gomod"
 	}
 
-	return strings.Join([]string{projectPath[1], scope, projectPath[3]}, "-")
+	projectName := projectPath[3]
+
+	return strings.Join([]string{projectScope, projectType, projectName}, "-")
 }
