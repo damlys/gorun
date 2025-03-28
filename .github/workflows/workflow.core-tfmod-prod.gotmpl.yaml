@@ -1,0 +1,51 @@
+name: core-tfmod-prod
+on:
+  pull_request:
+    paths:
+      - "projects/core/terraform-modules/prod/**"
+      - "!projects/core/terraform-modules/prod/README.md"
+  push:
+    branches:
+      - main
+    paths:
+      - "projects/core/terraform-modules/prod/**"
+      - "!projects/core/terraform-modules/prod/README.md"
+jobs:
+  core-tfmod-prod:
+    name: core-tfmod-prod
+    runs-on: ubuntu-24.04
+    container: ghcr.io/damlys/gorun-devcontainer:0.2.103
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      DOCKER_BUILDKIT: 1
+      HELM_EXPERIMENTAL_OCI: 1
+      TF_IN_AUTOMATION: 1
+    steps:
+      - name: git clone
+        uses: actions/checkout@v4
+      - name: git clone fix
+        run: git config --system --add safe.directory $GITHUB_WORKSPACE
+      - name: gcloud auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+          create_credentials_file: true
+          cleanup_credentials: true
+      - name: cache
+        uses: actions/cache@v4
+        with:
+          key: core-tfmod-prod
+          path: |
+            projects/core/terraform-modules/prod/.terraform
+      - name: test
+        run: ./scripts/terraform-module test "projects/core/terraform-modules/prod"
+      - name: init
+        run: terraform -chdir="projects/core/terraform-modules/prod" init -input=false
+      - name: plan
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        run: terraform -chdir="projects/core/terraform-modules/prod" plan -input=false
+      - name: apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform -chdir="projects/core/terraform-modules/prod" apply -input=false -auto-approve
