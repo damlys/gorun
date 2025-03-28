@@ -21,6 +21,5 @@ Chosen PSS, because it is enough to keep Kubernetes workloads safe and does not 
 
 ### Consequences
 
-- We use Istio ambient mode (CNI node agent) instead of sidecar mode (sidecar proxy)
+- We use Istio mesh with the Istio Container Network Interface plugin (`istio-cni-node`)
   - [Install Istio with Pod Security Admission](https://istio.io/latest/docs/setup/additional-setup/pod-security-admission/)
-  - [Sidecar or ambient?](https://istio.io/latest/docs/overview/dataplane-modes/)
