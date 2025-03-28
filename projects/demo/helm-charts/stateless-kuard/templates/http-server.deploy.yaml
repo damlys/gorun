@@ -21,11 +21,14 @@ spec:
       labels:
         app.kubernetes.io/component: http-server
         {{- include "kuard.metadataLabels" $ | nindent 8 }}
+        {{- if .Values.httpServer.extraPodLabels }}
+        {{- toYaml .Values.httpServer.extraPodLabels | nindent 8 }}
+        {{- end }}
       annotations:
         checksum/configs: "{{ include "kuard.configsChecksum" $ }}"
         instrumentation.opentelemetry.io/otel-go-auto-target-exe: /kuard
-        {{- if .Values.httpServer.podAnnotations }}
-        {{- toYaml .Values.httpServer.podAnnotations | nindent 8 }}
+        {{- if .Values.httpServer.extraPodAnnotations }}
+        {{- toYaml .Values.httpServer.extraPodAnnotations | nindent 8 }}
         {{- end }}
     spec:
       {{- if .Values.serviceAccountName }}

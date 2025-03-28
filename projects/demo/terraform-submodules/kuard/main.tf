@@ -1,14 +1,18 @@
-resource "kubernetes_labels" "namespace" {
-  api_version = "v1"
-  kind        = "Namespace"
-  metadata {
-    name = var.kubernetes_namespace.metadata[0].name
-  }
-  labels = {
-    istio-injection = "enabled" # or "disabled"
-  }
+module "workspace" {
+  source = "../../../core/terraform-submodules/gke-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-workspace/0.2.100.zip"
 
-  force = true
+  workspace_name = "kuard"
+
+  # TODO
+  # extra_namespace_labels = {
+  #   istio-injection = "enabled" # or "disabled"
+  # }
+
+  iam_testers = [
+    "user:damlys.test@gmail.com",
+  ]
+  iam_developers = [
+  ]
 }
 
 module "helm_manifest" {
@@ -19,7 +23,7 @@ module "helm_manifest" {
     kind       = "ResourceQuota"
     metadata = {
       name      = "pods"
-      namespace = var.kubernetes_namespace.metadata[0].name
+      namespace = module.workspace.kubernetes_namespace.metadata[0].name
     }
     spec = {
       hard = {
@@ -38,7 +42,7 @@ module "stateless_kuard_service_account" {
 
   google_project           = var.google_project
   google_container_cluster = var.google_container_cluster
-  kubernetes_namespace     = var.kubernetes_namespace
+  kubernetes_namespace     = module.workspace.kubernetes_namespace
   service_account_name     = "stateless-kuard"
 }
 
@@ -49,10 +53,13 @@ module "stateless_kuard_helm_template" {
   chart      = "stateless-kuard"
   version_   = "0.2.100"
   name       = "stateless-kuard"
-  namespace  = var.kubernetes_namespace.metadata[0].name
+  namespace  = module.workspace.kubernetes_namespace.metadata[0].name
 
   values = [templatefile("${path.module}/assets/values.yaml.tftpl", {
     service_account_name = module.stateless_kuard_service_account.kubernetes_service_account.metadata[0].name
+
+    example_username = data.kubernetes_secret.example.data.username
+    example_password = data.kubernetes_secret.example.data.password
   })]
 }
 
@@ -63,7 +70,7 @@ data "kubernetes_service" "stateless_kuard" {
 
   metadata {
     name      = "stateless-kuard-http-server"
-    namespace = var.kubernetes_namespace.metadata[0].name
+    namespace = module.workspace.kubernetes_namespace.metadata[0].name
   }
 }
 
@@ -90,7 +97,7 @@ module "stateless_kuard_availability_monitor" {
 module "stateless_kuard_gateway_redirect" {
   source = "../../../core/terraform-submodules/gke-gateway-redirect" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-gateway-redirect/0.2.100.zip"
 
-  kubernetes_namespace = var.kubernetes_namespace
+  kubernetes_namespace = module.workspace.kubernetes_namespace
 
   old_domain = "kuard.${var.platform_domain}"
   new_domain = "stateless-kuard.${var.platform_domain}"
@@ -105,7 +112,7 @@ module "stateful_kuard_service_account" {
 
   google_project           = var.google_project
   google_container_cluster = var.google_container_cluster
-  kubernetes_namespace     = var.kubernetes_namespace
+  kubernetes_namespace     = module.workspace.kubernetes_namespace
   service_account_name     = "stateful-kuard"
 }
 
@@ -114,10 +121,13 @@ resource "helm_release" "stateful_kuard" {
   chart      = "stateful-kuard"
   version    = "0.2.100"
   name       = "stateful-kuard"
-  namespace  = var.kubernetes_namespace.metadata[0].name
+  namespace  = module.workspace.kubernetes_namespace.metadata[0].name
 
   values = [templatefile("${path.module}/assets/values.yaml.tftpl", {
     service_account_name = module.stateful_kuard_service_account.kubernetes_service_account.metadata[0].name
+
+    example_username = data.kubernetes_secret.example.data.username
+    example_password = data.kubernetes_secret.example.data.password
   })]
 }
 
@@ -128,7 +138,7 @@ data "kubernetes_service" "stateful_kuard" {
 
   metadata {
     name      = "stateful-kuard-http-server-headless"
-    namespace = var.kubernetes_namespace.metadata[0].name
+    namespace = module.workspace.kubernetes_namespace.metadata[0].name
   }
 }
 
