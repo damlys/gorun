@@ -16,8 +16,8 @@ jobs:
     steps:
       - name: git clone
         uses: actions/checkout@v4
-      - name: git clone fix
-        run: git config --system --add safe.directory $GITHUB_WORKSPACE
+        with:
+          set-safe-directory: ${{ github.workspace }}
 
       - name: format check
         run: shfmt --indent=2 --diff ./scripts
