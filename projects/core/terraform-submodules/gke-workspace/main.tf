@@ -1,12 +1,20 @@
 resource "kubernetes_namespace" "this" {
   metadata {
     name = var.workspace_name
+    labels = merge({
+      "pod-security.kubernetes.io/enforce"         = "baseline"
+      "pod-security.kubernetes.io/enforce-version" = "latest"
+      "pod-security.kubernetes.io/audit"           = "restricted"
+      "pod-security.kubernetes.io/audit-version"   = "latest"
+      "pod-security.kubernetes.io/warn"            = "restricted"
+      "pod-security.kubernetes.io/warn-version"    = "latest"
+    }, var.extra_namespace_labels)
+    annotations = merge({
+    }, var.extra_namespace_annotations)
   }
 
-  lifecycle {
-    ignore_changes = [
-      metadata[0].labels,
-    ]
+  timeouts {
+    delete = "20m" # it takes about 10 minutes to delete a GKE gateway route (servicenetworkendpointgroups.networking.gke.io)
   }
 }
 

@@ -8,6 +8,8 @@ data "google_client_config" "oauth2" {
 data "google_project" "this" {
 }
 
+# module.test_platform.google_container_cluster == gke_gogcp-test-2_europe-central2-a_gogke-test-2
+
 provider "kubernetes" {
   host                   = "https://${module.test_platform.google_container_cluster.endpoint}"
   token                  = data.google_client_config.oauth2.access_token
