@@ -2,6 +2,9 @@ dependencies:
 - name: base
   repository: https://istio-release.storage.googleapis.com/charts
   version: 1.25.0
+- name: cni
+  repository: https://istio-release.storage.googleapis.com/charts
+  version: 1.25.1
 - name: istiod
   repository: https://istio-release.storage.googleapis.com/charts
   version: 1.25.0
@@ -11,5 +14,8 @@ dependencies:
 - name: opentelemetry-operator
   repository: https://open-telemetry.github.io/opentelemetry-helm-charts
   version: 0.82.0
-digest: sha256:6e6a3a0155d3753f72ae2922b9fcef0a94bcd363e82136dfb8b82d583088dc21
-generated: "2025-03-14T06:42:23.938516377Z"
+- name: ztunnel
+  repository: https://istio-release.storage.googleapis.com/charts
+  version: 1.25.1
+digest: sha256:c3aef556001912cba5e320661df81fee845aaf6b41b981d39fb87396188c1029
+generated: "2025-03-29T11:21:48.384743921Z"
