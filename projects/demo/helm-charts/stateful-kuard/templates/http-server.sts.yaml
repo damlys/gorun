@@ -27,7 +27,6 @@ spec:
         {{- end }}
       annotations:
         checksum/configs: "{{ include "kuard.configsChecksum" $ }}"
-        instrumentation.opentelemetry.io/otel-go-auto-target-exe: /kuard
         {{- if .Values.httpServer.extraPodAnnotations }}
         {{- toYaml .Values.httpServer.extraPodAnnotations | nindent 8 }}
         {{- end }}

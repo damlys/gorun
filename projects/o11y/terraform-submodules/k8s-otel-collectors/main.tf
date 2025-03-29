@@ -54,35 +54,6 @@ resource "kubernetes_cluster_role_binding" "otlp_collector" {
   }
 }
 
-resource "kubernetes_manifest" "otlp_instrumentation" {
-  manifest = {
-    apiVersion = "opentelemetry.io/v1alpha1"
-    kind       = "Instrumentation" # https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api/instrumentations.md
-    metadata = {
-      name      = "otlp-instrumentation"
-      namespace = kubernetes_manifest.otlp_collector.manifest.metadata.namespace
-    }
-    spec = {
-      exporter = {
-        endpoint = local.otlp_grpc_entrypoint
-      }
-      dotnet = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.otlp_grpc_entrypoint }] }
-      go     = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.otlp_grpc_entrypoint }] }
-      java   = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.otlp_grpc_entrypoint }] }
-      nodejs = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.otlp_grpc_entrypoint }] }
-      python = { env = [{ name = "OTEL_EXPORTER_OTLP_ENDPOINT", value = local.otlp_http_entrypoint }] } # Python auto-instrumentation does not support gRPC protocol
-
-      propagators = [
-        "tracecontext",
-        "baggage",
-      ]
-      sampler = {
-        type = "always_on"
-      }
-    }
-  }
-}
-
 #######################################
 ### file
 #######################################
