@@ -11,14 +11,6 @@ variable "google_container_cluster" {
   })
 }
 
-variable "kubernetes_namespace" {
-  type = object({
-    metadata = list(object({
-      name = string
-    }))
-  })
-}
-
 variable "platform_domain" {
   type = string
 }

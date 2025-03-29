@@ -3,9 +3,11 @@ serviceAccountName: "${service_account_name}"
 configEnvs:
   CONFIG_A: example CONFIG_A
   CONFIG_B: example CONFIG_B
+  EXAMPLE_USERNAME: "${example_username}"
 secretConfigEnvs:
   SECRET_A: example SECRET_A
   SECRET_B: example SECRET_B
+  EXAMPLE_PASSWORD: "${example_password}"
 configFiles:
   config.json: |
     {
@@ -18,6 +20,6 @@ secretConfigFiles:
     }
 
 # httpServer:
-#   podAnnotations:
+#   extraPodAnnotations:
 #     instrumentation.opentelemetry.io/inject-go: "otel-otlp-collector/otlp-instrumentation" # or "false"
 #     sidecar.istio.io/inject: "true" # or "false"

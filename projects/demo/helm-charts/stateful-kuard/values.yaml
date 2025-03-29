@@ -12,4 +12,5 @@ secretConfigFiles: {}
 httpServer:
   replicas: 1
   maxUnavailable: 1
-  podAnnotations: {}
+  extraPodLabels: {}
+  extraPodAnnotations: {}
