@@ -11,14 +11,21 @@ receivers:
     include_file_path: true
     include:
       - /var/log/pods/*/*/*.log
-    exclude:
-      # format is /var/log/pods/<namespace_name>_<pod_name>_<pod_uid>/<container_name>/<run_id>.log
-      - /var/log/pods/lgtm-*_*_*/*/*.log # Grafana namespaces
-      - /var/log/pods/otel-*_*_*/*/*.log # OpenTelemetry namespaces
+    exclude: # format is /var/log/pods/<namespace_name>_<pod_name>_<pod_uid>/<container_name>/<run_id>.log
+      # Kubernetes namespaces
+      - /var/log/pods/kube-*_*_*/*/*.log
+      - /var/log/pods/gke-*_*_*/*/*.log
+      # Istio namespaces, pods and containers
+      - /var/log/pods/istio-*_*_*/*/*.log
+      - /var/log/pods/*_istio-*_*/*/*.log
+      - /var/log/pods/*_*_*/istio-*/*.log
+      # OpenTelemetry namespaces
+      - /var/log/pods/otel-*_*_*/*/*.log
+      # OpenTelemetry auto-instrumentation
       - /var/log/pods/*_*_*/opentelemetry-auto-instrumentation/*.log
       - /var/log/pods/*_*_*/opentelemetry-auto-instrumentation-*/*.log
-      - /var/log/pods/*_*_*/istio-init/*.log
-      - /var/log/pods/*_*_*/istio-proxy/*.log
+      # Grafana namespaces
+      - /var/log/pods/lgtm-*_*_*/*/*.log
     operators:
       - id: container-parser
         type: container # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/pkg/stanza/docs/operators/container.md

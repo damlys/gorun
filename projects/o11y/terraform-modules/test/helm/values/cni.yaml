@@ -1,0 +1,6 @@
+_internal_defaults_do_not_set:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}

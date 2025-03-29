@@ -18,3 +18,8 @@ We need to monitor pod security settings. Do not allow to use `hostPath` volumes
 ## Decision Outcome
 
 Chosen PSS, because it is enough to keep Kubernetes workloads safe and does not require to maintain additional tools.
+
+### Consequences
+
+- We use Istio mesh with the Istio Container Network Interface plugin (`istio-cni-node`)
+  - [Install Istio with Pod Security Admission](https://istio.io/latest/docs/setup/additional-setup/pod-security-admission/)
