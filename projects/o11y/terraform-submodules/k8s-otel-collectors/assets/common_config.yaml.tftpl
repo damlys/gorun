@@ -20,6 +20,7 @@ receivers:
       # Istio sidecar proxy
       - /var/log/pods/*_*_*/istio-init/*.log
       - /var/log/pods/*_*_*/istio-proxy/*.log
+      - /var/log/pods/*_*_*/istio-validation/*.log
       # OpenTelemetry namespaces
       - /var/log/pods/otel-*_*_*/*/*.log
       # OpenTelemetry auto-instrumentation

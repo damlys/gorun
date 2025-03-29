@@ -106,6 +106,10 @@ module "test_otel_collectors" {
 resource "kubernetes_namespace" "istio_system" {
   metadata {
     name = "istio-system"
+    labels = {
+      "pod-security.kubernetes.io/enforce"         = "privileged"
+      "pod-security.kubernetes.io/enforce-version" = "latest"
+    }
   }
 }
 
@@ -122,9 +126,46 @@ resource "helm_release" "istio_base" {
   ]
 }
 
+resource "kubernetes_resource_quota" "istio_gcp_critical_pods" {
+  metadata {
+    name      = "gcp-critical-pods"
+    namespace = kubernetes_namespace.istio_system.metadata[0].name
+  }
+  spec {
+    hard = {
+      pods = 100
+    }
+    scope_selector {
+      match_expression {
+        operator   = "In"
+        scope_name = "PriorityClass"
+        values     = ["system-node-critical"]
+      }
+    }
+  }
+}
+
+resource "helm_release" "istio_cni" {
+  depends_on = [
+    kubernetes_resource_quota.istio_gcp_critical_pods,
+  ]
+
+  repository = "${path.module}/helm/charts"
+  chart      = "cni"
+  name       = "istio-cni"
+  namespace  = kubernetes_namespace.istio_system.metadata[0].name
+
+  values = [
+    file("${path.module}/helm/values/cni.yaml"),
+    templatefile("${path.module}/assets/istio_cni.yaml.tftpl", {
+    }),
+  ]
+}
+
 resource "helm_release" "istio_discovery" {
   depends_on = [
     helm_release.istio_base,
+    helm_release.istio_cni,
   ]
 
   repository = "${path.module}/helm/charts"
