@@ -613,8 +613,8 @@ resource "kubernetes_manifest" "gke_gateway" { # console.cloud.google.com/net-se
     apiVersion = "gateway.networking.k8s.io/v1"
     kind       = "Gateway"
     metadata = {
-      namespace = kubernetes_namespace.gke_gateway.metadata[0].name
       name      = "gke-gateway"
+      namespace = kubernetes_namespace.gke_gateway.metadata[0].name
       annotations = {
         "cert-manager.io/issuer" = kubernetes_manifest.letsencrypt_production.manifest.metadata.name
       }
@@ -676,13 +676,13 @@ resource "kubernetes_manifest" "gke_gateway" { # console.cloud.google.com/net-se
   }
 }
 
-resource "kubernetes_manifest" "gke_gateway_http_to_https" {
+resource "kubernetes_manifest" "gke_gateway_redirect_http" {
   manifest = {
     apiVersion = "gateway.networking.k8s.io/v1"
     kind       = "HTTPRoute"
     metadata = {
+      name      = "redirect-http"
       namespace = kubernetes_namespace.gke_gateway.metadata[0].name
-      name      = "http-to-https"
     }
     spec = {
       parentRefs = [{

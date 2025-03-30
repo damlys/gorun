@@ -3,8 +3,8 @@ resource "kubernetes_manifest" "http_route" {
     apiVersion = "gateway.networking.k8s.io/v1"
     kind       = "HTTPRoute"
     metadata = {
+      name      = "redirect-domain-${join("-", reverse(split(".", var.old_domain)))}"
       namespace = var.kubernetes_namespace.metadata[0].name
-      name      = "redirect-${join("-", reverse(split(".", var.old_domain)))}"
     }
     spec = {
       parentRefs = [{
