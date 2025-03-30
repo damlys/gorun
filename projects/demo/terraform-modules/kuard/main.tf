@@ -1,5 +1,5 @@
 module "vault" {
-  source = "../../../core/terraform-submodules/gke-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-vault/0.2.100.zip"
+  source = "../../../core/terraform-submodules/k8s-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-vault/0.2.100.zip"
 
   vault_name = "kuard"
 

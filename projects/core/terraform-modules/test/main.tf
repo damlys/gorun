@@ -30,7 +30,7 @@ module "test_platform" {
 #######################################
 
 module "test_vault" {
-  source = "../../terraform-submodules/gke-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-vault/0.2.100.zip"
+  source = "../../terraform-submodules/k8s-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-vault/0.2.100.zip"
   depends_on = [
     module.test_platform,
   ]
@@ -45,7 +45,7 @@ module "test_vault" {
 }
 
 module "grafana_vault" {
-  source = "../../terraform-submodules/gke-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-vault/0.2.100.zip"
+  source = "../../terraform-submodules/k8s-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-vault/0.2.100.zip"
   depends_on = [
     module.test_platform,
   ]
@@ -64,7 +64,7 @@ module "grafana_vault" {
 #######################################
 
 module "test_workspace" {
-  source = "../../terraform-submodules/gke-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-workspace/0.2.100.zip"
+  source = "../../terraform-submodules/k8s-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-workspace/0.2.100.zip"
   depends_on = [
     module.test_platform,
   ]

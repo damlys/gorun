@@ -1,5 +1,5 @@
 module "workspace" {
-  source = "../../../core/terraform-submodules/gke-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-workspace/0.2.100.zip"
+  source = "../../../core/terraform-submodules/k8s-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-workspace/0.2.100.zip"
 
   workspace_name = "kuard"
 
@@ -74,7 +74,7 @@ data "kubernetes_service" "stateless_kuard" {
 }
 
 module "stateless_kuard_gateway_route" {
-  source = "../../../core/terraform-submodules/gke-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-gateway-route/0.2.100.zip"
+  source = "../../../core/terraform-submodules/k8s-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-route/0.2.100.zip"
 
   kubernetes_service = data.kubernetes_service.stateless_kuard
 
@@ -94,7 +94,7 @@ module "stateless_kuard_availability_monitor" {
 }
 
 module "stateless_kuard_gateway_redirect" {
-  source = "../../../core/terraform-submodules/gke-gateway-redirect" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-gateway-redirect/0.2.100.zip"
+  source = "../../../core/terraform-submodules/k8s-gateway-redirect" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-redirect/0.2.100.zip"
 
   kubernetes_namespace = module.workspace.kubernetes_namespace
 
@@ -142,7 +142,7 @@ data "kubernetes_service" "stateful_kuard" {
 }
 
 module "stateful_kuard_gateway_route" {
-  source = "../../../core/terraform-submodules/gke-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-gateway-route/0.2.100.zip"
+  source = "../../../core/terraform-submodules/k8s-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-route/0.2.100.zip"
 
   kubernetes_service = data.kubernetes_service.stateful_kuard
 
