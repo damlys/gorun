@@ -5,7 +5,7 @@ dependencies:
   - # https://github.com/istio/istio/tree/master/manifests/charts/base
     repository: https://istio-release.storage.googleapis.com/charts
     name: base
-    version: 1.25.0
+    version: 1.25.1
   - # https://github.com/istio/istio/tree/master/manifests/charts/istio-cni
     repository: https://istio-release.storage.googleapis.com/charts
     name: cni
@@ -13,7 +13,7 @@ dependencies:
   - # https://github.com/istio/istio/tree/master/manifests/charts/istio-control/istio-discovery
     repository: https://istio-release.storage.googleapis.com/charts
     name: istiod
-    version: 1.25.0
+    version: 1.25.1
   - # https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector
     repository: https://open-telemetry.github.io/opentelemetry-helm-charts
     name: opentelemetry-collector
