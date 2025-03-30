@@ -19,4 +19,5 @@ _internal_defaults_do_not_set:
         limits: {}
     defaultPodDisruptionBudget:
       enabled: false
+  autoscaleEnabled: false
   rollingMaxUnavailable: 1
