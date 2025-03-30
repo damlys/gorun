@@ -1,18 +1,18 @@
-name: core-tfsub-gke-vault
+name: core-tfsub-k8s-vault
 on:
   pull_request:
     paths:
-      - "projects/core/terraform-submodules/gke-vault/**"
-      - "!projects/core/terraform-submodules/gke-vault/README.md"
+      - "projects/core/terraform-submodules/k8s-vault/**"
+      - "!projects/core/terraform-submodules/k8s-vault/README.md"
   push:
     branches:
       - main
     paths:
-      - "projects/core/terraform-submodules/gke-vault/**"
-      - "!projects/core/terraform-submodules/gke-vault/README.md"
+      - "projects/core/terraform-submodules/k8s-vault/**"
+      - "!projects/core/terraform-submodules/k8s-vault/README.md"
 jobs:
-  core-tfsub-gke-vault:
-    name: core-tfsub-gke-vault
+  core-tfsub-k8s-vault:
+    name: core-tfsub-k8s-vault
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.2.103
     permissions:
@@ -36,19 +36,19 @@ jobs:
       - name: cache
         uses: actions/cache@v4
         with:
-          key: core-tfsub-gke-vault
+          key: core-tfsub-k8s-vault
           path: |
-            projects/core/terraform-submodules/gke-vault/.terraform
-            projects/core/terraform-submodules/gke-vault/.terraform.lock.hcl
+            projects/core/terraform-submodules/k8s-vault/.terraform
+            projects/core/terraform-submodules/k8s-vault/.terraform.lock.hcl
       - name: build
-        run: ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-vault"
+        run: ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-vault"
       - name: test
-        run: ./scripts/terraform-submodule test "projects/core/terraform-submodules/gke-vault"
+        run: ./scripts/terraform-submodule test "projects/core/terraform-submodules/k8s-vault"
       - name: pre-publish
         if: github.event_name == 'pull_request' && github.base_ref == 'main'
-        run: ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gke-vault"
+        run: ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/k8s-vault"
       - name: publish
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gke-vault"
+        run: ./scripts/terraform-submodule publish "projects/core/terraform-submodules/k8s-vault"
       - name: show
-        run: ./scripts/terraform-submodule show "projects/core/terraform-submodules/gke-vault"
+        run: ./scripts/terraform-submodule show "projects/core/terraform-submodules/k8s-vault"
