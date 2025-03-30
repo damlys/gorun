@@ -22,7 +22,3 @@ dependencies:
     repository: https://open-telemetry.github.io/opentelemetry-helm-charts
     name: opentelemetry-operator
     version: 0.82.0
-  - # https://github.com/istio/istio/tree/master/manifests/charts/ztunnel
-    repository: https://istio-release.storage.googleapis.com/charts
-    name: ztunnel
-    version: 1.25.1
