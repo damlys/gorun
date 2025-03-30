@@ -198,7 +198,7 @@ resource "kubernetes_manifest" "gke_gateway_redirect_http_to_https" {
 }
 
 #######################################
-### projects/core/terraform-submodules/gke-gateway-route
+### projects/core/terraform-submodules/k8s-gateway-route
 #######################################
 
 resource "kubernetes_manifest" "http_route" {
