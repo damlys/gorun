@@ -25,3 +25,8 @@ variable "health_check_path" {
   type    = string
   default = "/healthy"
 }
+
+variable "is_domain_root" {
+  type    = bool
+  default = false
+}

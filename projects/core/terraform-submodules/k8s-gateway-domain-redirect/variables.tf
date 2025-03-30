@@ -18,3 +18,8 @@ variable "status_code" {
   type    = number
   default = 301
 }
+
+variable "is_domain_root" {
+  type    = bool
+  default = false
+}
