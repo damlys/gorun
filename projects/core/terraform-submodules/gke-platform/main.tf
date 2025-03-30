@@ -335,7 +335,7 @@ resource "kubernetes_namespace" "velero" {
 }
 
 module "velero_service_account" {
-  source = "../gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.2.100.zip"
+  source = "../gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.3.100.zip"
 
   google_project           = var.google_project
   google_container_cluster = google_container_cluster.this
@@ -448,7 +448,7 @@ resource "kubernetes_namespace" "cert_manager" {
 }
 
 module "cert_manager_service_account" {
-  source = "../gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.2.100.zip"
+  source = "../gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.3.100.zip"
 
   google_project           = var.google_project
   google_container_cluster = google_container_cluster.this
@@ -613,8 +613,8 @@ resource "kubernetes_manifest" "gke_gateway" { # console.cloud.google.com/net-se
     apiVersion = "gateway.networking.k8s.io/v1"
     kind       = "Gateway"
     metadata = {
-      namespace = kubernetes_namespace.gke_gateway.metadata[0].name
       name      = "gke-gateway"
+      namespace = kubernetes_namespace.gke_gateway.metadata[0].name
       annotations = {
         "cert-manager.io/issuer" = kubernetes_manifest.letsencrypt_production.manifest.metadata.name
       }
@@ -676,13 +676,13 @@ resource "kubernetes_manifest" "gke_gateway" { # console.cloud.google.com/net-se
   }
 }
 
-resource "kubernetes_manifest" "gke_gateway_http_to_https" {
+resource "kubernetes_manifest" "gke_gateway_redirect_http" {
   manifest = {
     apiVersion = "gateway.networking.k8s.io/v1"
     kind       = "HTTPRoute"
     metadata = {
+      name      = "redirect-http"
       namespace = kubernetes_namespace.gke_gateway.metadata[0].name
-      name      = "http-to-https"
     }
     spec = {
       parentRefs = [{

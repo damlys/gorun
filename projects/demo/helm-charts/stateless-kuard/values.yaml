@@ -1,6 +1,6 @@
 image:
   repository: europe-central2-docker.pkg.dev/gogcp-main-2/private-docker-images/gorun/demo/kuard
-  tag: 0.2.100
+  tag: 0.3.100
 
 serviceAccountName: ""
 
