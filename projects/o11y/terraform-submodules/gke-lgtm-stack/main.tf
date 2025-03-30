@@ -91,8 +91,8 @@ data "kubernetes_service" "grafana" {
   }
 }
 
-module "grafana_gateway_route" {
-  source = "../../../core/terraform-submodules/k8s-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-route/0.2.100.zip"
+module "grafana_gateway_http_route" {
+  source = "../../../core/terraform-submodules/k8s-gateway-http-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.2.100.zip"
 
   kubernetes_service = data.kubernetes_service.grafana
 

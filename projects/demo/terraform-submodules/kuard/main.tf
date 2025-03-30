@@ -73,8 +73,8 @@ data "kubernetes_service" "stateless_kuard" {
   }
 }
 
-module "stateless_kuard_gateway_route" {
-  source = "../../../core/terraform-submodules/k8s-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-route/0.2.100.zip"
+module "stateless_kuard_gateway_http_route" {
+  source = "../../../core/terraform-submodules/k8s-gateway-http-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.2.100.zip"
 
   kubernetes_service = data.kubernetes_service.stateless_kuard
 
@@ -93,8 +93,8 @@ module "stateless_kuard_availability_monitor" {
   notification_emails = ["damlys.test@gmail.com"]
 }
 
-module "stateless_kuard_gateway_redirect" {
-  source = "../../../core/terraform-submodules/k8s-gateway-redirect" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-redirect/0.2.100.zip"
+module "stateless_kuard_gateway_domain_redirect" {
+  source = "../../../core/terraform-submodules/k8s-gateway-domain-redirect" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-domain-redirect/0.2.100.zip"
 
   kubernetes_namespace = module.workspace.kubernetes_namespace
 
@@ -141,8 +141,8 @@ data "kubernetes_service" "stateful_kuard" {
   }
 }
 
-module "stateful_kuard_gateway_route" {
-  source = "../../../core/terraform-submodules/k8s-gateway-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-route/0.2.100.zip"
+module "stateful_kuard_gateway_http_route" {
+  source = "../../../core/terraform-submodules/k8s-gateway-http-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.2.100.zip"
 
   kubernetes_service = data.kubernetes_service.stateful_kuard
 
