@@ -45,11 +45,11 @@ function git::is_main_branch {
 }
 
 function git::commit {
-  local commit_path="$1"
+  local files_path="$1"
   local commit_message="$2"
 
   git restore --staged .
-  git add "./${commit_path}"
+  git add "./${files_path}"
   git commit --message="${commit_message}"
   git push origin HEAD
 }
