@@ -51,5 +51,5 @@ function git::commit {
   git restore --staged .
   git add "./${files_path}"
   git commit --message="${commit_message}"
-  git push
+  git push origin "HEAD:$(git rev-parse --abbrev-ref HEAD)"
 }
