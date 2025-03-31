@@ -1,4 +1,4 @@
-image: damlys/gorun-devcontainer:0.2.103
+image: damlys/gorun-devcontainer:0.3.100
 definitions:
   caches:
     core-tfmod-main: projects/core/terraform-modules/main/.terraform

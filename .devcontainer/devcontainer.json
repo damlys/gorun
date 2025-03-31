@@ -1,7 +1,7 @@
 {
   "name": "devcontainer-damlys-gorun",
 
-  "image": "europe-central2-docker.pkg.dev/gogcp-main-2/private-docker-images/gorun/core/devcontainer:0.2.104",
+  "image": "europe-central2-docker.pkg.dev/gogcp-main-2/private-docker-images/gorun/core/devcontainer:0.3.100",
   "runArgs": [
     "--name=devcontainer-damlys-gorun",
     "--env-file=${localEnv:HOME}${localEnv:USERPROFILE}/workspace/devcontainer-damlys.env"

@@ -12,7 +12,7 @@ jobs:
   test-bash:
     name: test-bash
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gorun-devcontainer:0.2.103
+    container: ghcr.io/damlys/gorun-devcontainer:0.3.100
     steps:
       - name: git clone
         uses: actions/checkout@v4

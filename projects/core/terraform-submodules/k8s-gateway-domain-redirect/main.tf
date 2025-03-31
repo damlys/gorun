@@ -12,7 +12,7 @@ resource "kubernetes_manifest" "http_route" {
         kind        = "Gateway"
         name        = "gke-gateway"
         namespace   = "gke-gateway"
-        sectionName = "https-wildcard"
+        sectionName = var.is_domain_root ? "https-root" : "https-wildcard"
       }]
       hostnames = [var.old_domain]
       rules = [{

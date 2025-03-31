@@ -14,7 +14,7 @@ jobs:
   o11y-tfsub-k8s-otel-collectors:
     name: o11y-tfsub-k8s-otel-collectors
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gorun-devcontainer:0.2.103
+    container: ghcr.io/damlys/gorun-devcontainer:0.3.100
     permissions:
       contents: write
       id-token: write
