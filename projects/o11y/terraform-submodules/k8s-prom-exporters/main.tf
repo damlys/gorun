@@ -27,14 +27,14 @@ resource "helm_release" "kube_state_metrics" {
 
 resource "kubernetes_namespace" "node_exporter" {
   metadata {
-    name = "o11y-prometheus-node-exporter"
+    name = "o11y-node-exporter"
   }
 }
 
 resource "helm_release" "node_exporter" {
   repository = "${path.module}/helm/charts"
   chart      = "prometheus-node-exporter"
-  name       = "prometheus-node-exporter"
+  name       = "node-exporter"
   namespace  = kubernetes_namespace.node_exporter.metadata[0].name
 
   values = [
@@ -50,14 +50,14 @@ resource "helm_release" "node_exporter" {
 
 resource "kubernetes_namespace" "blackbox_exporter" {
   metadata {
-    name = "o11y-prometheus-blackbox-exporter"
+    name = "o11y-blackbox-exporter"
   }
 }
 
 resource "helm_release" "blackbox_exporter" {
   repository = "${path.module}/helm/charts"
   chart      = "prometheus-blackbox-exporter"
-  name       = "prometheus-blackbox-exporter"
+  name       = "blackbox-exporter"
   namespace  = kubernetes_namespace.blackbox_exporter.metadata[0].name
 
   values = [
