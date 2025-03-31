@@ -8,7 +8,13 @@ jobs:
     runs-on: ubuntu-24.04
     container: ghcr.io/damlys/gorun-devcontainer:0.3.100
     steps:
-      - name: git clone
+      - name: git clone (PR)
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: git clone (not PR)
+        if: github.event_name != 'push'
         uses: actions/checkout@v4
       - name: git clone fix
         run: git config --system --add safe.directory $GITHUB_WORKSPACE

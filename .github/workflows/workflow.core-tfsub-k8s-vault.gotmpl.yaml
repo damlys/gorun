@@ -23,7 +23,13 @@ jobs:
       HELM_EXPERIMENTAL_OCI: 1
       TF_IN_AUTOMATION: 1
     steps:
-      - name: git clone
+      - name: git clone (PR)
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: git clone (not PR)
+        if: github.event_name != 'push'
         uses: actions/checkout@v4
       - name: git clone fix
         run: git config --system --add safe.directory $GITHUB_WORKSPACE
