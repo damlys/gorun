@@ -99,6 +99,10 @@ module "test_otel_collectors" {
   tempo_entrypoint = module.test_lgtm_stack.tempo_entrypoint
 }
 
+module "test_prom_exporters" {
+  source = "../../terraform-submodules/k8s-prom-exporters" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/o11y/k8s-prom-exporters/0.3.100.zip"
+}
+
 #######################################
 ### Istio
 #######################################

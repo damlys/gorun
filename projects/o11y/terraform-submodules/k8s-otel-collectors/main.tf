@@ -4,7 +4,7 @@
 
 resource "kubernetes_namespace" "otlp_collector" {
   metadata {
-    name = "otel-otlp-collector"
+    name = "o11y-otlp-collector"
   }
 }
 
@@ -60,7 +60,7 @@ resource "kubernetes_cluster_role_binding" "otlp_collector" {
 
 resource "kubernetes_namespace" "file_collector" {
   metadata {
-    name = "otel-file-collector"
+    name = "o11y-file-collector"
   }
 }
 
@@ -122,7 +122,7 @@ resource "kubernetes_cluster_role_binding" "file_collector" {
 
 resource "kubernetes_namespace" "prom_collector" {
   metadata {
-    name = "otel-prom-collector"
+    name = "o11y-prom-collector"
   }
 }
 

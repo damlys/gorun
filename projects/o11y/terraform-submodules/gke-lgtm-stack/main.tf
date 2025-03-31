@@ -4,7 +4,7 @@
 
 resource "kubernetes_namespace" "grafana" {
   metadata {
-    name = "lgtm-grafana"
+    name = "o11y-grafana"
   }
 
   timeouts {
@@ -120,7 +120,7 @@ module "grafana_availability_monitor" {
 
 resource "kubernetes_namespace" "loki" {
   metadata {
-    name = "lgtm-loki"
+    name = "o11y-loki"
   }
 }
 
@@ -180,7 +180,7 @@ resource "helm_release" "loki" {
 
 resource "kubernetes_namespace" "mimir" {
   metadata {
-    name = "lgtm-mimir"
+    name = "o11y-mimir"
   }
 }
 
@@ -240,7 +240,7 @@ resource "helm_release" "mimir" {
 
 resource "kubernetes_namespace" "tempo" {
   metadata {
-    name = "lgtm-tempo"
+    name = "o11y-tempo"
   }
 }
 
