@@ -25,7 +25,7 @@ resource "kubernetes_manifest" "otlp_collector" {
         requests = { cpu = "1m", memory = "1Mi" }
         limits   = {}
       }
-      observability = { metrics = { enableMetrics = true } }
+      observability = { metrics = { enableMetrics = false } }
     }
   }
 }
@@ -87,7 +87,7 @@ resource "kubernetes_manifest" "file_collector" {
         requests = { cpu = "1m", memory = "1Mi" }
         limits   = {}
       }
-      observability = { metrics = { enableMetrics = true } }
+      observability = { metrics = { enableMetrics = false } }
     }
   }
 }
@@ -178,14 +178,14 @@ resource "kubernetes_manifest" "prom_collector" {
           requests = { cpu = "1m", memory = "1Mi" }
           limits   = {}
         }
-        observability = { metrics = { enableMetrics = true } }
+        observability = { metrics = { enableMetrics = false } }
       }
 
       resources = {
         requests = { cpu = "1m", memory = "1Mi" }
         limits   = {}
       }
-      observability = { metrics = { enableMetrics = true } }
+      observability = { metrics = { enableMetrics = false } }
     }
   }
 }

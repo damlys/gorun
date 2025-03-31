@@ -34,7 +34,7 @@ resource "kubernetes_namespace" "node_exporter" {
 resource "helm_release" "node_exporter" {
   repository = "${path.module}/helm/charts"
   chart      = "prometheus-node-exporter"
-  name       = "node-exporter"
+  name       = "prometheus-node-exporter"
   namespace  = kubernetes_namespace.node_exporter.metadata[0].name
 
   values = [
@@ -57,12 +57,29 @@ resource "kubernetes_namespace" "blackbox_exporter" {
 resource "helm_release" "blackbox_exporter" {
   repository = "${path.module}/helm/charts"
   chart      = "prometheus-blackbox-exporter"
-  name       = "blackbox-exporter"
+  name       = "prometheus-blackbox-exporter"
   namespace  = kubernetes_namespace.blackbox_exporter.metadata[0].name
 
   values = [
     file("${path.module}/helm/values/prometheus-blackbox-exporter.yaml"),
     templatefile("${path.module}/assets/blackbox_exporter.yaml.tftpl", {
+      targets = [
+        {
+          name     = "grafana"
+          hostname = "grafana.gogke-test-2.damlys.dev"
+          url      = "https://grafana.gogke-test-2.damlys.dev/healthz"
+        },
+        {
+          name     = "stateless-kuard"
+          hostname = "stateless-kuard.gogke-test-2.damlys.dev"
+          url      = "https://stateless-kuard.gogke-test-2.damlys.dev/healthy"
+        },
+        {
+          name     = "stateful-kuard"
+          hostname = "stateful-kuard.gogke-test-2.damlys.dev"
+          url      = "https://stateful-kuard.gogke-test-2.damlys.dev/healthy"
+        },
+      ]
     }),
   ]
 }

@@ -1,0 +1,27 @@
+config:
+  modules:
+    https_2xx:
+      prober: http
+      timeout: 3s
+      http:
+        preferred_ip_protocol: ip4
+        ip_protocol_fallback: false
+        fail_if_not_ssl: true
+        valid_http_versions:
+          - HTTP/1.1
+          - HTTP/2.0
+        valid_status_codes:
+          - 200
+          - 204
+        follow_redirects: false
+        method: GET
+
+serviceMonitor:
+  selfMonitor:
+    enabled: false
+
+  enabled: true
+  defaults:
+    module: https_2xx
+  targets: #
+    ${indent(4, yamlencode(targets))}
