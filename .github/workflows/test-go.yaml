@@ -18,9 +18,9 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: actions/checkout@v4
         with:
-          ref: refs/heads/${{ github.head_ref }}
+          ref: ${{ github.head_ref }}
       - name: git clone (not PR)
-        if: github.event_name != 'push'
+        if: github.event_name != 'pull_request'
         uses: actions/checkout@v4
       - name: git clone fix
         run: git config --system --add safe.directory $GITHUB_WORKSPACE
