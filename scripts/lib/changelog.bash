@@ -11,7 +11,7 @@ function changelog::update_header {
   changelog_content="$(cat "${changelog_path}")"
 
   if git::is_main_branch; then
-    log::warning "changelog: skipping on main branch"
+    log::info "changelog: skipping header update on main branch"
     return 0
   fi
 
