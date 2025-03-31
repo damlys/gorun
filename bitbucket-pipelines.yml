@@ -23,6 +23,7 @@ definitions:
     o11y-tfsub-gcp-availability-monitor: projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform
     o11y-tfsub-gke-lgtm-stack: projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform
     o11y-tfsub-k8s-otel-collectors: projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform
+    o11y-tfsub-k8s-prom-exporters: projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform
   scripts:
     - &auth |
       set -e
@@ -872,6 +873,34 @@ definitions:
           - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-otel-collectors"
           - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/k8s-otel-collectors"
           - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-otel-collectors"
+    - step: &test-o11y-tfsub-k8s-prom-exporters
+        name: test o11y-tfsub-k8s-prom-exporters
+        condition:
+          changesets:
+            includePaths:
+              - "projects/o11y/terraform-submodules/k8s-prom-exporters/**"
+        caches:
+          - o11y-tfsub-k8s-prom-exporters
+        script:
+          - *auth
+          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-prom-exporters"
+          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-prom-exporters"
+          - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/k8s-prom-exporters"
+          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-prom-exporters"
+    - step: &publish-o11y-tfsub-k8s-prom-exporters
+        name: publish o11y-tfsub-k8s-prom-exporters
+        condition:
+          changesets:
+            includePaths:
+              - "projects/o11y/terraform-submodules/k8s-prom-exporters/**"
+        caches:
+          - o11y-tfsub-k8s-prom-exporters
+        script:
+          - *auth
+          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-prom-exporters"
+          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-prom-exporters"
+          - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/k8s-prom-exporters"
+          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-prom-exporters"
 
 pipelines:
   pull-requests:
@@ -906,6 +935,7 @@ pipelines:
           - step: *test-o11y-tfsub-gcp-availability-monitor
           - step: *test-o11y-tfsub-gke-lgtm-stack
           - step: *test-o11y-tfsub-k8s-otel-collectors
+          - step: *test-o11y-tfsub-k8s-prom-exporters
       - parallel:
           - step: *plan-core-tfmod-main
           - step: *plan-core-tfmod-prod
@@ -938,6 +968,7 @@ pipelines:
           - step: *publish-o11y-tfsub-gcp-availability-monitor
           - step: *publish-o11y-tfsub-gke-lgtm-stack
           - step: *publish-o11y-tfsub-k8s-otel-collectors
+          - step: *publish-o11y-tfsub-k8s-prom-exporters
       - parallel:
           - step: *plan-core-tfmod-main
           - step: *plan-core-tfmod-prod
