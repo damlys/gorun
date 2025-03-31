@@ -27,7 +27,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          ref: refs/heads/${{ github.head_ref }}
       - name: git clone (not PR)
         if: github.event_name != 'push'
         uses: actions/checkout@v4
