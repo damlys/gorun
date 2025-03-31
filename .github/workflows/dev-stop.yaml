@@ -16,8 +16,8 @@ jobs:
       - name: git clone (not PR)
         if: github.event_name != 'pull_request'
         uses: actions/checkout@v4
-      - name: git clone fix
-        run: git config --system --add safe.directory $GITHUB_WORKSPACE
+      - name: git clone (fix)
+        run: git config --system --add safe.directory "$GITHUB_WORKSPACE"
       - name: git config user
         run: git config --global user.name "github-actions" && git config --global user.email "github-actions@github.com"
 
@@ -25,5 +25,7 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+          create_credentials_file: true
+          cleanup_credentials: true
       - name: stop
         run: ./scripts/dev stop
