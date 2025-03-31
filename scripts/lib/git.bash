@@ -51,5 +51,12 @@ function git::commit {
   git restore --staged .
   git add "./${files_path}"
   git commit --message="${commit_message}"
-  git push origin "HEAD:$(git rev-parse --abbrev-ref HEAD)"
+
+  if ! str::is_empty "${GITHUB_HEAD_REF}"; then
+    git push origin "${GITHUB_HEAD_REF}"
+  elif ! str::is_empty "${GITHUB_REF}"; then
+    git push origin "${GITHUB_REF}"
+  else
+    git push origin "$(git rev-parse --abbrev-ref HEAD)"
+  fi
 }
