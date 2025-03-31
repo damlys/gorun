@@ -1,15 +1,36 @@
 set -e
 
-function changelog::contains_version {
+function changelog::update_header {
   local project_path="$1"
   local version="$2"
+  local today
+  local changelog_path="${project_path}/CHANGELOG.md"
   local changelog_content
 
-  changelog_content="$(cat "${project_path}/CHANGELOG.md")"
+  today="$(date --utc '+%Y-%m-%d')" # yyyy-mm-dd
+  changelog_content="$(cat "${changelog_path}")"
 
-  if str::contains "${changelog_content}" "## [${version}] - "; then
+  if git::is_main_branch; then
+    log::info "changelog: skipping header update on main branch"
     return 0
   fi
 
-  return 1
+  if str::contains "${changelog_content}" "## [${version}] - ${today}"; then
+    log::info "changelog: header is ok"
+    return 0
+  fi
+
+  if str::contains "${changelog_content}" "## [${version}] - "; then
+    log::info "changelog: updating header date"
+    local old="## \[${version}\] - .*$"
+    local new="## \[${version}\] - ${today}"
+    sed --in-place "s/${old}/${new}/g" "${changelog_path}"
+  else
+    log::info "changelog: adding header"
+    local old="## \[Unreleased\]"
+    local new="## \[Unreleased\]\n\n## \[${version}\] - ${today}"
+    sed --in-place "s/${old}/${new}/g" "${changelog_path}"
+  fi
+
+  git::commit "./${changelog_path}" "chore: update ${changelog_path} header (v${version}) [skip ci] [ci skip]"
 }

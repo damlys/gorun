@@ -31,14 +31,23 @@ jobs:
       HELM_EXPERIMENTAL_OCI: 1
       TF_IN_AUTOMATION: 1
     steps:
-      - name: git clone
+      - name: git clone (PR)
+        if: github.event_name == 'pull_request'
         uses: actions/checkout@v4
-      - name: git clone fix
+        with:
+          ref: {{ "${{ github.head_ref }}" }}
+      - name: git clone (not PR)
+        if: github.event_name != 'pull_request'
+        uses: actions/checkout@v4
+      - name: git clone (fix)
         {{- /*
         TODO: remove this workaround when the issue is fixed
         https://github.com/actions/checkout/issues/1169
         */}}
-        run: git config --system --add safe.directory $GITHUB_WORKSPACE
+        run: git config --system --add safe.directory "$GITHUB_WORKSPACE"
+      - name: git config user
+        run: git config --global user.name "github-actions" && git config --global user.email "github-actions@github.com"
+
       - name: gcloud auth
         uses: google-github-actions/auth@v2
         with:

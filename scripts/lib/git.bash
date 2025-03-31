@@ -36,3 +36,20 @@ function git::tag {
   git tag "${tag}"
   git push origin "${tag}"
 }
+
+function git::is_main_branch {
+  if str::equals "$(git rev-parse --abbrev-ref HEAD)" "main"; then
+    return 0
+  fi
+  return 1
+}
+
+function git::commit {
+  local files_path="$1"
+  local commit_message="$2"
+
+  git restore --staged .
+  git add "./${files_path}"
+  git commit --message="${commit_message}"
+  git push origin HEAD
+}

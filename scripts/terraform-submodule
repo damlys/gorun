@@ -42,18 +42,16 @@ function main {
     ;;
 
   "pre-publish")
-    if ! file::exists "${project_path}/CHANGELOG.md"; then
-      log::error "changelog file does not exists: ${project_path}"
-      return 1
-    fi
-    if ! changelog::contains_version "${project_path}" "${module_version}"; then
-      log::warning "changelog does not contain header with the module version: ${project_path}"
-    fi
     if git::tag_exists "${project_path}/v${module_version}"; then
       log::error "git tag with module version already exists: ${module_version}"
       log::info "update module version to fix the issue: ${project_path}"
       return 1
     fi
+    if ! file::exists "${project_path}/CHANGELOG.md"; then
+      log::error "changelog file does not exists: ${project_path}"
+      return 1
+    fi
+    changelog::update_header "${project_path}" "${module_version}"
     ;;
 
   "publish")
