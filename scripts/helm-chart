@@ -36,18 +36,16 @@ function main {
     ;;
 
   "pre-publish")
-    if ! file::exists "${project_path}/CHANGELOG.md"; then
-      log::error "changelog file does not exists: ${project_path}"
-      return 1
-    fi
-    if ! changelog::contains_version "${project_path}" "${chart_version}"; then
-      log::warning "changelog does not contain header with the chart version: ${project_path}"
-    fi
     if git::tag_exists "${project_path}/v${chart_version}"; then
       log::error "git tag with chart version already exists: ${chart_version}"
       log::info "bump chart version to fix the issue: ${project_path}"
       return 1
     fi
+    if ! file::exists "${project_path}/CHANGELOG.md"; then
+      log::error "changelog file does not exists: ${project_path}"
+      return 1
+    fi
+    changelog::update_header "${project_path}" "${chart_version}"
     ;;
 
   "publish")
