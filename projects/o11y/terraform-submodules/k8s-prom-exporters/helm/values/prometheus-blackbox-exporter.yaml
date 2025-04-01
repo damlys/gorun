@@ -1,0 +1,12 @@
+resources:
+  requests:
+    cpu: 1m
+    memory: 1Mi
+  limits: {}
+replicas: 1
+configReloader:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}

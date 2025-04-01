@@ -19,13 +19,11 @@ receivers:
       - /var/log/pods/istio-*_*_*/*/*.log
       - /var/log/pods/*_istio-*_*/*/*.log
       - /var/log/pods/*_*_*/istio-*/*.log
-      # OpenTelemetry namespaces
-      - /var/log/pods/otel-*_*_*/*/*.log
+      # Observability namespaces
+      - /var/log/pods/o11y-*_*_*/*/*.log
       # OpenTelemetry auto-instrumentation
       - /var/log/pods/*_*_*/opentelemetry-auto-instrumentation/*.log
       - /var/log/pods/*_*_*/opentelemetry-auto-instrumentation-*/*.log
-      # Grafana namespaces
-      - /var/log/pods/lgtm-*_*_*/*/*.log
     operators:
       - id: container-parser
         type: container # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/pkg/stanza/docs/operators/container.md

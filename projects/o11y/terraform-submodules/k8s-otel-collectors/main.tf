@@ -4,7 +4,7 @@
 
 resource "kubernetes_namespace" "otlp_collector" {
   metadata {
-    name = "otel-otlp-collector"
+    name = "o11y-otlp-collector"
   }
 }
 
@@ -25,7 +25,7 @@ resource "kubernetes_manifest" "otlp_collector" {
         requests = { cpu = "1m", memory = "1Mi" }
         limits   = {}
       }
-      observability = { metrics = { enableMetrics = true } }
+      observability = { metrics = { enableMetrics = false } }
     }
   }
 }
@@ -60,7 +60,7 @@ resource "kubernetes_cluster_role_binding" "otlp_collector" {
 
 resource "kubernetes_namespace" "file_collector" {
   metadata {
-    name = "otel-file-collector"
+    name = "o11y-file-collector"
   }
 }
 
@@ -87,7 +87,7 @@ resource "kubernetes_manifest" "file_collector" {
         requests = { cpu = "1m", memory = "1Mi" }
         limits   = {}
       }
-      observability = { metrics = { enableMetrics = true } }
+      observability = { metrics = { enableMetrics = false } }
     }
   }
 }
@@ -122,7 +122,7 @@ resource "kubernetes_cluster_role_binding" "file_collector" {
 
 resource "kubernetes_namespace" "prom_collector" {
   metadata {
-    name = "otel-prom-collector"
+    name = "o11y-prom-collector"
   }
 }
 
@@ -178,14 +178,14 @@ resource "kubernetes_manifest" "prom_collector" {
           requests = { cpu = "1m", memory = "1Mi" }
           limits   = {}
         }
-        observability = { metrics = { enableMetrics = true } }
+        observability = { metrics = { enableMetrics = false } }
       }
 
       resources = {
         requests = { cpu = "1m", memory = "1Mi" }
         limits   = {}
       }
-      observability = { metrics = { enableMetrics = true } }
+      observability = { metrics = { enableMetrics = false } }
     }
   }
 }

@@ -1,0 +1,11 @@
+kubeRBACProxy:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+resources:
+  requests:
+    cpu: 1m
+    memory: 1Mi
+  limits: {}
