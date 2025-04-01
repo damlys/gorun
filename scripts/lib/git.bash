@@ -48,7 +48,6 @@ function git::commit {
   local files_path="$1"
   local commit_message="$2"
 
-  git pull
   git restore --staged .
   git add "./${files_path}"
   git commit --message="${commit_message}"
