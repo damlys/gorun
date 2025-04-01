@@ -23,5 +23,9 @@ serviceMonitor:
   enabled: true
   defaults:
     module: https_2xx
-  targets: #
-    ${indent(4, yamlencode(targets))}
+  targets:
+    %{~ for url in urls ~}
+    - name: "${regex("^https://([-\\w]*)", url)[0]}"
+      hostname: "${regex("^https://([-\\w\\.]*)", url)[0]}"
+      url: "${url}"
+    %{~ endfor ~}

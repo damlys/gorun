@@ -101,6 +101,12 @@ module "test_otel_collectors" {
 
 module "test_prom_exporters" {
   source = "../../terraform-submodules/k8s-prom-exporters" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/o11y/k8s-prom-exporters/0.3.100.zip"
+
+  blackbox_exporter_urls = [
+    "https://grafana.gogke-test-2.damlys.dev/healthz",
+    "https://stateful-kuard.gogke-test-2.damlys.dev/healthy",
+    "https://stateless-kuard.gogke-test-2.damlys.dev/healthy",
+  ]
 }
 
 #######################################

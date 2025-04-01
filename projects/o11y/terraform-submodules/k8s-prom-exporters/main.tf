@@ -63,23 +63,7 @@ resource "helm_release" "blackbox_exporter" {
   values = [
     file("${path.module}/helm/values/prometheus-blackbox-exporter.yaml"),
     templatefile("${path.module}/assets/blackbox_exporter.yaml.tftpl", {
-      targets = [
-        {
-          name     = "grafana"
-          hostname = "grafana.gogke-test-2.damlys.dev"
-          url      = "https://grafana.gogke-test-2.damlys.dev/healthz"
-        },
-        {
-          name     = "stateless-kuard"
-          hostname = "stateless-kuard.gogke-test-2.damlys.dev"
-          url      = "https://stateless-kuard.gogke-test-2.damlys.dev/healthy"
-        },
-        {
-          name     = "stateful-kuard"
-          hostname = "stateful-kuard.gogke-test-2.damlys.dev"
-          url      = "https://stateful-kuard.gogke-test-2.damlys.dev/healthy"
-        },
-      ]
+      urls = var.blackbox_exporter_urls
     }),
   ]
 }
