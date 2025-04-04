@@ -27,9 +27,7 @@ fileContentTests:
 metadataTest:
   user: root:root
   workdir: /
-  volumes: []
-  exposedPorts: []
-  entrypoint: []
+  # entrypoint: []
   cmd: ["bash"]
   envVars:
     - key: NODE_ENV

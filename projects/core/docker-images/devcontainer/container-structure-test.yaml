@@ -287,8 +287,6 @@ fileContentTests:
 metadataTest:
   user: root:root
   workdir: /
-  # volumes: []
-  # exposedPorts: []
   # entrypoint: []
   cmd: ["bash"]
   envVars:

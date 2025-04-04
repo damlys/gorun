@@ -32,7 +32,5 @@ fileContentTests:
 metadataTest:
   user: root:root
   workdir: /
-  volumes: []
-  exposedPorts: []
-  entrypoint: []
+  # entrypoint: []
   cmd: ["bash"]

@@ -19,9 +19,7 @@ fileContentTests:
 metadataTest:
   user: root:root
   workdir: /go
-  volumes: []
-  exposedPorts: []
-  entrypoint: []
+  # entrypoint: []
   cmd: ["bash"]
   envVars:
     - key: GOPATH
