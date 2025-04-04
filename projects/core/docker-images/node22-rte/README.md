@@ -1,1 +1,1 @@
-Runtime environment (RTE) image for Node.js applications
+Node.js runtime environment

@@ -1,1 +1,1 @@
-Software development kit (SDK) image for Node.js applications
+Node.js software development kit
