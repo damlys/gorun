@@ -16,7 +16,7 @@ fileExistenceTests:
     shouldExist: true
     uid: 1111
     gid: 1111
-    permissions: drwxr-x---
+    permissions: drwxr-xr-x
 fileContentTests:
   - name: operating system
     path: /etc/os-release
