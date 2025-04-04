@@ -1,0 +1,36 @@
+schemaVersion: 2.0.0
+commandTests:
+  - name: node
+    command: node
+    args:
+      - --version
+    expectedOutput:
+      - v22\.
+  - name: npm
+    command: npm
+    args:
+      - --version
+  - name: npx
+    command: npx
+    args:
+      - --version
+  - name: typescript
+    command: tsc
+    args:
+      - --version
+fileContentTests:
+  - name: operating system
+    path: /etc/os-release
+    expectedContents:
+      - ID=debian
+      - VERSION_CODENAME=bookworm
+metadataTest:
+  user: root:root
+  workdir: /
+  volumes: []
+  exposedPorts: []
+  entrypoint: []
+  cmd: ["bash"]
+  envVars:
+    - key: NODE_ENV
+      value: development
