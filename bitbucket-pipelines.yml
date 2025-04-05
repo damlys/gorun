@@ -32,38 +32,6 @@ definitions:
       gcloud auth configure-docker "europe-central2-docker.pkg.dev"
       gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
   steps:
-    - step: &test-core-image-debian-bookworm
-        name: test core-image-debian-bookworm
-        condition:
-          changesets:
-            includePaths:
-              - "projects/core/docker-images/debian-bookworm/**"
-        services:
-          - docker
-        caches:
-          - docker
-        script:
-          - *auth
-          - ./scripts/docker-image build "projects/core/docker-images/debian-bookworm"
-          - ./scripts/docker-image test "projects/core/docker-images/debian-bookworm"
-          - ./scripts/docker-image pre-publish "projects/core/docker-images/debian-bookworm"
-          - ./scripts/docker-image show "projects/core/docker-images/debian-bookworm"
-    - step: &publish-core-image-debian-bookworm
-        name: publish core-image-debian-bookworm
-        condition:
-          changesets:
-            includePaths:
-              - "projects/core/docker-images/debian-bookworm/**"
-        services:
-          - docker
-        caches:
-          - docker
-        script:
-          - *auth
-          - ./scripts/docker-image build "projects/core/docker-images/debian-bookworm"
-          - ./scripts/docker-image test "projects/core/docker-images/debian-bookworm"
-          - ./scripts/docker-image publish "projects/core/docker-images/debian-bookworm"
-          - ./scripts/docker-image show "projects/core/docker-images/debian-bookworm"
     - step: &test-core-image-devcontainer
         name: test core-image-devcontainer
         condition:
@@ -288,38 +256,6 @@ definitions:
           - ./scripts/docker-image test "projects/core/docker-images/node22-sdk"
           - ./scripts/docker-image publish "projects/core/docker-images/node22-sdk"
           - ./scripts/docker-image show "projects/core/docker-images/node22-sdk"
-    - step: &test-core-image-ubuntu-noble
-        name: test core-image-ubuntu-noble
-        condition:
-          changesets:
-            includePaths:
-              - "projects/core/docker-images/ubuntu-noble/**"
-        services:
-          - docker
-        caches:
-          - docker
-        script:
-          - *auth
-          - ./scripts/docker-image build "projects/core/docker-images/ubuntu-noble"
-          - ./scripts/docker-image test "projects/core/docker-images/ubuntu-noble"
-          - ./scripts/docker-image pre-publish "projects/core/docker-images/ubuntu-noble"
-          - ./scripts/docker-image show "projects/core/docker-images/ubuntu-noble"
-    - step: &publish-core-image-ubuntu-noble
-        name: publish core-image-ubuntu-noble
-        condition:
-          changesets:
-            includePaths:
-              - "projects/core/docker-images/ubuntu-noble/**"
-        services:
-          - docker
-        caches:
-          - docker
-        script:
-          - *auth
-          - ./scripts/docker-image build "projects/core/docker-images/ubuntu-noble"
-          - ./scripts/docker-image test "projects/core/docker-images/ubuntu-noble"
-          - ./scripts/docker-image publish "projects/core/docker-images/ubuntu-noble"
-          - ./scripts/docker-image show "projects/core/docker-images/ubuntu-noble"
     - step: &test-core-tfmod-main
         name: test core-tfmod-main
         condition:
@@ -1098,7 +1034,6 @@ pipelines:
   pull-requests:
     "**":
       - parallel:
-          - step: *test-core-image-debian-bookworm
           - step: *test-core-image-devcontainer
           - step: *test-core-image-go1-rte
           - step: *test-core-image-go1-sdk
@@ -1106,7 +1041,6 @@ pipelines:
           - step: *test-core-image-java21-sdk
           - step: *test-core-image-node22-rte
           - step: *test-core-image-node22-sdk
-          - step: *test-core-image-ubuntu-noble
           - step: *test-core-tfmod-main
           - step: *test-core-tfmod-prod
           - step: *test-core-tfmod-test
@@ -1143,7 +1077,6 @@ pipelines:
   branches:
     main:
       - parallel:
-          - step: *publish-core-image-debian-bookworm
           - step: *publish-core-image-devcontainer
           - step: *publish-core-image-go1-rte
           - step: *publish-core-image-go1-sdk
@@ -1151,7 +1084,6 @@ pipelines:
           - step: *publish-core-image-java21-sdk
           - step: *publish-core-image-node22-rte
           - step: *publish-core-image-node22-sdk
-          - step: *publish-core-image-ubuntu-noble
           - step: *publish-core-tfsub-gcp-docker-images-registry
           - step: *publish-core-tfsub-gcp-helm-charts-registry
           - step: *publish-core-tfsub-gcp-project
