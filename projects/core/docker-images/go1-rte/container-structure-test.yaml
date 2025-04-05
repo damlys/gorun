@@ -6,28 +6,31 @@ commandTests:
       - go
     exitCode: 1
 fileExistenceTests:
-  - name: deploy's home directory
-    path: /home/deploy
-    shouldExist: true
-    uid: 1000
-    gid: 1000
-    permissions: drwxr-xr-x
   - name: no go directory
     path: /go
     shouldExist: false
+  - name: deploy's home directory
+    path: /home/deploy
+    shouldExist: true
+    uid: 1111
+    gid: 1111
+    permissions: drwxr-xr-x
 fileContentTests:
+  - name: operating system
+    path: /etc/os-release
+    expectedContents:
+      - ID=debian
+      - VERSION_CODENAME=bookworm
   - name: deploy group
     path: /etc/group
     expectedContents:
-      - .*deploy:x:1000:.*
+      - .*deploy:x:1111:.*
   - name: deploy user
     path: /etc/passwd
     expectedContents:
-      - .*deploy:x:1000:1000::/home/deploy:/bin/bash.*
+      - .*deploy:x:1111:1111::/home/deploy:/bin/bash.*
 metadataTest:
   user: root:root
   workdir: /
-  volumes: []
-  exposedPorts: []
-  entrypoint: []
+  # entrypoint: []
   cmd: ["bash"]

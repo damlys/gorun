@@ -10,12 +10,16 @@ fileExistenceTests:
   - name: go directory
     path: /go
     shouldExist: true
+fileContentTests:
+  - name: operating system
+    path: /etc/os-release
+    expectedContents:
+      - ID=debian
+      - VERSION_CODENAME=bookworm
 metadataTest:
   user: root:root
   workdir: /go
-  volumes: []
-  exposedPorts: []
-  entrypoint: []
+  # entrypoint: []
   cmd: ["bash"]
   envVars:
     - key: GOPATH

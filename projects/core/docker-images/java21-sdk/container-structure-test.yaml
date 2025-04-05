@@ -1,0 +1,37 @@
+schemaVersion: 2.0.0
+commandTests:
+  - name: java
+    command: java
+    args:
+      - --version
+    expectedOutput:
+      - openjdk 21\.
+  - name: javac
+    command: javac
+    args:
+      - --version
+    expectedOutput:
+      - javac 21\.
+  - name: gradle
+    command: gradle
+    args:
+      - --version
+    expectedOutput:
+      - Gradle 8\.
+  - name: maven
+    command: mvn
+    args:
+      - --version
+    expectedOutput:
+      - Apache Maven 3\.
+fileContentTests:
+  - name: operating system
+    path: /etc/os-release
+    expectedContents:
+      - ID=ubuntu
+      - VERSION_CODENAME=noble
+metadataTest:
+  user: root:root
+  workdir: /
+  # entrypoint: []
+  cmd: ["bash"]

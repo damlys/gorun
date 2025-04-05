@@ -64,70 +64,198 @@ definitions:
           - ./scripts/docker-image test "projects/core/docker-images/devcontainer"
           - ./scripts/docker-image publish "projects/core/docker-images/devcontainer"
           - ./scripts/docker-image show "projects/core/docker-images/devcontainer"
-    - step: &test-core-image-go-rte
-        name: test core-image-go-rte
+    - step: &test-core-image-go1-rte
+        name: test core-image-go1-rte
         condition:
           changesets:
             includePaths:
-              - "projects/core/docker-images/go-rte/**"
+              - "projects/core/docker-images/go1-rte/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "projects/core/docker-images/go-rte"
-          - ./scripts/docker-image test "projects/core/docker-images/go-rte"
-          - ./scripts/docker-image pre-publish "projects/core/docker-images/go-rte"
-          - ./scripts/docker-image show "projects/core/docker-images/go-rte"
-    - step: &publish-core-image-go-rte
-        name: publish core-image-go-rte
+          - ./scripts/docker-image build "projects/core/docker-images/go1-rte"
+          - ./scripts/docker-image test "projects/core/docker-images/go1-rte"
+          - ./scripts/docker-image pre-publish "projects/core/docker-images/go1-rte"
+          - ./scripts/docker-image show "projects/core/docker-images/go1-rte"
+    - step: &publish-core-image-go1-rte
+        name: publish core-image-go1-rte
         condition:
           changesets:
             includePaths:
-              - "projects/core/docker-images/go-rte/**"
+              - "projects/core/docker-images/go1-rte/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "projects/core/docker-images/go-rte"
-          - ./scripts/docker-image test "projects/core/docker-images/go-rte"
-          - ./scripts/docker-image publish "projects/core/docker-images/go-rte"
-          - ./scripts/docker-image show "projects/core/docker-images/go-rte"
-    - step: &test-core-image-go-sdk
-        name: test core-image-go-sdk
+          - ./scripts/docker-image build "projects/core/docker-images/go1-rte"
+          - ./scripts/docker-image test "projects/core/docker-images/go1-rte"
+          - ./scripts/docker-image publish "projects/core/docker-images/go1-rte"
+          - ./scripts/docker-image show "projects/core/docker-images/go1-rte"
+    - step: &test-core-image-go1-sdk
+        name: test core-image-go1-sdk
         condition:
           changesets:
             includePaths:
-              - "projects/core/docker-images/go-sdk/**"
+              - "projects/core/docker-images/go1-sdk/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "projects/core/docker-images/go-sdk"
-          - ./scripts/docker-image test "projects/core/docker-images/go-sdk"
-          - ./scripts/docker-image pre-publish "projects/core/docker-images/go-sdk"
-          - ./scripts/docker-image show "projects/core/docker-images/go-sdk"
-    - step: &publish-core-image-go-sdk
-        name: publish core-image-go-sdk
+          - ./scripts/docker-image build "projects/core/docker-images/go1-sdk"
+          - ./scripts/docker-image test "projects/core/docker-images/go1-sdk"
+          - ./scripts/docker-image pre-publish "projects/core/docker-images/go1-sdk"
+          - ./scripts/docker-image show "projects/core/docker-images/go1-sdk"
+    - step: &publish-core-image-go1-sdk
+        name: publish core-image-go1-sdk
         condition:
           changesets:
             includePaths:
-              - "projects/core/docker-images/go-sdk/**"
+              - "projects/core/docker-images/go1-sdk/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "projects/core/docker-images/go-sdk"
-          - ./scripts/docker-image test "projects/core/docker-images/go-sdk"
-          - ./scripts/docker-image publish "projects/core/docker-images/go-sdk"
-          - ./scripts/docker-image show "projects/core/docker-images/go-sdk"
+          - ./scripts/docker-image build "projects/core/docker-images/go1-sdk"
+          - ./scripts/docker-image test "projects/core/docker-images/go1-sdk"
+          - ./scripts/docker-image publish "projects/core/docker-images/go1-sdk"
+          - ./scripts/docker-image show "projects/core/docker-images/go1-sdk"
+    - step: &test-core-image-java21-rte
+        name: test core-image-java21-rte
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/docker-images/java21-rte/**"
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - *auth
+          - ./scripts/docker-image build "projects/core/docker-images/java21-rte"
+          - ./scripts/docker-image test "projects/core/docker-images/java21-rte"
+          - ./scripts/docker-image pre-publish "projects/core/docker-images/java21-rte"
+          - ./scripts/docker-image show "projects/core/docker-images/java21-rte"
+    - step: &publish-core-image-java21-rte
+        name: publish core-image-java21-rte
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/docker-images/java21-rte/**"
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - *auth
+          - ./scripts/docker-image build "projects/core/docker-images/java21-rte"
+          - ./scripts/docker-image test "projects/core/docker-images/java21-rte"
+          - ./scripts/docker-image publish "projects/core/docker-images/java21-rte"
+          - ./scripts/docker-image show "projects/core/docker-images/java21-rte"
+    - step: &test-core-image-java21-sdk
+        name: test core-image-java21-sdk
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/docker-images/java21-sdk/**"
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - *auth
+          - ./scripts/docker-image build "projects/core/docker-images/java21-sdk"
+          - ./scripts/docker-image test "projects/core/docker-images/java21-sdk"
+          - ./scripts/docker-image pre-publish "projects/core/docker-images/java21-sdk"
+          - ./scripts/docker-image show "projects/core/docker-images/java21-sdk"
+    - step: &publish-core-image-java21-sdk
+        name: publish core-image-java21-sdk
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/docker-images/java21-sdk/**"
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - *auth
+          - ./scripts/docker-image build "projects/core/docker-images/java21-sdk"
+          - ./scripts/docker-image test "projects/core/docker-images/java21-sdk"
+          - ./scripts/docker-image publish "projects/core/docker-images/java21-sdk"
+          - ./scripts/docker-image show "projects/core/docker-images/java21-sdk"
+    - step: &test-core-image-node22-rte
+        name: test core-image-node22-rte
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/docker-images/node22-rte/**"
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - *auth
+          - ./scripts/docker-image build "projects/core/docker-images/node22-rte"
+          - ./scripts/docker-image test "projects/core/docker-images/node22-rte"
+          - ./scripts/docker-image pre-publish "projects/core/docker-images/node22-rte"
+          - ./scripts/docker-image show "projects/core/docker-images/node22-rte"
+    - step: &publish-core-image-node22-rte
+        name: publish core-image-node22-rte
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/docker-images/node22-rte/**"
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - *auth
+          - ./scripts/docker-image build "projects/core/docker-images/node22-rte"
+          - ./scripts/docker-image test "projects/core/docker-images/node22-rte"
+          - ./scripts/docker-image publish "projects/core/docker-images/node22-rte"
+          - ./scripts/docker-image show "projects/core/docker-images/node22-rte"
+    - step: &test-core-image-node22-sdk
+        name: test core-image-node22-sdk
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/docker-images/node22-sdk/**"
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - *auth
+          - ./scripts/docker-image build "projects/core/docker-images/node22-sdk"
+          - ./scripts/docker-image test "projects/core/docker-images/node22-sdk"
+          - ./scripts/docker-image pre-publish "projects/core/docker-images/node22-sdk"
+          - ./scripts/docker-image show "projects/core/docker-images/node22-sdk"
+    - step: &publish-core-image-node22-sdk
+        name: publish core-image-node22-sdk
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/docker-images/node22-sdk/**"
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - *auth
+          - ./scripts/docker-image build "projects/core/docker-images/node22-sdk"
+          - ./scripts/docker-image test "projects/core/docker-images/node22-sdk"
+          - ./scripts/docker-image publish "projects/core/docker-images/node22-sdk"
+          - ./scripts/docker-image show "projects/core/docker-images/node22-sdk"
     - step: &test-core-tfmod-main
         name: test core-tfmod-main
         condition:
@@ -907,8 +1035,12 @@ pipelines:
     "**":
       - parallel:
           - step: *test-core-image-devcontainer
-          - step: *test-core-image-go-rte
-          - step: *test-core-image-go-sdk
+          - step: *test-core-image-go1-rte
+          - step: *test-core-image-go1-sdk
+          - step: *test-core-image-java21-rte
+          - step: *test-core-image-java21-sdk
+          - step: *test-core-image-node22-rte
+          - step: *test-core-image-node22-sdk
           - step: *test-core-tfmod-main
           - step: *test-core-tfmod-prod
           - step: *test-core-tfmod-test
@@ -946,8 +1078,12 @@ pipelines:
     main:
       - parallel:
           - step: *publish-core-image-devcontainer
-          - step: *publish-core-image-go-rte
-          - step: *publish-core-image-go-sdk
+          - step: *publish-core-image-go1-rte
+          - step: *publish-core-image-go1-sdk
+          - step: *publish-core-image-java21-rte
+          - step: *publish-core-image-java21-sdk
+          - step: *publish-core-image-node22-rte
+          - step: *publish-core-image-node22-sdk
           - step: *publish-core-tfsub-gcp-docker-images-registry
           - step: *publish-core-tfsub-gcp-helm-charts-registry
           - step: *publish-core-tfsub-gcp-project

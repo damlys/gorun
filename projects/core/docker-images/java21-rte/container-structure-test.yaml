@@ -1,0 +1,39 @@
+schemaVersion: 2.0.0
+commandTests:
+  - name: java
+    command: java
+    args:
+      - --version
+    expectedOutput:
+      - openjdk 21\.
+  - name: no javac
+    command: which
+    args:
+      - javac
+    exitCode: 1
+fileExistenceTests:
+  - name: deploy's home directory
+    path: /home/deploy
+    shouldExist: true
+    uid: 1111
+    gid: 1111
+    permissions: drwxr-x---
+fileContentTests:
+  - name: operating system
+    path: /etc/os-release
+    expectedContents:
+      - ID=ubuntu
+      - VERSION_CODENAME=noble
+  - name: deploy group
+    path: /etc/group
+    expectedContents:
+      - .*deploy:x:1111:.*
+  - name: deploy user
+    path: /etc/passwd
+    expectedContents:
+      - .*deploy:x:1111:1111::/home/deploy:/bin/bash.*
+metadataTest:
+  user: root:root
+  workdir: /
+  # entrypoint: []
+  cmd: ["bash"]
