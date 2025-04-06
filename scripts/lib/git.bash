@@ -60,11 +60,11 @@ function git::commit {
   while ! git push origin "${current_branch}"; do
     log::warning "git: failed to push changes"
 
-    while ! git pull --no-rebase origin "${current_branch}"; do
-      git merge --abort
+    while ! git pull --rebase origin "${current_branch}"; do
+      git rebase --abort
 
-      retry_seconds=$((3 + RANDOM % 8)) # between 3 and 10
       if ((retry_count > 0)); then
+        retry_seconds=$((3 + RANDOM % 8)) # between 3 and 10
         log::warning "git: failed to pull changes: retrying in ${retry_seconds} seconds, ${retry_count} tries left"
         sleep "${retry_seconds}"
       else
