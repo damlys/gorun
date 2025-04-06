@@ -51,6 +51,24 @@ function git::commit {
   git restore --staged .
   git add "./${files_path}"
   git commit --message="${commit_message}"
-  git pull origin
-  git push origin HEAD
+
+  local retry_count=5
+  local retry_seconds=0
+  while ! git push origin HEAD; do
+    log::warning "git: failed to push changes"
+
+    while ! git pull --rebase origin HEAD; do
+      git rebase --abort
+
+      retry_seconds=$((3 + RANDOM % 8)) # between 3 and 10
+      if ((retry_count > 0)); then
+        log::warning "git: failed to pull changes: retrying in ${retry_seconds} seconds, ${retry_count} tries left"
+        sleep "${retry_seconds}"
+      else
+        log::error "git: failed to pull changes"
+        exit 1
+      fi
+      retry_count=$((retry_count - 1))
+    done
+  done
 }
