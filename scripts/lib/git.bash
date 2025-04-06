@@ -47,9 +47,35 @@ function git::is_main_branch {
 function git::commit {
   local files_path="$1"
   local commit_message="$2"
+  local current_branch
+  local retry_count=5
+  local retry_seconds=0
+
+  current_branch="$(git rev-parse --abbrev-ref HEAD)"
 
   git restore --staged .
   git add "./${files_path}"
   git commit --message="${commit_message}"
-  git push origin HEAD
+
+  log::info "git: pushing"
+  while ! git push origin "${current_branch}"; do
+    log::warning "git: failed to push"
+
+    log::info "git: pulling"
+    while ! git pull --rebase origin "${current_branch}"; do
+      git rebase --abort
+
+      if ((retry_count > 0)); then
+        retry_seconds=$((3 + RANDOM % 8)) # between 3 and 10
+        log::warning "git: failed to pull: retrying in ${retry_seconds} seconds, ${retry_count} tries left"
+        sleep "${retry_seconds}"
+      else
+        log::error "git: failed to pull"
+        return 1
+      fi
+      retry_count=$((retry_count - 1))
+    done
+    log::info "git: pulled"
+  done
+  log::info "git: pushed"
 }
