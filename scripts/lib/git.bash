@@ -51,5 +51,6 @@ function git::commit {
   git restore --staged .
   git add "./${files_path}"
   git commit --message="${commit_message}"
+  git pull --rebase origin HEAD
   git push origin HEAD
 }
