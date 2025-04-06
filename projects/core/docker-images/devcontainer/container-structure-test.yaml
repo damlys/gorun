@@ -58,12 +58,6 @@ commandTests:
     command: helm
     args:
       - version
-  - # https://istio.io/latest/docs/reference/commands/istioctl/
-    name: istioctl
-    command: istioctl
-    args:
-      - version
-      - --remote=false
   - # https://kubectl.docs.kubernetes.io/references/kubectl/
     name: kubectl
     command: kubectl
@@ -257,9 +251,6 @@ fileExistenceTests:
     shouldExist: true
   - name: helm shell completion
     path: /etc/bash_completion.d/helm
-    shouldExist: true
-  - name: istioctl shell completion
-    path: /etc/bash_completion.d/istioctl
     shouldExist: true
   - name: kubectl shell completion
     path: /etc/bash_completion.d/kubectl

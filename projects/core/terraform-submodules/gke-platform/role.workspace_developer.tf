@@ -125,11 +125,6 @@ resource "kubernetes_cluster_role" "namespace_workspace_developer" {
     resources  = ["gateways", "gateways/status", "httproutes", "httproutes/status"]
     verbs      = ["get", "list", "watch"]
   }
-  # rule {
-  #   api_groups = ["networking.istio.io"]
-  #   resources  = []
-  #   verbs      = ["get", "list", "watch"]
-  # }
 
   # rule {
   #   api_groups = ["cert-manager.io"]
