@@ -57,8 +57,8 @@ function git::commit {
   while ! git push origin HEAD; do
     log::warning "git: failed to push changes"
 
-    while ! git pull --rebase origin HEAD; do
-      git rebase --abort
+    while ! git pull origin HEAD; do
+      git merge --abort
 
       retry_seconds=$((3 + RANDOM % 8)) # between 3 and 10
       if ((retry_count > 0)); then
