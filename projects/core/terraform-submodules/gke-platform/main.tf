@@ -187,11 +187,15 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
     gcs_fuse_csi_driver_config { enabled = false }           # Google Cloud Storage driver
     horizontal_pod_autoscaling { disabled = false }
     http_load_balancing { disabled = false }
-    network_policy_config { disabled = false }
+    network_policy_config { disabled = false } # TODO
   }
   vertical_pod_autoscaling { enabled = true }
   gateway_api_config { channel = "CHANNEL_STANDARD" }
-  network_policy { enabled = true }
+  network_policy { enabled = true } # TODO
+
+  datapath_provider = "ADVANCED_DATAPATH" # enables Dataplane v2 # TODO
+
+  enable_cilium_clusterwide_network_policy = true # TODO
 
   # do not create default node pool
   initial_node_count       = 1
