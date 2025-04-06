@@ -57,21 +57,25 @@ function git::commit {
 
   local retry_count=5
   local retry_seconds=0
+  log::info "git: pushing"
   while ! git push origin "${current_branch}"; do
-    log::warning "git: failed to push changes"
+    log::warning "git: failed to push"
 
+    log::info "git: pulling"
     while ! git pull --rebase origin "${current_branch}"; do
       git rebase --abort
 
       if ((retry_count > 0)); then
         retry_seconds=$((3 + RANDOM % 8)) # between 3 and 10
-        log::warning "git: failed to pull changes: retrying in ${retry_seconds} seconds, ${retry_count} tries left"
+        log::warning "git: failed to pull: retrying in ${retry_seconds} seconds, ${retry_count} tries left"
         sleep "${retry_seconds}"
       else
-        log::error "git: failed to pull changes"
+        log::error "git: failed to pull"
         exit 1
       fi
       retry_count=$((retry_count - 1))
     done
+    log::info "git: pulled"
   done
+  log::info "git: pushed"
 }
