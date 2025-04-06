@@ -7,7 +7,7 @@ function changelog::update_header {
   local changelog_path="${project_path}/CHANGELOG.md"
   local changelog_content
 
-  today="1993-05-12" # TODO restore
+  today="$(date --utc '+%Y-%m-%d')" # yyyy-mm-dd
   changelog_content="$(cat "${changelog_path}")"
 
   if git::is_main_branch; then
