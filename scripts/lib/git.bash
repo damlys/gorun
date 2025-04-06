@@ -47,6 +47,9 @@ function git::is_main_branch {
 function git::commit {
   local files_path="$1"
   local commit_message="$2"
+  local current_branch
+
+  current_branch="$(git rev-parse --abbrev-ref HEAD)"
 
   git restore --staged .
   git add "./${files_path}"
@@ -54,10 +57,10 @@ function git::commit {
 
   local retry_count=5
   local retry_seconds=0
-  while ! git push origin HEAD; do
+  while ! git push origin "${current_branch}"; do
     log::warning "git: failed to push changes"
 
-    while ! git pull --no-rebase origin HEAD; do
+    while ! git pull --no-rebase origin "${current_branch}"; do
       git merge --abort
 
       retry_seconds=$((3 + RANDOM % 8)) # between 3 and 10
