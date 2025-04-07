@@ -25,6 +25,12 @@ commandTests:
 
   # Cloud Native
 
+  - # https://docs.cilium.io/en/stable/gettingstarted/k8s-install-default/#install-the-cilium-cli
+    name: cilium
+    command: cilium
+    args:
+      - version
+      - --client
   - # https://cert-manager.io/docs/reference/cmctl/
     name: cmctl
     command: cmctl
@@ -56,6 +62,11 @@ commandTests:
   - # https://helm.sh/
     name: helm
     command: helm
+    args:
+      - version
+  - # https://docs.cilium.io/en/stable/observability/hubble/setup/#install-the-hubble-client
+    name: hubble
+    command: hubble
     args:
       - version
   - # https://kubectl.docs.kubernetes.io/references/kubectl/
@@ -231,6 +242,9 @@ commandTests:
 #######################################
 
 fileExistenceTests:
+  - name: cilium shell completion
+    path: /etc/bash_completion.d/cilium
+    shouldExist: true
   - name: cmctl shell completion
     path: /etc/bash_completion.d/cmctl
     shouldExist: true
@@ -251,6 +265,9 @@ fileExistenceTests:
     shouldExist: true
   - name: helm shell completion
     path: /etc/bash_completion.d/helm
+    shouldExist: true
+  - name: hubble shell completion
+    path: /etc/bash_completion.d/hubble
     shouldExist: true
   - name: kubectl shell completion
     path: /etc/bash_completion.d/kubectl

@@ -171,6 +171,11 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
     key_name = google_kms_crypto_key.gke_secrets.id
   }
 
+  # enable Dataplane v2 (Cilium CNI)
+  datapath_provider = "ADVANCED_DATAPATH"
+  # enable CiliumClusterWideNetworkPolicy resource
+  enable_cilium_clusterwide_network_policy = true
+
   # logging_service = "none"
   logging_config {
     enable_components = []
@@ -179,6 +184,10 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
   monitoring_config {
     enable_components = []
     managed_prometheus { enabled = false }
+    advanced_datapath_observability_config {
+      enable_metrics = false # Dataplane V2 Metrics
+      enable_relay   = true  # Dataplane V2 Observability
+    }
   }
 
   addons_config {
@@ -187,15 +196,9 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
     gcs_fuse_csi_driver_config { enabled = false }           # Google Cloud Storage driver
     horizontal_pod_autoscaling { disabled = false }
     http_load_balancing { disabled = false }
-    network_policy_config { disabled = false } # TODO
   }
   vertical_pod_autoscaling { enabled = true }
   gateway_api_config { channel = "CHANNEL_STANDARD" }
-  network_policy { enabled = true } # TODO
-
-  datapath_provider = "ADVANCED_DATAPATH" # enables Dataplane v2 # TODO
-
-  enable_cilium_clusterwide_network_policy = true # TODO
 
   # do not create default node pool
   initial_node_count       = 1
