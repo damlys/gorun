@@ -186,7 +186,7 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
     managed_prometheus { enabled = false }
     advanced_datapath_observability_config {
       enable_metrics = true # Dataplane V2 Metrics
-      enable_relay   = true # Dataplane V2 Observability
+      enable_relay   = true # Dataplane V2 Observability (Hubble Relay)
     }
   }
 
@@ -435,6 +435,29 @@ resource "helm_release" "velero" {
       velero_backups_kms_key_name  = google_kms_crypto_key.velero_backups.id
 
       kubectl_image_tag = var.kubectl_image_tag == null ? "" : var.kubectl_image_tag
+    }),
+  ]
+}
+
+#######################################
+### Hubble UI
+#######################################
+
+resource "helm_release" "hubble_ui" {
+  depends_on = [
+    google_container_cluster.this,
+    google_container_node_pool.this,
+    helm_release.prometheus_operator_crds,
+  ]
+
+  repository = "${path.module}/helm/charts"
+  chart      = "cilium"
+  name       = "hubble-ui"
+  namespace  = "gke-managed-dpv2-observability" # created by GKE
+
+  values = [
+    file("${path.module}/helm/values/cilium.yaml"),
+    templatefile("${path.module}/assets/hubble_ui.yaml.tftpl", {
     }),
   ]
 }

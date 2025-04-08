@@ -1,0 +1,37 @@
+agent: false
+tls:
+  secretsNamespace:
+    create: false
+  readSecretsOnlyFromSecretsNamespace: false
+operator:
+  enabled: false
+cni:
+  install: false
+envoy:
+  enabled: false
+hubble:
+  enabled: false
+  relay:
+    enabled: false
+    tls:
+      server:
+        enabled: true
+        relayName: hubble-relay.gke-managed-dpv2-observability.svc.cluster.local
+  ui:
+    enabled: true
+    standalone:
+      enabled: true
+      tls:
+        certsVolume:
+          projected:
+            defaultMode: 0400
+            sources:
+              - secret:
+                  name: hubble-relay-client-certs
+                  items:
+                    - key: tls.crt
+                      path: client.crt
+                    - key: tls.key
+                      path: client.key
+                    - key: ca.crt
+                      path: hubble-relay-ca.crt

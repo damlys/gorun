@@ -1,0 +1,107 @@
+resources:
+  requests:
+    cpu: 1m
+    memory: 1Mi
+  limits: {}
+cni:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+hubble:
+  relay:
+    resources:
+      requests:
+        cpu: 1m
+        memory: 1Mi
+      limits: {}
+    replicas: 1
+  ui:
+    backend:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 1Mi
+        limits: {}
+    frontend:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 1Mi
+        limits: {}
+    replicas: 1
+envoy:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+operator:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+nodeinit:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+preflight:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+clustermesh:
+  apiserver:
+    etcd:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 1Mi
+        limits: {}
+      init:
+        resources:
+          requests:
+            cpu: 1m
+            memory: 1Mi
+          limits: {}
+    kvstoremesh:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 1Mi
+        limits: {}
+    replicas: 1
+    resources:
+      requests:
+        cpu: 1m
+        memory: 1Mi
+      limits: {}
+cgroup:
+  autoMount:
+    resources:
+      requests:
+        cpu: 1m
+        memory: 1Mi
+      limits: {}
+authentication:
+  mutual:
+    spire:
+      install:
+        agent:
+          resources:
+            requests:
+              cpu: 1m
+              memory: 1Mi
+            limits: {}
+        server:
+          resources:
+            requests:
+              cpu: 1m
+              memory: 1Mi
+            limits: {}
