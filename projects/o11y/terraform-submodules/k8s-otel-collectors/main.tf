@@ -193,6 +193,30 @@ resource "kubernetes_manifest" "prom_collector" {
   }
 }
 
+data "kubernetes_service_account" "prom_collector" {
+  metadata {
+    name      = "${kubernetes_manifest.prom_collector.manifest.metadata.name}-collector"
+    namespace = kubernetes_manifest.prom_collector.manifest.metadata.namespace
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "prom_collector" {
+  metadata {
+    name = "${data.kubernetes_service_account.prom_collector.metadata[0].namespace}-${data.kubernetes_service_account.prom_collector.metadata[0].name}"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "opentelemetry-collector"
+  }
+  subject {
+    api_group = ""
+    kind      = "ServiceAccount"
+    name      = data.kubernetes_service_account.prom_collector.metadata[0].name
+    namespace = data.kubernetes_service_account.prom_collector.metadata[0].namespace
+  }
+}
+
 resource "kubernetes_manifest" "prom_pod_annotations" { # discovers metrics by pod annotations
   manifest = {
     apiVersion = "monitoring.coreos.com/v1"
@@ -244,29 +268,5 @@ resource "kubernetes_manifest" "prom_pod_annotations" { # discovers metrics by p
         ]
       }]
     }
-  }
-}
-
-data "kubernetes_service_account" "prom_collector" {
-  metadata {
-    name      = "${kubernetes_manifest.prom_collector.manifest.metadata.name}-collector"
-    namespace = kubernetes_manifest.prom_collector.manifest.metadata.namespace
-  }
-}
-
-resource "kubernetes_cluster_role_binding" "prom_collector" {
-  metadata {
-    name = "${data.kubernetes_service_account.prom_collector.metadata[0].namespace}-${data.kubernetes_service_account.prom_collector.metadata[0].name}"
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "opentelemetry-collector"
-  }
-  subject {
-    api_group = ""
-    kind      = "ServiceAccount"
-    name      = data.kubernetes_service_account.prom_collector.metadata[0].name
-    namespace = data.kubernetes_service_account.prom_collector.metadata[0].namespace
   }
 }
