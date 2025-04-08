@@ -171,7 +171,7 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
     key_name = google_kms_crypto_key.gke_secrets.id
   }
 
-  # enable Dataplane v2 (Cilium CNI)
+  # enable Dataplane V2 (Cilium CNI)
   datapath_provider = "ADVANCED_DATAPATH"
   # enable CiliumClusterWideNetworkPolicy resource
   enable_cilium_clusterwide_network_policy = true
@@ -185,8 +185,8 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
     enable_components = []
     managed_prometheus { enabled = false }
     advanced_datapath_observability_config {
-      enable_metrics = false # Dataplane V2 Metrics
-      enable_relay   = true  # Dataplane V2 Observability
+      enable_metrics = true # Dataplane V2 Metrics
+      enable_relay   = true # Dataplane V2 Observability
     }
   }
 
