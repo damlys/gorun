@@ -25,7 +25,8 @@ resource "kubernetes_manifest" "otlp_collector" {
         requests = { cpu = "1m", memory = "1Mi" }
         limits   = {}
       }
-      observability = { metrics = { enableMetrics = false } }
+      observability  = { metrics = { enableMetrics = false } }
+      podAnnotations = { "prometheus.io/scrape" = false }
     }
   }
 }
@@ -87,7 +88,8 @@ resource "kubernetes_manifest" "file_collector" {
         requests = { cpu = "1m", memory = "1Mi" }
         limits   = {}
       }
-      observability = { metrics = { enableMetrics = false } }
+      observability  = { metrics = { enableMetrics = false } }
+      podAnnotations = { "prometheus.io/scrape" = false }
     }
   }
 }
@@ -185,7 +187,8 @@ resource "kubernetes_manifest" "prom_collector" {
         requests = { cpu = "1m", memory = "1Mi" }
         limits   = {}
       }
-      observability = { metrics = { enableMetrics = false } }
+      observability  = { metrics = { enableMetrics = false } }
+      podAnnotations = { "prometheus.io/scrape" = false }
     }
   }
 }
@@ -211,5 +214,59 @@ resource "kubernetes_cluster_role_binding" "prom_collector" {
     kind      = "ServiceAccount"
     name      = data.kubernetes_service_account.prom_collector.metadata[0].name
     namespace = data.kubernetes_service_account.prom_collector.metadata[0].namespace
+  }
+}
+
+resource "kubernetes_manifest" "prom_pod_annotations" { # discovers metrics by pod annotations
+  manifest = {
+    apiVersion = "monitoring.coreos.com/v1"
+    kind       = "PodMonitor"
+    metadata = {
+      name      = "prom-pod-annotations"
+      namespace = kubernetes_namespace.prom_collector.metadata[0].name
+    }
+    spec = {
+      namespaceSelector = {
+        any = true
+      }
+      selector = {
+        matchLabels = {}
+      }
+      podMetricsEndpoints = [{
+        relabelings = [ # https://github.com/prometheus-community/helm-charts/blob/2f1d889c6d5e7c3a73b61476b3efe7eed8385d35/charts/prometheus/values.yaml#L1109
+          {
+            sourceLabels = ["__meta_kubernetes_pod_annotation_prometheus_io_scrape"]
+            action       = "keep"
+            regex        = true
+          },
+          {
+            sourceLabels = ["__meta_kubernetes_pod_annotation_prometheus_io_scheme"]
+            action       = "replace"
+            regex        = "(https?)"
+            targetLabel  = "__scheme__"
+          },
+          {
+            sourceLabels = ["__meta_kubernetes_pod_annotation_prometheus_io_path"]
+            action       = "replace"
+            regex        = "(.+)"
+            targetLabel  = "__metrics_path__"
+          },
+          {
+            sourceLabels = ["__meta_kubernetes_pod_annotation_prometheus_io_port", "__meta_kubernetes_pod_ip"]
+            action       = "replace"
+            regex        = "(\\d+);(([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4})"
+            replacement  = "[$2]:$1"
+            targetLabel  = "__address__"
+          },
+          {
+            sourceLabels = ["__meta_kubernetes_pod_annotation_prometheus_io_port", "__meta_kubernetes_pod_ip"]
+            action       = "replace"
+            regex        = "(\\d+);((([0-9]+?)(\\.|$)){4})"
+            replacement  = "$2:$1"
+            targetLabel  = "__address__"
+          },
+        ]
+      }]
+    }
   }
 }
