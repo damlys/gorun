@@ -3,10 +3,6 @@ module "workspace" {
 
   workspace_name = "kuard"
 
-  extra_namespace_labels = {
-    istio-injection = "enabled" # or "disabled"
-  }
-
   iam_testers = [
     "user:damlys.test@gmail.com",
   ]

@@ -15,10 +15,6 @@ receivers:
       # Kubernetes namespaces
       - /var/log/pods/kube-*_*_*/*/*.log
       - /var/log/pods/gke-*_*_*/*/*.log
-      # Istio namespaces, pods and containers
-      - /var/log/pods/istio-*_*_*/*/*.log
-      - /var/log/pods/*_istio-*_*/*/*.log
-      - /var/log/pods/*_*_*/istio-*/*.log
       # Observability namespaces
       - /var/log/pods/o11y-*_*_*/*/*.log
       # OpenTelemetry auto-instrumentation
