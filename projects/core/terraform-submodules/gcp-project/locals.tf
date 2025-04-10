@@ -1,5 +1,5 @@
 locals {
-  services = [
+  services = toset([
     "cloudresourcemanager.googleapis.com",
     "serviceusage.googleapis.com",
 
@@ -15,5 +15,5 @@ locals {
     "cloudtrace.googleapis.com",
     "logging.googleapis.com",
     "monitoring.googleapis.com",
-  ]
+  ])
 }
