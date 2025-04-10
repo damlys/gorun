@@ -78,6 +78,13 @@ go install golang.org/x/tools/cmd/gonew@latest
 go install golang.org/x/tools/gopls@latest
 go install golang.org/x/vuln/cmd/govulncheck@latest
 
+# cilium: https://github.com/cilium/cilium-cli/releases
+cilium_version="0.18.3"
+wget https://github.com/cilium/cilium-cli/releases/download/v${cilium_version}/cilium-${TARGETOS}-${TARGETARCH}.tar.gz \
+  --output-document=/tmp/cilium.tar.gz
+tar -zxvf cilium.tar.gz
+mv cilium /usr/local/bin/cilium
+
 # cmctl: https://github.com/cert-manager/cmctl/releases
 cmctl_version="2.1.1"
 wget https://github.com/cert-manager/cmctl/releases/download/v${cmctl_version}/cmctl_${TARGETOS}_${TARGETARCH} \
@@ -107,6 +114,13 @@ wget https://get.helm.sh/helm-v${helm_version}-${TARGETOS}-${TARGETARCH}.tar.gz 
 tar -zxvf helm.tar.gz
 mv ${TARGETOS}-${TARGETARCH}/helm /usr/local/bin/helm
 
+# hubble: https://github.com/cilium/hubble/releases
+hubble_version="1.17.2"
+wget https://github.com/cilium/hubble/releases/download/v${hubble_version}/hubble-${TARGETOS}-${TARGETARCH}.tar.gz \
+  --output-document=/tmp/hubble.tar.gz
+tar -zxvf hubble.tar.gz
+mv hubble /usr/local/bin/hubble
+
 # shfmt: https://github.com/mvdan/sh/releases
 shfmt_version="3.11.0"
 wget https://github.com/mvdan/sh/releases/download/v${shfmt_version}/shfmt_v${shfmt_version}_${TARGETOS}_${TARGETARCH} \
@@ -135,11 +149,13 @@ wget https://github.com/mikefarah/yq/releases/download/v${yq_version}/yq_${TARGE
 chmod a+x /usr/local/bin/*
 
 # shell completions
+cilium completion bash >/etc/bash_completion.d/cilium
 cmctl completion bash >/etc/bash_completion.d/cmctl
 gh completion -s bash >/etc/bash_completion.d/gh
 golangci-lint completion bash >/etc/bash_completion.d/golangci-lint
 goreleaser completion bash >/etc/bash_completion.d/goreleaser
 helm completion bash >/etc/bash_completion.d/helm
+hubble completion bash >/etc/bash_completion.d/hubble
 kubectl completion bash >/etc/bash_completion.d/kubectl
 velero completion bash >/etc/bash_completion.d/velero
 yq shell-completion bash >/etc/bash_completion.d/yq
