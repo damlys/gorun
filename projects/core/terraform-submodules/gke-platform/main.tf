@@ -35,6 +35,10 @@ resource "google_compute_address" "egress_internet" { # console.cloud.google.com
 
   address_type = "EXTERNAL"
   network_tier = "STANDARD"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_compute_router" "egress_internet" { # console.cloud.google.com/hybrid/routers/list
@@ -103,6 +107,10 @@ resource "google_kms_crypto_key" "gke_secrets" { # console.cloud.google.com/secu
   key_ring = google_kms_key_ring.this.id
   name     = "gke-secrets"
   purpose  = "ENCRYPT_DECRYPT"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_kms_crypto_key_iam_member" "gke_secrets" {
@@ -200,21 +208,21 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
   vertical_pod_autoscaling { enabled = true }
   gateway_api_config { channel = "CHANNEL_STANDARD" }
 
-  # do not create default node pool
-  initial_node_count       = 1
-  remove_default_node_pool = true
-
-  # allow to destroy resource
-  deletion_protection = false
-
-  # do not track node updates
   lifecycle {
+    # do not track node updates
     ignore_changes = [
       node_config,
       node_pool,
       node_version,
     ]
+
+    prevent_destroy = true
   }
+  deletion_protection = true
+
+  # do not create default node pool
+  initial_node_count       = 1
+  remove_default_node_pool = true
 }
 
 resource "kubernetes_namespace" "gke_security_groups" {
@@ -350,6 +358,10 @@ resource "google_kms_crypto_key" "velero_backups" {
   key_ring = google_kms_key_ring.this.id
   name     = "velero-backups"
   purpose  = "ENCRYPT_DECRYPT"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_kms_crypto_key_iam_member" "velero_backups" {
@@ -394,13 +406,17 @@ resource "google_storage_bucket" "velero_backups" {
   labels        = local.velero_labels
   location      = var.platform_region
   storage_class = "REGIONAL"
-  force_destroy = true
 
   encryption {
     default_kms_key_name = google_kms_crypto_key.velero_backups.id
   }
   uniform_bucket_level_access = true
   public_access_prevention    = "enforced"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+  force_destroy = false
 }
 
 resource "google_storage_bucket_iam_member" "velero_service_account" {
@@ -531,6 +547,10 @@ resource "google_compute_address" "ingress_internet" { # console.cloud.google.co
 
   address_type = "EXTERNAL"
   network_tier = "STANDARD"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_dns_managed_zone" "ingress_internet" { # console.cloud.google.com/net-services/dns/zones

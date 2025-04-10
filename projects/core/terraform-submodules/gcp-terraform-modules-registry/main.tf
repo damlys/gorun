@@ -12,6 +12,11 @@ resource "google_storage_bucket" "this" {
 
   uniform_bucket_level_access = true
   public_access_prevention    = contains(var.iam_readers, "allUsers") ? "inherited" : "enforced"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+  force_destroy = false
 }
 
 resource "google_storage_bucket_iam_member" "readers" {

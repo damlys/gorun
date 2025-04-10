@@ -46,6 +46,10 @@ resource "helm_release" "grafana_postgresql" {
     templatefile("${path.module}/assets/grafana_postgresql/values.yaml.tftpl", {
     }),
   ]
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "helm_release" "grafana" {
@@ -139,10 +143,14 @@ resource "google_storage_bucket" "loki" {
   labels        = local.loki_labels
   location      = var.platform_region
   storage_class = "REGIONAL"
-  force_destroy = true
 
   uniform_bucket_level_access = true
   public_access_prevention    = "enforced"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+  force_destroy = false
 }
 
 resource "google_storage_bucket_iam_member" "loki_service_account" {
@@ -199,10 +207,14 @@ resource "google_storage_bucket" "mimir" {
   labels        = local.mimir_labels
   location      = var.platform_region
   storage_class = "REGIONAL"
-  force_destroy = true
 
   uniform_bucket_level_access = true
   public_access_prevention    = "enforced"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+  force_destroy = false
 }
 
 resource "google_storage_bucket_iam_member" "mimir_service_account" {
@@ -259,10 +271,14 @@ resource "google_storage_bucket" "tempo" {
   labels        = local.tempo_labels
   location      = var.platform_region
   storage_class = "REGIONAL"
-  force_destroy = true
 
   uniform_bucket_level_access = true
   public_access_prevention    = "enforced"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+  force_destroy = false
 }
 
 resource "google_storage_bucket_iam_member" "tempo_service_account" {
