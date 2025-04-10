@@ -1,3 +1,22 @@
+#
+# see: Enable the Hubble UI / Helm (Standalone install)
+# https://docs.cilium.io/en/stable/observability/hubble/hubble-ui/#enable-the-hubble-ui
+#
+# see: How to deploy the Hubble UI binary distribution
+# https://cloud.google.com/kubernetes-engine/docs/how-to/configure-dpv2-observability#how_to_deploy_the_hubble_ui_binary_distribution
+#
+# render command for debugging purposes:
+# helm template hubble-ui ./projects/core/terraform-submodules/gke-platform/helm/charts/cilium/ \
+#   --values=./projects/core/terraform-submodules/gke-platform/assets/hubble_ui.yaml.tftpl \
+#   --values=./projects/core/terraform-submodules/gke-platform/helm/values/cilium.yaml
+#
+# port-forward command:
+# kubectl --namespace=gke-managed-dpv2-observability port-forward service/hubble-ui 16100:80
+#
+# logs command:
+# kubectl --namespace=gke-managed-dpv2-observability logs --selector=k8s-app=hubble-ui --container=backend --follow
+#
+
 agent: false
 tls:
   secretsNamespace:
@@ -16,9 +35,17 @@ hubble:
     tls:
       server:
         enabled: true
-        relayName: hubble-relay.gke-managed-dpv2-observability.svc.cluster.local
+        relayName: relay.gke-managed-dpv2-observability.svc.cluster.local
   ui:
     enabled: true
+    frontend:
+      image:
+        tag: v0.11.0
+        useDigest: false
+    backend:
+      image:
+        tag: v0.11.0
+        useDigest: false
     standalone:
       enabled: true
       tls:

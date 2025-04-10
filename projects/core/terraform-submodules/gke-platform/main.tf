@@ -293,6 +293,34 @@ resource "google_container_node_pool" "this" {
 }
 
 #######################################
+### Cilium & Hubble
+#######################################
+
+data "kubernetes_namespace" "gke_dataplane_v2_observability" {
+  depends_on = [
+    google_container_cluster.this,
+    google_container_node_pool.this,
+  ]
+
+  metadata {
+    name = "gke-managed-dpv2-observability" # Dataplane V2 Observability
+  }
+}
+
+resource "helm_release" "hubble_ui" {
+  repository = "${path.module}/helm/charts"
+  chart      = "cilium"
+  name       = "hubble-ui"
+  namespace  = data.kubernetes_namespace.gke_dataplane_v2_observability.metadata[0].name
+
+  values = [
+    file("${path.module}/helm/values/cilium.yaml"),
+    templatefile("${path.module}/assets/hubble_ui.yaml.tftpl", {
+    }),
+  ]
+}
+
+#######################################
 ### Prometheus Operator (CRDs only)
 #######################################
 
@@ -435,29 +463,6 @@ resource "helm_release" "velero" {
       velero_backups_kms_key_name  = google_kms_crypto_key.velero_backups.id
 
       kubectl_image_tag = var.kubectl_image_tag == null ? "" : var.kubectl_image_tag
-    }),
-  ]
-}
-
-#######################################
-### Hubble UI
-#######################################
-
-resource "helm_release" "hubble_ui" {
-  depends_on = [
-    google_container_cluster.this,
-    google_container_node_pool.this,
-    helm_release.prometheus_operator_crds,
-  ]
-
-  repository = "${path.module}/helm/charts"
-  chart      = "cilium"
-  name       = "hubble-ui"
-  namespace  = "gke-managed-dpv2-observability" # created by GKE
-
-  values = [
-    file("${path.module}/helm/values/cilium.yaml"),
-    templatefile("${path.module}/assets/hubble_ui.yaml.tftpl", {
     }),
   ]
 }
