@@ -24,4 +24,4 @@ We need to choose GCP network tier for GKE gateways.
 
 Chosen standard network tier, because it's cheaper option. Global routing is not needed at this moment.
 
-Use [this Terraform code](0001-network-tier/premium-network-tier.tf) to move back to premium network tier in the future (if needed).
+Use [this Terraform code](0001-network-tier/premium-network-tier.txt) to move back to premium network tier in the future (if needed).
