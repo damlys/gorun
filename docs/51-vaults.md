@@ -1,4 +1,6 @@
-# Secrets
+# Vaults
+
+## Kubernetes secrets
 
 ```
 $ kubectl \
