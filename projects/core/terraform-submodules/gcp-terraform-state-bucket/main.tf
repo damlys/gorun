@@ -23,6 +23,7 @@ resource "google_storage_bucket" "this" {
   lifecycle {
     prevent_destroy = true
   }
+  force_destroy = false
 }
 
 resource "google_storage_bucket_iam_member" "readers" {

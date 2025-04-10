@@ -13,6 +13,10 @@ resource "kubernetes_namespace" "this" {
     }, var.extra_namespace_annotations)
   }
 
+  lifecycle {
+    prevent_destroy = true
+  }
+
   timeouts {
     delete = "20m" # it takes about 10 minutes to delete a GKE gateway route (servicenetworkendpointgroups.networking.gke.io)
   }

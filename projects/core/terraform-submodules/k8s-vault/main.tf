@@ -2,6 +2,10 @@ resource "kubernetes_namespace" "this" {
   metadata {
     name = "vault-${var.vault_name}"
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "kubernetes_resource_quota" "disable_pods_scheduling" {

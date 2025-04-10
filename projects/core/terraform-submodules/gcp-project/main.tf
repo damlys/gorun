@@ -14,6 +14,8 @@ resource "google_project" "this" {
       folder_id,
       billing_account,
     ]
+
+    prevent_destroy = true
   }
 
   # do not create default network
@@ -23,7 +25,7 @@ resource "google_project" "this" {
 resource "google_project_service" "this" { # console.cloud.google.com/apis/dashboard
   project = google_project.this.project_id
 
-  for_each = var.services
+  for_each = local.services
   service  = each.key
 }
 

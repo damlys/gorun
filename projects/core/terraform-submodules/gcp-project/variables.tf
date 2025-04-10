@@ -11,27 +11,6 @@ variable "billing_account_id" {
   default = null
 }
 
-variable "services" {
-  type = set(string)
-  default = [
-    "cloudresourcemanager.googleapis.com",
-    "serviceusage.googleapis.com",
-
-    "artifactregistry.googleapis.com",
-    "cloudkms.googleapis.com",
-    "compute.googleapis.com",
-    "container.googleapis.com",
-
-    "certificatemanager.googleapis.com",
-    "dns.googleapis.com",
-    "networkservices.googleapis.com",
-
-    "cloudtrace.googleapis.com",
-    "logging.googleapis.com",
-    "monitoring.googleapis.com",
-  ]
-}
-
 variable "firebase_enabled" {
   type    = bool
   default = false
