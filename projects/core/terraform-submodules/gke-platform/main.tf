@@ -290,6 +290,16 @@ resource "google_container_node_pool" "this" {
     metadata = {
       disable-legacy-endpoints = "true"
     }
+
+    labels = each.value.node_labels
+    dynamic "taint" {
+      for_each = each.value.node_taints
+      content {
+        key    = taint.value.key
+        value  = taint.value.value
+        effect = taint.value.effect
+      }
+    }
   }
 
   lifecycle {
