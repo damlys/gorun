@@ -56,6 +56,8 @@ variable "node_pools" {
     node_spot_instances = bool
     node_min_instances  = number
     node_max_instances  = number
+    node_labels         = map(string)
+    node_taints         = list(object({ key = string, value = string, effect = string }))
   }))
   default = {
     "main-pool-1" = {
@@ -63,6 +65,8 @@ variable "node_pools" {
       node_spot_instances = false
       node_min_instances  = 1
       node_max_instances  = 1
+      node_labels         = {}
+      node_taints         = []
     }
   }
 }

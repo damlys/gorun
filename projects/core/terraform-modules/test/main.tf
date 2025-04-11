@@ -17,6 +17,8 @@ module "test_platform" {
       node_spot_instances = true
       node_min_instances  = 1
       node_max_instances  = 1
+      node_labels         = {}
+      node_taints         = []
     }
   }
 

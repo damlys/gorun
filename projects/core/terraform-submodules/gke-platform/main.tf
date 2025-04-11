@@ -290,6 +290,19 @@ resource "google_container_node_pool" "this" {
     metadata = {
       disable-legacy-endpoints = "true"
     }
+
+    # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#built-in-node-labels
+    labels = each.value.node_labels
+
+    # https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+    dynamic "taint" {
+      for_each = each.value.node_taints
+      content {
+        key    = taint.value.key
+        value  = taint.value.value
+        effect = taint.value.effect
+      }
+    }
   }
 
   lifecycle {
