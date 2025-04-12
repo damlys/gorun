@@ -135,7 +135,7 @@ module "test_prom_exporters" {
 
   blackbox_exporter_urls = [
     "https://grafana.gogke-test-2.damlys.dev/healthz",
-    "https://kibana.gogke-test-2.damlys.dev/api/status", # TODO
+    "https://kibana.gogke-test-2.damlys.dev/login",
     "https://stateful-kuard.gogke-test-2.damlys.dev/healthy",
     "https://stateless-kuard.gogke-test-2.damlys.dev/healthy",
   ]

@@ -3,15 +3,15 @@ service:
     logs:
       receivers: [otlp]
       processors: [memory_limiter, filter, k8sattributes, batch]
-      exporters: [otlphttp/loki]
+      exporters: [otlphttp/elasticsearch, otlphttp/loki]
     metrics:
       receivers: [otlp]
       processors: [memory_limiter, filter, k8sattributes, batch]
-      exporters: [otlphttp/mimir]
+      exporters: [otlphttp/elasticsearch, otlphttp/mimir]
     traces:
       receivers: [otlp]
       processors: [memory_limiter, filter, k8sattributes, batch]
-      exporters: [otlphttp/tempo]
+      exporters: [otlphttp/elasticsearch, otlphttp/tempo]
 
   extensions:
     - health_check

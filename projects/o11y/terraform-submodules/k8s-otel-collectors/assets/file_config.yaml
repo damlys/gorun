@@ -3,7 +3,7 @@ service:
     logs:
       receivers: [filelog]
       processors: [memory_limiter, filter, k8sattributes, batch]
-      exporters: [otlphttp/loki]
+      exporters: [otlphttp/elasticsearch, otlphttp/loki]
 
   extensions:
     - health_check

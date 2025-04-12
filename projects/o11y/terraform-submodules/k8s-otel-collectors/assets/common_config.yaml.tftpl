@@ -85,6 +85,9 @@ processors:
     timeout: 10s
 
 exporters:
+  otlphttp/elasticsearch:
+    endpoint: "${elasticsearch_entrypoint}"
+
   otlphttp/loki:
     endpoint: "${loki_entrypoint}/otlp"
 
@@ -93,6 +96,11 @@ exporters:
 
   otlphttp/tempo:
     endpoint: "${tempo_entrypoint}/otlp"
+
+  prometheusremotewrite/elasticsearch:
+    endpoint: "${elasticsearch_entrypoint}/_prometheus/remote/write"
+    resource_to_telemetry_conversion:
+      enabled: true
 
   prometheusremotewrite/mimir: # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/prometheusremotewriteexporter/README.md
     endpoint: "${mimir_entrypoint}/api/v1/push"
