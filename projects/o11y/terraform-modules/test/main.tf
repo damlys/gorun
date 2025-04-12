@@ -75,6 +75,29 @@ resource "kubernetes_cluster_role" "opentelemetry_targetallocator" {
 }
 
 #######################################
+### Elastic Cloud on Kubernetes (ECK)
+#######################################
+
+resource "kubernetes_namespace" "elastic_system" {
+  metadata {
+    name = "elastic-system"
+  }
+}
+
+resource "helm_release" "elastic_operator" {
+  repository = "${path.module}/helm/charts"
+  chart      = "eck-operator"
+  name       = "elastic-operator"
+  namespace  = kubernetes_namespace.elastic_system.metadata[0].name
+
+  values = [
+    file("${path.module}/helm/values/eck-operator.yaml"),
+    templatefile("${path.module}/assets/elastic_operator.yaml.tftpl", {
+    }),
+  ]
+}
+
+#######################################
 ### OpenTelemetry & Grafana
 #######################################
 
