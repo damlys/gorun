@@ -98,8 +98,15 @@ resource "helm_release" "elastic_operator" {
 }
 
 #######################################
-### OpenTelemetry & Grafana
+### OpenTelemetry stack
 #######################################
+
+module "test_elastic_stack" {
+  source = "../../terraform-submodules/k8s-elastic-stack" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/o11y/k8s-elastic-stack/0.3.100.zip"
+
+  kibana_domain = "kibana.gogke-test-2.damlys.dev"
+  kibana_email  = "kibana@gogke-test-2.damlys.dev"
+}
 
 module "test_lgtm_stack" {
   source = "../../terraform-submodules/gke-lgtm-stack" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/o11y/gke-lgtm-stack/0.3.100.zip"
@@ -117,9 +124,10 @@ module "test_otel_collectors" {
     helm_release.opentelemetry_operator,
   ]
 
-  loki_entrypoint  = module.test_lgtm_stack.loki_entrypoint
-  mimir_entrypoint = module.test_lgtm_stack.mimir_entrypoint
-  tempo_entrypoint = module.test_lgtm_stack.tempo_entrypoint
+  elasticsearch_entrypoint = module.test_elastic_stack.elasticsearch_entrypoint
+  loki_entrypoint          = module.test_lgtm_stack.loki_entrypoint
+  mimir_entrypoint         = module.test_lgtm_stack.mimir_entrypoint
+  tempo_entrypoint         = module.test_lgtm_stack.tempo_entrypoint
 }
 
 module "test_prom_exporters" {
@@ -127,6 +135,7 @@ module "test_prom_exporters" {
 
   blackbox_exporter_urls = [
     "https://grafana.gogke-test-2.damlys.dev/healthz",
+    "https://kibana.gogke-test-2.damlys.dev/api/status", # TODO
     "https://stateful-kuard.gogke-test-2.damlys.dev/healthy",
     "https://stateless-kuard.gogke-test-2.damlys.dev/healthy",
   ]
