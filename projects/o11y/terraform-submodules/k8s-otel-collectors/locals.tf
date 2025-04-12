@@ -2,6 +2,7 @@ locals {
   common_config = yamldecode(templatefile("${path.module}/assets/common_config.yaml.tftpl", {
     elasticsearch_entrypoint = var.elasticsearch_entrypoint
     loki_entrypoint          = var.loki_entrypoint
+    metricbeat_entrypoint    = var.metricbeat_entrypoint
     mimir_entrypoint         = var.mimir_entrypoint
     tempo_entrypoint         = var.tempo_entrypoint
   }))

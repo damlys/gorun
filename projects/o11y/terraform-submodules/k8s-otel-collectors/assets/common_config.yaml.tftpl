@@ -97,8 +97,8 @@ exporters:
   otlphttp/tempo:
     endpoint: "${tempo_entrypoint}/otlp"
 
-  prometheusremotewrite/elasticsearch:
-    endpoint: "${elasticsearch_entrypoint}/_prometheus/remote/write"
+  prometheusremotewrite/metricbeat:
+    endpoint: "${metricbeat_entrypoint}/write"
     resource_to_telemetry_conversion:
       enabled: true
 

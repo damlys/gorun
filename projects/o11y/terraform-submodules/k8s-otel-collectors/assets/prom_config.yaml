@@ -3,7 +3,7 @@ service:
     metrics:
       receivers: [prometheus]
       processors: [memory_limiter, filter, k8sattributes, batch]
-      exporters: [prometheusremotewrite/elasticsearch, prometheusremotewrite/mimir]
+      exporters: [prometheusremotewrite/metricbeat, prometheusremotewrite/mimir]
 
   extensions:
     - health_check

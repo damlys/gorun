@@ -103,3 +103,44 @@ module "kibana_gateway_http_route" {
   container_port    = 5601
   health_check_path = "/login"
 }
+
+#######################################
+### Metricbeat
+#######################################
+
+resource "kubernetes_namespace" "metricbeat" {
+  metadata {
+    name = "o11y-metricbeat"
+  }
+}
+
+resource "kubernetes_manifest" "metricbeat" {
+  manifest = {
+    apiVersion = "beat.k8s.elastic.co/v1beta1" # https://www.elastic.co/guide/en/cloud-on-k8s/2.16/k8s-api-beat-k8s-elastic-co-v1beta1.html
+    kind       = "Beat"
+    metadata = {
+      name      = "metricbeat"
+      namespace = kubernetes_namespace.metricbeat.metadata[0].name
+      labels = {
+        "app.kubernetes.io/instance" = "metricbeat"
+        "app.kubernetes.io/name"     = "metricbeat"
+        "app.kubernetes.io/version"  = local.elastic_version
+      }
+      annotations = {
+        "eck.k8s.elastic.co/license" = "basic"
+      }
+    }
+    spec = yamldecode(templatefile("${path.module}/assets/metricbeat_spec.yaml.tftpl", {
+      elastic_version = local.elastic_version
+
+      elasticsearch_name      = kubernetes_manifest.elasticsearch.manifest.metadata.name
+      elasticsearch_namespace = kubernetes_manifest.elasticsearch.manifest.metadata.namespace
+      kibana_name             = kubernetes_manifest.kibana.manifest.metadata.name
+      kibana_namespace        = kubernetes_manifest.kibana.manifest.metadata.namespace
+    }))
+  }
+
+  field_manager {
+    force_conflicts = true
+  }
+}

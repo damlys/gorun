@@ -126,6 +126,7 @@ module "test_otel_collectors" {
 
   elasticsearch_entrypoint = module.test_elastic_stack.elasticsearch_entrypoint
   loki_entrypoint          = module.test_lgtm_stack.loki_entrypoint
+  metricbeat_entrypoint    = module.test_elastic_stack.metricbeat_entrypoint
   mimir_entrypoint         = module.test_lgtm_stack.mimir_entrypoint
   tempo_entrypoint         = module.test_lgtm_stack.tempo_entrypoint
 }

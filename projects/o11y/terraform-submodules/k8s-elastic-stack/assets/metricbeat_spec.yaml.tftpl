@@ -1,0 +1,33 @@
+version: "${elastic_version}"
+type: metricbeat
+config:
+  metricbeat:
+    modules:
+      - # https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-module-prometheus.html
+        # https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-prometheus-remote_write.html
+        module: prometheus
+        metricsets: [remote_write]
+        host: localhost
+        port: 9201
+        use_types: true
+        rate_counters: true
+        period: 60s
+deployment:
+  podTemplate:
+    metadata:
+      creationTimestamp: "1999-12-31T23:59:59Z" # bug: kubernetes_manifest apply throws error without this line
+    spec:
+      containers:
+        - name: metricbeat
+          resources:
+            requests:
+              cpu: 1m
+              memory: 1Mi
+            limits: {}
+
+elasticsearchRef:
+  name: "${elasticsearch_name}"
+  namespace: "${elasticsearch_namespace}"
+kibanaRef:
+  name: "${kibana_name}"
+  namespace: "${kibana_namespace}"
