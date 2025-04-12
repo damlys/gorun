@@ -10,6 +10,8 @@ Sources:
 
 - https://github.com/cert-manager/cert-manager/tree/master/deploy/charts
 - https://github.com/cilium/cilium/tree/main/install/kubernetes
+- https://github.com/elastic/cloud-on-k8s/tree/main/deploy
+- https://github.com/elastic/helm-charts
 - https://github.com/grafana/helm-charts
 - https://github.com/open-telemetry/opentelemetry-helm-charts
 - https://github.com/prometheus-community/helm-charts
@@ -17,6 +19,7 @@ Sources:
 
 ```
 $ helm repo add cilium https://helm.cilium.io
+$ helm repo add elastic https://helm.elastic.co
 $ helm repo add grafana https://grafana.github.io/helm-charts
 $ helm repo add jetstack https://charts.jetstack.io
 $ helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
