@@ -1,3 +1,7 @@
+{{- /*
+https://docs.gitlab.com/ci/yaml/
+https://docs.gitlab.com/ci/variables/predefined_variables/
+*/ -}}
 default:
   image: damlys/gorun-devcontainer:0.3.100
   before_script:
@@ -20,7 +24,7 @@ test-{{ .ProjectSlug }}:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "{{ .ProjectPath }}/**/*"
+        - "{{ .ProjectPath }}/**"
   script:
     - ./scripts/docker-image build "{{ .ProjectPath }}"
     - ./scripts/docker-image test "{{ .ProjectPath }}"
@@ -31,7 +35,7 @@ publish-{{ .ProjectSlug }}:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "{{ .ProjectPath }}/**/*"
+        - "{{ .ProjectPath }}/**"
   script:
     - ./scripts/docker-image build "{{ .ProjectPath }}"
     - ./scripts/docker-image test "{{ .ProjectPath }}"
@@ -45,7 +49,7 @@ test-{{ .ProjectSlug }}:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "{{ .ProjectPath }}/**/*"
+        - "{{ .ProjectPath }}/**"
   script:
     - ./scripts/helm-chart build "{{ .ProjectPath }}"
     - ./scripts/helm-chart test "{{ .ProjectPath }}"
@@ -56,7 +60,7 @@ publish-{{ .ProjectSlug }}:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "{{ .ProjectPath }}/**/*"
+        - "{{ .ProjectPath }}/**"
   script:
     - ./scripts/helm-chart build "{{ .ProjectPath }}"
     - ./scripts/helm-chart test "{{ .ProjectPath }}"
@@ -70,7 +74,7 @@ test-{{ .ProjectSlug }}:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "{{ .ProjectPath }}/**/*"
+        - "{{ .ProjectPath }}/**"
   cache:
     paths:
       - {{ .ProjectPath }}/.terraform
@@ -85,7 +89,7 @@ publish-{{ .ProjectSlug }}:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "{{ .ProjectPath }}/**/*"
+        - "{{ .ProjectPath }}/**"
   cache:
     paths:
       - {{ .ProjectPath }}/.terraform
@@ -103,7 +107,7 @@ test-{{ .ProjectSlug }}:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "{{ .ProjectPath }}/**/*"
+        - "{{ .ProjectPath }}/**"
   cache:
     paths:
       - {{ .ProjectPath }}/.terraform
@@ -114,10 +118,10 @@ plan-{{ .ProjectSlug }}:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "{{ .ProjectPath }}/**/*"
+        - "{{ .ProjectPath }}/**"
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "{{ .ProjectPath }}/**/*"
+        - "{{ .ProjectPath }}/**"
   cache:
     paths:
       - {{ .ProjectPath }}/.terraform
@@ -129,7 +133,7 @@ apply-{{ .ProjectSlug }}:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "{{ .ProjectPath }}/**/*"
+        - "{{ .ProjectPath }}/**"
   cache:
     paths:
       - {{ .ProjectPath }}/.terraform
@@ -145,7 +149,7 @@ test-{{ .ProjectSlug }}:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "{{ .ProjectPath }}/**/*"
+        - "{{ .ProjectPath }}/**"
   script:
     - ./scripts/go-module test "{{ .ProjectPath }}"
 {{- end }}

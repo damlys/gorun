@@ -16,7 +16,7 @@ test-core-image-devcontainer:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/docker-images/devcontainer/**/*"
+        - "projects/core/docker-images/devcontainer/**"
   script:
     - ./scripts/docker-image build "projects/core/docker-images/devcontainer"
     - ./scripts/docker-image test "projects/core/docker-images/devcontainer"
@@ -27,7 +27,7 @@ publish-core-image-devcontainer:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/docker-images/devcontainer/**/*"
+        - "projects/core/docker-images/devcontainer/**"
   script:
     - ./scripts/docker-image build "projects/core/docker-images/devcontainer"
     - ./scripts/docker-image test "projects/core/docker-images/devcontainer"
@@ -38,7 +38,7 @@ test-core-image-go1-rte:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/docker-images/go1-rte/**/*"
+        - "projects/core/docker-images/go1-rte/**"
   script:
     - ./scripts/docker-image build "projects/core/docker-images/go1-rte"
     - ./scripts/docker-image test "projects/core/docker-images/go1-rte"
@@ -49,7 +49,7 @@ publish-core-image-go1-rte:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/docker-images/go1-rte/**/*"
+        - "projects/core/docker-images/go1-rte/**"
   script:
     - ./scripts/docker-image build "projects/core/docker-images/go1-rte"
     - ./scripts/docker-image test "projects/core/docker-images/go1-rte"
@@ -60,7 +60,7 @@ test-core-image-go1-sdk:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/docker-images/go1-sdk/**/*"
+        - "projects/core/docker-images/go1-sdk/**"
   script:
     - ./scripts/docker-image build "projects/core/docker-images/go1-sdk"
     - ./scripts/docker-image test "projects/core/docker-images/go1-sdk"
@@ -71,7 +71,7 @@ publish-core-image-go1-sdk:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/docker-images/go1-sdk/**/*"
+        - "projects/core/docker-images/go1-sdk/**"
   script:
     - ./scripts/docker-image build "projects/core/docker-images/go1-sdk"
     - ./scripts/docker-image test "projects/core/docker-images/go1-sdk"
@@ -82,7 +82,7 @@ test-core-image-java21-rte:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/docker-images/java21-rte/**/*"
+        - "projects/core/docker-images/java21-rte/**"
   script:
     - ./scripts/docker-image build "projects/core/docker-images/java21-rte"
     - ./scripts/docker-image test "projects/core/docker-images/java21-rte"
@@ -93,7 +93,7 @@ publish-core-image-java21-rte:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/docker-images/java21-rte/**/*"
+        - "projects/core/docker-images/java21-rte/**"
   script:
     - ./scripts/docker-image build "projects/core/docker-images/java21-rte"
     - ./scripts/docker-image test "projects/core/docker-images/java21-rte"
@@ -104,7 +104,7 @@ test-core-image-java21-sdk:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/docker-images/java21-sdk/**/*"
+        - "projects/core/docker-images/java21-sdk/**"
   script:
     - ./scripts/docker-image build "projects/core/docker-images/java21-sdk"
     - ./scripts/docker-image test "projects/core/docker-images/java21-sdk"
@@ -115,7 +115,7 @@ publish-core-image-java21-sdk:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/docker-images/java21-sdk/**/*"
+        - "projects/core/docker-images/java21-sdk/**"
   script:
     - ./scripts/docker-image build "projects/core/docker-images/java21-sdk"
     - ./scripts/docker-image test "projects/core/docker-images/java21-sdk"
@@ -126,7 +126,7 @@ test-core-image-node22-rte:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/docker-images/node22-rte/**/*"
+        - "projects/core/docker-images/node22-rte/**"
   script:
     - ./scripts/docker-image build "projects/core/docker-images/node22-rte"
     - ./scripts/docker-image test "projects/core/docker-images/node22-rte"
@@ -137,7 +137,7 @@ publish-core-image-node22-rte:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/docker-images/node22-rte/**/*"
+        - "projects/core/docker-images/node22-rte/**"
   script:
     - ./scripts/docker-image build "projects/core/docker-images/node22-rte"
     - ./scripts/docker-image test "projects/core/docker-images/node22-rte"
@@ -148,7 +148,7 @@ test-core-image-node22-sdk:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/docker-images/node22-sdk/**/*"
+        - "projects/core/docker-images/node22-sdk/**"
   script:
     - ./scripts/docker-image build "projects/core/docker-images/node22-sdk"
     - ./scripts/docker-image test "projects/core/docker-images/node22-sdk"
@@ -159,7 +159,7 @@ publish-core-image-node22-sdk:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/docker-images/node22-sdk/**/*"
+        - "projects/core/docker-images/node22-sdk/**"
   script:
     - ./scripts/docker-image build "projects/core/docker-images/node22-sdk"
     - ./scripts/docker-image test "projects/core/docker-images/node22-sdk"
@@ -170,7 +170,7 @@ test-core-tfmod-main:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-modules/main/**/*"
+        - "projects/core/terraform-modules/main/**"
   cache:
     paths:
       - projects/core/terraform-modules/main/.terraform
@@ -181,10 +181,10 @@ plan-core-tfmod-main:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-modules/main/**/*"
+        - "projects/core/terraform-modules/main/**"
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-modules/main/**/*"
+        - "projects/core/terraform-modules/main/**"
   cache:
     paths:
       - projects/core/terraform-modules/main/.terraform
@@ -196,7 +196,7 @@ apply-core-tfmod-main:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-modules/main/**/*"
+        - "projects/core/terraform-modules/main/**"
   cache:
     paths:
       - projects/core/terraform-modules/main/.terraform
@@ -209,7 +209,7 @@ test-core-tfmod-prod:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-modules/prod/**/*"
+        - "projects/core/terraform-modules/prod/**"
   cache:
     paths:
       - projects/core/terraform-modules/prod/.terraform
@@ -220,10 +220,10 @@ plan-core-tfmod-prod:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-modules/prod/**/*"
+        - "projects/core/terraform-modules/prod/**"
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-modules/prod/**/*"
+        - "projects/core/terraform-modules/prod/**"
   cache:
     paths:
       - projects/core/terraform-modules/prod/.terraform
@@ -235,7 +235,7 @@ apply-core-tfmod-prod:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-modules/prod/**/*"
+        - "projects/core/terraform-modules/prod/**"
   cache:
     paths:
       - projects/core/terraform-modules/prod/.terraform
@@ -248,7 +248,7 @@ test-core-tfmod-test:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-modules/test/**/*"
+        - "projects/core/terraform-modules/test/**"
   cache:
     paths:
       - projects/core/terraform-modules/test/.terraform
@@ -259,10 +259,10 @@ plan-core-tfmod-test:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-modules/test/**/*"
+        - "projects/core/terraform-modules/test/**"
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-modules/test/**/*"
+        - "projects/core/terraform-modules/test/**"
   cache:
     paths:
       - projects/core/terraform-modules/test/.terraform
@@ -274,7 +274,7 @@ apply-core-tfmod-test:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-modules/test/**/*"
+        - "projects/core/terraform-modules/test/**"
   cache:
     paths:
       - projects/core/terraform-modules/test/.terraform
@@ -287,7 +287,7 @@ test-core-tfsub-gcp-docker-images-registry:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-submodules/gcp-docker-images-registry/**/*"
+        - "projects/core/terraform-submodules/gcp-docker-images-registry/**"
   cache:
     paths:
       - projects/core/terraform-submodules/gcp-docker-images-registry/.terraform
@@ -302,7 +302,7 @@ publish-core-tfsub-gcp-docker-images-registry:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-submodules/gcp-docker-images-registry/**/*"
+        - "projects/core/terraform-submodules/gcp-docker-images-registry/**"
   cache:
     paths:
       - projects/core/terraform-submodules/gcp-docker-images-registry/.terraform
@@ -317,7 +317,7 @@ test-core-tfsub-gcp-helm-charts-registry:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-submodules/gcp-helm-charts-registry/**/*"
+        - "projects/core/terraform-submodules/gcp-helm-charts-registry/**"
   cache:
     paths:
       - projects/core/terraform-submodules/gcp-helm-charts-registry/.terraform
@@ -332,7 +332,7 @@ publish-core-tfsub-gcp-helm-charts-registry:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-submodules/gcp-helm-charts-registry/**/*"
+        - "projects/core/terraform-submodules/gcp-helm-charts-registry/**"
   cache:
     paths:
       - projects/core/terraform-submodules/gcp-helm-charts-registry/.terraform
@@ -347,7 +347,7 @@ test-core-tfsub-gcp-project:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-submodules/gcp-project/**/*"
+        - "projects/core/terraform-submodules/gcp-project/**"
   cache:
     paths:
       - projects/core/terraform-submodules/gcp-project/.terraform
@@ -362,7 +362,7 @@ publish-core-tfsub-gcp-project:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-submodules/gcp-project/**/*"
+        - "projects/core/terraform-submodules/gcp-project/**"
   cache:
     paths:
       - projects/core/terraform-submodules/gcp-project/.terraform
@@ -377,7 +377,7 @@ test-core-tfsub-gcp-terraform-modules-registry:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-submodules/gcp-terraform-modules-registry/**/*"
+        - "projects/core/terraform-submodules/gcp-terraform-modules-registry/**"
   cache:
     paths:
       - projects/core/terraform-submodules/gcp-terraform-modules-registry/.terraform
@@ -392,7 +392,7 @@ publish-core-tfsub-gcp-terraform-modules-registry:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-submodules/gcp-terraform-modules-registry/**/*"
+        - "projects/core/terraform-submodules/gcp-terraform-modules-registry/**"
   cache:
     paths:
       - projects/core/terraform-submodules/gcp-terraform-modules-registry/.terraform
@@ -407,7 +407,7 @@ test-core-tfsub-gcp-terraform-state-bucket:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-submodules/gcp-terraform-state-bucket/**/*"
+        - "projects/core/terraform-submodules/gcp-terraform-state-bucket/**"
   cache:
     paths:
       - projects/core/terraform-submodules/gcp-terraform-state-bucket/.terraform
@@ -422,7 +422,7 @@ publish-core-tfsub-gcp-terraform-state-bucket:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-submodules/gcp-terraform-state-bucket/**/*"
+        - "projects/core/terraform-submodules/gcp-terraform-state-bucket/**"
   cache:
     paths:
       - projects/core/terraform-submodules/gcp-terraform-state-bucket/.terraform
@@ -437,7 +437,7 @@ test-core-tfsub-gke-platform:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-submodules/gke-platform/**/*"
+        - "projects/core/terraform-submodules/gke-platform/**"
   cache:
     paths:
       - projects/core/terraform-submodules/gke-platform/.terraform
@@ -452,7 +452,7 @@ publish-core-tfsub-gke-platform:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-submodules/gke-platform/**/*"
+        - "projects/core/terraform-submodules/gke-platform/**"
   cache:
     paths:
       - projects/core/terraform-submodules/gke-platform/.terraform
@@ -467,7 +467,7 @@ test-core-tfsub-gke-service-account:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-submodules/gke-service-account/**/*"
+        - "projects/core/terraform-submodules/gke-service-account/**"
   cache:
     paths:
       - projects/core/terraform-submodules/gke-service-account/.terraform
@@ -482,7 +482,7 @@ publish-core-tfsub-gke-service-account:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-submodules/gke-service-account/**/*"
+        - "projects/core/terraform-submodules/gke-service-account/**"
   cache:
     paths:
       - projects/core/terraform-submodules/gke-service-account/.terraform
@@ -497,7 +497,7 @@ test-core-tfsub-k8s-gateway-domain-redirect:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-submodules/k8s-gateway-domain-redirect/**/*"
+        - "projects/core/terraform-submodules/k8s-gateway-domain-redirect/**"
   cache:
     paths:
       - projects/core/terraform-submodules/k8s-gateway-domain-redirect/.terraform
@@ -512,7 +512,7 @@ publish-core-tfsub-k8s-gateway-domain-redirect:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-submodules/k8s-gateway-domain-redirect/**/*"
+        - "projects/core/terraform-submodules/k8s-gateway-domain-redirect/**"
   cache:
     paths:
       - projects/core/terraform-submodules/k8s-gateway-domain-redirect/.terraform
@@ -527,7 +527,7 @@ test-core-tfsub-k8s-gateway-http-route:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-submodules/k8s-gateway-http-route/**/*"
+        - "projects/core/terraform-submodules/k8s-gateway-http-route/**"
   cache:
     paths:
       - projects/core/terraform-submodules/k8s-gateway-http-route/.terraform
@@ -542,7 +542,7 @@ publish-core-tfsub-k8s-gateway-http-route:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-submodules/k8s-gateway-http-route/**/*"
+        - "projects/core/terraform-submodules/k8s-gateway-http-route/**"
   cache:
     paths:
       - projects/core/terraform-submodules/k8s-gateway-http-route/.terraform
@@ -557,7 +557,7 @@ test-core-tfsub-k8s-vault:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-submodules/k8s-vault/**/*"
+        - "projects/core/terraform-submodules/k8s-vault/**"
   cache:
     paths:
       - projects/core/terraform-submodules/k8s-vault/.terraform
@@ -572,7 +572,7 @@ publish-core-tfsub-k8s-vault:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-submodules/k8s-vault/**/*"
+        - "projects/core/terraform-submodules/k8s-vault/**"
   cache:
     paths:
       - projects/core/terraform-submodules/k8s-vault/.terraform
@@ -587,7 +587,7 @@ test-core-tfsub-k8s-workspace:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/terraform-submodules/k8s-workspace/**/*"
+        - "projects/core/terraform-submodules/k8s-workspace/**"
   cache:
     paths:
       - projects/core/terraform-submodules/k8s-workspace/.terraform
@@ -602,7 +602,7 @@ publish-core-tfsub-k8s-workspace:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/terraform-submodules/k8s-workspace/**/*"
+        - "projects/core/terraform-submodules/k8s-workspace/**"
   cache:
     paths:
       - projects/core/terraform-submodules/k8s-workspace/.terraform
@@ -617,7 +617,7 @@ test-demo-image-kuard:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/demo/docker-images/kuard/**/*"
+        - "projects/demo/docker-images/kuard/**"
   script:
     - ./scripts/docker-image build "projects/demo/docker-images/kuard"
     - ./scripts/docker-image test "projects/demo/docker-images/kuard"
@@ -628,7 +628,7 @@ publish-demo-image-kuard:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/demo/docker-images/kuard/**/*"
+        - "projects/demo/docker-images/kuard/**"
   script:
     - ./scripts/docker-image build "projects/demo/docker-images/kuard"
     - ./scripts/docker-image test "projects/demo/docker-images/kuard"
@@ -639,7 +639,7 @@ test-demo-gomod-kuard-tester:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/demo/go-modules/kuard-tester/**/*"
+        - "projects/demo/go-modules/kuard-tester/**"
   script:
     - ./scripts/go-module test "projects/demo/go-modules/kuard-tester"
 test-demo-chart-stateful-kuard:
@@ -647,7 +647,7 @@ test-demo-chart-stateful-kuard:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/demo/helm-charts/stateful-kuard/**/*"
+        - "projects/demo/helm-charts/stateful-kuard/**"
   script:
     - ./scripts/helm-chart build "projects/demo/helm-charts/stateful-kuard"
     - ./scripts/helm-chart test "projects/demo/helm-charts/stateful-kuard"
@@ -658,7 +658,7 @@ publish-demo-chart-stateful-kuard:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/demo/helm-charts/stateful-kuard/**/*"
+        - "projects/demo/helm-charts/stateful-kuard/**"
   script:
     - ./scripts/helm-chart build "projects/demo/helm-charts/stateful-kuard"
     - ./scripts/helm-chart test "projects/demo/helm-charts/stateful-kuard"
@@ -669,7 +669,7 @@ test-demo-chart-stateless-kuard:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/demo/helm-charts/stateless-kuard/**/*"
+        - "projects/demo/helm-charts/stateless-kuard/**"
   script:
     - ./scripts/helm-chart build "projects/demo/helm-charts/stateless-kuard"
     - ./scripts/helm-chart test "projects/demo/helm-charts/stateless-kuard"
@@ -680,7 +680,7 @@ publish-demo-chart-stateless-kuard:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/demo/helm-charts/stateless-kuard/**/*"
+        - "projects/demo/helm-charts/stateless-kuard/**"
   script:
     - ./scripts/helm-chart build "projects/demo/helm-charts/stateless-kuard"
     - ./scripts/helm-chart test "projects/demo/helm-charts/stateless-kuard"
@@ -691,7 +691,7 @@ test-demo-tfmod-kuard:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/demo/terraform-modules/kuard/**/*"
+        - "projects/demo/terraform-modules/kuard/**"
   cache:
     paths:
       - projects/demo/terraform-modules/kuard/.terraform
@@ -702,10 +702,10 @@ plan-demo-tfmod-kuard:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/demo/terraform-modules/kuard/**/*"
+        - "projects/demo/terraform-modules/kuard/**"
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/demo/terraform-modules/kuard/**/*"
+        - "projects/demo/terraform-modules/kuard/**"
   cache:
     paths:
       - projects/demo/terraform-modules/kuard/.terraform
@@ -717,7 +717,7 @@ apply-demo-tfmod-kuard:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/demo/terraform-modules/kuard/**/*"
+        - "projects/demo/terraform-modules/kuard/**"
   cache:
     paths:
       - projects/demo/terraform-modules/kuard/.terraform
@@ -730,7 +730,7 @@ test-demo-tfsub-helm-manifest:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/demo/terraform-submodules/helm-manifest/**/*"
+        - "projects/demo/terraform-submodules/helm-manifest/**"
   cache:
     paths:
       - projects/demo/terraform-submodules/helm-manifest/.terraform
@@ -745,7 +745,7 @@ publish-demo-tfsub-helm-manifest:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/demo/terraform-submodules/helm-manifest/**/*"
+        - "projects/demo/terraform-submodules/helm-manifest/**"
   cache:
     paths:
       - projects/demo/terraform-submodules/helm-manifest/.terraform
@@ -760,7 +760,7 @@ test-demo-tfsub-helm-template:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/demo/terraform-submodules/helm-template/**/*"
+        - "projects/demo/terraform-submodules/helm-template/**"
   cache:
     paths:
       - projects/demo/terraform-submodules/helm-template/.terraform
@@ -775,7 +775,7 @@ publish-demo-tfsub-helm-template:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/demo/terraform-submodules/helm-template/**/*"
+        - "projects/demo/terraform-submodules/helm-template/**"
   cache:
     paths:
       - projects/demo/terraform-submodules/helm-template/.terraform
@@ -790,7 +790,7 @@ test-demo-tfsub-kuard:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/demo/terraform-submodules/kuard/**/*"
+        - "projects/demo/terraform-submodules/kuard/**"
   cache:
     paths:
       - projects/demo/terraform-submodules/kuard/.terraform
@@ -805,7 +805,7 @@ publish-demo-tfsub-kuard:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/demo/terraform-submodules/kuard/**/*"
+        - "projects/demo/terraform-submodules/kuard/**"
   cache:
     paths:
       - projects/demo/terraform-submodules/kuard/.terraform
@@ -820,7 +820,7 @@ test-o11y-tfmod-test:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/o11y/terraform-modules/test/**/*"
+        - "projects/o11y/terraform-modules/test/**"
   cache:
     paths:
       - projects/o11y/terraform-modules/test/.terraform
@@ -831,10 +831,10 @@ plan-o11y-tfmod-test:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/o11y/terraform-modules/test/**/*"
+        - "projects/o11y/terraform-modules/test/**"
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/o11y/terraform-modules/test/**/*"
+        - "projects/o11y/terraform-modules/test/**"
   cache:
     paths:
       - projects/o11y/terraform-modules/test/.terraform
@@ -846,7 +846,7 @@ apply-o11y-tfmod-test:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/o11y/terraform-modules/test/**/*"
+        - "projects/o11y/terraform-modules/test/**"
   cache:
     paths:
       - projects/o11y/terraform-modules/test/.terraform
@@ -859,7 +859,7 @@ test-o11y-tfsub-gcp-availability-monitor:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/o11y/terraform-submodules/gcp-availability-monitor/**/*"
+        - "projects/o11y/terraform-submodules/gcp-availability-monitor/**"
   cache:
     paths:
       - projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform
@@ -874,7 +874,7 @@ publish-o11y-tfsub-gcp-availability-monitor:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/o11y/terraform-submodules/gcp-availability-monitor/**/*"
+        - "projects/o11y/terraform-submodules/gcp-availability-monitor/**"
   cache:
     paths:
       - projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform
@@ -889,7 +889,7 @@ test-o11y-tfsub-gke-lgtm-stack:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/o11y/terraform-submodules/gke-lgtm-stack/**/*"
+        - "projects/o11y/terraform-submodules/gke-lgtm-stack/**"
   cache:
     paths:
       - projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform
@@ -904,7 +904,7 @@ publish-o11y-tfsub-gke-lgtm-stack:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/o11y/terraform-submodules/gke-lgtm-stack/**/*"
+        - "projects/o11y/terraform-submodules/gke-lgtm-stack/**"
   cache:
     paths:
       - projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform
@@ -919,7 +919,7 @@ test-o11y-tfsub-k8s-otel-collectors:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/o11y/terraform-submodules/k8s-otel-collectors/**/*"
+        - "projects/o11y/terraform-submodules/k8s-otel-collectors/**"
   cache:
     paths:
       - projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform
@@ -934,7 +934,7 @@ publish-o11y-tfsub-k8s-otel-collectors:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/o11y/terraform-submodules/k8s-otel-collectors/**/*"
+        - "projects/o11y/terraform-submodules/k8s-otel-collectors/**"
   cache:
     paths:
       - projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform
@@ -949,7 +949,7 @@ test-o11y-tfsub-k8s-prom-exporters:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/o11y/terraform-submodules/k8s-prom-exporters/**/*"
+        - "projects/o11y/terraform-submodules/k8s-prom-exporters/**"
   cache:
     paths:
       - projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform
@@ -964,7 +964,7 @@ publish-o11y-tfsub-k8s-prom-exporters:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/o11y/terraform-submodules/k8s-prom-exporters/**/*"
+        - "projects/o11y/terraform-submodules/k8s-prom-exporters/**"
   cache:
     paths:
       - projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform

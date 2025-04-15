@@ -1,29 +1,47 @@
 image: damlys/gorun-devcontainer:0.3.100
 definitions:
   caches:
-    core-tfmod-main: projects/core/terraform-modules/main/.terraform
-    core-tfmod-prod: projects/core/terraform-modules/prod/.terraform
-    core-tfmod-test: projects/core/terraform-modules/test/.terraform
-    core-tfsub-gcp-docker-images-registry: projects/core/terraform-submodules/gcp-docker-images-registry/.terraform
-    core-tfsub-gcp-helm-charts-registry: projects/core/terraform-submodules/gcp-helm-charts-registry/.terraform
-    core-tfsub-gcp-project: projects/core/terraform-submodules/gcp-project/.terraform
-    core-tfsub-gcp-terraform-modules-registry: projects/core/terraform-submodules/gcp-terraform-modules-registry/.terraform
-    core-tfsub-gcp-terraform-state-bucket: projects/core/terraform-submodules/gcp-terraform-state-bucket/.terraform
-    core-tfsub-gke-platform: projects/core/terraform-submodules/gke-platform/.terraform
-    core-tfsub-gke-service-account: projects/core/terraform-submodules/gke-service-account/.terraform
-    core-tfsub-k8s-gateway-domain-redirect: projects/core/terraform-submodules/k8s-gateway-domain-redirect/.terraform
-    core-tfsub-k8s-gateway-http-route: projects/core/terraform-submodules/k8s-gateway-http-route/.terraform
-    core-tfsub-k8s-vault: projects/core/terraform-submodules/k8s-vault/.terraform
-    core-tfsub-k8s-workspace: projects/core/terraform-submodules/k8s-workspace/.terraform
-    demo-tfmod-kuard: projects/demo/terraform-modules/kuard/.terraform
-    demo-tfsub-helm-manifest: projects/demo/terraform-submodules/helm-manifest/.terraform
-    demo-tfsub-helm-template: projects/demo/terraform-submodules/helm-template/.terraform
-    demo-tfsub-kuard: projects/demo/terraform-submodules/kuard/.terraform
-    o11y-tfmod-test: projects/o11y/terraform-modules/test/.terraform
-    o11y-tfsub-gcp-availability-monitor: projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform
-    o11y-tfsub-gke-lgtm-stack: projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform
-    o11y-tfsub-k8s-otel-collectors: projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform
-    o11y-tfsub-k8s-prom-exporters: projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform
+    core-tfmod-main-0: projects/core/terraform-modules/main/.terraform
+    core-tfmod-prod-0: projects/core/terraform-modules/prod/.terraform
+    core-tfmod-test-0: projects/core/terraform-modules/test/.terraform
+    core-tfsub-gcp-docker-images-registry-0: projects/core/terraform-submodules/gcp-docker-images-registry/.terraform
+    core-tfsub-gcp-docker-images-registry-1: projects/core/terraform-submodules/gcp-docker-images-registry/.terraform.lock.hcl
+    core-tfsub-gcp-helm-charts-registry-0: projects/core/terraform-submodules/gcp-helm-charts-registry/.terraform
+    core-tfsub-gcp-helm-charts-registry-1: projects/core/terraform-submodules/gcp-helm-charts-registry/.terraform.lock.hcl
+    core-tfsub-gcp-project-0: projects/core/terraform-submodules/gcp-project/.terraform
+    core-tfsub-gcp-project-1: projects/core/terraform-submodules/gcp-project/.terraform.lock.hcl
+    core-tfsub-gcp-terraform-modules-registry-0: projects/core/terraform-submodules/gcp-terraform-modules-registry/.terraform
+    core-tfsub-gcp-terraform-modules-registry-1: projects/core/terraform-submodules/gcp-terraform-modules-registry/.terraform.lock.hcl
+    core-tfsub-gcp-terraform-state-bucket-0: projects/core/terraform-submodules/gcp-terraform-state-bucket/.terraform
+    core-tfsub-gcp-terraform-state-bucket-1: projects/core/terraform-submodules/gcp-terraform-state-bucket/.terraform.lock.hcl
+    core-tfsub-gke-platform-0: projects/core/terraform-submodules/gke-platform/.terraform
+    core-tfsub-gke-platform-1: projects/core/terraform-submodules/gke-platform/.terraform.lock.hcl
+    core-tfsub-gke-service-account-0: projects/core/terraform-submodules/gke-service-account/.terraform
+    core-tfsub-gke-service-account-1: projects/core/terraform-submodules/gke-service-account/.terraform.lock.hcl
+    core-tfsub-k8s-gateway-domain-redirect-0: projects/core/terraform-submodules/k8s-gateway-domain-redirect/.terraform
+    core-tfsub-k8s-gateway-domain-redirect-1: projects/core/terraform-submodules/k8s-gateway-domain-redirect/.terraform.lock.hcl
+    core-tfsub-k8s-gateway-http-route-0: projects/core/terraform-submodules/k8s-gateway-http-route/.terraform
+    core-tfsub-k8s-gateway-http-route-1: projects/core/terraform-submodules/k8s-gateway-http-route/.terraform.lock.hcl
+    core-tfsub-k8s-vault-0: projects/core/terraform-submodules/k8s-vault/.terraform
+    core-tfsub-k8s-vault-1: projects/core/terraform-submodules/k8s-vault/.terraform.lock.hcl
+    core-tfsub-k8s-workspace-0: projects/core/terraform-submodules/k8s-workspace/.terraform
+    core-tfsub-k8s-workspace-1: projects/core/terraform-submodules/k8s-workspace/.terraform.lock.hcl
+    demo-tfmod-kuard-0: projects/demo/terraform-modules/kuard/.terraform
+    demo-tfsub-helm-manifest-0: projects/demo/terraform-submodules/helm-manifest/.terraform
+    demo-tfsub-helm-manifest-1: projects/demo/terraform-submodules/helm-manifest/.terraform.lock.hcl
+    demo-tfsub-helm-template-0: projects/demo/terraform-submodules/helm-template/.terraform
+    demo-tfsub-helm-template-1: projects/demo/terraform-submodules/helm-template/.terraform.lock.hcl
+    demo-tfsub-kuard-0: projects/demo/terraform-submodules/kuard/.terraform
+    demo-tfsub-kuard-1: projects/demo/terraform-submodules/kuard/.terraform.lock.hcl
+    o11y-tfmod-test-0: projects/o11y/terraform-modules/test/.terraform
+    o11y-tfsub-gcp-availability-monitor-0: projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform
+    o11y-tfsub-gcp-availability-monitor-1: projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform.lock.hcl
+    o11y-tfsub-gke-lgtm-stack-0: projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform
+    o11y-tfsub-gke-lgtm-stack-1: projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform.lock.hcl
+    o11y-tfsub-k8s-otel-collectors-0: projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform
+    o11y-tfsub-k8s-otel-collectors-1: projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform.lock.hcl
+    o11y-tfsub-k8s-prom-exporters-0: projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform
+    o11y-tfsub-k8s-prom-exporters-1: projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform.lock.hcl
   scripts:
     - &auth |
       set -e
@@ -263,7 +281,7 @@ definitions:
             includePaths:
               - "projects/core/terraform-modules/main/**"
         caches:
-          - core-tfmod-main
+          - core-tfmod-main-0
         script:
           - *auth
           - ./scripts/terraform-module test "projects/core/terraform-modules/main"
@@ -274,7 +292,7 @@ definitions:
             includePaths:
               - "projects/core/terraform-modules/main/**"
         caches:
-          - core-tfmod-main
+          - core-tfmod-main-0
         script:
           - *auth
           - terraform -chdir="projects/core/terraform-modules/main" init -input="false"
@@ -286,7 +304,7 @@ definitions:
             includePaths:
               - "projects/core/terraform-modules/main/**"
         caches:
-          - core-tfmod-main
+          - core-tfmod-main-0
         script:
           - *auth
           - terraform -chdir="projects/core/terraform-modules/main" init -input="false"
@@ -299,7 +317,7 @@ definitions:
             includePaths:
               - "projects/core/terraform-modules/prod/**"
         caches:
-          - core-tfmod-prod
+          - core-tfmod-prod-0
         script:
           - *auth
           - ./scripts/terraform-module test "projects/core/terraform-modules/prod"
@@ -310,7 +328,7 @@ definitions:
             includePaths:
               - "projects/core/terraform-modules/prod/**"
         caches:
-          - core-tfmod-prod
+          - core-tfmod-prod-0
         script:
           - *auth
           - terraform -chdir="projects/core/terraform-modules/prod" init -input="false"
@@ -322,7 +340,7 @@ definitions:
             includePaths:
               - "projects/core/terraform-modules/prod/**"
         caches:
-          - core-tfmod-prod
+          - core-tfmod-prod-0
         script:
           - *auth
           - terraform -chdir="projects/core/terraform-modules/prod" init -input="false"
@@ -335,7 +353,7 @@ definitions:
             includePaths:
               - "projects/core/terraform-modules/test/**"
         caches:
-          - core-tfmod-test
+          - core-tfmod-test-0
         script:
           - *auth
           - ./scripts/terraform-module test "projects/core/terraform-modules/test"
@@ -346,7 +364,7 @@ definitions:
             includePaths:
               - "projects/core/terraform-modules/test/**"
         caches:
-          - core-tfmod-test
+          - core-tfmod-test-0
         script:
           - *auth
           - terraform -chdir="projects/core/terraform-modules/test" init -input="false"
@@ -358,7 +376,7 @@ definitions:
             includePaths:
               - "projects/core/terraform-modules/test/**"
         caches:
-          - core-tfmod-test
+          - core-tfmod-test-0
         script:
           - *auth
           - terraform -chdir="projects/core/terraform-modules/test" init -input="false"
@@ -371,7 +389,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/gcp-docker-images-registry/**"
         caches:
-          - core-tfsub-gcp-docker-images-registry
+          - core-tfsub-gcp-docker-images-registry-0
+          - core-tfsub-gcp-docker-images-registry-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-docker-images-registry"
@@ -385,7 +404,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/gcp-docker-images-registry/**"
         caches:
-          - core-tfsub-gcp-docker-images-registry
+          - core-tfsub-gcp-docker-images-registry-0
+          - core-tfsub-gcp-docker-images-registry-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-docker-images-registry"
@@ -399,7 +419,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/gcp-helm-charts-registry/**"
         caches:
-          - core-tfsub-gcp-helm-charts-registry
+          - core-tfsub-gcp-helm-charts-registry-0
+          - core-tfsub-gcp-helm-charts-registry-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-helm-charts-registry"
@@ -413,7 +434,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/gcp-helm-charts-registry/**"
         caches:
-          - core-tfsub-gcp-helm-charts-registry
+          - core-tfsub-gcp-helm-charts-registry-0
+          - core-tfsub-gcp-helm-charts-registry-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-helm-charts-registry"
@@ -427,7 +449,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/gcp-project/**"
         caches:
-          - core-tfsub-gcp-project
+          - core-tfsub-gcp-project-0
+          - core-tfsub-gcp-project-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-project"
@@ -441,7 +464,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/gcp-project/**"
         caches:
-          - core-tfsub-gcp-project
+          - core-tfsub-gcp-project-0
+          - core-tfsub-gcp-project-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-project"
@@ -455,7 +479,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/gcp-terraform-modules-registry/**"
         caches:
-          - core-tfsub-gcp-terraform-modules-registry
+          - core-tfsub-gcp-terraform-modules-registry-0
+          - core-tfsub-gcp-terraform-modules-registry-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-terraform-modules-registry"
@@ -469,7 +494,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/gcp-terraform-modules-registry/**"
         caches:
-          - core-tfsub-gcp-terraform-modules-registry
+          - core-tfsub-gcp-terraform-modules-registry-0
+          - core-tfsub-gcp-terraform-modules-registry-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-terraform-modules-registry"
@@ -483,7 +509,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/gcp-terraform-state-bucket/**"
         caches:
-          - core-tfsub-gcp-terraform-state-bucket
+          - core-tfsub-gcp-terraform-state-bucket-0
+          - core-tfsub-gcp-terraform-state-bucket-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-terraform-state-bucket"
@@ -497,7 +524,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/gcp-terraform-state-bucket/**"
         caches:
-          - core-tfsub-gcp-terraform-state-bucket
+          - core-tfsub-gcp-terraform-state-bucket-0
+          - core-tfsub-gcp-terraform-state-bucket-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-terraform-state-bucket"
@@ -511,7 +539,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/gke-platform/**"
         caches:
-          - core-tfsub-gke-platform
+          - core-tfsub-gke-platform-0
+          - core-tfsub-gke-platform-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-platform"
@@ -525,7 +554,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/gke-platform/**"
         caches:
-          - core-tfsub-gke-platform
+          - core-tfsub-gke-platform-0
+          - core-tfsub-gke-platform-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-platform"
@@ -539,7 +569,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/gke-service-account/**"
         caches:
-          - core-tfsub-gke-service-account
+          - core-tfsub-gke-service-account-0
+          - core-tfsub-gke-service-account-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-service-account"
@@ -553,7 +584,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/gke-service-account/**"
         caches:
-          - core-tfsub-gke-service-account
+          - core-tfsub-gke-service-account-0
+          - core-tfsub-gke-service-account-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-service-account"
@@ -567,7 +599,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/k8s-gateway-domain-redirect/**"
         caches:
-          - core-tfsub-k8s-gateway-domain-redirect
+          - core-tfsub-k8s-gateway-domain-redirect-0
+          - core-tfsub-k8s-gateway-domain-redirect-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-gateway-domain-redirect"
@@ -581,7 +614,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/k8s-gateway-domain-redirect/**"
         caches:
-          - core-tfsub-k8s-gateway-domain-redirect
+          - core-tfsub-k8s-gateway-domain-redirect-0
+          - core-tfsub-k8s-gateway-domain-redirect-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-gateway-domain-redirect"
@@ -595,7 +629,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/k8s-gateway-http-route/**"
         caches:
-          - core-tfsub-k8s-gateway-http-route
+          - core-tfsub-k8s-gateway-http-route-0
+          - core-tfsub-k8s-gateway-http-route-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-gateway-http-route"
@@ -609,7 +644,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/k8s-gateway-http-route/**"
         caches:
-          - core-tfsub-k8s-gateway-http-route
+          - core-tfsub-k8s-gateway-http-route-0
+          - core-tfsub-k8s-gateway-http-route-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-gateway-http-route"
@@ -623,7 +659,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/k8s-vault/**"
         caches:
-          - core-tfsub-k8s-vault
+          - core-tfsub-k8s-vault-0
+          - core-tfsub-k8s-vault-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-vault"
@@ -637,7 +674,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/k8s-vault/**"
         caches:
-          - core-tfsub-k8s-vault
+          - core-tfsub-k8s-vault-0
+          - core-tfsub-k8s-vault-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-vault"
@@ -651,7 +689,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/k8s-workspace/**"
         caches:
-          - core-tfsub-k8s-workspace
+          - core-tfsub-k8s-workspace-0
+          - core-tfsub-k8s-workspace-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-workspace"
@@ -665,7 +704,8 @@ definitions:
             includePaths:
               - "projects/core/terraform-submodules/k8s-workspace/**"
         caches:
-          - core-tfsub-k8s-workspace
+          - core-tfsub-k8s-workspace-0
+          - core-tfsub-k8s-workspace-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-workspace"
@@ -768,7 +808,7 @@ definitions:
             includePaths:
               - "projects/demo/terraform-modules/kuard/**"
         caches:
-          - demo-tfmod-kuard
+          - demo-tfmod-kuard-0
         script:
           - *auth
           - ./scripts/terraform-module test "projects/demo/terraform-modules/kuard"
@@ -779,7 +819,7 @@ definitions:
             includePaths:
               - "projects/demo/terraform-modules/kuard/**"
         caches:
-          - demo-tfmod-kuard
+          - demo-tfmod-kuard-0
         script:
           - *auth
           - terraform -chdir="projects/demo/terraform-modules/kuard" init -input="false"
@@ -791,7 +831,7 @@ definitions:
             includePaths:
               - "projects/demo/terraform-modules/kuard/**"
         caches:
-          - demo-tfmod-kuard
+          - demo-tfmod-kuard-0
         script:
           - *auth
           - terraform -chdir="projects/demo/terraform-modules/kuard" init -input="false"
@@ -804,7 +844,8 @@ definitions:
             includePaths:
               - "projects/demo/terraform-submodules/helm-manifest/**"
         caches:
-          - demo-tfsub-helm-manifest
+          - demo-tfsub-helm-manifest-0
+          - demo-tfsub-helm-manifest-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-manifest"
@@ -818,7 +859,8 @@ definitions:
             includePaths:
               - "projects/demo/terraform-submodules/helm-manifest/**"
         caches:
-          - demo-tfsub-helm-manifest
+          - demo-tfsub-helm-manifest-0
+          - demo-tfsub-helm-manifest-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-manifest"
@@ -832,7 +874,8 @@ definitions:
             includePaths:
               - "projects/demo/terraform-submodules/helm-template/**"
         caches:
-          - demo-tfsub-helm-template
+          - demo-tfsub-helm-template-0
+          - demo-tfsub-helm-template-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-template"
@@ -846,7 +889,8 @@ definitions:
             includePaths:
               - "projects/demo/terraform-submodules/helm-template/**"
         caches:
-          - demo-tfsub-helm-template
+          - demo-tfsub-helm-template-0
+          - demo-tfsub-helm-template-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-template"
@@ -860,7 +904,8 @@ definitions:
             includePaths:
               - "projects/demo/terraform-submodules/kuard/**"
         caches:
-          - demo-tfsub-kuard
+          - demo-tfsub-kuard-0
+          - demo-tfsub-kuard-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/kuard"
@@ -874,7 +919,8 @@ definitions:
             includePaths:
               - "projects/demo/terraform-submodules/kuard/**"
         caches:
-          - demo-tfsub-kuard
+          - demo-tfsub-kuard-0
+          - demo-tfsub-kuard-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/kuard"
@@ -888,7 +934,7 @@ definitions:
             includePaths:
               - "projects/o11y/terraform-modules/test/**"
         caches:
-          - o11y-tfmod-test
+          - o11y-tfmod-test-0
         script:
           - *auth
           - ./scripts/terraform-module test "projects/o11y/terraform-modules/test"
@@ -899,7 +945,7 @@ definitions:
             includePaths:
               - "projects/o11y/terraform-modules/test/**"
         caches:
-          - o11y-tfmod-test
+          - o11y-tfmod-test-0
         script:
           - *auth
           - terraform -chdir="projects/o11y/terraform-modules/test" init -input="false"
@@ -911,7 +957,7 @@ definitions:
             includePaths:
               - "projects/o11y/terraform-modules/test/**"
         caches:
-          - o11y-tfmod-test
+          - o11y-tfmod-test-0
         script:
           - *auth
           - terraform -chdir="projects/o11y/terraform-modules/test" init -input="false"
@@ -924,7 +970,8 @@ definitions:
             includePaths:
               - "projects/o11y/terraform-submodules/gcp-availability-monitor/**"
         caches:
-          - o11y-tfsub-gcp-availability-monitor
+          - o11y-tfsub-gcp-availability-monitor-0
+          - o11y-tfsub-gcp-availability-monitor-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gcp-availability-monitor"
@@ -938,7 +985,8 @@ definitions:
             includePaths:
               - "projects/o11y/terraform-submodules/gcp-availability-monitor/**"
         caches:
-          - o11y-tfsub-gcp-availability-monitor
+          - o11y-tfsub-gcp-availability-monitor-0
+          - o11y-tfsub-gcp-availability-monitor-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gcp-availability-monitor"
@@ -952,7 +1000,8 @@ definitions:
             includePaths:
               - "projects/o11y/terraform-submodules/gke-lgtm-stack/**"
         caches:
-          - o11y-tfsub-gke-lgtm-stack
+          - o11y-tfsub-gke-lgtm-stack-0
+          - o11y-tfsub-gke-lgtm-stack-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-lgtm-stack"
@@ -966,7 +1015,8 @@ definitions:
             includePaths:
               - "projects/o11y/terraform-submodules/gke-lgtm-stack/**"
         caches:
-          - o11y-tfsub-gke-lgtm-stack
+          - o11y-tfsub-gke-lgtm-stack-0
+          - o11y-tfsub-gke-lgtm-stack-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-lgtm-stack"
@@ -980,7 +1030,8 @@ definitions:
             includePaths:
               - "projects/o11y/terraform-submodules/k8s-otel-collectors/**"
         caches:
-          - o11y-tfsub-k8s-otel-collectors
+          - o11y-tfsub-k8s-otel-collectors-0
+          - o11y-tfsub-k8s-otel-collectors-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-otel-collectors"
@@ -994,7 +1045,8 @@ definitions:
             includePaths:
               - "projects/o11y/terraform-submodules/k8s-otel-collectors/**"
         caches:
-          - o11y-tfsub-k8s-otel-collectors
+          - o11y-tfsub-k8s-otel-collectors-0
+          - o11y-tfsub-k8s-otel-collectors-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-otel-collectors"
@@ -1008,7 +1060,8 @@ definitions:
             includePaths:
               - "projects/o11y/terraform-submodules/k8s-prom-exporters/**"
         caches:
-          - o11y-tfsub-k8s-prom-exporters
+          - o11y-tfsub-k8s-prom-exporters-0
+          - o11y-tfsub-k8s-prom-exporters-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-prom-exporters"
@@ -1022,7 +1075,8 @@ definitions:
             includePaths:
               - "projects/o11y/terraform-submodules/k8s-prom-exporters/**"
         caches:
-          - o11y-tfsub-k8s-prom-exporters
+          - o11y-tfsub-k8s-prom-exporters-0
+          - o11y-tfsub-k8s-prom-exporters-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-prom-exporters"
