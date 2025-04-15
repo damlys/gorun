@@ -49,6 +49,7 @@ jobs:
           path: |
             projects/core/terraform-submodules/k8s-vault/.terraform
             projects/core/terraform-submodules/k8s-vault/.terraform.lock.hcl
+
       - name: build
         run: ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-vault"
       - name: test

@@ -49,6 +49,7 @@ jobs:
           path: |
             projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform
             projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform.lock.hcl
+
       - name: build
         run: ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-otel-collectors"
       - name: test

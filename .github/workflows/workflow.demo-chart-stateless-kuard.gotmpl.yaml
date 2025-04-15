@@ -44,6 +44,7 @@ jobs:
           cleanup_credentials: true
       - name: helm auth (Google Artifact Registry)
         run: gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
+
       - name: build
         run: ./scripts/helm-chart build "projects/demo/helm-charts/stateless-kuard"
       - name: test

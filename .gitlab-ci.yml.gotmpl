@@ -18,7 +18,7 @@ stages:
 test-{{ .ProjectSlug }}:
   stage: test
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
         - "{{ .ProjectPath }}/**/*"
   script:
@@ -29,7 +29,7 @@ test-{{ .ProjectSlug }}:
 publish-{{ .ProjectSlug }}:
   stage: publish
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
         - "{{ .ProjectPath }}/**/*"
   script:
@@ -43,7 +43,7 @@ publish-{{ .ProjectSlug }}:
 test-{{ .ProjectSlug }}:
   stage: test
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
         - "{{ .ProjectPath }}/**/*"
   script:
@@ -54,7 +54,7 @@ test-{{ .ProjectSlug }}:
 publish-{{ .ProjectSlug }}:
   stage: publish
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
         - "{{ .ProjectPath }}/**/*"
   script:
@@ -68,7 +68,7 @@ publish-{{ .ProjectSlug }}:
 test-{{ .ProjectSlug }}:
   stage: test
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
         - "{{ .ProjectPath }}/**/*"
   cache:
@@ -83,7 +83,7 @@ test-{{ .ProjectSlug }}:
 publish-{{ .ProjectSlug }}:
   stage: publish
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
         - "{{ .ProjectPath }}/**/*"
   cache:
@@ -101,7 +101,7 @@ publish-{{ .ProjectSlug }}:
 test-{{ .ProjectSlug }}:
   stage: test
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
         - "{{ .ProjectPath }}/**/*"
   cache:
@@ -112,7 +112,10 @@ test-{{ .ProjectSlug }}:
 plan-{{ .ProjectSlug }}:
   stage: plan
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+      changes:
+        - "{{ .ProjectPath }}/**/*"
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
         - "{{ .ProjectPath }}/**/*"
   cache:
@@ -124,7 +127,7 @@ plan-{{ .ProjectSlug }}:
 apply-{{ .ProjectSlug }}:
   stage: apply
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
         - "{{ .ProjectPath }}/**/*"
   cache:
@@ -140,7 +143,7 @@ apply-{{ .ProjectSlug }}:
 test-{{ .ProjectSlug }}:
   stage: test
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
         - "{{ .ProjectPath }}/**/*"
   script:

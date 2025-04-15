@@ -49,6 +49,7 @@ jobs:
           path: |
             projects/demo/terraform-submodules/helm-manifest/.terraform
             projects/demo/terraform-submodules/helm-manifest/.terraform.lock.hcl
+
       - name: build
         run: ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-manifest"
       - name: test

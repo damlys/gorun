@@ -27,5 +27,6 @@ jobs:
           credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
           create_credentials_file: true
           cleanup_credentials: true
+
       - name: stop
         run: ./scripts/dev stop

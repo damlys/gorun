@@ -49,6 +49,7 @@ jobs:
           path: |
             projects/demo/terraform-submodules/kuard/.terraform
             projects/demo/terraform-submodules/kuard/.terraform.lock.hcl
+
       - name: build
         run: ./scripts/terraform-submodule build "projects/demo/terraform-submodules/kuard"
       - name: test
