@@ -49,6 +49,7 @@ jobs:
           path: |
             projects/core/terraform-submodules/gcp-helm-charts-registry/.terraform
             projects/core/terraform-submodules/gcp-helm-charts-registry/.terraform.lock.hcl
+
       - name: build
         run: ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-helm-charts-registry"
       - name: test

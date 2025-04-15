@@ -59,6 +59,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: build
         run: ./scripts/docker-image build "projects/core/docker-images/java21-rte"
       - name: test

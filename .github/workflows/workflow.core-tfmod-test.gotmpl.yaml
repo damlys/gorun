@@ -48,6 +48,7 @@ jobs:
           key: core-tfmod-test
           path: |
             projects/core/terraform-modules/test/.terraform
+
       - name: test
         run: ./scripts/terraform-module test "projects/core/terraform-modules/test"
       - name: init

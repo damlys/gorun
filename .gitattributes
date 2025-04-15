@@ -4,5 +4,6 @@
 **/*.gotmpl.* linguist-generated=true
 **/*.tftpl.* linguist-generated=true
 **/Chart.lock linguist-generated=true
+/.gitlab-ci.yml linguist-generated=true
 /bitbucket-pipelines.yml linguist-generated=true
 /projects/*/*/*/helm/charts/**/* linguist-generated=true

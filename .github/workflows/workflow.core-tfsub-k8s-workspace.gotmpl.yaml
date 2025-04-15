@@ -49,6 +49,7 @@ jobs:
           path: |
             projects/core/terraform-submodules/k8s-workspace/.terraform
             projects/core/terraform-submodules/k8s-workspace/.terraform.lock.hcl
+
       - name: build
         run: ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-workspace"
       - name: test

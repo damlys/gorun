@@ -49,6 +49,7 @@ jobs:
           path: |
             projects/core/terraform-submodules/gke-platform/.terraform
             projects/core/terraform-submodules/gke-platform/.terraform.lock.hcl
+
       - name: build
         run: ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-platform"
       - name: test

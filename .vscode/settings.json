@@ -31,6 +31,7 @@
     "Dockerfile.bash": "shellscript"
   },
   "files.readonlyInclude": {
+    ".gitlab-ci.yml": true,
     "**/.terraform.lock.hcl": true,
     "**/*.gotmpl.*": true, // files rendered with Go
     "**/*.tftpl.*": true, // files rendered by Terraform

@@ -1,10 +1,19 @@
+{{- /*
+https://support.atlassian.com/bitbucket-cloud/docs/bitbucket-pipelines-configuration-reference/
+https://support.atlassian.com/bitbucket-cloud/docs/variables-and-secrets/#Default-variables
+*/ -}}
 image: damlys/gorun-devcontainer:0.3.100
 definitions:
   caches:
     {{- range . }}
 
-    {{- if or (eq .ProjectType "terraform-submodules") (eq .ProjectType "terraform-modules") }}
-    {{ .ProjectSlug }}: {{ .ProjectPath }}/.terraform
+    {{- if eq .ProjectType "terraform-submodules" }}
+    {{ .ProjectSlug }}-0: {{ .ProjectPath }}/.terraform
+    {{ .ProjectSlug }}-1: {{ .ProjectPath }}/.terraform.lock.hcl
+    {{- end }}
+
+    {{- if eq .ProjectType "terraform-modules" }}
+    {{ .ProjectSlug }}-0: {{ .ProjectPath }}/.terraform
     {{- end }}
 
     {{- end }}{{/* range . */}}
@@ -88,7 +97,8 @@ definitions:
             includePaths:
               - "{{ .ProjectPath }}/**"
         caches:
-          - {{ .ProjectSlug }}
+          - {{ .ProjectSlug }}-0
+          - {{ .ProjectSlug }}-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "{{ .ProjectPath }}"
@@ -102,7 +112,8 @@ definitions:
             includePaths:
               - "{{ .ProjectPath }}/**"
         caches:
-          - {{ .ProjectSlug }}
+          - {{ .ProjectSlug }}-0
+          - {{ .ProjectSlug }}-1
         script:
           - *auth
           - ./scripts/terraform-submodule build "{{ .ProjectPath }}"
@@ -119,7 +130,7 @@ definitions:
             includePaths:
               - "{{ .ProjectPath }}/**"
         caches:
-          - {{ .ProjectSlug }}
+          - {{ .ProjectSlug }}-0
         script:
           - *auth
           - ./scripts/terraform-module test "{{ .ProjectPath }}"
@@ -130,7 +141,7 @@ definitions:
             includePaths:
               - "{{ .ProjectPath }}/**"
         caches:
-          - {{ .ProjectSlug }}
+          - {{ .ProjectSlug }}-0
         script:
           - *auth
           - terraform -chdir="{{ .ProjectPath }}" init -input="false"
@@ -142,7 +153,7 @@ definitions:
             includePaths:
               - "{{ .ProjectPath }}/**"
         caches:
-          - {{ .ProjectSlug }}
+          - {{ .ProjectSlug }}-0
         script:
           - *auth
           - terraform -chdir="{{ .ProjectPath }}" init -input="false"
@@ -166,7 +177,7 @@ definitions:
 
 pipelines:
   pull-requests:
-    "**":
+    main:
       - parallel:
           {{- range . }}
 

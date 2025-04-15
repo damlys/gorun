@@ -1,3 +1,7 @@
+{{- /*
+https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions
+https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#default-environment-variables
+*/ -}}
 name: {{ .ProjectSlug }}
 on:
   pull_request:
@@ -71,6 +75,7 @@ jobs:
           registry: ghcr.io
           username: {{ "${{ github.actor }}" }}
           password: {{ "${{ secrets.GITHUB_TOKEN }}" }}
+
       - name: build
         run: ./scripts/docker-image build "{{ .ProjectPath }}"
       - name: test
@@ -88,6 +93,7 @@ jobs:
       {{- if eq .ProjectType "helm-charts" }}
       - name: helm auth (Google Artifact Registry)
         run: gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
+
       - name: build
         run: ./scripts/helm-chart build "{{ .ProjectPath }}"
       - name: test
@@ -102,20 +108,15 @@ jobs:
         run: ./scripts/helm-chart show "{{ .ProjectPath }}"
       {{- end }}
 
-      {{- if or (eq .ProjectType "terraform-submodules") (eq .ProjectType "terraform-modules") }}
+      {{- if eq .ProjectType "terraform-submodules" }}
       - name: cache
         uses: actions/cache@v4
         with:
           key: {{ .ProjectSlug }}
           path: |
             {{ .ProjectPath }}/.terraform
-
-            {{- if eq .ProjectType "terraform-submodules" }}
             {{ .ProjectPath }}/.terraform.lock.hcl
-            {{- end }}
-      {{- end }}
 
-      {{- if eq .ProjectType "terraform-submodules" }}
       - name: build
         run: ./scripts/terraform-submodule build "{{ .ProjectPath }}"
       - name: test
@@ -131,6 +132,13 @@ jobs:
       {{- end }}
 
       {{- if eq .ProjectType "terraform-modules" }}
+      - name: cache
+        uses: actions/cache@v4
+        with:
+          key: {{ .ProjectSlug }}
+          path: |
+            {{ .ProjectPath }}/.terraform
+
       - name: test
         run: ./scripts/terraform-module test "{{ .ProjectPath }}"
       - name: init
@@ -144,6 +152,7 @@ jobs:
       {{- end }}
 
       {{- if eq .ProjectType "go-modules" }}
+
       - name: test
         run: ./scripts/go-module test "{{ .ProjectPath }}"
       {{- end }}

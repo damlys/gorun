@@ -48,6 +48,7 @@ jobs:
           key: demo-tfmod-kuard
           path: |
             projects/demo/terraform-modules/kuard/.terraform
+
       - name: test
         run: ./scripts/terraform-module test "projects/demo/terraform-modules/kuard"
       - name: init
