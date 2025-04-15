@@ -1,2 +1,961 @@
 default:
   image: damlys/gorun-devcontainer:0.3.100
+  before_script:
+    - echo "$GOOGLE_CREDENTIALS" | gcloud auth activate-service-account --key-file="/dev/stdin"
+    - export GOOGLE_APPLICATION_CREDENTIALS="/tmp/GOOGLE_APPLICATION_CREDENTIALS.json" && echo "$GOOGLE_CREDENTIALS" >"$GOOGLE_APPLICATION_CREDENTIALS"
+    - gcloud auth configure-docker "europe-central2-docker.pkg.dev"
+    - gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
+
+stages:
+  - test
+  - publish
+  - plan
+  - apply
+test-core-image-devcontainer:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/docker-images/devcontainer/**/*"
+  script:
+    - ./scripts/docker-image build "projects/core/docker-images/devcontainer"
+    - ./scripts/docker-image test "projects/core/docker-images/devcontainer"
+    - ./scripts/docker-image pre-publish "projects/core/docker-images/devcontainer"
+    - ./scripts/docker-image show "projects/core/docker-images/devcontainer"
+publish-core-image-devcontainer:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/docker-images/devcontainer/**/*"
+  script:
+    - ./scripts/docker-image build "projects/core/docker-images/devcontainer"
+    - ./scripts/docker-image test "projects/core/docker-images/devcontainer"
+    - ./scripts/docker-image publish "projects/core/docker-images/devcontainer"
+    - ./scripts/docker-image show "projects/core/docker-images/devcontainer"
+test-core-image-go1-rte:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/docker-images/go1-rte/**/*"
+  script:
+    - ./scripts/docker-image build "projects/core/docker-images/go1-rte"
+    - ./scripts/docker-image test "projects/core/docker-images/go1-rte"
+    - ./scripts/docker-image pre-publish "projects/core/docker-images/go1-rte"
+    - ./scripts/docker-image show "projects/core/docker-images/go1-rte"
+publish-core-image-go1-rte:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/docker-images/go1-rte/**/*"
+  script:
+    - ./scripts/docker-image build "projects/core/docker-images/go1-rte"
+    - ./scripts/docker-image test "projects/core/docker-images/go1-rte"
+    - ./scripts/docker-image publish "projects/core/docker-images/go1-rte"
+    - ./scripts/docker-image show "projects/core/docker-images/go1-rte"
+test-core-image-go1-sdk:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/docker-images/go1-sdk/**/*"
+  script:
+    - ./scripts/docker-image build "projects/core/docker-images/go1-sdk"
+    - ./scripts/docker-image test "projects/core/docker-images/go1-sdk"
+    - ./scripts/docker-image pre-publish "projects/core/docker-images/go1-sdk"
+    - ./scripts/docker-image show "projects/core/docker-images/go1-sdk"
+publish-core-image-go1-sdk:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/docker-images/go1-sdk/**/*"
+  script:
+    - ./scripts/docker-image build "projects/core/docker-images/go1-sdk"
+    - ./scripts/docker-image test "projects/core/docker-images/go1-sdk"
+    - ./scripts/docker-image publish "projects/core/docker-images/go1-sdk"
+    - ./scripts/docker-image show "projects/core/docker-images/go1-sdk"
+test-core-image-java21-rte:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/docker-images/java21-rte/**/*"
+  script:
+    - ./scripts/docker-image build "projects/core/docker-images/java21-rte"
+    - ./scripts/docker-image test "projects/core/docker-images/java21-rte"
+    - ./scripts/docker-image pre-publish "projects/core/docker-images/java21-rte"
+    - ./scripts/docker-image show "projects/core/docker-images/java21-rte"
+publish-core-image-java21-rte:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/docker-images/java21-rte/**/*"
+  script:
+    - ./scripts/docker-image build "projects/core/docker-images/java21-rte"
+    - ./scripts/docker-image test "projects/core/docker-images/java21-rte"
+    - ./scripts/docker-image publish "projects/core/docker-images/java21-rte"
+    - ./scripts/docker-image show "projects/core/docker-images/java21-rte"
+test-core-image-java21-sdk:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/docker-images/java21-sdk/**/*"
+  script:
+    - ./scripts/docker-image build "projects/core/docker-images/java21-sdk"
+    - ./scripts/docker-image test "projects/core/docker-images/java21-sdk"
+    - ./scripts/docker-image pre-publish "projects/core/docker-images/java21-sdk"
+    - ./scripts/docker-image show "projects/core/docker-images/java21-sdk"
+publish-core-image-java21-sdk:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/docker-images/java21-sdk/**/*"
+  script:
+    - ./scripts/docker-image build "projects/core/docker-images/java21-sdk"
+    - ./scripts/docker-image test "projects/core/docker-images/java21-sdk"
+    - ./scripts/docker-image publish "projects/core/docker-images/java21-sdk"
+    - ./scripts/docker-image show "projects/core/docker-images/java21-sdk"
+test-core-image-node22-rte:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/docker-images/node22-rte/**/*"
+  script:
+    - ./scripts/docker-image build "projects/core/docker-images/node22-rte"
+    - ./scripts/docker-image test "projects/core/docker-images/node22-rte"
+    - ./scripts/docker-image pre-publish "projects/core/docker-images/node22-rte"
+    - ./scripts/docker-image show "projects/core/docker-images/node22-rte"
+publish-core-image-node22-rte:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/docker-images/node22-rte/**/*"
+  script:
+    - ./scripts/docker-image build "projects/core/docker-images/node22-rte"
+    - ./scripts/docker-image test "projects/core/docker-images/node22-rte"
+    - ./scripts/docker-image publish "projects/core/docker-images/node22-rte"
+    - ./scripts/docker-image show "projects/core/docker-images/node22-rte"
+test-core-image-node22-sdk:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/docker-images/node22-sdk/**/*"
+  script:
+    - ./scripts/docker-image build "projects/core/docker-images/node22-sdk"
+    - ./scripts/docker-image test "projects/core/docker-images/node22-sdk"
+    - ./scripts/docker-image pre-publish "projects/core/docker-images/node22-sdk"
+    - ./scripts/docker-image show "projects/core/docker-images/node22-sdk"
+publish-core-image-node22-sdk:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/docker-images/node22-sdk/**/*"
+  script:
+    - ./scripts/docker-image build "projects/core/docker-images/node22-sdk"
+    - ./scripts/docker-image test "projects/core/docker-images/node22-sdk"
+    - ./scripts/docker-image publish "projects/core/docker-images/node22-sdk"
+    - ./scripts/docker-image show "projects/core/docker-images/node22-sdk"
+test-core-tfmod-main:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-modules/main/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-modules/main/.terraform
+  script:
+    - ./scripts/terraform-module test "projects/core/terraform-modules/main"
+plan-core-tfmod-main:
+  stage: plan
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-modules/main/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-modules/main/.terraform
+  script:
+    - terraform -chdir="projects/core/terraform-modules/main" init -input="false"
+    - terraform -chdir="projects/core/terraform-modules/main" plan -input="false"
+apply-core-tfmod-main:
+  stage: apply
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-modules/main/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-modules/main/.terraform
+  script:
+    - terraform -chdir="projects/core/terraform-modules/main" init -input="false"
+    - terraform -chdir="projects/core/terraform-modules/main" apply -input="false" -auto-approve
+  when: manual
+test-core-tfmod-prod:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-modules/prod/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-modules/prod/.terraform
+  script:
+    - ./scripts/terraform-module test "projects/core/terraform-modules/prod"
+plan-core-tfmod-prod:
+  stage: plan
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-modules/prod/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-modules/prod/.terraform
+  script:
+    - terraform -chdir="projects/core/terraform-modules/prod" init -input="false"
+    - terraform -chdir="projects/core/terraform-modules/prod" plan -input="false"
+apply-core-tfmod-prod:
+  stage: apply
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-modules/prod/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-modules/prod/.terraform
+  script:
+    - terraform -chdir="projects/core/terraform-modules/prod" init -input="false"
+    - terraform -chdir="projects/core/terraform-modules/prod" apply -input="false" -auto-approve
+  when: manual
+test-core-tfmod-test:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-modules/test/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-modules/test/.terraform
+  script:
+    - ./scripts/terraform-module test "projects/core/terraform-modules/test"
+plan-core-tfmod-test:
+  stage: plan
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-modules/test/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-modules/test/.terraform
+  script:
+    - terraform -chdir="projects/core/terraform-modules/test" init -input="false"
+    - terraform -chdir="projects/core/terraform-modules/test" plan -input="false"
+apply-core-tfmod-test:
+  stage: apply
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-modules/test/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-modules/test/.terraform
+  script:
+    - terraform -chdir="projects/core/terraform-modules/test" init -input="false"
+    - terraform -chdir="projects/core/terraform-modules/test" apply -input="false" -auto-approve
+  when: manual
+test-core-tfsub-gcp-docker-images-registry:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/gcp-docker-images-registry/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/gcp-docker-images-registry/.terraform
+      - projects/core/terraform-submodules/gcp-docker-images-registry/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-docker-images-registry"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-docker-images-registry"
+    - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gcp-docker-images-registry"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-docker-images-registry"
+publish-core-tfsub-gcp-docker-images-registry:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/gcp-docker-images-registry/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/gcp-docker-images-registry/.terraform
+      - projects/core/terraform-submodules/gcp-docker-images-registry/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-docker-images-registry"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-docker-images-registry"
+    - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gcp-docker-images-registry"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-docker-images-registry"
+test-core-tfsub-gcp-helm-charts-registry:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/gcp-helm-charts-registry/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/gcp-helm-charts-registry/.terraform
+      - projects/core/terraform-submodules/gcp-helm-charts-registry/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-helm-charts-registry"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-helm-charts-registry"
+    - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gcp-helm-charts-registry"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-helm-charts-registry"
+publish-core-tfsub-gcp-helm-charts-registry:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/gcp-helm-charts-registry/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/gcp-helm-charts-registry/.terraform
+      - projects/core/terraform-submodules/gcp-helm-charts-registry/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-helm-charts-registry"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-helm-charts-registry"
+    - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gcp-helm-charts-registry"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-helm-charts-registry"
+test-core-tfsub-gcp-project:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/gcp-project/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/gcp-project/.terraform
+      - projects/core/terraform-submodules/gcp-project/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-project"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-project"
+    - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gcp-project"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-project"
+publish-core-tfsub-gcp-project:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/gcp-project/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/gcp-project/.terraform
+      - projects/core/terraform-submodules/gcp-project/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-project"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-project"
+    - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gcp-project"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-project"
+test-core-tfsub-gcp-terraform-modules-registry:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/gcp-terraform-modules-registry/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/gcp-terraform-modules-registry/.terraform
+      - projects/core/terraform-submodules/gcp-terraform-modules-registry/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+    - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+publish-core-tfsub-gcp-terraform-modules-registry:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/gcp-terraform-modules-registry/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/gcp-terraform-modules-registry/.terraform
+      - projects/core/terraform-submodules/gcp-terraform-modules-registry/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+    - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-terraform-modules-registry"
+test-core-tfsub-gcp-terraform-state-bucket:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/gcp-terraform-state-bucket/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/gcp-terraform-state-bucket/.terraform
+      - projects/core/terraform-submodules/gcp-terraform-state-bucket/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+    - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+publish-core-tfsub-gcp-terraform-state-bucket:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/gcp-terraform-state-bucket/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/gcp-terraform-state-bucket/.terraform
+      - projects/core/terraform-submodules/gcp-terraform-state-bucket/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+    - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gcp-terraform-state-bucket"
+test-core-tfsub-gke-platform:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/gke-platform/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/gke-platform/.terraform
+      - projects/core/terraform-submodules/gke-platform/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-platform"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gke-platform"
+    - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gke-platform"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gke-platform"
+publish-core-tfsub-gke-platform:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/gke-platform/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/gke-platform/.terraform
+      - projects/core/terraform-submodules/gke-platform/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-platform"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gke-platform"
+    - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gke-platform"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gke-platform"
+test-core-tfsub-gke-service-account:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/gke-service-account/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/gke-service-account/.terraform
+      - projects/core/terraform-submodules/gke-service-account/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-service-account"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gke-service-account"
+    - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/gke-service-account"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gke-service-account"
+publish-core-tfsub-gke-service-account:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/gke-service-account/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/gke-service-account/.terraform
+      - projects/core/terraform-submodules/gke-service-account/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/gke-service-account"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/gke-service-account"
+    - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/gke-service-account"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/gke-service-account"
+test-core-tfsub-k8s-gateway-domain-redirect:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/k8s-gateway-domain-redirect/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/k8s-gateway-domain-redirect/.terraform
+      - projects/core/terraform-submodules/k8s-gateway-domain-redirect/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-gateway-domain-redirect"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/k8s-gateway-domain-redirect"
+    - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/k8s-gateway-domain-redirect"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/k8s-gateway-domain-redirect"
+publish-core-tfsub-k8s-gateway-domain-redirect:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/k8s-gateway-domain-redirect/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/k8s-gateway-domain-redirect/.terraform
+      - projects/core/terraform-submodules/k8s-gateway-domain-redirect/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-gateway-domain-redirect"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/k8s-gateway-domain-redirect"
+    - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/k8s-gateway-domain-redirect"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/k8s-gateway-domain-redirect"
+test-core-tfsub-k8s-gateway-http-route:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/k8s-gateway-http-route/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/k8s-gateway-http-route/.terraform
+      - projects/core/terraform-submodules/k8s-gateway-http-route/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-gateway-http-route"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/k8s-gateway-http-route"
+    - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/k8s-gateway-http-route"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/k8s-gateway-http-route"
+publish-core-tfsub-k8s-gateway-http-route:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/k8s-gateway-http-route/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/k8s-gateway-http-route/.terraform
+      - projects/core/terraform-submodules/k8s-gateway-http-route/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-gateway-http-route"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/k8s-gateway-http-route"
+    - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/k8s-gateway-http-route"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/k8s-gateway-http-route"
+test-core-tfsub-k8s-vault:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/k8s-vault/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/k8s-vault/.terraform
+      - projects/core/terraform-submodules/k8s-vault/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-vault"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/k8s-vault"
+    - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/k8s-vault"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/k8s-vault"
+publish-core-tfsub-k8s-vault:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/k8s-vault/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/k8s-vault/.terraform
+      - projects/core/terraform-submodules/k8s-vault/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-vault"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/k8s-vault"
+    - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/k8s-vault"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/k8s-vault"
+test-core-tfsub-k8s-workspace:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/k8s-workspace/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/k8s-workspace/.terraform
+      - projects/core/terraform-submodules/k8s-workspace/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-workspace"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/k8s-workspace"
+    - ./scripts/terraform-submodule pre-publish "projects/core/terraform-submodules/k8s-workspace"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/k8s-workspace"
+publish-core-tfsub-k8s-workspace:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/core/terraform-submodules/k8s-workspace/**/*"
+  cache:
+    paths:
+      - projects/core/terraform-submodules/k8s-workspace/.terraform
+      - projects/core/terraform-submodules/k8s-workspace/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/core/terraform-submodules/k8s-workspace"
+    - ./scripts/terraform-submodule test "projects/core/terraform-submodules/k8s-workspace"
+    - ./scripts/terraform-submodule publish "projects/core/terraform-submodules/k8s-workspace"
+    - ./scripts/terraform-submodule show "projects/core/terraform-submodules/k8s-workspace"
+test-demo-image-kuard:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/docker-images/kuard/**/*"
+  script:
+    - ./scripts/docker-image build "projects/demo/docker-images/kuard"
+    - ./scripts/docker-image test "projects/demo/docker-images/kuard"
+    - ./scripts/docker-image pre-publish "projects/demo/docker-images/kuard"
+    - ./scripts/docker-image show "projects/demo/docker-images/kuard"
+publish-demo-image-kuard:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/docker-images/kuard/**/*"
+  script:
+    - ./scripts/docker-image build "projects/demo/docker-images/kuard"
+    - ./scripts/docker-image test "projects/demo/docker-images/kuard"
+    - ./scripts/docker-image publish "projects/demo/docker-images/kuard"
+    - ./scripts/docker-image show "projects/demo/docker-images/kuard"
+test-demo-gomod-kuard-tester:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/go-modules/kuard-tester/**/*"
+  script:
+    - ./scripts/go-module test "projects/demo/go-modules/kuard-tester"
+test-demo-chart-stateful-kuard:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/helm-charts/stateful-kuard/**/*"
+  script:
+    - ./scripts/helm-chart build "projects/demo/helm-charts/stateful-kuard"
+    - ./scripts/helm-chart test "projects/demo/helm-charts/stateful-kuard"
+    - ./scripts/helm-chart pre-publish "projects/demo/helm-charts/stateful-kuard"
+    - ./scripts/helm-chart show "projects/demo/helm-charts/stateful-kuard"
+publish-demo-chart-stateful-kuard:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/helm-charts/stateful-kuard/**/*"
+  script:
+    - ./scripts/helm-chart build "projects/demo/helm-charts/stateful-kuard"
+    - ./scripts/helm-chart test "projects/demo/helm-charts/stateful-kuard"
+    - ./scripts/helm-chart publish "projects/demo/helm-charts/stateful-kuard"
+    - ./scripts/helm-chart show "projects/demo/helm-charts/stateful-kuard"
+test-demo-chart-stateless-kuard:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/helm-charts/stateless-kuard/**/*"
+  script:
+    - ./scripts/helm-chart build "projects/demo/helm-charts/stateless-kuard"
+    - ./scripts/helm-chart test "projects/demo/helm-charts/stateless-kuard"
+    - ./scripts/helm-chart pre-publish "projects/demo/helm-charts/stateless-kuard"
+    - ./scripts/helm-chart show "projects/demo/helm-charts/stateless-kuard"
+publish-demo-chart-stateless-kuard:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/helm-charts/stateless-kuard/**/*"
+  script:
+    - ./scripts/helm-chart build "projects/demo/helm-charts/stateless-kuard"
+    - ./scripts/helm-chart test "projects/demo/helm-charts/stateless-kuard"
+    - ./scripts/helm-chart publish "projects/demo/helm-charts/stateless-kuard"
+    - ./scripts/helm-chart show "projects/demo/helm-charts/stateless-kuard"
+test-demo-tfmod-kuard:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/terraform-modules/kuard/**/*"
+  cache:
+    paths:
+      - projects/demo/terraform-modules/kuard/.terraform
+  script:
+    - ./scripts/terraform-module test "projects/demo/terraform-modules/kuard"
+plan-demo-tfmod-kuard:
+  stage: plan
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/terraform-modules/kuard/**/*"
+  cache:
+    paths:
+      - projects/demo/terraform-modules/kuard/.terraform
+  script:
+    - terraform -chdir="projects/demo/terraform-modules/kuard" init -input="false"
+    - terraform -chdir="projects/demo/terraform-modules/kuard" plan -input="false"
+apply-demo-tfmod-kuard:
+  stage: apply
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/terraform-modules/kuard/**/*"
+  cache:
+    paths:
+      - projects/demo/terraform-modules/kuard/.terraform
+  script:
+    - terraform -chdir="projects/demo/terraform-modules/kuard" init -input="false"
+    - terraform -chdir="projects/demo/terraform-modules/kuard" apply -input="false" -auto-approve
+  when: manual
+test-demo-tfsub-helm-manifest:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/terraform-submodules/helm-manifest/**/*"
+  cache:
+    paths:
+      - projects/demo/terraform-submodules/helm-manifest/.terraform
+      - projects/demo/terraform-submodules/helm-manifest/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-manifest"
+    - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-manifest"
+    - ./scripts/terraform-submodule pre-publish "projects/demo/terraform-submodules/helm-manifest"
+    - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-manifest"
+publish-demo-tfsub-helm-manifest:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/terraform-submodules/helm-manifest/**/*"
+  cache:
+    paths:
+      - projects/demo/terraform-submodules/helm-manifest/.terraform
+      - projects/demo/terraform-submodules/helm-manifest/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-manifest"
+    - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-manifest"
+    - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/helm-manifest"
+    - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-manifest"
+test-demo-tfsub-helm-template:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/terraform-submodules/helm-template/**/*"
+  cache:
+    paths:
+      - projects/demo/terraform-submodules/helm-template/.terraform
+      - projects/demo/terraform-submodules/helm-template/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-template"
+    - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-template"
+    - ./scripts/terraform-submodule pre-publish "projects/demo/terraform-submodules/helm-template"
+    - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-template"
+publish-demo-tfsub-helm-template:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/terraform-submodules/helm-template/**/*"
+  cache:
+    paths:
+      - projects/demo/terraform-submodules/helm-template/.terraform
+      - projects/demo/terraform-submodules/helm-template/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-template"
+    - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-template"
+    - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/helm-template"
+    - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-template"
+test-demo-tfsub-kuard:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/terraform-submodules/kuard/**/*"
+  cache:
+    paths:
+      - projects/demo/terraform-submodules/kuard/.terraform
+      - projects/demo/terraform-submodules/kuard/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/kuard"
+    - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/kuard"
+    - ./scripts/terraform-submodule pre-publish "projects/demo/terraform-submodules/kuard"
+    - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/kuard"
+publish-demo-tfsub-kuard:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/demo/terraform-submodules/kuard/**/*"
+  cache:
+    paths:
+      - projects/demo/terraform-submodules/kuard/.terraform
+      - projects/demo/terraform-submodules/kuard/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/kuard"
+    - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/kuard"
+    - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/kuard"
+    - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/kuard"
+test-o11y-tfmod-test:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/o11y/terraform-modules/test/**/*"
+  cache:
+    paths:
+      - projects/o11y/terraform-modules/test/.terraform
+  script:
+    - ./scripts/terraform-module test "projects/o11y/terraform-modules/test"
+plan-o11y-tfmod-test:
+  stage: plan
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/o11y/terraform-modules/test/**/*"
+  cache:
+    paths:
+      - projects/o11y/terraform-modules/test/.terraform
+  script:
+    - terraform -chdir="projects/o11y/terraform-modules/test" init -input="false"
+    - terraform -chdir="projects/o11y/terraform-modules/test" plan -input="false"
+apply-o11y-tfmod-test:
+  stage: apply
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/o11y/terraform-modules/test/**/*"
+  cache:
+    paths:
+      - projects/o11y/terraform-modules/test/.terraform
+  script:
+    - terraform -chdir="projects/o11y/terraform-modules/test" init -input="false"
+    - terraform -chdir="projects/o11y/terraform-modules/test" apply -input="false" -auto-approve
+  when: manual
+test-o11y-tfsub-gcp-availability-monitor:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/o11y/terraform-submodules/gcp-availability-monitor/**/*"
+  cache:
+    paths:
+      - projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform
+      - projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gcp-availability-monitor"
+    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gcp-availability-monitor"
+    - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/gcp-availability-monitor"
+    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gcp-availability-monitor"
+publish-o11y-tfsub-gcp-availability-monitor:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/o11y/terraform-submodules/gcp-availability-monitor/**/*"
+  cache:
+    paths:
+      - projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform
+      - projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gcp-availability-monitor"
+    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gcp-availability-monitor"
+    - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/gcp-availability-monitor"
+    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gcp-availability-monitor"
+test-o11y-tfsub-gke-lgtm-stack:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/o11y/terraform-submodules/gke-lgtm-stack/**/*"
+  cache:
+    paths:
+      - projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform
+      - projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-lgtm-stack"
+    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gke-lgtm-stack"
+    - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/gke-lgtm-stack"
+    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gke-lgtm-stack"
+publish-o11y-tfsub-gke-lgtm-stack:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/o11y/terraform-submodules/gke-lgtm-stack/**/*"
+  cache:
+    paths:
+      - projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform
+      - projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-lgtm-stack"
+    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gke-lgtm-stack"
+    - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/gke-lgtm-stack"
+    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gke-lgtm-stack"
+test-o11y-tfsub-k8s-otel-collectors:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/o11y/terraform-submodules/k8s-otel-collectors/**/*"
+  cache:
+    paths:
+      - projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform
+      - projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-otel-collectors"
+    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-otel-collectors"
+    - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/k8s-otel-collectors"
+    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-otel-collectors"
+publish-o11y-tfsub-k8s-otel-collectors:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/o11y/terraform-submodules/k8s-otel-collectors/**/*"
+  cache:
+    paths:
+      - projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform
+      - projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-otel-collectors"
+    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-otel-collectors"
+    - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/k8s-otel-collectors"
+    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-otel-collectors"
+test-o11y-tfsub-k8s-prom-exporters:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/o11y/terraform-submodules/k8s-prom-exporters/**/*"
+  cache:
+    paths:
+      - projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform
+      - projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-prom-exporters"
+    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-prom-exporters"
+    - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/k8s-prom-exporters"
+    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-prom-exporters"
+publish-o11y-tfsub-k8s-prom-exporters:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "projects/o11y/terraform-submodules/k8s-prom-exporters/**/*"
+  cache:
+    paths:
+      - projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform
+      - projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-prom-exporters"
+    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-prom-exporters"
+    - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/k8s-prom-exporters"
+    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-prom-exporters"

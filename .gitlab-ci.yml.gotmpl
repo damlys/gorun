@@ -1,2 +1,150 @@
 default:
   image: damlys/gorun-devcontainer:0.3.100
+  before_script:
+    - echo "$GOOGLE_CREDENTIALS" | gcloud auth activate-service-account --key-file="/dev/stdin"
+    - export GOOGLE_APPLICATION_CREDENTIALS="/tmp/GOOGLE_APPLICATION_CREDENTIALS.json" && echo "$GOOGLE_CREDENTIALS" >"$GOOGLE_APPLICATION_CREDENTIALS"
+    - gcloud auth configure-docker "europe-central2-docker.pkg.dev"
+    - gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
+
+stages:
+  - test
+  - publish
+  - plan
+  - apply
+
+{{- range . }}
+
+{{- if eq .ProjectType "docker-images" }}
+test-{{ .ProjectSlug }}:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "{{ .ProjectPath }}/**/*"
+  script:
+    - ./scripts/docker-image build "{{ .ProjectPath }}"
+    - ./scripts/docker-image test "{{ .ProjectPath }}"
+    - ./scripts/docker-image pre-publish "{{ .ProjectPath }}"
+    - ./scripts/docker-image show "{{ .ProjectPath }}"
+publish-{{ .ProjectSlug }}:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "{{ .ProjectPath }}/**/*"
+  script:
+    - ./scripts/docker-image build "{{ .ProjectPath }}"
+    - ./scripts/docker-image test "{{ .ProjectPath }}"
+    - ./scripts/docker-image publish "{{ .ProjectPath }}"
+    - ./scripts/docker-image show "{{ .ProjectPath }}"
+{{- end }}
+
+{{- if eq .ProjectType "helm-charts" }}
+test-{{ .ProjectSlug }}:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "{{ .ProjectPath }}/**/*"
+  script:
+    - ./scripts/helm-chart build "{{ .ProjectPath }}"
+    - ./scripts/helm-chart test "{{ .ProjectPath }}"
+    - ./scripts/helm-chart pre-publish "{{ .ProjectPath }}"
+    - ./scripts/helm-chart show "{{ .ProjectPath }}"
+publish-{{ .ProjectSlug }}:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "{{ .ProjectPath }}/**/*"
+  script:
+    - ./scripts/helm-chart build "{{ .ProjectPath }}"
+    - ./scripts/helm-chart test "{{ .ProjectPath }}"
+    - ./scripts/helm-chart publish "{{ .ProjectPath }}"
+    - ./scripts/helm-chart show "{{ .ProjectPath }}"
+{{- end }}
+
+{{- if eq .ProjectType "terraform-submodules" }}
+test-{{ .ProjectSlug }}:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "{{ .ProjectPath }}/**/*"
+  cache:
+    paths:
+      - {{ .ProjectPath }}/.terraform
+      - {{ .ProjectPath }}/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "{{ .ProjectPath }}"
+    - ./scripts/terraform-submodule test "{{ .ProjectPath }}"
+    - ./scripts/terraform-submodule pre-publish "{{ .ProjectPath }}"
+    - ./scripts/terraform-submodule show "{{ .ProjectPath }}"
+publish-{{ .ProjectSlug }}:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "{{ .ProjectPath }}/**/*"
+  cache:
+    paths:
+      - {{ .ProjectPath }}/.terraform
+      - {{ .ProjectPath }}/.terraform.lock.hcl
+  script:
+    - ./scripts/terraform-submodule build "{{ .ProjectPath }}"
+    - ./scripts/terraform-submodule test "{{ .ProjectPath }}"
+    - ./scripts/terraform-submodule publish "{{ .ProjectPath }}"
+    - ./scripts/terraform-submodule show "{{ .ProjectPath }}"
+{{- end }}
+
+{{- if eq .ProjectType "terraform-modules" }}
+test-{{ .ProjectSlug }}:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "{{ .ProjectPath }}/**/*"
+  cache:
+    paths:
+      - {{ .ProjectPath }}/.terraform
+  script:
+    - ./scripts/terraform-module test "{{ .ProjectPath }}"
+plan-{{ .ProjectSlug }}:
+  stage: plan
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "{{ .ProjectPath }}/**/*"
+  cache:
+    paths:
+      - {{ .ProjectPath }}/.terraform
+  script:
+    - terraform -chdir="{{ .ProjectPath }}" init -input="false"
+    - terraform -chdir="{{ .ProjectPath }}" plan -input="false"
+apply-{{ .ProjectSlug }}:
+  stage: apply
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "{{ .ProjectPath }}/**/*"
+  cache:
+    paths:
+      - {{ .ProjectPath }}/.terraform
+  script:
+    - terraform -chdir="{{ .ProjectPath }}" init -input="false"
+    - terraform -chdir="{{ .ProjectPath }}" apply -input="false" -auto-approve
+  when: manual
+{{- end }}
+
+{{- if eq .ProjectType "go-modules" }}
+test-{{ .ProjectSlug }}:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "{{ .ProjectPath }}/**/*"
+  script:
+    - ./scripts/go-module test "{{ .ProjectPath }}"
+{{- end }}
+
+{{- end }}{{/* range . */}}
