@@ -12,7 +12,7 @@ jobs:
   test-go:
     name: test-go
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gorun-devcontainer:0.3.100
+    container: ghcr.io/damlys/gorun-devcontainer:0.4.100
     steps:
       - name: git clone (PR)
         if: github.event_name == 'pull_request'

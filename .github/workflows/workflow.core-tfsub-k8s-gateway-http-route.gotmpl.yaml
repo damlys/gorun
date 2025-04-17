@@ -14,7 +14,7 @@ jobs:
   core-tfsub-k8s-gateway-http-route:
     name: core-tfsub-k8s-gateway-http-route
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gorun-devcontainer:0.3.100
+    container: ghcr.io/damlys/gorun-devcontainer:0.4.100
     permissions:
       contents: write
       id-token: write
