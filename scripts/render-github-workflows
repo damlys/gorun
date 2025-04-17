@@ -4,7 +4,7 @@ for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
 
 function main {
   rm -f ./.github/workflows/workflow.*.gotmpl.yaml
-  go run ./go/cmd/render-github-workflows
+  go run ./projects/core/go-modules/monorepo/cmd/render-github-workflows
 }
 
 main "$@"

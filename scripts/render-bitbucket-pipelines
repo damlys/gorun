@@ -4,7 +4,7 @@ for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
 
 function main {
   rm -f ./bitbucket-pipelines.yml
-  go run ./go/cmd/render-bitbucket-pipelines
+  go run ./projects/core/go-modules/monorepo/cmd/render-bitbucket-pipelines
 }
 
 main "$@"

@@ -4,7 +4,7 @@ for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
 
 function main {
   rm -f ./.gitlab-ci.yml
-  go run ./go/cmd/render-gitlab-pipelines
+  go run ./projects/core/go-modules/monorepo/cmd/render-gitlab-pipelines
 }
 
 main "$@"

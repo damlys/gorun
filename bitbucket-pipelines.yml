@@ -274,6 +274,15 @@ definitions:
           - ./scripts/docker-image test "projects/core/docker-images/node22-sdk"
           - ./scripts/docker-image publish "projects/core/docker-images/node22-sdk"
           - ./scripts/docker-image show "projects/core/docker-images/node22-sdk"
+    - step: &test-core-gomod-monorepo
+        name: test core-gomod-monorepo
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/go-modules/monorepo/**"
+        script:
+          - *auth
+          - ./scripts/go-module test "projects/core/go-modules/monorepo"
     - step: &test-core-tfmod-main
         name: test core-tfmod-main
         condition:
@@ -1095,6 +1104,7 @@ pipelines:
           - step: *test-core-image-java21-sdk
           - step: *test-core-image-node22-rte
           - step: *test-core-image-node22-sdk
+          - step: *test-core-gomod-monorepo
           - step: *test-core-tfmod-main
           - step: *test-core-tfmod-prod
           - step: *test-core-tfmod-test

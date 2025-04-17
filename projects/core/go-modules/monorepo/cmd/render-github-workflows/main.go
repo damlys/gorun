@@ -6,8 +6,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/damlys/gorun/go/internal/monorepo"
-	"github.com/damlys/gorun/go/internal/tmpl"
+	"github.com/damlys/gorun/projects/core/go-modules/monorepo/internal/monorepo"
+	"github.com/damlys/gorun/projects/core/go-modules/monorepo/internal/tmpl"
 )
 
 func main() {

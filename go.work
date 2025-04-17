@@ -1,5 +1,5 @@
 go 1.24
 
-use ./go
+use ./projects/core/go-modules/monorepo
 
 use ./projects/demo/go-modules/kuard-tester

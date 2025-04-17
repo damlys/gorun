@@ -5,8 +5,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/damlys/gorun/go/internal/monorepo"
-	"github.com/damlys/gorun/go/internal/tmpl"
+	"github.com/damlys/gorun/projects/core/go-modules/monorepo/internal/monorepo"
+	"github.com/damlys/gorun/projects/core/go-modules/monorepo/internal/tmpl"
 )
 
 func main() {
@@ -22,8 +22,8 @@ func main() {
 	}
 	log.Printf("projects count: %d\n", len(projects))
 
-	templateFilePath := path.Join(wd, "bitbucket-pipelines.yml.gotmpl")
-	outputFilePath := path.Join(wd, "bitbucket-pipelines.yml")
+	templateFilePath := path.Join(wd, ".gitlab-ci.yml.gotmpl")
+	outputFilePath := path.Join(wd, ".gitlab-ci.yml")
 	log.Printf("rendering\n")
 	err = tmpl.RenderTemplate(templateFilePath, outputFilePath, projects)
 	if err != nil {

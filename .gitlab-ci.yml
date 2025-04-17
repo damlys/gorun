@@ -165,6 +165,14 @@ publish-core-image-node22-sdk:
     - ./scripts/docker-image test "projects/core/docker-images/node22-sdk"
     - ./scripts/docker-image publish "projects/core/docker-images/node22-sdk"
     - ./scripts/docker-image show "projects/core/docker-images/node22-sdk"
+test-core-gomod-monorepo:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+      changes:
+        - "projects/core/go-modules/monorepo/**"
+  script:
+    - ./scripts/go-module test "projects/core/go-modules/monorepo"
 test-core-tfmod-main:
   stage: test
   rules:
