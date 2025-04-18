@@ -183,7 +183,7 @@ resource "kubernetes_manifest" "gke_gateway_redirect_http_to_https" {
         kind        = "Gateway"
         namespace   = kubernetes_manifest.gke_gateway.manifest.metadata.namespace
         name        = kubernetes_manifest.gke_gateway.manifest.metadata.name
-        sectionName = "http"
+        port        = 80
       }]
       rules = [{
         filters = [{
@@ -215,7 +215,7 @@ resource "kubernetes_manifest" "http_route" {
         kind        = "Gateway"
         name        = "gke-gateway"
         namespace   = "gke-gateway"
-        sectionName = "https"
+        port        = 443
       }]
       hostnames = [var.domain]
       rules = [{

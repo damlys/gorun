@@ -751,11 +751,11 @@ resource "kubernetes_manifest" "gke_gateway_redirect_http" {
     }
     spec = {
       parentRefs = [{
-        group       = "gateway.networking.k8s.io"
-        kind        = "Gateway"
-        name        = kubernetes_manifest.gke_gateway.manifest.metadata.name
-        namespace   = kubernetes_manifest.gke_gateway.manifest.metadata.namespace
-        sectionName = "http"
+        group     = "gateway.networking.k8s.io"
+        kind      = "Gateway"
+        name      = kubernetes_manifest.gke_gateway.manifest.metadata.name
+        namespace = kubernetes_manifest.gke_gateway.manifest.metadata.namespace
+        port      = 80
       }]
       rules = [{
         filters = [{
