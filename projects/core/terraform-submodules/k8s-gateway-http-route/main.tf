@@ -8,11 +8,11 @@ resource "kubernetes_manifest" "http_route" {
     }
     spec = {
       parentRefs = [{
-        group       = "gateway.networking.k8s.io"
-        kind        = "Gateway"
-        name        = "gke-gateway"
-        namespace   = "gke-gateway"
-        sectionName = var.is_domain_root ? "https-root" : "https-wildcard"
+        group     = "gateway.networking.k8s.io"
+        kind      = "Gateway"
+        name      = "gke-gateway"
+        namespace = "gke-gateway"
+        port      = 443
       }]
       hostnames = [var.domain]
       rules = [{
