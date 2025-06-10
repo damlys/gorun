@@ -13,7 +13,7 @@ resource "kubernetes_namespace" "grafana" {
 }
 
 module "grafana_service_account" {
-  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.4.100.zip"
+  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.5.100.zip"
 
   google_project           = var.google_project
   google_container_cluster = var.google_container_cluster
@@ -96,7 +96,7 @@ data "kubernetes_service" "grafana" {
 }
 
 module "grafana_gateway_http_route" {
-  source = "../../../core/terraform-submodules/k8s-gateway-http-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.4.100.zip"
+  source = "../../../core/terraform-submodules/k8s-gateway-http-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.5.100.zip"
 
   kubernetes_service = data.kubernetes_service.grafana
 
@@ -107,7 +107,7 @@ module "grafana_gateway_http_route" {
 }
 
 module "grafana_availability_monitor" {
-  source = "../gcp-availability-monitor" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/o11y/gcp-availability-monitor/0.4.100.zip"
+  source = "../gcp-availability-monitor" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/o11y/gcp-availability-monitor/0.5.100.zip"
 
   google_project = var.google_project
 
@@ -129,7 +129,7 @@ resource "kubernetes_namespace" "loki" {
 }
 
 module "loki_service_account" {
-  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.4.100.zip"
+  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.5.100.zip"
 
   google_project           = var.google_project
   google_container_cluster = var.google_container_cluster
@@ -193,7 +193,7 @@ resource "kubernetes_namespace" "mimir" {
 }
 
 module "mimir_service_account" {
-  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.4.100.zip"
+  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.5.100.zip"
 
   google_project           = var.google_project
   google_container_cluster = var.google_container_cluster
@@ -257,7 +257,7 @@ resource "kubernetes_namespace" "tempo" {
 }
 
 module "tempo_service_account" {
-  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.4.100.zip"
+  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.5.100.zip"
 
   google_project           = var.google_project
   google_container_cluster = var.google_container_cluster

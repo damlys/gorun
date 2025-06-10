@@ -1,5 +1,5 @@
 module "workspace" {
-  source = "../../../core/terraform-submodules/k8s-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-workspace/0.4.100.zip"
+  source = "../../../core/terraform-submodules/k8s-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-workspace/0.5.100.zip"
 
   workspace_name = "kuard"
 
@@ -11,7 +11,7 @@ module "workspace" {
 }
 
 module "helm_manifest" {
-  source = "../helm-manifest" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/demo/helm-manifest/0.4.100.zip"
+  source = "../helm-manifest" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/demo/helm-manifest/0.5.100.zip"
 
   manifest = {
     apiVersion = "v1"
@@ -33,7 +33,7 @@ module "helm_manifest" {
 #######################################
 
 module "stateless_kuard_service_account" {
-  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.4.100.zip"
+  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.5.100.zip"
 
   google_project           = var.google_project
   google_container_cluster = var.google_container_cluster
@@ -42,11 +42,11 @@ module "stateless_kuard_service_account" {
 }
 
 module "stateless_kuard_helm_template" {
-  source = "../helm-template" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/demo/helm-template/0.4.100.zip"
+  source = "../helm-template" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/demo/helm-template/0.5.100.zip"
 
   repository = "../../helm-charts" # "oci://europe-central2-docker.pkg.dev/gogcp-main-2/private-helm-charts/gorun/demo"
   chart      = "stateless-kuard"
-  version_   = "0.4.100"
+  version_   = "0.5.100"
   name       = "stateless-kuard"
   namespace  = module.workspace.kubernetes_namespace.metadata[0].name
 
@@ -70,7 +70,7 @@ data "kubernetes_service" "stateless_kuard" {
 }
 
 module "stateless_kuard_gateway_http_route" {
-  source = "../../../core/terraform-submodules/k8s-gateway-http-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.4.100.zip"
+  source = "../../../core/terraform-submodules/k8s-gateway-http-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.5.100.zip"
 
   kubernetes_service = data.kubernetes_service.stateless_kuard
 
@@ -78,7 +78,7 @@ module "stateless_kuard_gateway_http_route" {
 }
 
 module "stateless_kuard_availability_monitor" {
-  source = "../../../o11y/terraform-submodules/gcp-availability-monitor" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/o11y/gcp-availability-monitor/0.4.100.zip"
+  source = "../../../o11y/terraform-submodules/gcp-availability-monitor" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/o11y/gcp-availability-monitor/0.5.100.zip"
 
   google_project = var.google_project
 
@@ -90,7 +90,7 @@ module "stateless_kuard_availability_monitor" {
 }
 
 module "stateless_kuard_gateway_domain_redirect" {
-  source = "../../../core/terraform-submodules/k8s-gateway-domain-redirect" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-domain-redirect/0.4.100.zip"
+  source = "../../../core/terraform-submodules/k8s-gateway-domain-redirect" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-domain-redirect/0.5.100.zip"
 
   kubernetes_namespace = module.workspace.kubernetes_namespace
 
@@ -103,7 +103,7 @@ module "stateless_kuard_gateway_domain_redirect" {
 #######################################
 
 module "stateful_kuard_service_account" {
-  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.4.100.zip"
+  source = "../../../core/terraform-submodules/gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-service-account/0.5.100.zip"
 
   google_project           = var.google_project
   google_container_cluster = var.google_container_cluster
@@ -114,7 +114,7 @@ module "stateful_kuard_service_account" {
 resource "helm_release" "stateful_kuard" {
   repository = "../../helm-charts" # "oci://europe-central2-docker.pkg.dev/gogcp-main-2/private-helm-charts/gorun/demo"
   chart      = "stateful-kuard"
-  version    = "0.4.100"
+  version    = "0.5.100"
   name       = "stateful-kuard"
   namespace  = module.workspace.kubernetes_namespace.metadata[0].name
 
@@ -138,7 +138,7 @@ data "kubernetes_service" "stateful_kuard" {
 }
 
 module "stateful_kuard_gateway_http_route" {
-  source = "../../../core/terraform-submodules/k8s-gateway-http-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.4.100.zip"
+  source = "../../../core/terraform-submodules/k8s-gateway-http-route" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.5.100.zip"
 
   kubernetes_service = data.kubernetes_service.stateful_kuard
 
