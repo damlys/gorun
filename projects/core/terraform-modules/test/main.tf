@@ -3,13 +3,13 @@
 #######################################
 
 module "test_platform" {
-  source = "../../terraform-submodules/gke-platform" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/gke-platform/0.5.100.zip"
+  source = "../../terraform-submodules/gke-platform" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-3-private-terraform-modules/gorun/core/gke-platform/0.5.100.zip"
 
   google_client_config = data.google_client_config.oauth2
   google_project       = data.google_project.this
 
-  platform_name   = "gogke-test-2"
-  platform_domain = "gogke-test-2.damlys.dev"
+  platform_name   = "gogke-test-3"
+  platform_domain = "gogke-test-3.damlys.dev"
 
   node_pools = {
     "spot-pool-1" = {
@@ -32,12 +32,12 @@ module "test_platform" {
 #######################################
 
 module "test_vault" {
-  source = "../../terraform-submodules/k8s-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-vault/0.5.100.zip"
+  source = "../../terraform-submodules/k8s-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-3-private-terraform-modules/gorun/core/k8s-vault/0.5.100.zip"
   depends_on = [
     module.test_platform,
   ]
 
-  vault_name = "gomod-test-2"
+  vault_name = "gomod-test-3"
 
   iam_readers = [
   ]
@@ -47,7 +47,7 @@ module "test_vault" {
 }
 
 module "grafana_vault" {
-  source = "../../terraform-submodules/k8s-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-vault/0.5.100.zip"
+  source = "../../terraform-submodules/k8s-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-3-private-terraform-modules/gorun/core/k8s-vault/0.5.100.zip"
   depends_on = [
     module.test_platform,
   ]
@@ -66,12 +66,12 @@ module "grafana_vault" {
 #######################################
 
 module "test_workspace" {
-  source = "../../terraform-submodules/k8s-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-2-private-terraform-modules/gorun/core/k8s-workspace/0.5.100.zip"
+  source = "../../terraform-submodules/k8s-workspace" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-3-private-terraform-modules/gorun/core/k8s-workspace/0.5.100.zip"
   depends_on = [
     module.test_platform,
   ]
 
-  workspace_name = "gomod-test-2"
+  workspace_name = "gomod-test-3"
 
   iam_testers = [
   ]

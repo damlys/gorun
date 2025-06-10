@@ -6,7 +6,7 @@ import (
 )
 
 func TestSuccess(t *testing.T) {
-	req, err := http.NewRequest("GET", "https://stateless-kuard.gogke-test-2.damlys.dev/-/env", nil)
+	req, err := http.NewRequest("GET", "https://stateless-kuard.gogke-test-3.damlys.dev/-/env", nil)
 	if err != nil {
 		t.Fatalf("request create error: %v", err)
 	}
@@ -32,14 +32,14 @@ func TestRedirects(t *testing.T) {
 	}{
 		{
 			"http to https redirect",
-			"http://stateless-kuard.gogke-test-2.damlys.dev/-/env",
-			"https://stateless-kuard.gogke-test-2.damlys.dev/-/env",
+			"http://stateless-kuard.gogke-test-3.damlys.dev/-/env",
+			"https://stateless-kuard.gogke-test-3.damlys.dev/-/env",
 			http.StatusFound,
 		},
 		{
 			"old domain redirect",
-			"https://kuard.gogke-test-2.damlys.dev/-/env",
-			"https://stateless-kuard.gogke-test-2.damlys.dev/-/env",
+			"https://kuard.gogke-test-3.damlys.dev/-/env",
+			"https://stateless-kuard.gogke-test-3.damlys.dev/-/env",
 			http.StatusMovedPermanently,
 		},
 	}

@@ -8,8 +8,8 @@ function main {
   case "${cmd}" in
   "stop")
     log::info "destroying test node pools"
-    local gcp_project="gogcp-test-2"
-    local gke_cluster="gogke-test-2"
+    local gcp_project="gogcp-test-3"
+    local gke_cluster="gogke-test-3"
     local gke_location="europe-central2-a"
     for gke_node_pool in $(gcloud --quiet container node-pools list --cluster="${gke_cluster}" --location="${gke_location}" --project="${gcp_project}" --format="value(name)"); do
       gcloud --quiet container node-pools delete "${gke_node_pool}" --cluster="${gke_cluster}" --location="${gke_location}" --project="${gcp_project}" --async

@@ -1,4 +1,4 @@
-repository: europe-central2-docker.pkg.dev/gogcp-main-2/private-docker-images/gorun/core/devcontainer
+repository: europe-central2-docker.pkg.dev/gogcp-main-3/private-docker-images/gorun/core/devcontainer
 tag: 0.5.100
 aliases:
   - # https://hub.docker.com/r/damlys/gorun-devcontainer
