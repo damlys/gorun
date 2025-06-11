@@ -21,7 +21,7 @@ mv gradle-${gradle_version} /usr/local/share/gradle
 
 # maven: https://maven.apache.org/download.cgi
 maven_version="3.9.9"
-wget "https://dlcdn.apache.org/maven/maven-3/${maven_version}/binaries/apache-maven-${maven_version}-bin.zip" \
+wget "https://archive.apache.org/dist/maven/maven-3/${maven_version}/binaries/apache-maven-${maven_version}-bin.zip" \
   --no-verbose \
   --output-document=/tmp/maven.zip
 unzip maven.zip
