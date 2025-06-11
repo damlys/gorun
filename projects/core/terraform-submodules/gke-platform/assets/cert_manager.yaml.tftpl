@@ -9,6 +9,10 @@ extraArgs:
   - --enable-gateway-api
   # https://cert-manager.io/docs/configuration/acme/dns01/google/#enable-ambient-credential-usage
   - --issuer-ambient-credentials
+  # https://cert-manager.io/docs/faq/acme/#dns01-troubleshooting
+  # https://cert-manager.io/docs/configuration/acme/dns01/#setting-nameservers-for-dns01-self-check
+  - --dns01-recursive-nameservers-only
+  - --dns01-recursive-nameservers=8.8.8.8:53,1.1.1.1:53
 
 prometheus:
   enabled: true
