@@ -17,6 +17,11 @@ commandTests:
     command: gke-gcloud-auth-plugin
     args:
       - --version
+  - # https://firebase.google.com/docs/cli
+    name: firebase
+    command: firebase
+    args:
+      - --version
   - # https://cli.github.com/
     name: gh
     command: gh
@@ -145,6 +150,25 @@ commandTests:
     args:
       - -help
 
+  # Node.js tools
+
+  - # https://nodejs.org/en
+    name: nodejs
+    command: node
+    args:
+      - --version
+    expectedOutput:
+      - v22\.
+  - # https://www.npmjs.com/
+    name: npm
+    command: npm
+    args:
+      - --version
+  - name: npx
+    command: npx
+    args:
+      - --version
+
   # Shell script tools
 
   - # https://github.com/koalaman/shellcheck
@@ -271,6 +295,9 @@ fileExistenceTests:
     shouldExist: true
   - name: kubectl shell completion
     path: /etc/bash_completion.d/kubectl
+    shouldExist: true
+  - name: npm shell completion
+    path: /etc/bash_completion.d/npm
     shouldExist: true
   - name: velero shell completion
     path: /etc/bash_completion.d/velero

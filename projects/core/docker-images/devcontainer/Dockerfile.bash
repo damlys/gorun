@@ -38,6 +38,10 @@ wget https://go.dev/dl/go${go_version}.${TARGETOS}-${TARGETARCH}.tar.gz \
   --output-document=/tmp/go.tar.gz
 tar --directory=/usr/local -zxvf go.tar.gz
 
+# nodejs: https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions
+curl -fsSL https://deb.nodesource.com/setup_lts.x -o nodesource_setup.sh
+bash nodesource_setup.sh
+
 # docker: https://docs.docker.com/engine/install/debian/#install-using-the-repository
 install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -67,6 +71,7 @@ apt install --yes \
   google-cloud-sdk-gke-gcloud-auth-plugin \
   jq \
   kubectl \
+  nodejs \
   shellcheck
 
 apt install --yes --no-install-recommends \
@@ -77,6 +82,9 @@ go install github.com/posener/complete/gocomplete@v1.2.3
 go install golang.org/x/tools/cmd/gonew@latest
 go install golang.org/x/tools/gopls@latest
 go install golang.org/x/vuln/cmd/govulncheck@latest
+
+npm install --global \
+  firebase-tools
 
 # cilium: https://github.com/cilium/cilium-cli/releases
 cilium_version="0.18.3"
@@ -157,6 +165,7 @@ goreleaser completion bash >/etc/bash_completion.d/goreleaser
 helm completion bash >/etc/bash_completion.d/helm
 hubble completion bash >/etc/bash_completion.d/hubble
 kubectl completion bash >/etc/bash_completion.d/kubectl
+npm completion >/etc/bash_completion.d/npm
 velero completion bash >/etc/bash_completion.d/velero
 yq shell-completion bash >/etc/bash_completion.d/yq
 
