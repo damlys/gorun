@@ -15,7 +15,7 @@ jobs:
   demo-image-kuard:
     name: demo-image-kuard
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gorun-devcontainer:0.4.100
+    container: ghcr.io/damlys/gorun-devcontainer:0.5.100
     permissions:
       contents: write
       id-token: write
