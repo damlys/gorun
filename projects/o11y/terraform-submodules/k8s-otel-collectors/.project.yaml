@@ -1,2 +1,2 @@
-repository: gogcp-main-2-private-terraform-modules/gorun/o11y/k8s-otel-collectors
-version: 0.4.100
+repository: gogcp-main-3-private-terraform-modules/gorun/o11y/k8s-otel-collectors
+version: 0.5.100

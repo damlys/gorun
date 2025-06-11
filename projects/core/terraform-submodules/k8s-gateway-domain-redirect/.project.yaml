@@ -1,2 +1,2 @@
-repository: gogcp-main-2-private-terraform-modules/gorun/core/k8s-gateway-domain-redirect
-version: 0.4.101
+repository: gogcp-main-3-private-terraform-modules/gorun/core/k8s-gateway-domain-redirect
+version: 0.5.100

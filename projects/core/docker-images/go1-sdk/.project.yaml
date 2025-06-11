@@ -1,2 +1,2 @@
-repository: europe-central2-docker.pkg.dev/gogcp-main-2/private-docker-images/gorun/core/go1-sdk
-tag: 0.4.100
+repository: europe-central2-docker.pkg.dev/gogcp-main-3/private-docker-images/gorun/core/go1-sdk
+tag: 0.5.100
