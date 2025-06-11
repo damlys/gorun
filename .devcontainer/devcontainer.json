@@ -13,6 +13,7 @@
   "mounts": [
     "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock",
     "type=volume,source=devcontainer-damlys-docker,target=/root/.docker",
+    "type=volume,source=devcontainer-damlys-firebase,target=/root/.config/configstore",
     "type=volume,source=devcontainer-damlys-gcloud,target=/root/.config/gcloud",
     "type=volume,source=devcontainer-damlys-github,target=/root/.config/gh",
     "type=volume,source=devcontainer-damlys-helm,target=/root/.config/helm",
