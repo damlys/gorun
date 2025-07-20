@@ -84,6 +84,7 @@ go install golang.org/x/tools/gopls@latest
 go install golang.org/x/vuln/cmd/govulncheck@latest
 
 npm install --global \
+  @google/gemini-cli \
   firebase-tools
 
 # cilium: https://github.com/cilium/cilium-cli/releases
