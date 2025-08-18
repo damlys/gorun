@@ -2,6 +2,7 @@
   "recommendations": [
     "eamodio.gitlens",
     "esbenp.prettier-vscode",
+    "google.geminicodeassist",
     "googlecloudtools.cloudcode",
     "hashicorp.hcl",
     "hashicorp.terraform",

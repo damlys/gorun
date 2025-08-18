@@ -204,6 +204,14 @@ commandTests:
     args:
       - --version
 
+  # AI tools
+
+  - # https://github.com/google-gemini/gemini-cli
+    name: gemini
+    command: gemini
+    args:
+      - --version
+
   # Other tools
 
   - name: curl
