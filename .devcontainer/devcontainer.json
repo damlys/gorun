@@ -26,17 +26,15 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "eamodio.gitlens",
+        "docker.docker",
         "esbenp.prettier-vscode",
         "google.geminicodeassist",
         "googlecloudtools.cloudcode",
         "hashicorp.hcl",
         "hashicorp.terraform",
-        "ms-azuretools.vscode-docker",
         "ms-kubernetes-tools.vscode-kubernetes-tools",
         "redhat.vscode-xml",
         "redhat.vscode-yaml",
-        "streetsidesoftware.code-spell-checker",
         // Golang
         "golang.go",
         // Shell script
@@ -45,7 +43,6 @@
       ],
       "settings": {
         "cloudcode.autoDependencies": "off",
-        "redhat.telemetry.enabled": false,
         // Golang
         "go.lintTool": "golangci-lint",
         "go.toolsManagement.autoUpdate": false,
