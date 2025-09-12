@@ -19,8 +19,6 @@ func slug(projectPath []string) string {
 		projectType = "tfsub"
 	case "terraform-modules":
 		projectType = "tfmod"
-	case "go-modules":
-		projectType = "gomod"
 	}
 
 	projectName := projectPath[3]

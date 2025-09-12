@@ -634,14 +634,6 @@ publish-demo-image-kuard:
     - ./scripts/docker-image test "projects/demo/docker-images/kuard"
     - ./scripts/docker-image publish "projects/demo/docker-images/kuard"
     - ./scripts/docker-image show "projects/demo/docker-images/kuard"
-test-demo-gomod-kuard-tester:
-  stage: test
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
-      changes:
-        - "projects/demo/go-modules/kuard-tester/**"
-  script:
-    - ./scripts/go-module test "projects/demo/go-modules/kuard-tester"
 test-demo-chart-stateful-kuard:
   stage: test
   rules:

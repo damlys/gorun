@@ -16,7 +16,6 @@ func TestSlug(t *testing.T) {
 		{[]string{"projects", "core", "helm-releases", "example"}, "core-release-example"},
 		{[]string{"projects", "core", "terraform-submodules", "example"}, "core-tfsub-example"},
 		{[]string{"projects", "core", "terraform-modules", "example"}, "core-tfmod-example"},
-		{[]string{"projects", "core", "go-modules", "example"}, "core-gomod-example"},
 
 		// do not change project name
 		{[]string{"projects", "core", "terraform-submodules", "gcp-docker-images-registry"}, "core-tfsub-gcp-docker-images-registry"},

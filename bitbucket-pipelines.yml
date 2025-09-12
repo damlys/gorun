@@ -744,15 +744,6 @@ definitions:
           - ./scripts/docker-image test "projects/demo/docker-images/kuard"
           - ./scripts/docker-image publish "projects/demo/docker-images/kuard"
           - ./scripts/docker-image show "projects/demo/docker-images/kuard"
-    - step: &test-demo-gomod-kuard-tester
-        name: test demo-gomod-kuard-tester
-        condition:
-          changesets:
-            includePaths:
-              - "projects/demo/go-modules/kuard-tester/**"
-        script:
-          - *auth
-          - ./scripts/go-module test "projects/demo/go-modules/kuard-tester"
     - step: &test-demo-chart-stateful-kuard
         name: test demo-chart-stateful-kuard
         condition:
@@ -1110,7 +1101,6 @@ pipelines:
           - step: *test-core-tfsub-k8s-vault
           - step: *test-core-tfsub-k8s-workspace
           - step: *test-demo-image-kuard
-          - step: *test-demo-gomod-kuard-tester
           - step: *test-demo-chart-stateful-kuard
           - step: *test-demo-chart-stateless-kuard
           - step: *test-demo-tfmod-kuard

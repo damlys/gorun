@@ -150,9 +150,3 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: terraform -chdir="{{ .ProjectPath }}" apply -input=false -auto-approve
       {{- end }}
-
-      {{- if eq .ProjectType "go-modules" }}
-
-      - name: test
-        run: ./scripts/go-module test "{{ .ProjectPath }}"
-      {{- end }}

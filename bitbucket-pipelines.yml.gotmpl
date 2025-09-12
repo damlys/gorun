@@ -161,18 +161,6 @@ definitions:
         trigger: manual
     {{- end }}
 
-    {{- if eq .ProjectType "go-modules" }}
-    - step: &test-{{ .ProjectSlug }}
-        name: test {{ .ProjectSlug }}
-        condition:
-          changesets:
-            includePaths:
-              - "{{ .ProjectPath }}/**"
-        script:
-          - *auth
-          - ./scripts/go-module test "{{ .ProjectPath }}"
-    {{- end }}
-
     {{- end }}{{/* range . */}}
 
 pipelines:
@@ -186,10 +174,6 @@ pipelines:
           {{- end }}
 
           {{- if eq .ProjectType "terraform-modules" }}
-          - step: *test-{{ .ProjectSlug }}
-          {{- end }}
-
-          {{- if eq .ProjectType "go-modules" }}
           - step: *test-{{ .ProjectSlug }}
           {{- end }}
 

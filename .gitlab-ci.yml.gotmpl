@@ -143,15 +143,4 @@ apply-{{ .ProjectSlug }}:
   when: manual
 {{- end }}
 
-{{- if eq .ProjectType "go-modules" }}
-test-{{ .ProjectSlug }}:
-  stage: test
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
-      changes:
-        - "{{ .ProjectPath }}/**"
-  script:
-    - ./scripts/go-module test "{{ .ProjectPath }}"
-{{- end }}
-
 {{- end }}{{/* range . */}}
