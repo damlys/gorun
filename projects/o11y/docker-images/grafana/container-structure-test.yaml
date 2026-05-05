@@ -1,0 +1,19 @@
+schemaVersion: 2.0.0
+fileExistenceTests:
+  - name: grafana-clickhouse-datasource plugin
+    path: /var/lib/grafana/plugins/grafana-clickhouse-datasource/plugin.json
+    shouldExist: true
+  - name: googlecloud-logging-datasource plugin
+    path: /var/lib/grafana/plugins/googlecloud-logging-datasource/plugin.json
+    shouldExist: true
+  - name: googlecloud-trace-datasource plugin
+    path: /var/lib/grafana/plugins/googlecloud-trace-datasource/plugin.json
+    shouldExist: true
+metadataTest:
+  envVars:
+    - key: GF_PATHS_CONFIG
+      value: /etc/grafana/grafana.ini
+    - key: GF_PATHS_PROVISIONING
+      value: /etc/grafana/provisioning
+    - key: TZ
+      value: UTC

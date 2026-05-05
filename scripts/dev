@@ -4,12 +4,17 @@ for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
 
 function main {
   local cmd="$1"
+  local gcp_project="gogcp-test-8"
 
   case "${cmd}" in
   "stop")
+    log::info "disabling test monitoring policies"
+    for gcp_monitoring_policy in $(gcloud alpha monitoring policies list --project="${gcp_project}" --format="value(name)"); do
+      gcloud alpha monitoring policies update --no-enabled "${gcp_monitoring_policy}" --project="${gcp_project}"
+    done
+
     log::info "destroying test node pools"
-    local gcp_project="gogcp-test-3"
-    local gke_cluster="gogke-test-3"
+    local gke_cluster="gogke-test-8"
     local gke_location="europe-central2-a"
     for gke_node_pool in $(gcloud --quiet container node-pools list --cluster="${gke_cluster}" --location="${gke_location}" --project="${gcp_project}" --format="value(name)"); do
       gcloud --quiet container node-pools delete "${gke_node_pool}" --cluster="${gke_cluster}" --location="${gke_location}" --project="${gcp_project}" --async
@@ -22,6 +27,14 @@ function main {
     log::info "creating test node pools"
     terraform -chdir="projects/core/terraform-modules/test" init -input=false
     terraform -chdir="projects/core/terraform-modules/test" apply -input=false -auto-approve -target=module.test_platform.google_container_node_pool.this
+
+    log::info "waiting 15 minutes"
+    sleep 900
+
+    log::info "enabling test monitoring policies"
+    for gcp_monitoring_policy in $(gcloud alpha monitoring policies list --project="${gcp_project}" --format="value(name)"); do
+      gcloud alpha monitoring policies update --enabled "${gcp_monitoring_policy}" --project="${gcp_project}"
+    done
 
     log::info "done"
     ;;

@@ -1,6 +1,8 @@
-image: damlys/gorun-devcontainer:0.5.100
+image: damlys/gorun-devcontainer:0.8.100
 definitions:
   caches:
+    apps-tfmod-test-0: projects/apps/terraform-modules/test/.terraform
+    cicd-tfmod-cloud-build-0: projects/cicd/terraform-modules/cloud-build/.terraform
     core-tfmod-main-0: projects/core/terraform-modules/main/.terraform
     core-tfmod-prod-0: projects/core/terraform-modules/prod/.terraform
     core-tfmod-test-0: projects/core/terraform-modules/test/.terraform
@@ -27,21 +29,13 @@ definitions:
     core-tfsub-k8s-workspace-0: projects/core/terraform-submodules/k8s-workspace/.terraform
     core-tfsub-k8s-workspace-1: projects/core/terraform-submodules/k8s-workspace/.terraform.lock.hcl
     demo-tfmod-kuard-0: projects/demo/terraform-modules/kuard/.terraform
-    demo-tfsub-helm-manifest-0: projects/demo/terraform-submodules/helm-manifest/.terraform
-    demo-tfsub-helm-manifest-1: projects/demo/terraform-submodules/helm-manifest/.terraform.lock.hcl
-    demo-tfsub-helm-template-0: projects/demo/terraform-submodules/helm-template/.terraform
-    demo-tfsub-helm-template-1: projects/demo/terraform-submodules/helm-template/.terraform.lock.hcl
     demo-tfsub-kuard-0: projects/demo/terraform-submodules/kuard/.terraform
     demo-tfsub-kuard-1: projects/demo/terraform-submodules/kuard/.terraform.lock.hcl
     o11y-tfmod-test-0: projects/o11y/terraform-modules/test/.terraform
     o11y-tfsub-gcp-availability-monitor-0: projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform
     o11y-tfsub-gcp-availability-monitor-1: projects/o11y/terraform-submodules/gcp-availability-monitor/.terraform.lock.hcl
-    o11y-tfsub-gke-lgtm-stack-0: projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform
-    o11y-tfsub-gke-lgtm-stack-1: projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform.lock.hcl
-    o11y-tfsub-k8s-otel-collectors-0: projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform
-    o11y-tfsub-k8s-otel-collectors-1: projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform.lock.hcl
-    o11y-tfsub-k8s-prom-exporters-0: projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform
-    o11y-tfsub-k8s-prom-exporters-1: projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform.lock.hcl
+    o11y-tfsub-gke-observability-stack-0: projects/o11y/terraform-submodules/gke-observability-stack/.terraform
+    o11y-tfsub-gke-observability-stack-1: projects/o11y/terraform-submodules/gke-observability-stack/.terraform.lock.hcl
   scripts:
     - &auth |
       set -e
@@ -50,6 +44,102 @@ definitions:
       gcloud auth configure-docker "europe-central2-docker.pkg.dev"
       gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
   steps:
+    - step: &test-apps-chart-http-server
+        name: test apps-chart-http-server
+        condition:
+          changesets:
+            includePaths:
+              - "projects/apps/helm-charts/http-server/**"
+        script:
+          - *auth
+          - ./scripts/helm-chart build "projects/apps/helm-charts/http-server"
+          - ./scripts/helm-chart test "projects/apps/helm-charts/http-server"
+          - ./scripts/helm-chart pre-publish "projects/apps/helm-charts/http-server"
+          - ./scripts/helm-chart show "projects/apps/helm-charts/http-server"
+    - step: &publish-apps-chart-http-server
+        name: publish apps-chart-http-server
+        condition:
+          changesets:
+            includePaths:
+              - "projects/apps/helm-charts/http-server/**"
+        script:
+          - *auth
+          - ./scripts/helm-chart build "projects/apps/helm-charts/http-server"
+          - ./scripts/helm-chart test "projects/apps/helm-charts/http-server"
+          - ./scripts/helm-chart publish "projects/apps/helm-charts/http-server"
+          - ./scripts/helm-chart show "projects/apps/helm-charts/http-server"
+    - step: &test-apps-tfmod-test
+        name: test apps-tfmod-test
+        condition:
+          changesets:
+            includePaths:
+              - "projects/apps/terraform-modules/test/**"
+        caches:
+          - apps-tfmod-test-0
+        script:
+          - *auth
+          - ./scripts/terraform-module test "projects/apps/terraform-modules/test"
+    - step: &plan-apps-tfmod-test
+        name: plan apps-tfmod-test
+        condition:
+          changesets:
+            includePaths:
+              - "projects/apps/terraform-modules/test/**"
+        caches:
+          - apps-tfmod-test-0
+        script:
+          - *auth
+          - terraform -chdir="projects/apps/terraform-modules/test" init -input="false"
+          - terraform -chdir="projects/apps/terraform-modules/test" plan -input="false"
+    - step: &apply-apps-tfmod-test
+        name: apply apps-tfmod-test
+        condition:
+          changesets:
+            includePaths:
+              - "projects/apps/terraform-modules/test/**"
+        caches:
+          - apps-tfmod-test-0
+        script:
+          - *auth
+          - terraform -chdir="projects/apps/terraform-modules/test" init -input="false"
+          - terraform -chdir="projects/apps/terraform-modules/test" apply -input="false" -auto-approve
+        trigger: manual
+    - step: &test-cicd-tfmod-cloud-build
+        name: test cicd-tfmod-cloud-build
+        condition:
+          changesets:
+            includePaths:
+              - "projects/cicd/terraform-modules/cloud-build/**"
+        caches:
+          - cicd-tfmod-cloud-build-0
+        script:
+          - *auth
+          - ./scripts/terraform-module test "projects/cicd/terraform-modules/cloud-build"
+    - step: &plan-cicd-tfmod-cloud-build
+        name: plan cicd-tfmod-cloud-build
+        condition:
+          changesets:
+            includePaths:
+              - "projects/cicd/terraform-modules/cloud-build/**"
+        caches:
+          - cicd-tfmod-cloud-build-0
+        script:
+          - *auth
+          - terraform -chdir="projects/cicd/terraform-modules/cloud-build" init -input="false"
+          - terraform -chdir="projects/cicd/terraform-modules/cloud-build" plan -input="false"
+    - step: &apply-cicd-tfmod-cloud-build
+        name: apply cicd-tfmod-cloud-build
+        condition:
+          changesets:
+            includePaths:
+              - "projects/cicd/terraform-modules/cloud-build/**"
+        caches:
+          - cicd-tfmod-cloud-build-0
+        script:
+          - *auth
+          - terraform -chdir="projects/cicd/terraform-modules/cloud-build" init -input="false"
+          - terraform -chdir="projects/cicd/terraform-modules/cloud-build" apply -input="false" -auto-approve
+        trigger: manual
     - step: &test-core-image-devcontainer
         name: test core-image-devcontainer
         condition:
@@ -210,70 +300,142 @@ definitions:
           - ./scripts/docker-image test "projects/core/docker-images/java21-sdk"
           - ./scripts/docker-image publish "projects/core/docker-images/java21-sdk"
           - ./scripts/docker-image show "projects/core/docker-images/java21-sdk"
-    - step: &test-core-image-node22-rte
-        name: test core-image-node22-rte
+    - step: &test-core-image-node24-rte
+        name: test core-image-node24-rte
         condition:
           changesets:
             includePaths:
-              - "projects/core/docker-images/node22-rte/**"
+              - "projects/core/docker-images/node24-rte/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "projects/core/docker-images/node22-rte"
-          - ./scripts/docker-image test "projects/core/docker-images/node22-rte"
-          - ./scripts/docker-image pre-publish "projects/core/docker-images/node22-rte"
-          - ./scripts/docker-image show "projects/core/docker-images/node22-rte"
-    - step: &publish-core-image-node22-rte
-        name: publish core-image-node22-rte
+          - ./scripts/docker-image build "projects/core/docker-images/node24-rte"
+          - ./scripts/docker-image test "projects/core/docker-images/node24-rte"
+          - ./scripts/docker-image pre-publish "projects/core/docker-images/node24-rte"
+          - ./scripts/docker-image show "projects/core/docker-images/node24-rte"
+    - step: &publish-core-image-node24-rte
+        name: publish core-image-node24-rte
         condition:
           changesets:
             includePaths:
-              - "projects/core/docker-images/node22-rte/**"
+              - "projects/core/docker-images/node24-rte/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "projects/core/docker-images/node22-rte"
-          - ./scripts/docker-image test "projects/core/docker-images/node22-rte"
-          - ./scripts/docker-image publish "projects/core/docker-images/node22-rte"
-          - ./scripts/docker-image show "projects/core/docker-images/node22-rte"
-    - step: &test-core-image-node22-sdk
-        name: test core-image-node22-sdk
+          - ./scripts/docker-image build "projects/core/docker-images/node24-rte"
+          - ./scripts/docker-image test "projects/core/docker-images/node24-rte"
+          - ./scripts/docker-image publish "projects/core/docker-images/node24-rte"
+          - ./scripts/docker-image show "projects/core/docker-images/node24-rte"
+    - step: &test-core-image-node24-sdk
+        name: test core-image-node24-sdk
         condition:
           changesets:
             includePaths:
-              - "projects/core/docker-images/node22-sdk/**"
+              - "projects/core/docker-images/node24-sdk/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "projects/core/docker-images/node22-sdk"
-          - ./scripts/docker-image test "projects/core/docker-images/node22-sdk"
-          - ./scripts/docker-image pre-publish "projects/core/docker-images/node22-sdk"
-          - ./scripts/docker-image show "projects/core/docker-images/node22-sdk"
-    - step: &publish-core-image-node22-sdk
-        name: publish core-image-node22-sdk
+          - ./scripts/docker-image build "projects/core/docker-images/node24-sdk"
+          - ./scripts/docker-image test "projects/core/docker-images/node24-sdk"
+          - ./scripts/docker-image pre-publish "projects/core/docker-images/node24-sdk"
+          - ./scripts/docker-image show "projects/core/docker-images/node24-sdk"
+    - step: &publish-core-image-node24-sdk
+        name: publish core-image-node24-sdk
         condition:
           changesets:
             includePaths:
-              - "projects/core/docker-images/node22-sdk/**"
+              - "projects/core/docker-images/node24-sdk/**"
         services:
           - docker
         caches:
           - docker
         script:
           - *auth
-          - ./scripts/docker-image build "projects/core/docker-images/node22-sdk"
-          - ./scripts/docker-image test "projects/core/docker-images/node22-sdk"
-          - ./scripts/docker-image publish "projects/core/docker-images/node22-sdk"
-          - ./scripts/docker-image show "projects/core/docker-images/node22-sdk"
+          - ./scripts/docker-image build "projects/core/docker-images/node24-sdk"
+          - ./scripts/docker-image test "projects/core/docker-images/node24-sdk"
+          - ./scripts/docker-image publish "projects/core/docker-images/node24-sdk"
+          - ./scripts/docker-image show "projects/core/docker-images/node24-sdk"
+    - step: &test-core-chart-clickhouse
+        name: test core-chart-clickhouse
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/helm-charts/clickhouse/**"
+        script:
+          - *auth
+          - ./scripts/helm-chart build "projects/core/helm-charts/clickhouse"
+          - ./scripts/helm-chart test "projects/core/helm-charts/clickhouse"
+          - ./scripts/helm-chart pre-publish "projects/core/helm-charts/clickhouse"
+          - ./scripts/helm-chart show "projects/core/helm-charts/clickhouse"
+    - step: &publish-core-chart-clickhouse
+        name: publish core-chart-clickhouse
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/helm-charts/clickhouse/**"
+        script:
+          - *auth
+          - ./scripts/helm-chart build "projects/core/helm-charts/clickhouse"
+          - ./scripts/helm-chart test "projects/core/helm-charts/clickhouse"
+          - ./scripts/helm-chart publish "projects/core/helm-charts/clickhouse"
+          - ./scripts/helm-chart show "projects/core/helm-charts/clickhouse"
+    - step: &test-core-chart-configs
+        name: test core-chart-configs
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/helm-charts/configs/**"
+        script:
+          - *auth
+          - ./scripts/helm-chart build "projects/core/helm-charts/configs"
+          - ./scripts/helm-chart test "projects/core/helm-charts/configs"
+          - ./scripts/helm-chart pre-publish "projects/core/helm-charts/configs"
+          - ./scripts/helm-chart show "projects/core/helm-charts/configs"
+    - step: &publish-core-chart-configs
+        name: publish core-chart-configs
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/helm-charts/configs/**"
+        script:
+          - *auth
+          - ./scripts/helm-chart build "projects/core/helm-charts/configs"
+          - ./scripts/helm-chart test "projects/core/helm-charts/configs"
+          - ./scripts/helm-chart publish "projects/core/helm-charts/configs"
+          - ./scripts/helm-chart show "projects/core/helm-charts/configs"
+    - step: &test-core-chart-postgres
+        name: test core-chart-postgres
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/helm-charts/postgres/**"
+        script:
+          - *auth
+          - ./scripts/helm-chart build "projects/core/helm-charts/postgres"
+          - ./scripts/helm-chart test "projects/core/helm-charts/postgres"
+          - ./scripts/helm-chart pre-publish "projects/core/helm-charts/postgres"
+          - ./scripts/helm-chart show "projects/core/helm-charts/postgres"
+    - step: &publish-core-chart-postgres
+        name: publish core-chart-postgres
+        condition:
+          changesets:
+            includePaths:
+              - "projects/core/helm-charts/postgres/**"
+        script:
+          - *auth
+          - ./scripts/helm-chart build "projects/core/helm-charts/postgres"
+          - ./scripts/helm-chart test "projects/core/helm-charts/postgres"
+          - ./scripts/helm-chart publish "projects/core/helm-charts/postgres"
+          - ./scripts/helm-chart show "projects/core/helm-charts/postgres"
     - step: &test-core-tfmod-main
         name: test core-tfmod-main
         condition:
@@ -828,66 +990,6 @@ definitions:
           - terraform -chdir="projects/demo/terraform-modules/kuard" init -input="false"
           - terraform -chdir="projects/demo/terraform-modules/kuard" apply -input="false" -auto-approve
         trigger: manual
-    - step: &test-demo-tfsub-helm-manifest
-        name: test demo-tfsub-helm-manifest
-        condition:
-          changesets:
-            includePaths:
-              - "projects/demo/terraform-submodules/helm-manifest/**"
-        caches:
-          - demo-tfsub-helm-manifest-0
-          - demo-tfsub-helm-manifest-1
-        script:
-          - *auth
-          - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-manifest"
-          - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-manifest"
-          - ./scripts/terraform-submodule pre-publish "projects/demo/terraform-submodules/helm-manifest"
-          - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-manifest"
-    - step: &publish-demo-tfsub-helm-manifest
-        name: publish demo-tfsub-helm-manifest
-        condition:
-          changesets:
-            includePaths:
-              - "projects/demo/terraform-submodules/helm-manifest/**"
-        caches:
-          - demo-tfsub-helm-manifest-0
-          - demo-tfsub-helm-manifest-1
-        script:
-          - *auth
-          - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-manifest"
-          - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-manifest"
-          - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/helm-manifest"
-          - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-manifest"
-    - step: &test-demo-tfsub-helm-template
-        name: test demo-tfsub-helm-template
-        condition:
-          changesets:
-            includePaths:
-              - "projects/demo/terraform-submodules/helm-template/**"
-        caches:
-          - demo-tfsub-helm-template-0
-          - demo-tfsub-helm-template-1
-        script:
-          - *auth
-          - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-template"
-          - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-template"
-          - ./scripts/terraform-submodule pre-publish "projects/demo/terraform-submodules/helm-template"
-          - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-template"
-    - step: &publish-demo-tfsub-helm-template
-        name: publish demo-tfsub-helm-template
-        condition:
-          changesets:
-            includePaths:
-              - "projects/demo/terraform-submodules/helm-template/**"
-        caches:
-          - demo-tfsub-helm-template-0
-          - demo-tfsub-helm-template-1
-        script:
-          - *auth
-          - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-template"
-          - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-template"
-          - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/helm-template"
-          - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-template"
     - step: &test-demo-tfsub-kuard
         name: test demo-tfsub-kuard
         condition:
@@ -918,6 +1020,86 @@ definitions:
           - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/kuard"
           - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/kuard"
           - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/kuard"
+    - step: &test-o11y-image-grafana
+        name: test o11y-image-grafana
+        condition:
+          changesets:
+            includePaths:
+              - "projects/o11y/docker-images/grafana/**"
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - *auth
+          - ./scripts/docker-image build "projects/o11y/docker-images/grafana"
+          - ./scripts/docker-image test "projects/o11y/docker-images/grafana"
+          - ./scripts/docker-image pre-publish "projects/o11y/docker-images/grafana"
+          - ./scripts/docker-image show "projects/o11y/docker-images/grafana"
+    - step: &publish-o11y-image-grafana
+        name: publish o11y-image-grafana
+        condition:
+          changesets:
+            includePaths:
+              - "projects/o11y/docker-images/grafana/**"
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - *auth
+          - ./scripts/docker-image build "projects/o11y/docker-images/grafana"
+          - ./scripts/docker-image test "projects/o11y/docker-images/grafana"
+          - ./scripts/docker-image publish "projects/o11y/docker-images/grafana"
+          - ./scripts/docker-image show "projects/o11y/docker-images/grafana"
+    - step: &test-o11y-chart-grafana
+        name: test o11y-chart-grafana
+        condition:
+          changesets:
+            includePaths:
+              - "projects/o11y/helm-charts/grafana/**"
+        script:
+          - *auth
+          - ./scripts/helm-chart build "projects/o11y/helm-charts/grafana"
+          - ./scripts/helm-chart test "projects/o11y/helm-charts/grafana"
+          - ./scripts/helm-chart pre-publish "projects/o11y/helm-charts/grafana"
+          - ./scripts/helm-chart show "projects/o11y/helm-charts/grafana"
+    - step: &publish-o11y-chart-grafana
+        name: publish o11y-chart-grafana
+        condition:
+          changesets:
+            includePaths:
+              - "projects/o11y/helm-charts/grafana/**"
+        script:
+          - *auth
+          - ./scripts/helm-chart build "projects/o11y/helm-charts/grafana"
+          - ./scripts/helm-chart test "projects/o11y/helm-charts/grafana"
+          - ./scripts/helm-chart publish "projects/o11y/helm-charts/grafana"
+          - ./scripts/helm-chart show "projects/o11y/helm-charts/grafana"
+    - step: &test-o11y-chart-otelcol
+        name: test o11y-chart-otelcol
+        condition:
+          changesets:
+            includePaths:
+              - "projects/o11y/helm-charts/otelcol/**"
+        script:
+          - *auth
+          - ./scripts/helm-chart build "projects/o11y/helm-charts/otelcol"
+          - ./scripts/helm-chart test "projects/o11y/helm-charts/otelcol"
+          - ./scripts/helm-chart pre-publish "projects/o11y/helm-charts/otelcol"
+          - ./scripts/helm-chart show "projects/o11y/helm-charts/otelcol"
+    - step: &publish-o11y-chart-otelcol
+        name: publish o11y-chart-otelcol
+        condition:
+          changesets:
+            includePaths:
+              - "projects/o11y/helm-charts/otelcol/**"
+        script:
+          - *auth
+          - ./scripts/helm-chart build "projects/o11y/helm-charts/otelcol"
+          - ./scripts/helm-chart test "projects/o11y/helm-charts/otelcol"
+          - ./scripts/helm-chart publish "projects/o11y/helm-charts/otelcol"
+          - ./scripts/helm-chart show "projects/o11y/helm-charts/otelcol"
     - step: &test-o11y-tfmod-test
         name: test o11y-tfmod-test
         condition:
@@ -984,108 +1166,54 @@ definitions:
           - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gcp-availability-monitor"
           - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/gcp-availability-monitor"
           - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gcp-availability-monitor"
-    - step: &test-o11y-tfsub-gke-lgtm-stack
-        name: test o11y-tfsub-gke-lgtm-stack
+    - step: &test-o11y-tfsub-gke-observability-stack
+        name: test o11y-tfsub-gke-observability-stack
         condition:
           changesets:
             includePaths:
-              - "projects/o11y/terraform-submodules/gke-lgtm-stack/**"
+              - "projects/o11y/terraform-submodules/gke-observability-stack/**"
         caches:
-          - o11y-tfsub-gke-lgtm-stack-0
-          - o11y-tfsub-gke-lgtm-stack-1
+          - o11y-tfsub-gke-observability-stack-0
+          - o11y-tfsub-gke-observability-stack-1
         script:
           - *auth
-          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-lgtm-stack"
-          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gke-lgtm-stack"
-          - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/gke-lgtm-stack"
-          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gke-lgtm-stack"
-    - step: &publish-o11y-tfsub-gke-lgtm-stack
-        name: publish o11y-tfsub-gke-lgtm-stack
+          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-observability-stack"
+          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gke-observability-stack"
+          - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/gke-observability-stack"
+          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gke-observability-stack"
+    - step: &publish-o11y-tfsub-gke-observability-stack
+        name: publish o11y-tfsub-gke-observability-stack
         condition:
           changesets:
             includePaths:
-              - "projects/o11y/terraform-submodules/gke-lgtm-stack/**"
+              - "projects/o11y/terraform-submodules/gke-observability-stack/**"
         caches:
-          - o11y-tfsub-gke-lgtm-stack-0
-          - o11y-tfsub-gke-lgtm-stack-1
+          - o11y-tfsub-gke-observability-stack-0
+          - o11y-tfsub-gke-observability-stack-1
         script:
           - *auth
-          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-lgtm-stack"
-          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gke-lgtm-stack"
-          - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/gke-lgtm-stack"
-          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gke-lgtm-stack"
-    - step: &test-o11y-tfsub-k8s-otel-collectors
-        name: test o11y-tfsub-k8s-otel-collectors
-        condition:
-          changesets:
-            includePaths:
-              - "projects/o11y/terraform-submodules/k8s-otel-collectors/**"
-        caches:
-          - o11y-tfsub-k8s-otel-collectors-0
-          - o11y-tfsub-k8s-otel-collectors-1
-        script:
-          - *auth
-          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-otel-collectors"
-          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-otel-collectors"
-          - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/k8s-otel-collectors"
-          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-otel-collectors"
-    - step: &publish-o11y-tfsub-k8s-otel-collectors
-        name: publish o11y-tfsub-k8s-otel-collectors
-        condition:
-          changesets:
-            includePaths:
-              - "projects/o11y/terraform-submodules/k8s-otel-collectors/**"
-        caches:
-          - o11y-tfsub-k8s-otel-collectors-0
-          - o11y-tfsub-k8s-otel-collectors-1
-        script:
-          - *auth
-          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-otel-collectors"
-          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-otel-collectors"
-          - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/k8s-otel-collectors"
-          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-otel-collectors"
-    - step: &test-o11y-tfsub-k8s-prom-exporters
-        name: test o11y-tfsub-k8s-prom-exporters
-        condition:
-          changesets:
-            includePaths:
-              - "projects/o11y/terraform-submodules/k8s-prom-exporters/**"
-        caches:
-          - o11y-tfsub-k8s-prom-exporters-0
-          - o11y-tfsub-k8s-prom-exporters-1
-        script:
-          - *auth
-          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-prom-exporters"
-          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-prom-exporters"
-          - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/k8s-prom-exporters"
-          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-prom-exporters"
-    - step: &publish-o11y-tfsub-k8s-prom-exporters
-        name: publish o11y-tfsub-k8s-prom-exporters
-        condition:
-          changesets:
-            includePaths:
-              - "projects/o11y/terraform-submodules/k8s-prom-exporters/**"
-        caches:
-          - o11y-tfsub-k8s-prom-exporters-0
-          - o11y-tfsub-k8s-prom-exporters-1
-        script:
-          - *auth
-          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-prom-exporters"
-          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-prom-exporters"
-          - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/k8s-prom-exporters"
-          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-prom-exporters"
+          - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-observability-stack"
+          - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gke-observability-stack"
+          - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/gke-observability-stack"
+          - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gke-observability-stack"
 
 pipelines:
   pull-requests:
     main:
       - parallel:
+          - step: *test-apps-chart-http-server
+          - step: *test-apps-tfmod-test
+          - step: *test-cicd-tfmod-cloud-build
           - step: *test-core-image-devcontainer
           - step: *test-core-image-go1-rte
           - step: *test-core-image-go1-sdk
           - step: *test-core-image-java21-rte
           - step: *test-core-image-java21-sdk
-          - step: *test-core-image-node22-rte
-          - step: *test-core-image-node22-sdk
+          - step: *test-core-image-node24-rte
+          - step: *test-core-image-node24-sdk
+          - step: *test-core-chart-clickhouse
+          - step: *test-core-chart-configs
+          - step: *test-core-chart-postgres
           - step: *test-core-tfmod-main
           - step: *test-core-tfmod-prod
           - step: *test-core-tfmod-test
@@ -1104,15 +1232,16 @@ pipelines:
           - step: *test-demo-chart-stateful-kuard
           - step: *test-demo-chart-stateless-kuard
           - step: *test-demo-tfmod-kuard
-          - step: *test-demo-tfsub-helm-manifest
-          - step: *test-demo-tfsub-helm-template
           - step: *test-demo-tfsub-kuard
+          - step: *test-o11y-image-grafana
+          - step: *test-o11y-chart-grafana
+          - step: *test-o11y-chart-otelcol
           - step: *test-o11y-tfmod-test
           - step: *test-o11y-tfsub-gcp-availability-monitor
-          - step: *test-o11y-tfsub-gke-lgtm-stack
-          - step: *test-o11y-tfsub-k8s-otel-collectors
-          - step: *test-o11y-tfsub-k8s-prom-exporters
+          - step: *test-o11y-tfsub-gke-observability-stack
       - parallel:
+          - step: *plan-apps-tfmod-test
+          - step: *plan-cicd-tfmod-cloud-build
           - step: *plan-core-tfmod-main
           - step: *plan-core-tfmod-prod
           - step: *plan-core-tfmod-test
@@ -1121,13 +1250,17 @@ pipelines:
   branches:
     main:
       - parallel:
+          - step: *publish-apps-chart-http-server
           - step: *publish-core-image-devcontainer
           - step: *publish-core-image-go1-rte
           - step: *publish-core-image-go1-sdk
           - step: *publish-core-image-java21-rte
           - step: *publish-core-image-java21-sdk
-          - step: *publish-core-image-node22-rte
-          - step: *publish-core-image-node22-sdk
+          - step: *publish-core-image-node24-rte
+          - step: *publish-core-image-node24-sdk
+          - step: *publish-core-chart-clickhouse
+          - step: *publish-core-chart-configs
+          - step: *publish-core-chart-postgres
           - step: *publish-core-tfsub-gcp-docker-images-registry
           - step: *publish-core-tfsub-gcp-helm-charts-registry
           - step: *publish-core-tfsub-gcp-project
@@ -1142,20 +1275,23 @@ pipelines:
           - step: *publish-demo-image-kuard
           - step: *publish-demo-chart-stateful-kuard
           - step: *publish-demo-chart-stateless-kuard
-          - step: *publish-demo-tfsub-helm-manifest
-          - step: *publish-demo-tfsub-helm-template
           - step: *publish-demo-tfsub-kuard
+          - step: *publish-o11y-image-grafana
+          - step: *publish-o11y-chart-grafana
+          - step: *publish-o11y-chart-otelcol
           - step: *publish-o11y-tfsub-gcp-availability-monitor
-          - step: *publish-o11y-tfsub-gke-lgtm-stack
-          - step: *publish-o11y-tfsub-k8s-otel-collectors
-          - step: *publish-o11y-tfsub-k8s-prom-exporters
+          - step: *publish-o11y-tfsub-gke-observability-stack
       - parallel:
+          - step: *plan-apps-tfmod-test
+          - step: *plan-cicd-tfmod-cloud-build
           - step: *plan-core-tfmod-main
           - step: *plan-core-tfmod-prod
           - step: *plan-core-tfmod-test
           - step: *plan-demo-tfmod-kuard
           - step: *plan-o11y-tfmod-test
       - parallel:
+          - step: *apply-apps-tfmod-test
+          - step: *apply-cicd-tfmod-cloud-build
           - step: *apply-core-tfmod-main
           - step: *apply-core-tfmod-prod
           - step: *apply-core-tfmod-test

@@ -7,7 +7,7 @@ resource "google_storage_bucket" "this" {
 
   # prevent modifications to make artifacts immutable
   retention_policy {
-    retention_period = 60 * 60 * 24 * 365 * 10 # 10 years
+    retention_period = var.registry_immutability ? 60 * 60 * 24 * 365 * 10 : 1 # 10 years or 1 second
   }
 
   uniform_bucket_level_access = true

@@ -1,0 +1,22 @@
+hyperdx:
+  replicas: 1
+clickhouse:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+otel:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+tasks:
+  checkAlerts:
+    resources:
+      requests:
+        cpu: 1m
+        memory: 1Mi
+      limits: {}

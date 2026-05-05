@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Release.Name }}-headless"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    {{- include "postgres.metadataLabels" . | nindent 4 }}
+    {{- if .Values.extraServiceLabels }}
+    {{- toYaml .Values.extraServiceLabels | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- if .Values.extraServiceAnnotations }}
+    {{- toYaml .Values.extraServiceAnnotations | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    {{- include "postgres.selectorLabels" . | nindent 4 }}
+  type: ClusterIP
+  clusterIP: None # headless service
+  publishNotReadyAddresses: false
+  ports:
+    - name: postgres-tcp
+      port: 5432
+      protocol: TCP
+      targetPort: postgres-tcp

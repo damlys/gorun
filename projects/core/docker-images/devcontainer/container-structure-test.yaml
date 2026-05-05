@@ -64,6 +64,11 @@ commandTests:
     args:
       - compose
       - version
+  - # https://grafana.github.io/grafanactl/
+    name: grafanactl
+    command: grafanactl
+    args:
+      - --version
   - # https://helm.sh/
     name: helm
     command: helm
@@ -81,6 +86,11 @@ commandTests:
       - version
       - --client
       - --output=yaml
+  - # https://skaffold.dev/
+    name: skaffold
+    command: skaffold
+    args:
+      - version
   - # https://www.terraform.io/
     name: terraform
     command: terraform
@@ -106,7 +116,7 @@ commandTests:
     args:
       - version
     expectedOutput:
-      - go version go1\.24\.
+      - go version go1\.25\.
   - name: go installation
     command: which
     args:
@@ -150,6 +160,21 @@ commandTests:
     args:
       - -help
 
+  # Python tools
+
+  - # https://www.python.org/
+    name: python
+    command: python3
+    args:
+      - --version
+    expectedOutput:
+      - Python 3\.
+  - # https://pypi.org/
+    name: pip
+    command: pip3
+    args:
+      - --version
+
   # Node.js tools
 
   - # https://nodejs.org/en
@@ -158,7 +183,7 @@ commandTests:
     args:
       - --version
     expectedOutput:
-      - v22\.
+      - v24\.
   - # https://www.npmjs.com/
     name: npm
     command: npm
@@ -166,6 +191,10 @@ commandTests:
       - --version
   - name: npx
     command: npx
+    args:
+      - --version
+  - name: typescript
+    command: tsc
     args:
       - --version
 
@@ -295,6 +324,9 @@ fileExistenceTests:
   - name: goreleaser shell completion
     path: /etc/bash_completion.d/goreleaser
     shouldExist: true
+  - name: grafanactl shell completion
+    path: /etc/bash_completion.d/grafanactl
+    shouldExist: true
   - name: helm shell completion
     path: /etc/bash_completion.d/helm
     shouldExist: true
@@ -306,6 +338,12 @@ fileExistenceTests:
     shouldExist: true
   - name: npm shell completion
     path: /etc/bash_completion.d/npm
+    shouldExist: true
+  - name: pip shell completion
+    path: /etc/bash_completion.d/pip
+    shouldExist: true
+  - name: skaffold shell completion
+    path: /etc/bash_completion.d/skaffold
     shouldExist: true
   - name: velero shell completion
     path: /etc/bash_completion.d/velero
@@ -335,5 +373,9 @@ metadataTest:
   envVars:
     - key: GOPATH
       value: /root/go
+    - key: NODE_ENV
+      value: development
+    - key: TZ
+      value: UTC
     - key: USE_GKE_GCLOUD_AUTH_PLUGIN
       value: "True"

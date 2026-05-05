@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "{{ .Release.Name }}"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    {{- include "clickhouse.metadataLabels" . | nindent 4 }}
+spec:
+  serviceName: "{{ .Release.Name }}-headless"
+  selector:
+    matchLabels:
+      {{- include "clickhouse.selectorLabels" . | nindent 6 }}
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        {{- include "clickhouse.metadataLabels" . | nindent 8 }}
+        {{- if .Values.extraPodLabels }}
+        {{- toYaml .Values.extraPodLabels | nindent 8 }}
+        {{- end }}
+      annotations:
+        {{- include "configs.annotations" . | nindent 8 }}
+        {{- if .Values.extraPodAnnotations }}
+        {{- toYaml .Values.extraPodAnnotations | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: "{{ .Release.Name }}"
+      containers:
+        - name: clickhouse-server
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          envFrom:
+            {{- include "configs.envFrom" . | nindent 12 }}
+          volumeMounts:
+            {{- include "configs.volumeMounts" . | nindent 12 }}
+            - name: clickhouse-data
+              mountPath: /var/lib/clickhouse
+          ports:
+            - name: clickhouse-http
+              containerPort: 8123
+              protocol: TCP
+            - name: clickhouse-tcp
+              containerPort: 9000
+              protocol: TCP
+          startupProbe:
+            httpGet:
+              port: clickhouse-http
+              path: /ping
+          readinessProbe:
+            httpGet:
+              port: clickhouse-http
+              path: /ping
+          livenessProbe:
+            httpGet:
+              port: clickhouse-http
+              path: /ping
+          resources:
+            requests:
+              cpu: "{{ .Values.resources.requests.cpu }}"
+              memory: "{{ .Values.resources.requests.memory }}"
+            limits:
+              cpu: "{{ .Values.resources.limits.cpu }}"
+              memory: "{{ .Values.resources.limits.memory }}"
+          securityContext: # container security context
+            privileged: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            readOnlyRootFilesystem: false
+            runAsUser: 101
+            runAsGroup: 101
+      securityContext: # pod security context
+        fsGroup: 101
+        fsGroupChangePolicy: OnRootMismatch
+      volumes:
+        {{- include "configs.volumes" . | nindent 8 }}
+  volumeClaimTemplates:
+    - metadata:
+        name: clickhouse-data
+      spec:
+        storageClassName: standard-rwo
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: "{{ .Values.resources.requests.storage }}"
+
+---
+{{- include "configs.manifests" . | nindent 0 }}

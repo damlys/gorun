@@ -1,6 +1,14 @@
 This module deploys observability tools to the test platform.
 
 ```
-$ terraform apply -target=helm_release.opentelemetry_operator
+$ terraform apply -target=module.grafana_vault
+$ kubectl \
+    --context="gke_gogcp-test-8_europe-central2-a_gogke-test-8" \
+    --namespace="vault-grafana" \
+    create secret generic "smtp" \
+    --from-literal="host=email-smtp.eu-central-1.amazonaws.com:465" \
+    --from-literal="user=..." \
+    --from-literal="password=..."
+
 $ terraform apply
 ```

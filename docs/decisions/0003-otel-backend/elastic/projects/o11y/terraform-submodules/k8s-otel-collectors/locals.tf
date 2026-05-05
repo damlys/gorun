@@ -1,0 +1,14 @@
+locals {
+  common_config = yamldecode(templatefile("${path.module}/assets/common_config.yaml.tftpl", {
+    elastic_apm_server_endpoint = var.elastic_apm_server_endpoint
+  }))
+  file_config = merge(local.common_config, yamldecode(file("${path.module}/assets/file_config.yaml")))
+  otlp_config = merge(local.common_config, yamldecode(file("${path.module}/assets/otlp_config.yaml")))
+  prom_config = merge(local.common_config, yamldecode(file("${path.module}/assets/prom_config.yaml")))
+
+  otlp_grpc_host = "${kubernetes_manifest.otlp_collector.manifest.metadata.name}-collector.${kubernetes_manifest.otlp_collector.manifest.metadata.namespace}.svc.cluster.local"
+  otlp_http_host = local.otlp_grpc_host # they are the same
+
+  otlp_grpc_port = 4317
+  otlp_http_port = 4318
+}

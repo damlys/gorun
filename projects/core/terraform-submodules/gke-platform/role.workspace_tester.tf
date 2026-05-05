@@ -5,7 +5,7 @@ resource "kubernetes_cluster_role" "cluster_workspace_tester" {
 
   rule {
     api_groups = [""]
-    resources  = ["namespaces"]
+    resources  = ["namespaces", "namespaces/status"]
     verbs      = ["get", "list", "watch"]
   }
 
@@ -74,6 +74,11 @@ resource "kubernetes_cluster_role" "namespace_workspace_tester" {
     verbs      = ["get", "list", "watch"]
   }
   rule {
+    api_groups = [""]
+    resources  = ["replicationcontrollers", "replicationcontrollers/status"]
+    verbs      = ["get", "list", "watch"]
+  }
+  rule {
     api_groups = ["apps"]
     resources  = ["daemonsets", "daemonsets/status"]
     verbs      = ["get", "list", "watch"]
@@ -93,6 +98,11 @@ resource "kubernetes_cluster_role" "namespace_workspace_tester" {
     resources  = ["poddisruptionbudgets", "poddisruptionbudgets/status"]
     verbs      = ["get", "list", "watch"]
   }
+  rule {
+    api_groups = [""]
+    resources  = ["resourcequotas"]
+    verbs      = ["get", "list", "watch"]
+  }
 
   rule {
     api_groups = [""]
@@ -103,6 +113,11 @@ resource "kubernetes_cluster_role" "namespace_workspace_tester" {
   rule {
     api_groups = [""]
     resources  = ["endpoints", "services", "services/status"]
+    verbs      = ["get", "list", "watch"]
+  }
+  rule {
+    api_groups = ["discovery.k8s.io"]
+    resources  = ["endpointslices"]
     verbs      = ["get", "list", "watch"]
   }
   rule {

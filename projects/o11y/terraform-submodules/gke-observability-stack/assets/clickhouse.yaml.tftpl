@@ -1,0 +1,27 @@
+configEnvs:
+  CLICKHOUSE_DB: opentelemetry
+configFiles:
+  /etc/clickhouse-server/config.d/logger.xml: |
+    <clickhouse>
+      <logger>
+        <console>1</console>
+
+        <log replace="replace">/dev/null</log>
+        <error_log replace="replace">/dev/null</error_log>
+      </logger>
+    </clickhouse>
+
+  /docker-entrypoint-initdb.d/ttl.sql: |
+    ALTER TABLE opentelemetry.otel_logs                           MODIFY TTL Timestamp  + INTERVAL 3 DAY;
+    ALTER TABLE opentelemetry.otel_metrics_exponential_histogram  MODIFY TTL TimeUnix   + INTERVAL 3 DAY;
+    ALTER TABLE opentelemetry.otel_metrics_gauge                  MODIFY TTL TimeUnix   + INTERVAL 3 DAY;
+    ALTER TABLE opentelemetry.otel_metrics_histogram              MODIFY TTL TimeUnix   + INTERVAL 3 DAY;
+    ALTER TABLE opentelemetry.otel_metrics_sum                    MODIFY TTL TimeUnix   + INTERVAL 3 DAY;
+    ALTER TABLE opentelemetry.otel_metrics_summary                MODIFY TTL TimeUnix   + INTERVAL 3 DAY;
+    ALTER TABLE opentelemetry.otel_traces                         MODIFY TTL Timestamp  + INTERVAL 3 DAY;
+    ALTER TABLE opentelemetry.otel_traces_trace_id_ts             MODIFY TTL Start      + INTERVAL 3 DAY;
+    ALTER TABLE opentelemetry.otel_traces_trace_id_ts_mv          MODIFY TTL Start      + INTERVAL 3 DAY;
+
+resources:
+  requests:
+    storage: 100Gi

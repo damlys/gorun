@@ -1,33 +1,40 @@
 {
-  "name": "devcontainer-damlys-gorun",
+  "name": "devcontainer-damlys-${localWorkspaceFolderBasename}",
+  "initializeCommand": ".devcontainer/docker-desktop-kubeconfig",
 
-  "image": "europe-central2-docker.pkg.dev/gogcp-main-3/private-docker-images/gorun/core/devcontainer:0.5.101",
+  "image": "europe-central2-docker.pkg.dev/gogcp-main-8/private-docker-images/gorun/core/devcontainer:0.8.100",
   "runArgs": [
-    "--name=devcontainer-damlys-gorun",
-    "--env-file=${localEnv:HOME}${localEnv:USERPROFILE}/workspace/devcontainer-damlys.env"
+    "--name=devcontainer-damlys-${localWorkspaceFolderBasename}",
+    "--add-host=kubernetes.docker.internal:host-gateway",
+    "--env-file=${localEnv:HOME}/workspace/devcontainer-damlys.env"
+    //
   ],
   "containerEnv": {
     "DOCKER_BUILDKIT": "1",
-    "HELM_EXPERIMENTAL_OCI": "1"
+    "EDITOR": "code --wait",
+    "HELM_EXPERIMENTAL_OCI": "1",
+    "KUBECONFIG": "/root/.kube/config:/root/docker-desktop-kubeconfig.yaml"
   },
   "mounts": [
     "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock",
+    "type=bind,source=${localEnv:HOME}/workspace/docker-desktop-kubeconfig.yaml,target=/root/docker-desktop-kubeconfig.yaml",
     "type=volume,source=devcontainer-damlys-docker,target=/root/.docker",
     "type=volume,source=devcontainer-damlys-firebase,target=/root/.config/configstore",
     "type=volume,source=devcontainer-damlys-gcloud,target=/root/.config/gcloud",
     "type=volume,source=devcontainer-damlys-gemini,target=/root/.gemini",
     "type=volume,source=devcontainer-damlys-github,target=/root/.config/gh",
+    "type=volume,source=devcontainer-damlys-grafanactl,target=/root/.config/grafanactl",
     "type=volume,source=devcontainer-damlys-helm,target=/root/.config/helm",
     "type=volume,source=devcontainer-damlys-kube,target=/root/.kube",
     "type=volume,source=devcontainer-damlys-terraform,target=/root/.terraform.d",
     "type=volume,source=devcontainer-damlys-velero,target=/root/.config/velero"
+    //
   ],
 
   "customizations": {
     "vscode": {
       "extensions": [
         "docker.docker",
-        "esbenp.prettier-vscode",
         "google.geminicodeassist",
         "googlecloudtools.cloudcode",
         "hashicorp.hcl",
@@ -37,8 +44,13 @@
         "redhat.vscode-yaml",
         // Golang
         "golang.go",
+        // Python
+        "ms-python.autopep8",
+        "ms-python.python",
+        // Node.js
+        "esbenp.prettier-vscode",
         // Shell script
-        "foxundermoon.shell-format",
+        "foxundermoon.shell-format@7.2.5",
         "timonwong.shellcheck"
       ],
       "settings": {

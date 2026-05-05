@@ -1,0 +1,25 @@
+# https://hub.docker.com/_/postgres
+image:
+  repository: postgres
+  tag: 18.1
+
+configEnvs:
+  POSTGRES_USER: postgres
+  POSTGRES_DB: postgres
+secretConfigEnvs:
+  POSTGRES_PASSWORD: Secret123
+configFiles: {}
+secretConfigFiles: {}
+
+extraPodLabels: {}
+extraPodAnnotations: {}
+extraServiceLabels: {}
+extraServiceAnnotations: {}
+resources:
+  requests:
+    cpu: 1m
+    memory: 1Mi
+    storage: 10Gi
+  limits:
+    cpu: 1000m
+    memory: 1Gi

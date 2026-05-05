@@ -5,7 +5,7 @@ resource "kubernetes_cluster_role" "cluster_workspace_developer" {
 
   rule {
     api_groups = [""]
-    resources  = ["namespaces"]
+    resources  = ["namespaces", "namespaces/status"]
     verbs      = ["get", "list", "watch"]
   }
 
@@ -40,7 +40,7 @@ resource "kubernetes_cluster_role" "namespace_workspace_developer" {
   rule {
     api_groups = [""]
     resources  = ["serviceaccounts"]
-    verbs      = ["get", "list", "watch"]
+    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
   }
   rule {
     api_groups = [""]
@@ -74,6 +74,11 @@ resource "kubernetes_cluster_role" "namespace_workspace_developer" {
     verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
   }
   rule {
+    api_groups = [""]
+    resources  = ["replicationcontrollers", "replicationcontrollers/status"]
+    verbs      = ["get", "list", "watch"]
+  }
+  rule {
     api_groups = ["apps"]
     resources  = ["daemonsets", "daemonsets/status"]
     verbs      = ["get", "list", "watch"]
@@ -93,6 +98,11 @@ resource "kubernetes_cluster_role" "namespace_workspace_developer" {
     resources  = ["poddisruptionbudgets", "poddisruptionbudgets/status"]
     verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
   }
+  rule {
+    api_groups = [""]
+    resources  = ["resourcequotas"]
+    verbs      = ["get", "list", "watch"]
+  }
 
   rule {
     api_groups = [""]
@@ -104,6 +114,11 @@ resource "kubernetes_cluster_role" "namespace_workspace_developer" {
     api_groups = [""]
     resources  = ["endpoints", "services", "services/status"]
     verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
+  }
+  rule {
+    api_groups = ["discovery.k8s.io"]
+    resources  = ["endpointslices"]
+    verbs      = ["get", "list", "watch"]
   }
   rule {
     api_groups = ["net.gke.io"]

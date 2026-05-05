@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "docker.docker",
-    "esbenp.prettier-vscode",
     "google.geminicodeassist",
     "googlecloudtools.cloudcode",
     "hashicorp.hcl",
@@ -11,6 +10,11 @@
     "redhat.vscode-yaml",
     // Golang
     "golang.go",
+    // Python
+    "ms-python.autopep8",
+    "ms-python.python",
+    // Node.js
+    "esbenp.prettier-vscode",
     // Shell script
     "foxundermoon.shell-format",
     "timonwong.shellcheck"

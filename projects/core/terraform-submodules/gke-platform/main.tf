@@ -358,6 +358,38 @@ resource "helm_release" "prometheus_operator_crds" {
   chart      = "prometheus-operator-crds"
   name       = "prometheus-operator-crds"
   namespace  = kubernetes_namespace.prometheus_operator.metadata[0].name
+
+  values = [
+    file("${path.module}/helm/values/prometheus-operator-crds.yaml"),
+  ]
+}
+
+#######################################
+### OpenTelemetry Operator
+#######################################
+
+resource "kubernetes_namespace" "opentelemetry_operator" {
+  depends_on = [
+    google_container_cluster.this,
+    google_container_node_pool.this,
+  ]
+
+  metadata {
+    name = "opentelemetry-operator"
+  }
+}
+
+resource "helm_release" "opentelemetry_operator" {
+  repository = "${path.module}/helm/charts"
+  chart      = "opentelemetry-operator"
+  name       = "opentelemetry-operator"
+  namespace  = kubernetes_namespace.opentelemetry_operator.metadata[0].name
+
+  values = [
+    file("${path.module}/helm/values/opentelemetry-operator.yaml"),
+    templatefile("${path.module}/assets/opentelemetry_operator.yaml.tftpl", {
+    }),
+  ]
 }
 
 #######################################
@@ -392,7 +424,8 @@ resource "kubernetes_namespace" "velero" {
 }
 
 module "velero_service_account" {
-  source = "../gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-3-private-terraform-modules/gorun/core/gke-service-account/0.5.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gke-service-account/0.8.100.zip"
+  source = "../gke-service-account"
 
   google_project           = var.google_project
   google_container_cluster = google_container_cluster.this
@@ -448,6 +481,7 @@ resource "google_project_iam_custom_role" "velero_server" {
     "compute.snapshots.create",
     "compute.snapshots.useReadOnly",
     "compute.snapshots.delete",
+    "compute.snapshots.setLabels",
     "compute.zones.get",
     "storage.objects.create",
     "storage.objects.delete",
@@ -509,7 +543,8 @@ resource "kubernetes_namespace" "cert_manager" {
 }
 
 module "cert_manager_service_account" {
-  source = "../gke-service-account" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-3-private-terraform-modules/gorun/core/gke-service-account/0.5.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gke-service-account/0.8.100.zip"
+  source = "../gke-service-account"
 
   google_project           = var.google_project
   google_container_cluster = google_container_cluster.this

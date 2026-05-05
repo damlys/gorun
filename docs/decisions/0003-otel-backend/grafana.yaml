@@ -1,0 +1,361 @@
+---
+# Source: grafana/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: myrelease-grafana
+  namespace: mynamespace
+  labels:
+    helm.sh/chart: grafana-10.3.0
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: myrelease
+    app.kubernetes.io/version: "12.3.0"
+    app.kubernetes.io/component: admin-secret
+type: Opaque
+data:
+  
+  admin-user: "YWRtaW4="
+  admin-password: "U2VjcmV0MTIz"
+  ldap-toml: ""
+---
+# Source: grafana/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myrelease-grafana
+  namespace: mynamespace
+  labels:
+    helm.sh/chart: grafana-10.3.0
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: myrelease
+    app.kubernetes.io/version: "12.3.0"
+data:
+  
+  plugins: googlecloud-logging-datasource,googlecloud-trace-datasource
+  grafana.ini: |
+    [analytics]
+    check_for_updates = true
+    [auth]
+    disable_login_form = false
+    disable_signout_menu = false
+    [database]
+    host = ${grafana_postgresql_host}:5432
+    name = grafana
+    password = Secret123
+    type = postgres
+    user = grafana
+    [grafana_net]
+    url = https://grafana.net
+    [log]
+    level = error
+    mode = console
+    [paths]
+    data = /var/lib/grafana/
+    logs = /var/log/grafana
+    plugins = /var/lib/grafana/plugins
+    provisioning = /etc/grafana/provisioning
+    [security]
+    admin_email = ${grafana_admin_email}
+    admin_password = Secret123
+    admin_user = admin
+    disable_initial_admin_creation = false
+    [server]
+    domain = ${grafana_domain}
+    root_url = https://${grafana_domain}
+    [smtp]
+    enabled = true
+    from_address = ${grafana_email}
+    from_name = Grafana
+    host = ${grafana_smtp_host}
+    user = ${grafana_smtp_username}
+    [users]
+    allow_org_create = true
+    allow_sign_up = true
+    auto_assign_org = true
+    auto_assign_org_id = 1
+    auto_assign_org_role = Viewer
+    verify_email_enabled = false
+  gcp-datasources.yaml: |
+    apiVersion: 1
+    datasources:
+    - isDefault: false
+      jsonData:
+        authenticationType: gce
+      name: GCP logs
+      type: googlecloud-logging-datasource
+      uid: gcp-logs
+    - isDefault: false
+      jsonData:
+        authenticationType: gce
+        defaultProject: ${project_id}
+      name: GCP metrics
+      type: stackdriver
+      uid: gcp-metrics
+    - isDefault: false
+      jsonData:
+        authenticationType: gce
+      name: GCP traces
+      type: googlecloud-trace-datasource
+      uid: gcp-traces
+---
+# Source: grafana/templates/clusterrole.yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  labels:
+    helm.sh/chart: grafana-10.3.0
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: myrelease
+    app.kubernetes.io/version: "12.3.0"
+  name: myrelease-grafana-clusterrole
+rules: []
+---
+# Source: grafana/templates/clusterrolebinding.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: myrelease-grafana-clusterrolebinding
+  labels:
+    helm.sh/chart: grafana-10.3.0
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: myrelease
+    app.kubernetes.io/version: "12.3.0"
+subjects:
+  - kind: ServiceAccount
+    name: ${grafana_service_account_name}
+    namespace: mynamespace
+roleRef:
+  kind: ClusterRole
+  name: myrelease-grafana-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: grafana/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: myrelease-grafana
+  namespace: mynamespace
+  labels:
+    helm.sh/chart: grafana-10.3.0
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: myrelease
+    app.kubernetes.io/version: "12.3.0"
+rules: []
+---
+# Source: grafana/templates/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: myrelease-grafana
+  namespace: mynamespace
+  labels:
+    helm.sh/chart: grafana-10.3.0
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: myrelease
+    app.kubernetes.io/version: "12.3.0"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: myrelease-grafana
+subjects:
+- kind: ServiceAccount
+  name: ${grafana_service_account_name}
+  namespace: mynamespace
+---
+# Source: grafana/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: myrelease-grafana
+  namespace: mynamespace
+  labels:
+    helm.sh/chart: grafana-10.3.0
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: myrelease
+    app.kubernetes.io/version: "12.3.0"
+spec:
+  type: ClusterIP
+  ports:
+    - name: service
+      port: 80
+      protocol: TCP
+      targetPort: grafana
+  selector:
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: myrelease
+---
+# Source: grafana/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myrelease-grafana
+  namespace: mynamespace
+  labels:
+    helm.sh/chart: grafana-10.3.0
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: myrelease
+    app.kubernetes.io/version: "12.3.0"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: grafana
+      app.kubernetes.io/instance: myrelease
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: grafana-10.3.0
+        app.kubernetes.io/name: grafana
+        app.kubernetes.io/instance: myrelease
+        app.kubernetes.io/version: "12.3.0"
+      annotations:
+        checksum/config: 4e34ddf75c4ff5b0ff529fa9d8c6513bb97750a90fb7abe80d5d535c6fef964c
+        checksum/sc-dashboard-provider-config: e70bf6a851099d385178a76de9757bb0bef8299da6d8443602590e44f05fdf24
+        checksum/secret: 442eff44c367c93f0df2af41091ffd0068b8d05f2beba4a91f6defdcfd2a895a
+        kubectl.kubernetes.io/default-container: grafana
+    spec:
+      
+      serviceAccountName: ${grafana_service_account_name}
+      automountServiceAccountToken: true
+      shareProcessNamespace: false
+      securityContext:
+        fsGroup: 472
+        runAsGroup: 472
+        runAsNonRoot: true
+        runAsUser: 472
+      enableServiceLinks: true
+      containers:
+        - name: grafana
+          image: "docker.io/grafana/grafana:12.3.0"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: config
+              mountPath: "/etc/grafana/grafana.ini"
+              subPath: grafana.ini
+            - name: storage
+              mountPath: "/var/lib/grafana"
+            - name: config
+              mountPath: "/etc/grafana/provisioning/datasources/gcp-datasources.yaml"
+              subPath: "gcp-datasources.yaml"
+          ports:
+            - name: grafana
+              containerPort: 3000
+              protocol: TCP
+            - name: gossip-tcp
+              containerPort: 9094
+              protocol: TCP
+            - name: gossip-udp
+              containerPort: 9094
+              protocol: UDP
+            - name: profiling
+              containerPort: 6060
+              protocol: TCP
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: GF_SECURITY_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: myrelease-grafana
+                  key: admin-user
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: myrelease-grafana
+                  key: admin-password
+            - name: GF_INSTALL_PLUGINS
+              valueFrom:
+                configMapKeyRef:
+                  name: myrelease-grafana
+                  key: plugins
+            - name: GF_PATHS_DATA
+              value: /var/lib/grafana/
+            - name: GF_PATHS_LOGS
+              value: /var/log/grafana
+            - name: GF_PATHS_PLUGINS
+              value: /var/lib/grafana/plugins
+            - name: GF_PATHS_PROVISIONING
+              value: /etc/grafana/provisioning
+          livenessProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 60
+            timeoutSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+      volumes:
+        - name: config
+          configMap:
+            name: myrelease-grafana
+        - name: storage
+          emptyDir: {}
+---
+# Source: grafana/templates/tests/test-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myrelease-grafana-test
+  namespace: mynamespace
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": "before-hook-creation,hook-succeeded"
+  labels:
+    helm.sh/chart: grafana-10.3.0
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: myrelease
+    app.kubernetes.io/version: "12.3.0"
+data:
+  run.sh: |-
+    @test "Test Health" {
+      url="http://myrelease-grafana/api/health"
+
+      code=$(wget --server-response --spider --timeout 90 --tries 10 ${url} 2>&1 | awk '/^  HTTP/{print $2}')
+      [ "$code" == "200" ]
+    }
+---
+# Source: grafana/templates/tests/test.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myrelease-grafana-test
+  labels:
+    helm.sh/chart: grafana-10.3.0
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: myrelease
+    app.kubernetes.io/version: "12.3.0"
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": "before-hook-creation,hook-succeeded"
+  namespace: mynamespace
+spec:
+  serviceAccountName: default
+  containers:
+    - name: myrelease-test
+      image: "docker.io/bats/bats:v1.4.1"
+      imagePullPolicy: "IfNotPresent"
+      command: ["/opt/bats/bin/bats", "-t", "/tests/run.sh"]
+      volumeMounts:
+        - mountPath: /tests
+          name: tests
+          readOnly: true
+  volumes:
+    - name: tests
+      configMap:
+        name: myrelease-grafana-test
+  restartPolicy: Never

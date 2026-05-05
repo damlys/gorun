@@ -1,3 +1,3 @@
 provider "google" {
-  project = "gogcp-prod-3"
+  project = "gogcp-prod-8"
 }

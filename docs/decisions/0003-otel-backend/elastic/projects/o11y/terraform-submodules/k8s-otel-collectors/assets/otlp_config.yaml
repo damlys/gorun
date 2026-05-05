@@ -1,0 +1,17 @@
+service:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, filter, k8sattributes, batch]
+      exporters: [otlp/elastic]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, filter, k8sattributes, batch]
+      exporters: [otlp/elastic]
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, filter, k8sattributes, batch]
+      exporters: [otlp/elastic]
+
+  extensions:
+    - health_check

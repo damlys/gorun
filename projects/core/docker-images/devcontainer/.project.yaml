@@ -1,7 +1,7 @@
-repository: europe-central2-docker.pkg.dev/gogcp-main-3/private-docker-images/gorun/core/devcontainer
-tag: 0.5.101
+repository: europe-central2-docker.pkg.dev/gogcp-main-8/private-docker-images/gorun/core/devcontainer
+tag: 0.8.100
 aliases:
-  - # https://hub.docker.com/r/damlys/gorun-devcontainer
-    repository: damlys/gorun-devcontainer
-  - # https://github.com/users/damlys/packages/container/package/gogcp-devcontainer
-    repository: ghcr.io/damlys/gorun-devcontainer
+  # https://hub.docker.com/r/damlys/gorun-devcontainer
+  - repository: damlys/gorun-devcontainer
+  # https://github.com/users/damlys/packages/container/package/gogcp-devcontainer
+  - repository: ghcr.io/damlys/gorun-devcontainer

@@ -35,7 +35,7 @@ variable "cluster_location" {
   default = "europe-central2-a"
 }
 
-variable "cluster_version" { # gcloud container get-server-config --project="gogcp-main-3" --region="europe-central2" --flatten="channels" --filter="channels.channel=STABLE" --format="value(channels.defaultVersion)"
+variable "cluster_version" { # gcloud container get-server-config --project="gogcp-main-8" --region="europe-central2" --flatten="channels" --filter="channels.channel=STABLE" --format="value(channels.defaultVersion)"
   type    = string
   default = null
 }
@@ -61,7 +61,7 @@ variable "node_pools" {
   }))
   default = {
     "main-pool-1" = {
-      node_machine_type   = "n2d-standard-2"
+      node_machine_type   = "e2-standard-2"
       node_spot_instances = false
       node_min_instances  = 1
       node_max_instances  = 1

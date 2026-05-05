@@ -1,0 +1,11 @@
+{{- if not .Values.httpServer.serviceAccountName }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: "{{ .Release.Name }}-http-server"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    app.kubernetes.io/component: http-server
+    {{- include "kuard.metadataLabels" . | nindent 4 }}
+automountServiceAccountToken: true
+{{- end }}

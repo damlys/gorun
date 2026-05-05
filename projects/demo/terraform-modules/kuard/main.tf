@@ -1,5 +1,6 @@
 module "vault" {
-  source = "../../../core/terraform-submodules/k8s-vault" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-3-private-terraform-modules/gorun/core/k8s-vault/0.5.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/k8s-vault/0.8.100.zip"
+  source = "../../../core/terraform-submodules/k8s-vault"
 
   vault_name = "kuard"
 
@@ -11,10 +12,11 @@ module "vault" {
 }
 
 module "this" {
-  source = "../../terraform-submodules/kuard" # "gcs::https://www.googleapis.com/storage/v1/gogcp-main-3-private-terraform-modules/gorun/demo/kuard/0.5.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/demo/kuard/0.8.100.zip"
+  source = "../../terraform-submodules/kuard"
 
   google_project           = data.google_project.this
   google_container_cluster = data.google_container_cluster.this
 
-  platform_domain = "gogke-test-3.damlys.dev"
+  platform_domain = "gogke-test-8.damlys.dev"
 }

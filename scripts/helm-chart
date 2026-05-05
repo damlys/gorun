@@ -20,6 +20,7 @@ function main {
 
   case "${cmd}" in
   "build")
+    helm dependency build "${project_path}"
     helm package "${project_path}" --destination="${project_path}/.."
     ;;
 

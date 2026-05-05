@@ -10,3 +10,4 @@ complete -C /root/go/bin/gocomplete go
 complete -C /usr/local/bin/terraform terraform
 
 alias kubens="kubectl config set-context --current --namespace"
+alias python="python3"

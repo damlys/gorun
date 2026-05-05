@@ -1,0 +1,6 @@
+dependencies:
+- name: clickstack
+  repository: https://hyperdxio.github.io/helm-charts
+  version: 1.0.0
+digest: sha256:87f12e7b350392952b6a6f82cdea2c582996bd776993cc70443d0367c0bdafda
+generated: "2025-11-29T20:50:44.840972088Z"

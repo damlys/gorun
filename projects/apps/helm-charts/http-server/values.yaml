@@ -1,0 +1,24 @@
+image:
+  repository: europe-central2-docker.pkg.dev/gogcp-main-8/private-docker-images/gomod/goapp
+  tag: 0.0.0
+
+configEnvs: {}
+secretConfigEnvs: {}
+configFiles: {}
+secretConfigFiles: {}
+
+serviceAccountName: ""
+extraPodLabels: {}
+extraPodAnnotations: {}
+extraServiceLabels: {}
+extraServiceAnnotations: {}
+minReplicas: 1
+maxReplicas: 1
+maxUnavailable: 1
+resources:
+  requests:
+    cpu: 1m
+    memory: 1Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi

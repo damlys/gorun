@@ -13,6 +13,11 @@ variable "registry_location" {
   default = "europe-central2"
 }
 
+variable "registry_immutability" {
+  type    = bool
+  default = true
+}
+
 variable "iam_readers" {
   type    = set(string)
   default = []

@@ -5,7 +5,7 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
   labels:
     app.kubernetes.io/component: http-server
-    {{- include "kuard.metadataLabels" $ | nindent 4 }}
+    {{- include "kuard.metadataLabels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

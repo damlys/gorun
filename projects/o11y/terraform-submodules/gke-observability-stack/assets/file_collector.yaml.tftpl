@@ -1,0 +1,12 @@
+collector:
+  mode: daemonset
+  configEnvs:
+    CLICKHOUSE_ENDPOINT: "${clickhouse_endpoint}"
+    CLICKHOUSE_USER: clickhouse
+    CLICKHOUSE_DB: opentelemetry
+  secretConfigEnvs:
+    CLICKHOUSE_PASSWORD: Secret123
+  mountLogs: true
+  logsReceivers: [filelog]
+  metricsReceivers: []
+  tracesReceivers: []

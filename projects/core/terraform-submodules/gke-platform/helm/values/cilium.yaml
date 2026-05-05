@@ -9,6 +9,12 @@ cni:
       cpu: 1m
       memory: 1Mi
     limits: {}
+certgen:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
 hubble:
   relay:
     resources:

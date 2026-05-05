@@ -5,16 +5,16 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
   labels:
     app.kubernetes.io/component: http-server
-    {{- include "kuard.metadataLabels" $ | nindent 4 }}
+    {{- include "kuard.metadataLabels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: http-server
-      {{- include "kuard.selectorLabels" $ | nindent 6 }}
+      {{- include "kuard.selectorLabels" . | nindent 6 }}
   namespaceSelector:
     matchNames:
       - "{{ .Release.Namespace }}"
   endpoints:
-    - port: http
+    - port: kuard-http
       path: /metrics
       interval: 30s

@@ -1,0 +1,9 @@
+global:
+  storageClassName: standard-rwo
+  keepPVC: true
+
+# https://clickhouse.com/docs/use-cases/observability/clickstack/deployment/helm-cloud#google-kubernetes-engine-gke
+hyperdx:
+  frontendUrl: "https://${hyperdx_domain}"
+otel:
+  opampServerUrl: "http://${name}-app.${namespace}.svc.cluster.local:4320"

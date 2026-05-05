@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    {{- include "http-server.metadataLabels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "http-server.selectorLabels" . | nindent 6 }}
+  replicas: {{ .Values.minReplicas }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: {{ .Values.maxUnavailable }}
+  template:
+    metadata:
+      labels:
+        {{- include "http-server.metadataLabels" . | nindent 8 }}
+        {{- if .Values.extraPodLabels }}
+        {{- toYaml .Values.extraPodLabels | nindent 8 }}
+        {{- end }}
+      annotations:
+        {{- include "configs.annotations" . | nindent 8 }}
+        {{- if .Values.extraPodAnnotations }}
+        {{- toYaml .Values.extraPodAnnotations | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- if .Values.serviceAccountName }}
+      serviceAccountName: "{{ .Values.serviceAccountName }}"
+      {{- else }}
+      serviceAccountName: "{{ .Release.Name }}"
+      {{- end }}
+      containers:
+        - name: http-server
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          envFrom:
+            {{- include "configs.envFrom" . | nindent 12 }}
+          volumeMounts:
+            {{- include "configs.volumeMounts" . | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          startupProbe:
+            httpGet:
+              port: http
+              path: /healthy
+          readinessProbe:
+            httpGet:
+              port: http
+              path: /ready
+          livenessProbe:
+            httpGet:
+              port: http
+              path: /healthy
+          resources:
+            requests:
+              cpu: "{{ .Values.resources.requests.cpu }}"
+              memory: "{{ .Values.resources.requests.memory }}"
+            limits:
+              cpu: "{{ .Values.resources.limits.cpu }}"
+              memory: "{{ .Values.resources.limits.memory }}"
+          securityContext: # container security context
+            privileged: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            readOnlyRootFilesystem: false
+            runAsUser: 1111
+            runAsGroup: 1111
+      securityContext: # pod security context
+        fsGroup: 1111
+        fsGroupChangePolicy: OnRootMismatch
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    {{- include "http-server.selectorLabels" . | nindent 20 }}
+                topologyKey: kubernetes.io/hostname
+      volumes:
+        {{- include "configs.volumes" . | nindent 8 }}
+
+---
+{{- include "configs.manifests" . | nindent 0 }}

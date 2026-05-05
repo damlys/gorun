@@ -1,8 +1,6 @@
 image:
-  repository: europe-central2-docker.pkg.dev/gogcp-main-3/private-docker-images/gorun/demo/kuard
-  tag: 0.5.100
-
-serviceAccountName: ""
+  repository: europe-central2-docker.pkg.dev/gogcp-main-8/private-docker-images/gorun/demo/kuard
+  tag: 0.8.100
 
 configEnvs: {}
 secretConfigEnvs: {}
@@ -10,8 +8,18 @@ configFiles: {}
 secretConfigFiles: {}
 
 httpServer:
+  serviceAccountName: ""
+  extraPodLabels: {}
+  extraPodAnnotations: {}
+  extraServiceLabels: {}
+  extraServiceAnnotations: {}
   minReplicas: 1
   maxReplicas: 1
   maxUnavailable: 1
-  extraPodLabels: {}
-  extraPodAnnotations: {}
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi

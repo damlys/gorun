@@ -1,5 +1,5 @@
 default:
-  image: damlys/gorun-devcontainer:0.5.100
+  image: damlys/gorun-devcontainer:0.8.100
   before_script:
     - echo "$GOOGLE_CREDENTIALS" | gcloud auth activate-service-account --key-file="/dev/stdin"
     - export GOOGLE_APPLICATION_CREDENTIALS="/tmp/GOOGLE_APPLICATION_CREDENTIALS.json" && echo "$GOOGLE_CREDENTIALS" >"$GOOGLE_APPLICATION_CREDENTIALS"
@@ -11,6 +11,106 @@ stages:
   - publish
   - plan
   - apply
+test-apps-chart-http-server:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+      changes:
+        - "projects/apps/helm-charts/http-server/**"
+  script:
+    - ./scripts/helm-chart build "projects/apps/helm-charts/http-server"
+    - ./scripts/helm-chart test "projects/apps/helm-charts/http-server"
+    - ./scripts/helm-chart pre-publish "projects/apps/helm-charts/http-server"
+    - ./scripts/helm-chart show "projects/apps/helm-charts/http-server"
+publish-apps-chart-http-server:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
+      changes:
+        - "projects/apps/helm-charts/http-server/**"
+  script:
+    - ./scripts/helm-chart build "projects/apps/helm-charts/http-server"
+    - ./scripts/helm-chart test "projects/apps/helm-charts/http-server"
+    - ./scripts/helm-chart publish "projects/apps/helm-charts/http-server"
+    - ./scripts/helm-chart show "projects/apps/helm-charts/http-server"
+test-apps-tfmod-test:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+      changes:
+        - "projects/apps/terraform-modules/test/**"
+  cache:
+    paths:
+      - projects/apps/terraform-modules/test/.terraform
+  script:
+    - ./scripts/terraform-module test "projects/apps/terraform-modules/test"
+plan-apps-tfmod-test:
+  stage: plan
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+      changes:
+        - "projects/apps/terraform-modules/test/**"
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
+      changes:
+        - "projects/apps/terraform-modules/test/**"
+  cache:
+    paths:
+      - projects/apps/terraform-modules/test/.terraform
+  script:
+    - terraform -chdir="projects/apps/terraform-modules/test" init -input="false"
+    - terraform -chdir="projects/apps/terraform-modules/test" plan -input="false"
+apply-apps-tfmod-test:
+  stage: apply
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
+      changes:
+        - "projects/apps/terraform-modules/test/**"
+  cache:
+    paths:
+      - projects/apps/terraform-modules/test/.terraform
+  script:
+    - terraform -chdir="projects/apps/terraform-modules/test" init -input="false"
+    - terraform -chdir="projects/apps/terraform-modules/test" apply -input="false" -auto-approve
+  when: manual
+test-cicd-tfmod-cloud-build:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+      changes:
+        - "projects/cicd/terraform-modules/cloud-build/**"
+  cache:
+    paths:
+      - projects/cicd/terraform-modules/cloud-build/.terraform
+  script:
+    - ./scripts/terraform-module test "projects/cicd/terraform-modules/cloud-build"
+plan-cicd-tfmod-cloud-build:
+  stage: plan
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+      changes:
+        - "projects/cicd/terraform-modules/cloud-build/**"
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
+      changes:
+        - "projects/cicd/terraform-modules/cloud-build/**"
+  cache:
+    paths:
+      - projects/cicd/terraform-modules/cloud-build/.terraform
+  script:
+    - terraform -chdir="projects/cicd/terraform-modules/cloud-build" init -input="false"
+    - terraform -chdir="projects/cicd/terraform-modules/cloud-build" plan -input="false"
+apply-cicd-tfmod-cloud-build:
+  stage: apply
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
+      changes:
+        - "projects/cicd/terraform-modules/cloud-build/**"
+  cache:
+    paths:
+      - projects/cicd/terraform-modules/cloud-build/.terraform
+  script:
+    - terraform -chdir="projects/cicd/terraform-modules/cloud-build" init -input="false"
+    - terraform -chdir="projects/cicd/terraform-modules/cloud-build" apply -input="false" -auto-approve
+  when: manual
 test-core-image-devcontainer:
   stage: test
   rules:
@@ -121,50 +221,116 @@ publish-core-image-java21-sdk:
     - ./scripts/docker-image test "projects/core/docker-images/java21-sdk"
     - ./scripts/docker-image publish "projects/core/docker-images/java21-sdk"
     - ./scripts/docker-image show "projects/core/docker-images/java21-sdk"
-test-core-image-node22-rte:
+test-core-image-node24-rte:
   stage: test
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/docker-images/node22-rte/**"
+        - "projects/core/docker-images/node24-rte/**"
   script:
-    - ./scripts/docker-image build "projects/core/docker-images/node22-rte"
-    - ./scripts/docker-image test "projects/core/docker-images/node22-rte"
-    - ./scripts/docker-image pre-publish "projects/core/docker-images/node22-rte"
-    - ./scripts/docker-image show "projects/core/docker-images/node22-rte"
-publish-core-image-node22-rte:
+    - ./scripts/docker-image build "projects/core/docker-images/node24-rte"
+    - ./scripts/docker-image test "projects/core/docker-images/node24-rte"
+    - ./scripts/docker-image pre-publish "projects/core/docker-images/node24-rte"
+    - ./scripts/docker-image show "projects/core/docker-images/node24-rte"
+publish-core-image-node24-rte:
   stage: publish
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/docker-images/node22-rte/**"
+        - "projects/core/docker-images/node24-rte/**"
   script:
-    - ./scripts/docker-image build "projects/core/docker-images/node22-rte"
-    - ./scripts/docker-image test "projects/core/docker-images/node22-rte"
-    - ./scripts/docker-image publish "projects/core/docker-images/node22-rte"
-    - ./scripts/docker-image show "projects/core/docker-images/node22-rte"
-test-core-image-node22-sdk:
+    - ./scripts/docker-image build "projects/core/docker-images/node24-rte"
+    - ./scripts/docker-image test "projects/core/docker-images/node24-rte"
+    - ./scripts/docker-image publish "projects/core/docker-images/node24-rte"
+    - ./scripts/docker-image show "projects/core/docker-images/node24-rte"
+test-core-image-node24-sdk:
   stage: test
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/core/docker-images/node22-sdk/**"
+        - "projects/core/docker-images/node24-sdk/**"
   script:
-    - ./scripts/docker-image build "projects/core/docker-images/node22-sdk"
-    - ./scripts/docker-image test "projects/core/docker-images/node22-sdk"
-    - ./scripts/docker-image pre-publish "projects/core/docker-images/node22-sdk"
-    - ./scripts/docker-image show "projects/core/docker-images/node22-sdk"
-publish-core-image-node22-sdk:
+    - ./scripts/docker-image build "projects/core/docker-images/node24-sdk"
+    - ./scripts/docker-image test "projects/core/docker-images/node24-sdk"
+    - ./scripts/docker-image pre-publish "projects/core/docker-images/node24-sdk"
+    - ./scripts/docker-image show "projects/core/docker-images/node24-sdk"
+publish-core-image-node24-sdk:
   stage: publish
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/core/docker-images/node22-sdk/**"
+        - "projects/core/docker-images/node24-sdk/**"
   script:
-    - ./scripts/docker-image build "projects/core/docker-images/node22-sdk"
-    - ./scripts/docker-image test "projects/core/docker-images/node22-sdk"
-    - ./scripts/docker-image publish "projects/core/docker-images/node22-sdk"
-    - ./scripts/docker-image show "projects/core/docker-images/node22-sdk"
+    - ./scripts/docker-image build "projects/core/docker-images/node24-sdk"
+    - ./scripts/docker-image test "projects/core/docker-images/node24-sdk"
+    - ./scripts/docker-image publish "projects/core/docker-images/node24-sdk"
+    - ./scripts/docker-image show "projects/core/docker-images/node24-sdk"
+test-core-chart-clickhouse:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+      changes:
+        - "projects/core/helm-charts/clickhouse/**"
+  script:
+    - ./scripts/helm-chart build "projects/core/helm-charts/clickhouse"
+    - ./scripts/helm-chart test "projects/core/helm-charts/clickhouse"
+    - ./scripts/helm-chart pre-publish "projects/core/helm-charts/clickhouse"
+    - ./scripts/helm-chart show "projects/core/helm-charts/clickhouse"
+publish-core-chart-clickhouse:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
+      changes:
+        - "projects/core/helm-charts/clickhouse/**"
+  script:
+    - ./scripts/helm-chart build "projects/core/helm-charts/clickhouse"
+    - ./scripts/helm-chart test "projects/core/helm-charts/clickhouse"
+    - ./scripts/helm-chart publish "projects/core/helm-charts/clickhouse"
+    - ./scripts/helm-chart show "projects/core/helm-charts/clickhouse"
+test-core-chart-configs:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+      changes:
+        - "projects/core/helm-charts/configs/**"
+  script:
+    - ./scripts/helm-chart build "projects/core/helm-charts/configs"
+    - ./scripts/helm-chart test "projects/core/helm-charts/configs"
+    - ./scripts/helm-chart pre-publish "projects/core/helm-charts/configs"
+    - ./scripts/helm-chart show "projects/core/helm-charts/configs"
+publish-core-chart-configs:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
+      changes:
+        - "projects/core/helm-charts/configs/**"
+  script:
+    - ./scripts/helm-chart build "projects/core/helm-charts/configs"
+    - ./scripts/helm-chart test "projects/core/helm-charts/configs"
+    - ./scripts/helm-chart publish "projects/core/helm-charts/configs"
+    - ./scripts/helm-chart show "projects/core/helm-charts/configs"
+test-core-chart-postgres:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+      changes:
+        - "projects/core/helm-charts/postgres/**"
+  script:
+    - ./scripts/helm-chart build "projects/core/helm-charts/postgres"
+    - ./scripts/helm-chart test "projects/core/helm-charts/postgres"
+    - ./scripts/helm-chart pre-publish "projects/core/helm-charts/postgres"
+    - ./scripts/helm-chart show "projects/core/helm-charts/postgres"
+publish-core-chart-postgres:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
+      changes:
+        - "projects/core/helm-charts/postgres/**"
+  script:
+    - ./scripts/helm-chart build "projects/core/helm-charts/postgres"
+    - ./scripts/helm-chart test "projects/core/helm-charts/postgres"
+    - ./scripts/helm-chart publish "projects/core/helm-charts/postgres"
+    - ./scripts/helm-chart show "projects/core/helm-charts/postgres"
 test-core-tfmod-main:
   stage: test
   rules:
@@ -717,66 +883,6 @@ apply-demo-tfmod-kuard:
     - terraform -chdir="projects/demo/terraform-modules/kuard" init -input="false"
     - terraform -chdir="projects/demo/terraform-modules/kuard" apply -input="false" -auto-approve
   when: manual
-test-demo-tfsub-helm-manifest:
-  stage: test
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
-      changes:
-        - "projects/demo/terraform-submodules/helm-manifest/**"
-  cache:
-    paths:
-      - projects/demo/terraform-submodules/helm-manifest/.terraform
-      - projects/demo/terraform-submodules/helm-manifest/.terraform.lock.hcl
-  script:
-    - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-manifest"
-    - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-manifest"
-    - ./scripts/terraform-submodule pre-publish "projects/demo/terraform-submodules/helm-manifest"
-    - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-manifest"
-publish-demo-tfsub-helm-manifest:
-  stage: publish
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
-      changes:
-        - "projects/demo/terraform-submodules/helm-manifest/**"
-  cache:
-    paths:
-      - projects/demo/terraform-submodules/helm-manifest/.terraform
-      - projects/demo/terraform-submodules/helm-manifest/.terraform.lock.hcl
-  script:
-    - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-manifest"
-    - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-manifest"
-    - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/helm-manifest"
-    - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-manifest"
-test-demo-tfsub-helm-template:
-  stage: test
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
-      changes:
-        - "projects/demo/terraform-submodules/helm-template/**"
-  cache:
-    paths:
-      - projects/demo/terraform-submodules/helm-template/.terraform
-      - projects/demo/terraform-submodules/helm-template/.terraform.lock.hcl
-  script:
-    - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-template"
-    - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-template"
-    - ./scripts/terraform-submodule pre-publish "projects/demo/terraform-submodules/helm-template"
-    - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-template"
-publish-demo-tfsub-helm-template:
-  stage: publish
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
-      changes:
-        - "projects/demo/terraform-submodules/helm-template/**"
-  cache:
-    paths:
-      - projects/demo/terraform-submodules/helm-template/.terraform
-      - projects/demo/terraform-submodules/helm-template/.terraform.lock.hcl
-  script:
-    - ./scripts/terraform-submodule build "projects/demo/terraform-submodules/helm-template"
-    - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/helm-template"
-    - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/helm-template"
-    - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/helm-template"
 test-demo-tfsub-kuard:
   stage: test
   rules:
@@ -807,6 +913,72 @@ publish-demo-tfsub-kuard:
     - ./scripts/terraform-submodule test "projects/demo/terraform-submodules/kuard"
     - ./scripts/terraform-submodule publish "projects/demo/terraform-submodules/kuard"
     - ./scripts/terraform-submodule show "projects/demo/terraform-submodules/kuard"
+test-o11y-image-grafana:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+      changes:
+        - "projects/o11y/docker-images/grafana/**"
+  script:
+    - ./scripts/docker-image build "projects/o11y/docker-images/grafana"
+    - ./scripts/docker-image test "projects/o11y/docker-images/grafana"
+    - ./scripts/docker-image pre-publish "projects/o11y/docker-images/grafana"
+    - ./scripts/docker-image show "projects/o11y/docker-images/grafana"
+publish-o11y-image-grafana:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
+      changes:
+        - "projects/o11y/docker-images/grafana/**"
+  script:
+    - ./scripts/docker-image build "projects/o11y/docker-images/grafana"
+    - ./scripts/docker-image test "projects/o11y/docker-images/grafana"
+    - ./scripts/docker-image publish "projects/o11y/docker-images/grafana"
+    - ./scripts/docker-image show "projects/o11y/docker-images/grafana"
+test-o11y-chart-grafana:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+      changes:
+        - "projects/o11y/helm-charts/grafana/**"
+  script:
+    - ./scripts/helm-chart build "projects/o11y/helm-charts/grafana"
+    - ./scripts/helm-chart test "projects/o11y/helm-charts/grafana"
+    - ./scripts/helm-chart pre-publish "projects/o11y/helm-charts/grafana"
+    - ./scripts/helm-chart show "projects/o11y/helm-charts/grafana"
+publish-o11y-chart-grafana:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
+      changes:
+        - "projects/o11y/helm-charts/grafana/**"
+  script:
+    - ./scripts/helm-chart build "projects/o11y/helm-charts/grafana"
+    - ./scripts/helm-chart test "projects/o11y/helm-charts/grafana"
+    - ./scripts/helm-chart publish "projects/o11y/helm-charts/grafana"
+    - ./scripts/helm-chart show "projects/o11y/helm-charts/grafana"
+test-o11y-chart-otelcol:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+      changes:
+        - "projects/o11y/helm-charts/otelcol/**"
+  script:
+    - ./scripts/helm-chart build "projects/o11y/helm-charts/otelcol"
+    - ./scripts/helm-chart test "projects/o11y/helm-charts/otelcol"
+    - ./scripts/helm-chart pre-publish "projects/o11y/helm-charts/otelcol"
+    - ./scripts/helm-chart show "projects/o11y/helm-charts/otelcol"
+publish-o11y-chart-otelcol:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
+      changes:
+        - "projects/o11y/helm-charts/otelcol/**"
+  script:
+    - ./scripts/helm-chart build "projects/o11y/helm-charts/otelcol"
+    - ./scripts/helm-chart test "projects/o11y/helm-charts/otelcol"
+    - ./scripts/helm-chart publish "projects/o11y/helm-charts/otelcol"
+    - ./scripts/helm-chart show "projects/o11y/helm-charts/otelcol"
 test-o11y-tfmod-test:
   stage: test
   rules:
@@ -876,93 +1048,33 @@ publish-o11y-tfsub-gcp-availability-monitor:
     - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gcp-availability-monitor"
     - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/gcp-availability-monitor"
     - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gcp-availability-monitor"
-test-o11y-tfsub-gke-lgtm-stack:
+test-o11y-tfsub-gke-observability-stack:
   stage: test
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
       changes:
-        - "projects/o11y/terraform-submodules/gke-lgtm-stack/**"
+        - "projects/o11y/terraform-submodules/gke-observability-stack/**"
   cache:
     paths:
-      - projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform
-      - projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform.lock.hcl
+      - projects/o11y/terraform-submodules/gke-observability-stack/.terraform
+      - projects/o11y/terraform-submodules/gke-observability-stack/.terraform.lock.hcl
   script:
-    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-lgtm-stack"
-    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gke-lgtm-stack"
-    - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/gke-lgtm-stack"
-    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gke-lgtm-stack"
-publish-o11y-tfsub-gke-lgtm-stack:
+    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-observability-stack"
+    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gke-observability-stack"
+    - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/gke-observability-stack"
+    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gke-observability-stack"
+publish-o11y-tfsub-gke-observability-stack:
   stage: publish
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
       changes:
-        - "projects/o11y/terraform-submodules/gke-lgtm-stack/**"
+        - "projects/o11y/terraform-submodules/gke-observability-stack/**"
   cache:
     paths:
-      - projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform
-      - projects/o11y/terraform-submodules/gke-lgtm-stack/.terraform.lock.hcl
+      - projects/o11y/terraform-submodules/gke-observability-stack/.terraform
+      - projects/o11y/terraform-submodules/gke-observability-stack/.terraform.lock.hcl
   script:
-    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-lgtm-stack"
-    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gke-lgtm-stack"
-    - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/gke-lgtm-stack"
-    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gke-lgtm-stack"
-test-o11y-tfsub-k8s-otel-collectors:
-  stage: test
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
-      changes:
-        - "projects/o11y/terraform-submodules/k8s-otel-collectors/**"
-  cache:
-    paths:
-      - projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform
-      - projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform.lock.hcl
-  script:
-    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-otel-collectors"
-    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-otel-collectors"
-    - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/k8s-otel-collectors"
-    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-otel-collectors"
-publish-o11y-tfsub-k8s-otel-collectors:
-  stage: publish
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
-      changes:
-        - "projects/o11y/terraform-submodules/k8s-otel-collectors/**"
-  cache:
-    paths:
-      - projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform
-      - projects/o11y/terraform-submodules/k8s-otel-collectors/.terraform.lock.hcl
-  script:
-    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-otel-collectors"
-    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-otel-collectors"
-    - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/k8s-otel-collectors"
-    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-otel-collectors"
-test-o11y-tfsub-k8s-prom-exporters:
-  stage: test
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
-      changes:
-        - "projects/o11y/terraform-submodules/k8s-prom-exporters/**"
-  cache:
-    paths:
-      - projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform
-      - projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform.lock.hcl
-  script:
-    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-prom-exporters"
-    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-prom-exporters"
-    - ./scripts/terraform-submodule pre-publish "projects/o11y/terraform-submodules/k8s-prom-exporters"
-    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-prom-exporters"
-publish-o11y-tfsub-k8s-prom-exporters:
-  stage: publish
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == 'main'
-      changes:
-        - "projects/o11y/terraform-submodules/k8s-prom-exporters/**"
-  cache:
-    paths:
-      - projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform
-      - projects/o11y/terraform-submodules/k8s-prom-exporters/.terraform.lock.hcl
-  script:
-    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/k8s-prom-exporters"
-    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/k8s-prom-exporters"
-    - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/k8s-prom-exporters"
-    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/k8s-prom-exporters"
+    - ./scripts/terraform-submodule build "projects/o11y/terraform-submodules/gke-observability-stack"
+    - ./scripts/terraform-submodule test "projects/o11y/terraform-submodules/gke-observability-stack"
+    - ./scripts/terraform-submodule publish "projects/o11y/terraform-submodules/gke-observability-stack"
+    - ./scripts/terraform-submodule show "projects/o11y/terraform-submodules/gke-observability-stack"

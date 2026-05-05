@@ -18,7 +18,7 @@ function main {
   image_repository="$(yq '.repository' "${project_path}/.project.yaml")"
   image_tag="$(yq '.tag' "${project_path}/.project.yaml")"
   image="${image_repository}:${image_tag}"
-  image_aliases=$(yq '.aliases.[].repository + ":" + .tag' "${project_path}/.project.yaml")
+  image_aliases=$(yq '.tag as $tag | .aliases.[] | .repository + ":" + $tag' "${project_path}/.project.yaml")
 
   case "${cmd}" in
   "build")

@@ -5,13 +5,13 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
   labels:
     app.kubernetes.io/component: http-server
-    {{- include "kuard.metadataLabels" $ | nindent 4 }}
+    {{- include "kuard.metadataLabels" . | nindent 4 }}
 spec:
   serviceName: "{{ .Release.Name }}-http-server-headless"
   selector:
     matchLabels:
       app.kubernetes.io/component: http-server
-      {{- include "kuard.selectorLabels" $ | nindent 6 }}
+      {{- include "kuard.selectorLabels" . | nindent 6 }}
   replicas: {{ .Values.httpServer.replicas }}
   updateStrategy:
     type: RollingUpdate
@@ -21,18 +21,20 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/component: http-server
-        {{- include "kuard.metadataLabels" $ | nindent 8 }}
+        {{- include "kuard.metadataLabels" . | nindent 8 }}
         {{- if .Values.httpServer.extraPodLabels }}
         {{- toYaml .Values.httpServer.extraPodLabels | nindent 8 }}
         {{- end }}
       annotations:
-        checksum/configs: "{{ include "kuard.configsChecksum" $ }}"
+        {{- include "configs.annotations" . | nindent 8 }}
         {{- if .Values.httpServer.extraPodAnnotations }}
         {{- toYaml .Values.httpServer.extraPodAnnotations | nindent 8 }}
         {{- end }}
     spec:
-      {{- if .Values.serviceAccountName }}
-      serviceAccountName: "{{ .Values.serviceAccountName }}"
+      {{- if .Values.httpServer.serviceAccountName }}
+      serviceAccountName: "{{ .Values.httpServer.serviceAccountName }}"
+      {{- else }}
+      serviceAccountName: "{{ .Release.Name }}-http-server"
       {{- end }}
       initContainers:
         - name: chown-volume
@@ -40,7 +42,7 @@ spec:
           command: ["chown"]
           args: ["-R", "1000:3000", "/var/lib/kuard"]
           volumeMounts:
-            - name: data
+            - name: kuard-data
               mountPath: /var/lib/kuard
           resources:
             requests:
@@ -62,53 +64,49 @@ spec:
             runAsUser: 0
             runAsGroup: 0
       containers:
-        - name: http-server
+        - name: kuard-server
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           envFrom:
-            - configMapRef:
-                name: "{{ .Release.Name }}-config-envs"
-            - secretRef:
-                name: "{{ .Release.Name }}-config-envs"
+            {{- include "configs.envFrom" . | nindent 12 }}
           volumeMounts:
-            - name: config-files
-              mountPath: /run/secrets/kuard
-              readOnly: true
-            - name: data
+            {{- include "configs.volumeMounts" . | nindent 12 }}
+            - name: kuard-data
               mountPath: /var/lib/kuard
           ports:
-            - name: http
+            - name: kuard-http
               containerPort: 8080
               protocol: TCP
           startupProbe:
             httpGet:
-              port: http
+              port: kuard-http
               path: /healthy
           readinessProbe:
             httpGet:
-              port: http
+              port: kuard-http
               path: /ready
           livenessProbe:
             httpGet:
-              port: http
+              port: kuard-http
               path: /healthy
           resources:
             requests:
-              cpu: 1m
-              memory: 1Mi
+              cpu: "{{ .Values.httpServer.resources.requests.cpu }}"
+              memory: "{{ .Values.httpServer.resources.requests.memory }}"
             limits:
-              cpu: 100m
-              memory: 128Mi
+              cpu: "{{ .Values.httpServer.resources.limits.cpu }}"
+              memory: "{{ .Values.httpServer.resources.limits.memory }}"
           securityContext: # container security context
             privileged: false
             capabilities:
               drop:
                 - ALL
             runAsNonRoot: true
-            readOnlyRootFilesystem: true
+            readOnlyRootFilesystem: false
             runAsUser: 1000
             runAsGroup: 3000
       securityContext: # pod security context
         fsGroup: 2000
+        fsGroupChangePolicy: OnRootMismatch
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -117,23 +115,20 @@ spec:
                 labelSelector:
                   matchLabels:
                     app.kubernetes.io/component: http-server
-                    {{- include "kuard.selectorLabels" $ | nindent 20 }}
+                    {{- include "kuard.selectorLabels" . | nindent 20 }}
                 topologyKey: kubernetes.io/hostname
       volumes:
-        - name: config-files
-          projected:
-            sources:
-              - configMap:
-                  name: "{{ .Release.Name }}-config-files"
-              - secret:
-                  name: "{{ .Release.Name }}-config-files"
+        {{- include "configs.volumes" . | nindent 8 }}
   volumeClaimTemplates:
     - metadata:
-        name: data
+        name: kuard-data
       spec:
         storageClassName: standard-rwo
         accessModes:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 1Gi
+            storage: "{{ .Values.httpServer.resources.requests.storage }}"
+
+---
+{{- include "configs.manifests" . | nindent 0 }}

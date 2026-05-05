@@ -1,0 +1,140 @@
+serviceAccountName: "${service_account_name}"
+
+secretConfigEnvs:
+  GF_DATABASE_PASSWORD: Secret123
+  CLICKHOUSE_PASSWORD: Secret123
+
+configFiles:
+  # https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/
+  /etc/grafana/grafana.ini: |
+    [server]
+    domain=${grafana_domain}
+    root_url=https://${grafana_domain}
+
+    [database]
+    type=postgres
+    host=${postgres_host}:5432
+    user=postgres
+    name=grafana
+
+    [auth]
+    disable_login_form=false
+    disable_signout_menu=false
+    [users]
+    verify_email_enabled=false
+    allow_sign_up=true
+    allow_org_create=true
+    auto_assign_org=true
+    auto_assign_org_id=1
+    auto_assign_org_role=Viewer
+    [security]
+    disable_initial_admin_creation=false
+    admin_email=damlys.test@gmail.com
+    admin_user=admin
+    admin_password=Secret123
+
+    [smtp]
+    enabled=true
+    host=${smtp_host}
+    user=${smtp_user}
+    from_name=${grafana_domain}
+    from_address=${grafana_email}
+
+    [log]
+    mode=console
+    level=error
+
+  /etc/grafana/provisioning/datasources/clickhouse.yaml:
+    apiVersion: 1
+    datasources:
+      - # ClickHouse
+        # https://grafana.com/grafana/plugins/grafana-clickhouse-datasource/
+        # https://github.com/grafana/clickhouse-datasource
+        name: ClickHouse
+        uid: clickhouse
+        type: grafana-clickhouse-datasource
+        jsonData:
+          host: "${clickhouse_host}"
+          port: 9000
+          username: clickhouse
+          defaultDatabase: opentelemetry
+          defaultTable: otel_logs
+          logs:
+            defaultDatabase: opentelemetry
+            defaultTable: otel_logs
+            otelEnabled: true
+            otelVersion: latest
+          traces:
+            defaultDatabase: opentelemetry
+            defaultTable: otel_traces
+            otelEnabled: true
+            otelVersion: latest
+        secureJsonData:
+          password: $${CLICKHOUSE_PASSWORD}
+        isDefault: true
+
+  /etc/grafana/provisioning/dashboards/clickhouse.yaml:
+    apiVersion: 1
+    providers:
+      - name: clickhouse
+        type: file
+        options:
+          path: /var/lib/grafana/plugins/grafana-clickhouse-datasource/dashboards
+
+  /etc/grafana/provisioning/datasources/googlecloud.yaml:
+    apiVersion: 1
+    datasources:
+      - # Google Cloud Logging
+        # https://github.com/GoogleCloudPlatform/cloud-logging-data-source-plugin
+        # https://grafana.com/grafana/plugins/googlecloud-logging-datasource/
+        name: Google Cloud logs
+        uid: googlecloud-logs
+        type: googlecloud-logging-datasource
+        jsonData:
+          authenticationType: gce # required IAM roles: "roles/logging.viewer", "roles/logging.viewAccessor"
+        isDefault: false
+      - # Google Cloud Monitoring
+        # https://grafana.com/docs/grafana/latest/datasources/google-cloud-monitoring/
+        # https://github.com/grafana/grafana/tree/main/docs/sources/datasources/google-cloud-monitoring
+        name: Google Cloud metrics
+        uid: googlecloud-metrics
+        type: stackdriver
+        jsonData:
+          authenticationType: gce # required IAM roles: "roles/monitoring.viewer"
+          defaultProject: "${google_project_id}"
+        isDefault: false
+      - # Google Cloud Trace
+        # https://github.com/GoogleCloudPlatform/cloud-trace-data-source-plugin
+        # https://grafana.com/grafana/plugins/googlecloud-trace-datasource/
+        name: Google Cloud traces
+        uid: googlecloud-traces
+        type: googlecloud-trace-datasource
+        jsonData:
+          authenticationType: gce # required IAM roles: "roles/cloudtrace.user"
+        isDefault: false
+
+  /etc/grafana/provisioning/dashboards/examples.yaml:
+    apiVersion: 1
+    providers:
+      - name: examples
+        type: file
+        options:
+          path: /etc/grafana/dashboards/examples
+
+  /etc/grafana/dashboards/examples/hello-world.json: |
+    {
+      "uid": "hello-world",
+      "id": null,
+      "title": "Hello world",
+      "panels": [
+        {
+          "id": 1,
+          "type": "text",
+          "title": "Hello world",
+          "options": {
+            "mode": "markdown",
+            "content": "# Hello world!\n\nThis is an example of 'dashboard as code'."
+          }
+        }
+      ]
+    }

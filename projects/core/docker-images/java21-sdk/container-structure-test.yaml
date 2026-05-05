@@ -35,3 +35,6 @@ metadataTest:
   workdir: /
   # entrypoint: []
   cmd: ["bash"]
+  envVars:
+    - key: TZ
+      value: UTC

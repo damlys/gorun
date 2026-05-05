@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Release.Name }}"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    {{- include "http-server.metadataLabels" . | nindent 4 }}
+    {{- if .Values.extraServiceLabels }}
+    {{- toYaml .Values.extraServiceLabels | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- if .Values.extraServiceAnnotations }}
+    {{- toYaml .Values.extraServiceAnnotations | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    {{- include "http-server.selectorLabels" . | nindent 4 }}
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: http

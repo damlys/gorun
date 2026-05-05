@@ -1,0 +1,10 @@
+{{- if not .Values.serviceAccountName }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: "{{ .Release.Name }}"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    {{- include "http-server.metadataLabels" . | nindent 4 }}
+automountServiceAccountToken: true
+{{- end }}

@@ -12,10 +12,12 @@ $ docker login --username="$DOCKERHUB_USERNAME" --password="$DOCKERHUB_TOKEN"
 
 ## GitHub
 
-Login...
+Login:
 
 ```
-$ gh auth login
+$ export GITHUB_USERNAME="..."
+$ gh auth login --scopes="write:packages"
+$ gh auth token | docker login "ghcr.io" --username="$GITHUB_USERNAME" --password-stdin
 ```
 
 ## Google Cloud Platform

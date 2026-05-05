@@ -1,0 +1,8 @@
+apiVersion: v2
+name: postgres
+version: 0.8.100
+dependencies:
+  - # PROD repository: oci://europe-central2-docker.pkg.dev/gogcp-main-8/private-helm-charts/gorun/core
+    repository: file://../configs
+    name: configs
+    version: 0.8.100

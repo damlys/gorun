@@ -9,21 +9,27 @@
   "prettier.tabWidth": 2,
 
   "[dockerfile]": { "editor.defaultFormatter": "docker.docker" },
+  "[go]": { "editor.defaultFormatter": "golang.go" },
   "[hcl]": { "editor.defaultFormatter": "hashicorp.hcl" },
   "[helm]": { "editor.defaultFormatter": null, "editor.formatOnSave": false },
   "[ignore]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[json][jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[python]": { "editor.defaultFormatter": "ms-python.autopep8" },
   "[shellscript]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
   "[terraform][terraform-vars]": { "editor.defaultFormatter": "hashicorp.terraform" },
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[xml]": { "editor.defaultFormatter": "redhat.vscode-xml" },
   "[yaml]": { "editor.defaultFormatter": "redhat.vscode-yaml" },
   "prettier.printWidth": 120,
   "yaml.format.printWidth": 120,
 
   "search.exclude": {
-    "**/.terraform": true
+    "**/.terraform": true,
+    "docs/decisions/0003-otel-backend": true
   },
   "files.associations": {
+    "*.bash.tftpl": "shellscript",
     "*.gotmpl": "gotmpl",
     "*.yaml.gotmpl": "helm",
     "*.yaml.tftpl": "yaml",

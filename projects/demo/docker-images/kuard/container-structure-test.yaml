@@ -3,3 +3,7 @@ fileExistenceTests:
   - name: kuard binary
     path: /kuard
     shouldExist: true
+metadataTest:
+  envVars:
+    - key: TZ
+      value: UTC

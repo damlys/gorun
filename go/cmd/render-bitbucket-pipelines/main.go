@@ -16,7 +16,7 @@ func main() {
 	}
 	log.Printf("working directory: %s\n", wd)
 
-	projects, err := monorepo.ListProjects(wd)
+	projects, err := monorepo.ListProjects([]string{wd, "projects"}...)
 	if err != nil {
 		log.Fatalf("projects list error: %v\n", err)
 	}

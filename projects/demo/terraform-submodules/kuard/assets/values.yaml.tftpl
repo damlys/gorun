@@ -9,12 +9,16 @@ secretConfigEnvs:
   SECRET_B: example SECRET_B
   EXAMPLE_PASSWORD: "${example_password}"
 configFiles:
-  config.json: |
+  /run/secrets/kuard/config.json: |
     {
       "data": "example config.json"
     }
+  /run/secrets/kuard/config.yaml:
+    data: example config.yaml
 secretConfigFiles:
-  secret.json: |
+  /run/secrets/kuard/secret.json: |
     {
       "data": "example secret.json"
     }
+  /run/secrets/kuard/secret.yaml:
+    data: example secret.yaml

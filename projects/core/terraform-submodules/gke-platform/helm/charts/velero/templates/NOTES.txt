@@ -63,7 +63,7 @@ More info on the official site: https://velero.io/docs
 {{- end }}
 
 {{- range $key, $value := .Values.configMaps }}
-{{- eq $key "fs-restore-action-config" }}
+{{- if eq $key "fs-restore-action-config" }}
 {{- if hasKey $value.labels "velero.io/restic" }}
 {{- $breaking = print $breaking "\n\nREMOVED: velero.io/restic has been removed, and it is named velero.io/pod-volume-restore" }}
 {{- end }}
@@ -72,6 +72,23 @@ More info on the official site: https://velero.io/docs
 {{- $breaking = print $breaking "\n\nREMOVED: restore helper image velero-restic-restore-helper has been changed to velero-restore-helper" }}
 {{- end }}
 {{- end }}
+{{- end }}
+{{- end }}
+
+{{- if eq .Values.configuration.uploaderType "restic" }}
+{{- $breaking = print $breaking "\n\nERROR: restic uploaderType was removed, please use a different one" }}
+{{- end }}
+
+{{- if hasKey .Values.configuration.repositoryMaintenanceJob "requests" }}
+{{- $breaking = print $breaking "\n\nREMOVED: configuration.repositoryMaintenanceJob.requests has been removed, please use the configmap" }}
+{{- end }}
+
+{{- if hasKey .Values.configuration.repositoryMaintenanceJob "limits" }}
+{{- $breaking = print $breaking "\n\nREMOVED: configuration.repositoryMaintenanceJob.limits has been removed, please use the configmap" }}
+{{- end }}
+
+{{- if hasKey .Values.configuration.repositoryMaintenanceJob "latestJobsCount" }}
+{{- $breaking = print $breaking "\n\nREMOVED: configuration.repositoryMaintenanceJob.latestJobsCount has been removed, please use the configmap" }}
 {{- end }}
 
 {{- if $breaking }}

@@ -1,0 +1,118 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Release.Name }}-collector-config-envs"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    app.kubernetes.io/component: collector
+    {{- include "otelcol.metadataLabels" . | nindent 4 }}
+data:
+  {{- range $key, $val := .Values.collector.configEnvs }}
+  {{ $key }}: {{ $val | quote }}
+  {{- end }}
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: "{{ .Release.Name }}-collector-config-envs"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    app.kubernetes.io/component: collector
+    {{- include "otelcol.metadataLabels" . | nindent 4 }}
+data:
+  {{- range $key, $val := .Values.collector.secretConfigEnvs }}
+  {{ $key }}: {{ $val | b64enc | quote }}
+  {{- end }}
+
+---
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: "{{ .Release.Name }}"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    app.kubernetes.io/component: collector
+    {{- include "otelcol.metadataLabels" . | nindent 4 }}
+spec:
+  mode: "{{ .Values.collector.mode }}"
+  config:
+    {{- include "otelcol.collector.config" . | nindent 4 }}
+  env:
+    - name: K8S_NODE_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+  envFrom:
+    - configMapRef:
+        name: "{{ .Release.Name }}-collector-config-envs"
+    - secretRef:
+        name: "{{ .Release.Name }}-collector-config-envs"
+  {{- if .Values.collector.mountLogs }}
+  volumes:
+    - name: varlogpods
+      hostPath:
+        path: /var/log/pods
+  volumeMounts:
+    - name: varlogpods
+      mountPath: /var/log/pods
+      readOnly: true
+  {{- end }}
+
+  {{- if ne .Values.collector.mode "daemonset" }}
+  replicas: {{ .Values.collector.replicas }}
+  {{- end }}
+  resources:
+    requests:
+      cpu: "{{ .Values.collector.resources.requests.cpu }}"
+      memory: "{{ .Values.collector.resources.requests.memory }}"
+    limits:
+      cpu: "{{ .Values.collector.resources.limits.cpu }}"
+      memory: "{{ .Values.collector.resources.limits.memory }}"
+  observability:
+    metrics:
+      enableMetrics: false
+  podAnnotations:
+    prometheus.io/scrape: "false"
+    checksum/configs: "{{ include "otelcol.collector.configsChecksum" . }}"
+
+  {{- if .Values.targetAllocator.enabled }}
+  targetAllocator:
+    enabled: true
+    prometheusCR:
+      enabled: true
+      podMonitorSelector: {}
+      serviceMonitorSelector: {}
+      probeSelector: {}
+      scrapeConfigSelector: {}
+    serviceAccount: "{{ .Release.Name }}-targetallocator"
+    replicas: {{ .Values.targetAllocator.replicas }}
+    resources:
+      requests:
+        cpu: "{{ .Values.targetAllocator.resources.requests.cpu }}"
+        memory: "{{ .Values.targetAllocator.resources.requests.memory }}"
+      limits:
+        cpu: "{{ .Values.targetAllocator.resources.limits.cpu }}"
+        memory: "{{ .Values.targetAllocator.resources.limits.memory }}"
+    observability:
+      metrics:
+        enableMetrics: false
+  {{- end }}
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: "{{ .Release.Namespace }}-{{ .Release.Name }}-collector"
+  labels:
+    app.kubernetes.io/component: collector
+    {{- include "otelcol.metadataLabels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: opentelemetry-collector
+subjects:
+  - kind: ServiceAccount
+    name: "{{ .Release.Name }}-collector" # managed by operator
+    namespace: "{{ .Release.Namespace }}"

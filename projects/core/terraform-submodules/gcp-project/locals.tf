@@ -12,6 +12,9 @@ locals {
     "dns.googleapis.com",
     "networkservices.googleapis.com",
 
+    "cloudbuild.googleapis.com",
+    "secretmanager.googleapis.com",
+
     "cloudtrace.googleapis.com",
     "logging.googleapis.com",
     "monitoring.googleapis.com",

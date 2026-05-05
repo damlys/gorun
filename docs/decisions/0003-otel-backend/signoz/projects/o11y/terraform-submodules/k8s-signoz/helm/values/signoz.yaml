@@ -1,0 +1,78 @@
+clickhouse:
+  zookeeper:
+    resources:
+      requests:
+        cpu: 1m
+        memory: 1Mi
+      limits: {}
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+signoz:
+  initContainers:
+    init:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 1Mi
+        limits: {}
+    migration:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 1Mi
+        limits: {}
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+schemaMigrator:
+  initContainers:
+    init:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 1Mi
+        limits: {}
+    chReady:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 1Mi
+        limits: {}
+    wait:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 1Mi
+        limits: {}
+otelCollector:
+  initContainers:
+    init:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 1Mi
+        limits: {}
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+signoz-otel-gateway:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+redpanda:
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1Mi
+    limits: {}
+  statefulset:
+    replicas: 1

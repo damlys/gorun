@@ -5,6 +5,7 @@ ENTRYPOINT []
 CMD ["bash"]
 
 ENV PATH="$PATH:/usr/local/share/gradle/bin:/usr/local/share/maven/bin"
+ENV TZ="UTC"
 
 COPY ./Dockerfile.bash /Dockerfile.bash
 RUN /Dockerfile.bash && rm /Dockerfile.bash

@@ -1,0 +1,8 @@
+apiVersion: v2
+name: undefined
+version: 0.0.0
+dependencies:
+  - # https://github.com/hyperdxio/helm-charts/tree/main/charts/clickstack
+    repository: https://hyperdxio.github.io/helm-charts
+    name: clickstack
+    version: 1.0.0
