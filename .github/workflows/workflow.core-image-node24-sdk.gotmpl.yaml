@@ -15,7 +15,7 @@ jobs:
   core-image-node24-sdk:
     name: core-image-node24-sdk
     runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gorun-devcontainer:0.8.100
+    container: ghcr.io/damlys/gorun-devcontainer:0.9.100
     permissions:
       contents: write
       id-token: write

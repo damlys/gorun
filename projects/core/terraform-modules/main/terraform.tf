@@ -9,7 +9,7 @@ terraform {
   }
 
   backend "gcs" {
-    bucket = "gogcp-main-8-terraform-state"
+    bucket = "gogcp-main-9-terraform-state"
     prefix = "github.com/damlys/gorun/projects/core/terraform-modules/main"
   }
 }

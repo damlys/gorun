@@ -2,7 +2,7 @@
   "name": "devcontainer-damlys-${localWorkspaceFolderBasename}",
   "initializeCommand": ".devcontainer/docker-desktop-kubeconfig",
 
-  "image": "europe-central2-docker.pkg.dev/gogcp-main-8/private-docker-images/gorun/core/devcontainer:0.8.100",
+  "image": "europe-central2-docker.pkg.dev/gogcp-main-9/private-docker-images/gorun/core/devcontainer:0.9.100",
   "runArgs": [
     "--name=devcontainer-damlys-${localWorkspaceFolderBasename}",
     "--add-host=kubernetes.docker.internal:host-gateway",

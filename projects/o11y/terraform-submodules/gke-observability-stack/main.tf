@@ -12,10 +12,10 @@ resource "helm_release" "clickhouse" {
   # PROD -dependency_update
   dependency_update = true
 
-  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-8/private-helm-charts/gorun/core"
+  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-9/private-helm-charts/gorun/core"
   repository = "../../../core/helm-charts"
   chart      = "clickhouse"
-  version    = "0.8.100"
+  version    = "0.9.100"
 
   name      = "clickhouse"
   namespace = kubernetes_namespace.clickhouse.metadata[0].name
@@ -42,10 +42,10 @@ resource "helm_release" "grafana_postgres" {
   # PROD -dependency_update
   dependency_update = true
 
-  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-8/private-helm-charts/gorun/core"
+  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-9/private-helm-charts/gorun/core"
   repository = "../../../core/helm-charts"
   chart      = "postgres"
-  version    = "0.8.100"
+  version    = "0.9.100"
 
   name      = "grafana-postgres"
   namespace = kubernetes_namespace.grafana.metadata[0].name
@@ -59,7 +59,7 @@ resource "helm_release" "grafana_postgres" {
 }
 
 module "grafana_service_account" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gke-service-account/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/gke-service-account/0.9.100.zip"
   source = "../../../core/terraform-submodules/gke-service-account"
 
   google_project           = var.google_project
@@ -86,10 +86,10 @@ resource "helm_release" "grafana" {
   # PROD -dependency_update
   dependency_update = true
 
-  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-8/private-helm-charts/gorun/o11y"
+  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-9/private-helm-charts/gorun/o11y"
   repository = "../../helm-charts"
   chart      = "grafana"
-  version    = "0.8.100"
+  version    = "0.9.100"
 
   name      = "grafana"
   namespace = kubernetes_namespace.grafana.metadata[0].name
@@ -119,7 +119,7 @@ data "kubernetes_service" "grafana" {
 }
 
 module "grafana_gateway_http_route" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.9.100.zip"
   source = "../../../core/terraform-submodules/k8s-gateway-http-route"
 
   kubernetes_service = data.kubernetes_service.grafana
@@ -131,7 +131,7 @@ module "grafana_gateway_http_route" {
 }
 
 module "grafana_availability_monitor" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/o11y/gcp-availability-monitor/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/o11y/gcp-availability-monitor/0.9.100.zip"
   source = "../gcp-availability-monitor"
 
   google_project = var.google_project
@@ -154,10 +154,10 @@ resource "kubernetes_namespace" "otlp_collector" {
 }
 
 resource "helm_release" "otlp_collector" {
-  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-8/private-helm-charts/gorun/o11y"
+  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-9/private-helm-charts/gorun/o11y"
   repository = "../../helm-charts"
   chart      = "otelcol"
-  version    = "0.8.100"
+  version    = "0.9.100"
 
   name      = "otlp"
   namespace = kubernetes_namespace.otlp_collector.metadata[0].name
@@ -178,10 +178,10 @@ resource "kubernetes_namespace" "file_collector" {
 }
 
 resource "helm_release" "file_collector" {
-  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-8/private-helm-charts/gorun/o11y"
+  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-9/private-helm-charts/gorun/o11y"
   repository = "../../helm-charts"
   chart      = "otelcol"
-  version    = "0.8.100"
+  version    = "0.9.100"
 
   name      = "file"
   namespace = kubernetes_namespace.file_collector.metadata[0].name
@@ -202,10 +202,10 @@ resource "kubernetes_namespace" "kube_collector" {
 }
 
 resource "helm_release" "kube_collector" {
-  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-8/private-helm-charts/gorun/o11y"
+  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-9/private-helm-charts/gorun/o11y"
   repository = "../../helm-charts"
   chart      = "otelcol"
-  version    = "0.8.100"
+  version    = "0.9.100"
 
   name      = "kube"
   namespace = kubernetes_namespace.kube_collector.metadata[0].name
@@ -226,10 +226,10 @@ resource "kubernetes_namespace" "node_collector" {
 }
 
 resource "helm_release" "node_collector" {
-  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-8/private-helm-charts/gorun/o11y"
+  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-9/private-helm-charts/gorun/o11y"
   repository = "../../helm-charts"
   chart      = "otelcol"
-  version    = "0.8.100"
+  version    = "0.9.100"
 
   name      = "node"
   namespace = kubernetes_namespace.node_collector.metadata[0].name
@@ -250,10 +250,10 @@ resource "kubernetes_namespace" "prom_collector" {
 }
 
 resource "helm_release" "prom_collector" {
-  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-8/private-helm-charts/gorun/o11y"
+  # PROD repository = "oci://europe-central2-docker.pkg.dev/gogcp-main-9/private-helm-charts/gorun/o11y"
   repository = "../../helm-charts"
   chart      = "otelcol"
-  version    = "0.8.100"
+  version    = "0.9.100"
 
   name      = "prom"
   namespace = kubernetes_namespace.prom_collector.metadata[0].name

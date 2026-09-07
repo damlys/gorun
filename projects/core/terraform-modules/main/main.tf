@@ -3,47 +3,47 @@
 #######################################
 
 module "main_project" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gcp-project/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/gcp-project/0.9.100.zip"
   source = "../../terraform-submodules/gcp-project"
 
-  project_id   = "gogcp-main-8"
-  project_name = "gogcp-main-8"
+  project_id   = "gogcp-main-9"
+  project_name = "gogcp-main-9"
 
   billing_account_id = data.google_billing_account.this.id
 
   iam_owners = [
-    "serviceAccount:cloud-build@gogcp-main-8.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-8.iam.gserviceaccount.com",
+    "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
 module "test_project" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gcp-project/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/gcp-project/0.9.100.zip"
   source = "../../terraform-submodules/gcp-project"
 
-  project_id   = "gogcp-test-8"
-  project_name = "gogcp-test-8"
+  project_id   = "gogcp-test-9"
+  project_name = "gogcp-test-9"
 
   billing_account_id = data.google_billing_account.this.id
 
   iam_owners = [
-    "serviceAccount:cloud-build@gogcp-main-8.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-8.iam.gserviceaccount.com",
+    "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
 module "prod_project" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gcp-project/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/gcp-project/0.9.100.zip"
   source = "../../terraform-submodules/gcp-project"
 
-  project_id   = "gogcp-prod-8"
-  project_name = "gogcp-prod-8"
+  project_id   = "gogcp-prod-9"
+  project_name = "gogcp-prod-9"
 
   billing_account_id = data.google_billing_account.this.id
 
   iam_owners = [
-    "serviceAccount:cloud-build@gogcp-main-8.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-8.iam.gserviceaccount.com",
+    "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
@@ -52,15 +52,15 @@ module "prod_project" {
 #######################################
 
 module "terraform_state_bucket" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gcp-terraform-state-bucket/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/gcp-terraform-state-bucket/0.9.100.zip"
   source = "../../terraform-submodules/gcp-terraform-state-bucket"
 
   google_project = module.main_project.google_project
   bucket_name    = "terraform-state"
 
   iam_writers = [
-    "serviceAccount:cloud-build@gogcp-main-8.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-8.iam.gserviceaccount.com",
+    "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
@@ -69,7 +69,7 @@ module "terraform_state_bucket" {
 #######################################
 
 module "public_docker_images_registry" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gcp-docker-images-registry/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/gcp-docker-images-registry/0.9.100.zip"
   source = "../../terraform-submodules/gcp-docker-images-registry"
 
   google_project = module.main_project.google_project
@@ -79,14 +79,14 @@ module "public_docker_images_registry" {
 
   iam_readers = ["allUsers"]
   iam_writers = [
-    "serviceAccount:cloud-build@gogcp-main-8.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gomod@gogcp-main-8.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-8.iam.gserviceaccount.com",
+    "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gomod@gogcp-main-9.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
 module "private_docker_images_registry" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gcp-docker-images-registry/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/gcp-docker-images-registry/0.9.100.zip"
   source = "../../terraform-submodules/gcp-docker-images-registry"
 
   google_project = module.main_project.google_project
@@ -95,12 +95,12 @@ module "private_docker_images_registry" {
   registry_immutability = false
 
   iam_readers = [
-    "serviceAccount:gogke-test-8-gke-node@gogcp-test-8.iam.gserviceaccount.com",
+    "serviceAccount:gogke-test-9-gke-node@gogcp-test-9.iam.gserviceaccount.com",
   ]
   iam_writers = [
-    "serviceAccount:cloud-build@gogcp-main-8.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gomod@gogcp-main-8.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-8.iam.gserviceaccount.com",
+    "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gomod@gogcp-main-9.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
@@ -109,7 +109,7 @@ module "private_docker_images_registry" {
 #######################################
 
 module "public_helm_charts_registry" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gcp-helm-charts-registry/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/gcp-helm-charts-registry/0.9.100.zip"
   source = "../../terraform-submodules/gcp-helm-charts-registry"
 
   google_project = module.main_project.google_project
@@ -119,13 +119,13 @@ module "public_helm_charts_registry" {
 
   iam_readers = ["allUsers"]
   iam_writers = [
-    "serviceAccount:cloud-build@gogcp-main-8.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-8.iam.gserviceaccount.com",
+    "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
 module "private_helm_charts_registry" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gcp-helm-charts-registry/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/gcp-helm-charts-registry/0.9.100.zip"
   source = "../../terraform-submodules/gcp-helm-charts-registry" #
 
   google_project = module.main_project.google_project
@@ -134,11 +134,11 @@ module "private_helm_charts_registry" {
   registry_immutability = false
 
   iam_readers = [
-    "serviceAccount:gha-damlys-gomod@gogcp-main-8.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gomod@gogcp-main-9.iam.gserviceaccount.com",
   ]
   iam_writers = [
-    "serviceAccount:cloud-build@gogcp-main-8.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-8.iam.gserviceaccount.com",
+    "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
@@ -147,7 +147,7 @@ module "private_helm_charts_registry" {
 #######################################
 
 module "public_terraform_modules_registry" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gcp-terraform-modules-registry/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/gcp-terraform-modules-registry/0.9.100.zip"
   source = "../../terraform-submodules/gcp-terraform-modules-registry"
 
   google_project = module.main_project.google_project
@@ -157,13 +157,13 @@ module "public_terraform_modules_registry" {
 
   iam_readers = ["allUsers"]
   iam_writers = [
-    "serviceAccount:cloud-build@gogcp-main-8.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-8.iam.gserviceaccount.com",
+    "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
 module "private_terraform_modules_registry" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gcp-terraform-modules-registry/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/gcp-terraform-modules-registry/0.9.100.zip"
   source = "../../terraform-submodules/gcp-terraform-modules-registry"
 
   google_project = module.main_project.google_project
@@ -172,7 +172,7 @@ module "private_terraform_modules_registry" {
   registry_immutability = false
 
   iam_writers = [
-    "serviceAccount:cloud-build@gogcp-main-8.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-8.iam.gserviceaccount.com",
+    "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
+    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }

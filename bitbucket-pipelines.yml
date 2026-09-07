@@ -1,4 +1,4 @@
-image: damlys/gorun-devcontainer:0.8.100
+image: damlys/gorun-devcontainer:0.9.100
 definitions:
   caches:
     apps-tfmod-test-0: projects/apps/terraform-modules/test/.terraform

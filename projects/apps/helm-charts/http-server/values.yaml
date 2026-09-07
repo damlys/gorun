@@ -1,5 +1,5 @@
 image:
-  repository: europe-central2-docker.pkg.dev/gogcp-main-8/private-docker-images/gomod/goapp
+  repository: europe-central2-docker.pkg.dev/gogcp-main-9/private-docker-images/gomod/goapp
   tag: 0.0.0
 
 configEnvs: {}

@@ -424,7 +424,7 @@ resource "kubernetes_namespace" "velero" {
 }
 
 module "velero_service_account" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gke-service-account/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/gke-service-account/0.9.100.zip"
   source = "../gke-service-account"
 
   google_project           = var.google_project
@@ -543,7 +543,7 @@ resource "kubernetes_namespace" "cert_manager" {
 }
 
 module "cert_manager_service_account" {
-  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-8-private-terraform-modules/gorun/core/gke-service-account/0.8.100.zip"
+  # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/gke-service-account/0.9.100.zip"
   source = "../gke-service-account"
 
   google_project           = var.google_project

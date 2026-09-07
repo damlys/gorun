@@ -4,7 +4,7 @@ for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
 
 function main {
   local cmd="$1"
-  local gcp_project="gogcp-test-8"
+  local gcp_project="gogcp-test-9"
 
   case "${cmd}" in
   "stop")
@@ -14,7 +14,7 @@ function main {
     done
 
     log::info "destroying test node pools"
-    local gke_cluster="gogke-test-8"
+    local gke_cluster="gogke-test-9"
     local gke_location="europe-central2-a"
     for gke_node_pool in $(gcloud --quiet container node-pools list --cluster="${gke_cluster}" --location="${gke_location}" --project="${gcp_project}" --format="value(name)"); do
       gcloud --quiet container node-pools delete "${gke_node_pool}" --cluster="${gke_cluster}" --location="${gke_location}" --project="${gcp_project}" --async

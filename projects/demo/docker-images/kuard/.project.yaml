@@ -1,5 +1,5 @@
-repository: europe-central2-docker.pkg.dev/gogcp-main-8/private-docker-images/gorun/demo/kuard
-tag: 0.8.100
+repository: europe-central2-docker.pkg.dev/gogcp-main-9/private-docker-images/gorun/demo/kuard
+tag: 0.9.100
 aliases:
   # https://hub.docker.com/r/damlys/gorun-kuard
   - repository: damlys/gorun-kuard

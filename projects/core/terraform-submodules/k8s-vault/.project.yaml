@@ -1,2 +1,2 @@
-repository: gogcp-main-8-private-terraform-modules/gorun/core/k8s-vault
-version: 0.8.100
+repository: gogcp-main-9-private-terraform-modules/gorun/core/k8s-vault
+version: 0.9.100

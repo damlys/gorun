@@ -3,7 +3,7 @@ This module deploys observability tools to the test platform.
 ```
 $ terraform apply -target=module.grafana_vault
 $ kubectl \
-    --context="gke_gogcp-test-8_europe-central2-a_gogke-test-8" \
+    --context="gke_gogcp-test-9_europe-central2-a_gogke-test-9" \
     --namespace="vault-grafana" \
     create secret generic "smtp" \
     --from-literal="host=email-smtp.eu-central-1.amazonaws.com:465" \

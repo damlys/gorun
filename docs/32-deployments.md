@@ -1,6 +1,6 @@
 # Deployments
 
-- [stateless-kuard.gogke-test-8.damlys.dev](https://stateless-kuard.gogke-test-8.damlys.dev)
-  - [kuard.gogke-test-8.damlys.dev](https://kuard.gogke-test-8.damlys.dev)
-- [stateful-kuard.gogke-test-8.damlys.dev](https://stateful-kuard.gogke-test-8.damlys.dev)
-- [goapp.gogke-test-8.damlys.dev](https://goapp.gogke-test-8.damlys.dev/hello)
+- [stateless-kuard.gogke-test-9.damlys.pl](https://stateless-kuard.gogke-test-9.damlys.pl)
+  - [kuard.gogke-test-9.damlys.pl](https://kuard.gogke-test-9.damlys.pl)
+- [stateful-kuard.gogke-test-9.damlys.pl](https://stateful-kuard.gogke-test-9.damlys.pl)
+- [goapp.gogke-test-9.damlys.pl](https://goapp.gogke-test-9.damlys.pl/hello)
