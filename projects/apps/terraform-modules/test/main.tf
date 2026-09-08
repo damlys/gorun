@@ -7,7 +7,6 @@ module "gomod_test_vault" {
   iam_readers = [
   ]
   iam_writers = [
-    "serviceAccount:gha-damlys-gomod@gogcp-main-9.iam.gserviceaccount.com",
     "user:damlys.test@gmail.com",
   ]
 }
@@ -21,7 +20,6 @@ module "gomod_test_workspace" {
   iam_testers = [
   ]
   iam_developers = [
-    "serviceAccount:gha-damlys-gomod@gogcp-main-9.iam.gserviceaccount.com",
     "user:damlys.test@gmail.com",
   ]
 }
