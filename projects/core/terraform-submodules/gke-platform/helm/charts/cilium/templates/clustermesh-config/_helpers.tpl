@@ -42,4 +42,33 @@ trusted-ca-file: /var/lib/cilium/clustermesh/common-etcd-client-ca.crt
 key-file: /var/lib/cilium/clustermesh/{{ $prefix }}etcd-client.key
 cert-file: /var/lib/cilium/clustermesh/{{ $prefix }}etcd-client.crt
 {{- end }}
+
+{{- if and (not $local_etcd) (eq $override "") ($cluster.ips) }}
+cilium-host-aliases:
+- hostname: {{ $cluster.name }}.{{ $domain }}
+  ips: {{ toYaml $cluster.ips | nindent 4 }}
+{{- end }}
+{{- end }}
+
+{{- define "clustermesh-clusters" }}
+{{- $clusters := dict }}
+{{- if kindIs "map" .Values.clustermesh.config.clusters }}
+  {{- range $name, $cluster := deepCopy .Values.clustermesh.config.clusters }}
+    {{- if ne $cluster.enabled false }}
+      {{- $_ := unset $cluster "enabled" }}
+      {{- $_ = set $cluster "name" $name }}
+      {{- $_ = set $clusters $name $cluster }}
+    {{- end }}
+  {{- end }}
+{{- else if kindIs "slice" .Values.clustermesh.config.clusters }}
+  {{- range $cluster := deepCopy .Values.clustermesh.config.clusters }}
+    {{- if ne $cluster.enabled false }}
+      {{- $_ := unset $cluster "enabled" }}
+      {{- $_ := set $clusters $cluster.name $cluster }}
+    {{- end }}
+  {{- end }}
+{{- else }}
+  {{- fail (printf "unknown type %s for clustermesh.config.clusters" (kindOf .Values.clustermesh.config.clusters)) }}
+{{- end }}
+{{- toJson $clusters }}
 {{- end }}

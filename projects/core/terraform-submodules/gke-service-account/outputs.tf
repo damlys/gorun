@@ -3,5 +3,5 @@ output "google_service_account" {
 }
 
 output "kubernetes_service_account" {
-  value = kubernetes_service_account.this
+  value = kubernetes_service_account_v1.this
 }

@@ -39,6 +39,7 @@ spec:
             - "--ca-secret-namespace={{ include "cilium.namespace" . }}"
             - "--ca-secret-name=cilium-ca"
             - "--ca-common-name=Cilium CA"
+            - "--ca-enforce-validity-throughout-leaves-duration={{ .Values.certgen.enforceCAValidityThroughoutLeavesDuration }}"
           env:
             - name: CILIUM_CERTGEN_CONFIG
               value: |
@@ -137,7 +138,6 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccount: {{ .Values.serviceAccounts.hubblecertgen.name | quote }}
       serviceAccountName: {{ .Values.serviceAccounts.hubblecertgen.name | quote }}
       automountServiceAccountToken: {{ .Values.serviceAccounts.hubblecertgen.automount }}
       {{- with .Values.imagePullSecrets }}
@@ -149,9 +149,11 @@ spec:
       volumes:
       {{- toYaml . | nindent 6 }}
       {{- end }}
-      affinity:
       {{- with .Values.certgen.affinity }}
+      affinity:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-  ttlSecondsAfterFinished: {{ .Values.certgen.ttlSecondsAfterFinished }}
+  {{- with .Values.certgen.ttlSecondsAfterFinished }}
+  ttlSecondsAfterFinished: {{ . }}
+  {{- end }}
 {{- end }}

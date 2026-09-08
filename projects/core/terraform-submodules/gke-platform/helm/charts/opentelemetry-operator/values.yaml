@@ -11,6 +11,11 @@ replicaCount: 1
 ##
 revisionHistoryLimit: 10
 
+## Minimum number of seconds for which a newly created pod should be ready
+## without any of its container crashing, for it to be considered available.
+##
+minReadySeconds: 0
+
 ## Provide a name in place of opentelemetry-operator (includes the chart's release name).
 ##
 nameOverride: ""
@@ -50,7 +55,7 @@ manager:
     imagePullPolicy: IfNotPresent
   collectorImage:
     repository: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-k8s
-    tag: 0.138.0
+    tag: 0.158.0
   opampBridgeImage:
     repository: ""
     tag: ""
@@ -73,6 +78,9 @@ manager:
     apacheHttpd:
       repository: ""
       tag: ""
+    nginx:
+      repository: ""
+      tag: ""
     # To enable Go instrumentation, manager.autoInstrumentation.go.enabled must be set to true
     go:
       repository: ""
@@ -86,25 +94,48 @@ manager:
   # If ignoreMissingCollectorCRDs is set to true, the manager will not raise errors
   # if the collector CRDs are not present.
   ignoreMissingCollectorCRDs: false
-  # Feature Gates are a comma-delimited list of feature gate identifiers.
-  # Prefix a gate with '-' to disable support.
-  # Prefixing a gate with '+' or no prefix will enable support.
-  # A full list of valid identifiers can be found here: https://github.com/open-telemetry/opentelemetry-operator/blob/main/pkg/featuregate/featuregate.go
-  # NOTE: the featureGates value is deprecated and will be replaced by featureGatesMap in the future.
-  featureGates: ""
+  # OpenTelemetry Operator manager configuration.
+  # When set, this value is rendered as a ConfigMap and mounted into the
+  # manager container. The chart also passes the mounted file path to the
+  # manager with --config-file.
+  # The operator applies file configuration before CLI flags, so chart-rendered
+  # CLI flags take precedence over the same fields set here.
+  # The chart always sets the manager metrics address, metrics security, and
+  # health probe address with CLI flags. It also sets leader election, pprof,
+  # and webhook port flags when those chart values are enabled.
+  # See https://github.com/open-telemetry/opentelemetry-operator/blob/main/internal/config/config.go
+  # for the list of supported configuration fields.
+  config: {}
   # The featureGatesMap will enable or disable specific feature gates in the operator as well as deploy any prerequisites for the feature gate.
-  # If this property is not an empty map, the featureGates property will be ignored.
-  featureGatesMap: {}
-  # operator.targetallocator.mtls: false
+  # A full list of valid identifiers can be found here: https://github.com/open-telemetry/opentelemetry-operator/blob/main/pkg/featuregate/featuregate.go
+  featureGatesMap:
+    # operator.networkpolicy is disabled by default due to an upstream operator issue where it hardcodes
+    # the deployment name 'opentelemetry-operator-controller-manager', which causes startup crashes in Helm deployments.
+    # https://github.com/open-telemetry/opentelemetry-operator/issues/5493
+    operator.networkpolicy: false
+  # operator.clusterobservability: false
   # operator.targetallocator.fallbackstrategy: false
-  # operator.collector.targetallocatorcr: false
-  # operator.sidecarcontainers.native: false
-  # operator.golang.flags: false
-  # operator.collector.default.config: false
+  # operand.networkpolicy: false
   ports:
-    metricsPort: 8080
+    metricsPort: 8443
     webhookPort: 9443
     healthzPort: 8081
+  # Expose optionally a port for pprof profiling
+  #  pprofPort: 6060
+  ## Metrics server configuration
+  ## The operator uses controller-runtime built-in auth for the metrics server
+  metrics:
+    # Enable authentication and authorization for the metrics server
+    # Corresponds to --metrics-secure flag in the operator
+    secure: true
+
+    # TLS configuration (optional, self-signed certs generated if not provided)
+    # Corresponds to --metrics-tls-cert-file and --metrics-tls-key-file flags
+    tls:
+      # Path to TLS certificate file (optional)
+      certFile: ""
+      # Path to TLS private key file (optional)
+      keyFile: ""
   resources: {}
   # resources:
   #   limits:
@@ -145,6 +176,10 @@ manager:
     annotations: {}
     metricsEndpoints:
       - port: metrics
+        scheme: https
+        bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+        tlsConfig:
+          insecureSkipVerify: true
     # Used to set relabeling and metricRelabeling configs on the ServiceMonitor
     # https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config
     relabelings: []
@@ -222,39 +257,6 @@ manager:
       minReplicas: 2
   # Enable manager pod automatically rolling
   rolling: false
-
-  ## Container specific securityContext
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-  securityContext:
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop:
-        - ALL
-    runAsNonRoot: true
-    seccompProfile:
-      type: RuntimeDefault
-
-## Provide OpenTelemetry Operator kube-rbac-proxy container image.
-##
-kubeRBACProxy:
-  enabled: true
-  image:
-    repository: quay.io/brancz/kube-rbac-proxy
-    tag: v0.20.0
-  ports:
-    proxyPort: 8443
-  resources: {}
-  # resources:
-  #   limits:
-  #     cpu: 500m
-  #     memory: 128Mi
-  #   requests:
-  #     cpu: 5m
-  #     memory: 64Mi
-
-  ## List of additional cli arguments to configure the kube-rbac-proxy
-  ## for example: --tls-cipher-suites, --tls-min-version, etc.
-  extraArgs: []
 
   ## Container specific securityContext
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
@@ -349,6 +351,9 @@ admissionWebhooks:
 ## See https://github.com/open-telemetry/opentelemetry-helm-charts/blob/main/charts/opentelemetry-operator/UPGRADING.md#0560-to-0570 for more details.
 crds:
   create: true
+  # Annotations to add to all CRDs managed by this chart.
+  # For example, "example.com/managed-by: opentelemetry-operator-chart".
+  annotations: {}
 
 ## Create the provided Roles and RoleBindings
 ##
@@ -395,6 +400,12 @@ securityContext:
 automountServiceAccountToken: true
 
 testFramework:
+  certManager:
+    env:
+      - name: CERT_MANAGER_CLUSTERIP
+        value: "cert-manager-webhook.cert-manager"
+      - name: CERT_MANAGER_PORT
+        value: "443"
   image:
     repository: busybox
     tag: latest
@@ -414,3 +425,13 @@ testFramework:
   #   requests:
   #     cpu: 10m
   #     memory: 64Mi
+
+## Extra manifests to deploy as an array
+## Supports tpl syntax for templating
+extraObjects: []
+  # - apiVersion: v1
+  #   kind: ConfigMap
+  #   metadata:
+  #     name: '{{ include "opentelemetry-operator.fullname" . }}-extra'
+  #   data:
+  #     key: value

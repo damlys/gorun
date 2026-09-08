@@ -184,7 +184,11 @@ rules:
   - apiGroups:
       - ""
     resources:
+{{- if semverCompare ">=1.33-0" .Capabilities.KubeVersion.Version }}
+      - nodes/pods
+{{- else }}
       - nodes/proxy
+{{- end }}
     verbs:
       - get
   - apiGroups:
@@ -203,6 +207,16 @@ rules:
       - list
       - watch
   - apiGroups:
+      - operators.coreos.com
+    resources:
+      - clusterserviceversions
+    verbs:
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
       - coordination.k8s.io
     resources:
       - leases
@@ -212,11 +226,32 @@ rules:
       - list
       - update
   - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - get
+      - list
+  - apiGroups:
       - events.k8s.io
     resources:
       - events
     verbs:
+      - create
       - list
+      - patch
+      - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - httproutes
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
       - watch
   - apiGroups:
       - monitoring.coreos.com
@@ -249,6 +284,9 @@ rules:
     resources:
       - instrumentations
     verbs:
+      {{- if get .Values.manager.featureGatesMap "operator.clusterobservability" }}
+      - create
+      {{- end}}
       - get
       - list
       - patch
@@ -257,6 +295,9 @@ rules:
   - apiGroups:
       - opentelemetry.io
     resources:
+      {{- if get .Values.manager.featureGatesMap "operator.clusterobservability" }}
+      - clusterobservabilities
+      {{- end}}
       - opampbridges
     verbs:
       - create
@@ -269,12 +310,19 @@ rules:
   - apiGroups:
       - opentelemetry.io
     resources:
+      {{- if get .Values.manager.featureGatesMap "operator.clusterobservability" }}
+      - clusterobservabilities/finalizers
+      {{- end}}
       - opampbridges/finalizers
     verbs:
       - update
   - apiGroups:
       - opentelemetry.io
     resources:
+      {{- if get .Values.manager.featureGatesMap "operator.clusterobservability" }}
+      - clusterobservabilities/status
+      {{- end}}
+      - instrumentations/status
       - opampbridges/status
     verbs:
       - get
@@ -285,6 +333,9 @@ rules:
     resources:
       - opentelemetrycollectors
     verbs:
+      {{- if get .Values.manager.featureGatesMap "operator.clusterobservability" }}
+      - create
+      {{- end}}
       - get
       - list
       - patch
@@ -374,13 +425,19 @@ rules:
       - patch
       - delete
   - apiGroups:
+      - authentication.k8s.io
+    resources:
+      - tokenreviews
+    verbs:
+      - create
+  - apiGroups:
       - authorization.k8s.io
     resources:
       - subjectaccessreviews
     verbs:
       - create
 
-{{ if .Values.kubeRBACProxy.enabled }}
+{{ if .Values.manager.metrics.secure }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -394,20 +451,5 @@ rules:
       - /metrics
     verbs:
       - get
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    {{- include "opentelemetry-operator.labels" . | nindent 4 }}
-    app.kubernetes.io/component: controller-manager
-  name: {{ template "opentelemetry-operator.fullname" . }}-proxy
-rules:
-  - apiGroups:
-      - authentication.k8s.io
-    resources:
-      - tokenreviews
-    verbs:
-      - create
 {{- end }}
 {{ end }}

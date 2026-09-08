@@ -1,4 +1,4 @@
-data "kubernetes_secret" "example" {
+data "kubernetes_secret_v1" "example" {
   metadata {
     name      = "example"
     namespace = "vault-kuard"

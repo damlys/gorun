@@ -14,6 +14,9 @@ metadata:
 spec:
   replicas: {{ .Values.replicaCount }}
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  {{- if .Values.minReadySeconds }}
+  minReadySeconds: {{ .Values.minReadySeconds }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "opentelemetry-operator.selectorLabels" . | nindent 6 }}
@@ -23,6 +26,9 @@ spec:
       annotations:
         {{- if .Values.manager.rolling }}
         rollme: {{ randAlphaNum 5 | quote }}
+        {{- end }}
+        {{- if .Values.manager.config }}
+        checksum/config: {{ tpl (toYaml .Values.manager.config) . | sha256sum }}
         {{- end }}
         kubectl.kubernetes.io/default-container: manager
         {{- if .Values.manager.podAnnotations }}
@@ -46,12 +52,19 @@ spec:
       containers:
         - args:
             - --metrics-addr=0.0.0.0:{{ .Values.manager.ports.metricsPort }}
+            - --metrics-secure={{ .Values.manager.metrics.secure }}
             {{- if .Values.manager.leaderElection.enabled }}
             - --enable-leader-election
             {{- end }}
             - --health-probe-addr=:{{ .Values.manager.ports.healthzPort }}
+            {{- if .Values.manager.ports.pprofPort }}
+            - --pprof-addr=:{{ .Values.manager.ports.pprofPort }}
+            {{- end }}
             {{- if or .Values.admissionWebhooks.create .Values.admissionWebhooks.secretName }}
             - --webhook-port={{ .Values.manager.ports.webhookPort }}
+            {{- end }}
+            {{- if .Values.manager.config }}
+            - --config-file=/etc/opentelemetry-operator/config.yaml
             {{- end }}
             {{- if and .Values.manager.collectorImage.repository .Values.manager.collectorImage.tag }}
             - --collector-image={{ .Values.manager.collectorImage.repository }}:{{ .Values.manager.collectorImage.tag }}
@@ -83,13 +96,14 @@ spec:
             {{- if and .Values.manager.autoInstrumentationImage.apacheHttpd.repository .Values.manager.autoInstrumentationImage.apacheHttpd.tag }}
             - --auto-instrumentation-apache-httpd-image={{ .Values.manager.autoInstrumentationImage.apacheHttpd.repository }}:{{ .Values.manager.autoInstrumentationImage.apacheHttpd.tag }}
             {{- end }}
+            {{- if and .Values.manager.autoInstrumentationImage.nginx.repository .Values.manager.autoInstrumentationImage.nginx.tag }}
+            - --auto-instrumentation-nginx-image={{ .Values.manager.autoInstrumentationImage.nginx.repository }}:{{ .Values.manager.autoInstrumentationImage.nginx.tag }}
+            {{- end }}
             {{- if .Values.manager.ignoreMissingCollectorCRDs }}
             - --ignore-missing-collector-crds=true
             {{- end }}
             {{- if .Values.manager.featureGatesMap }}
             - --feature-gates={{ include "opentelemetry-operator.featureGatesMap" . }}
-            {{- else if ne .Values.manager.featureGates "" }}
-            - --feature-gates={{ .Values.manager.featureGates }}
             {{- end }}
             {{-  if .Values.manager.extraArgs  }}
             {{- .Values.manager.extraArgs | toYaml | nindent 12 }}
@@ -97,6 +111,10 @@ spec:
           command:
             - /manager
           env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             - name: SERVICE_ACCOUNT_NAME
               valueFrom:
                 fieldRef:
@@ -114,6 +132,11 @@ spec:
           name: manager
           imagePullPolicy: {{ .Values.manager.image.imagePullPolicy }}
           ports:
+            {{- if .Values.manager.ports.pprofPort }}
+            - containerPort: {{ .Values.manager.ports.pprofPort }}
+              name: pprof
+              protocol: TCP
+            {{- end }}
             - containerPort: {{ .Values.manager.ports.metricsPort }}
               name: metrics
               protocol: TCP
@@ -135,7 +158,7 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 10
           resources: {{ toYaml .Values.manager.resources | nindent 12 }}
-          {{- if or .Values.admissionWebhooks.create .Values.admissionWebhooks.secretName $explicitMount }}
+          {{- if or .Values.admissionWebhooks.create .Values.admissionWebhooks.secretName $explicitMount .Values.manager.config }}
           volumeMounts:
             {{- if or .Values.admissionWebhooks.create .Values.admissionWebhooks.secretName }}
             - mountPath: /tmp/k8s-webhook-server/serving-certs
@@ -147,37 +170,15 @@ spec:
               name: access-token
               readOnly: true
             {{- end }}
+            {{- if .Values.manager.config }}
+            - mountPath: /etc/opentelemetry-operator
+              name: config
+              readOnly: true
+            {{- end }}
           {{- end }}
           {{- with .Values.manager.securityContext }}
           securityContext: {{ toYaml . | nindent 12 }}
           {{- end }}
-        {{ if .Values.kubeRBACProxy.enabled }}
-        - args:
-            - --secure-listen-address=0.0.0.0:{{ .Values.kubeRBACProxy.ports.proxyPort }}
-            - --upstream=http://127.0.0.1:{{ .Values.manager.ports.metricsPort }}/
-            - --v=0
-            {{-  if .Values.kubeRBACProxy.extraArgs  }}
-            {{- .Values.kubeRBACProxy.extraArgs | toYaml | nindent 12 }}
-            {{-  end  }}
-          image: "{{ .Values.kubeRBACProxy.image.repository }}:{{ .Values.kubeRBACProxy.image.tag }}"
-          name: kube-rbac-proxy
-          ports:
-            - containerPort: {{ .Values.kubeRBACProxy.ports.proxyPort }}
-              name: https
-              protocol: TCP
-          {{- with .Values.kubeRBACProxy.resources }}
-          resources: {{ toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.kubeRBACProxy.securityContext }}
-          securityContext: {{ toYaml . | nindent 12 }}
-          {{- end }}
-          {{- if $explicitMount }}
-          volumeMounts:
-            - name: access-token
-              mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-              readOnly: true
-          {{- end }}
-        {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -196,7 +197,7 @@ spec:
       {{- end }}
       serviceAccountName: {{ template "opentelemetry-operator.serviceAccountName" . }}
       terminationGracePeriodSeconds: 10
-      {{- if or .Values.admissionWebhooks.create .Values.admissionWebhooks.secretName $explicitMount }}
+      {{- if or .Values.admissionWebhooks.create .Values.admissionWebhooks.secretName $explicitMount .Values.manager.config }}
       volumes:
         {{- if or .Values.admissionWebhooks.create .Values.admissionWebhooks.secretName }}
         - name: cert
@@ -222,6 +223,11 @@ spec:
                     - path: namespace
                       fieldRef:
                         fieldPath: metadata.namespace
+        {{- end }}
+        {{- if .Values.manager.config }}
+        - name: config
+          configMap:
+            name: {{ include "opentelemetry-operator.fullname" . }}-config
         {{- end }}
       {{- end }}
       securityContext:

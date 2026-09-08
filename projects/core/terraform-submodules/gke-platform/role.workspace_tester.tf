@@ -1,4 +1,4 @@
-resource "kubernetes_cluster_role" "cluster_workspace_tester" {
+resource "kubernetes_cluster_role_v1" "cluster_workspace_tester" {
   metadata {
     name = "custom:workspace-tester:cluster"
   }
@@ -32,7 +32,7 @@ resource "kubernetes_cluster_role" "cluster_workspace_tester" {
   }
 }
 
-resource "kubernetes_cluster_role" "namespace_workspace_tester" {
+resource "kubernetes_cluster_role_v1" "namespace_workspace_tester" {
   metadata {
     name = "custom:workspace-tester:namespace"
   }

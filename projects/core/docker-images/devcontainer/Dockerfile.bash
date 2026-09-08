@@ -54,9 +54,9 @@ wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /e
 chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list >/dev/null
 
-# google: https://cloud.google.com/sdk/docs/install#deb
+# google: https://docs.cloud.google.com/sdk/docs/install-sdk#deb
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
 echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
 
 # goreleaser: https://goreleaser.com/install/#apt
 echo "deb [trusted=yes] https://repo.goreleaser.com/apt/ /" | tee /etc/apt/sources.list.d/goreleaser.list
@@ -67,8 +67,8 @@ apt install --yes \
   docker-ce-cli \
   docker-compose-plugin \
   gh \
-  google-cloud-sdk \
-  google-cloud-sdk-gke-gcloud-auth-plugin \
+  google-cloud-cli \
+  google-cloud-cli-gke-gcloud-auth-plugin \
   jq \
   kubectl \
   nodejs \
@@ -95,14 +95,14 @@ npm install --global \
   typescript
 
 # cilium: https://github.com/cilium/cilium-cli/releases
-cilium_version="0.18.8"
+cilium_version="0.20.0"
 wget https://github.com/cilium/cilium-cli/releases/download/v${cilium_version}/cilium-${TARGETOS}-${TARGETARCH}.tar.gz \
   --output-document=/tmp/cilium.tar.gz
 tar -zxvf cilium.tar.gz
 mv cilium /usr/local/bin/cilium
 
 # cmctl: https://github.com/cert-manager/cmctl/releases
-cmctl_version="2.3.0"
+cmctl_version="2.5.0"
 wget https://github.com/cert-manager/cmctl/releases/download/v${cmctl_version}/cmctl_${TARGETOS}_${TARGETARCH} \
   --output-document=/usr/local/bin/cmctl
 
@@ -112,14 +112,14 @@ wget https://github.com/GoogleContainerTools/container-structure-test/releases/d
   --output-document=/usr/local/bin/container-structure-test
 
 # golangci-lint: https://github.com/golangci/golangci-lint/releases
-golangci_lint_version="2.11.3"
+golangci_lint_version="2.13.2"
 wget https://github.com/golangci/golangci-lint/releases/download/v${golangci_lint_version}/golangci-lint-${golangci_lint_version}-${TARGETOS}-${TARGETARCH}.tar.gz \
   --output-document=/tmp/golangci-lint.tar.gz
 tar -zxvf golangci-lint.tar.gz
 mv golangci-lint-${golangci_lint_version}-${TARGETOS}-${TARGETARCH}/golangci-lint /usr/local/bin/golangci-lint
 
 # grafanactl: https://github.com/grafana/grafanactl/releases
-grafanactl_version="0.1.9"
+grafanactl_version="0.1.10"
 wget https://github.com/grafana/grafanactl/releases/download/v${grafanactl_version}/grafanactl_${TARGETOS}_$([ "$TARGETARCH" = "amd64" ] && echo "x86_64" || echo "$TARGETARCH").tar.gz \
   --output-document=/tmp/grafanactl.tar.gz
 tar -zxvf grafanactl.tar.gz
@@ -131,45 +131,45 @@ wget https://github.com/mattolenik/hclq/releases/download/${hclq_version}/hclq-$
   --output-document=/usr/local/bin/hclq
 
 # helm: https://github.com/helm/helm/releases
-helm_version="4.1.3"
+helm_version="4.2.4"
 wget https://get.helm.sh/helm-v${helm_version}-${TARGETOS}-${TARGETARCH}.tar.gz \
   --output-document=/tmp/helm.tar.gz
 tar -zxvf helm.tar.gz
 mv ${TARGETOS}-${TARGETARCH}/helm /usr/local/bin/helm
 
 # hubble: https://github.com/cilium/hubble/releases
-hubble_version="1.18.3"
+hubble_version="1.19.4"
 wget https://github.com/cilium/hubble/releases/download/v${hubble_version}/hubble-${TARGETOS}-${TARGETARCH}.tar.gz \
   --output-document=/tmp/hubble.tar.gz
 tar -zxvf hubble.tar.gz
 mv hubble /usr/local/bin/hubble
 
 # shfmt: https://github.com/mvdan/sh/releases
-shfmt_version="3.13.0"
+shfmt_version="3.14.1"
 wget https://github.com/mvdan/sh/releases/download/v${shfmt_version}/shfmt_v${shfmt_version}_${TARGETOS}_${TARGETARCH} \
   --output-document=/usr/local/bin/shfmt
 
 # skaffold: https://github.com/GoogleContainerTools/skaffold/releases
-skaffold_version="2.18.0"
+skaffold_version="2.24.0"
 wget https://github.com/GoogleContainerTools/skaffold/releases/download/v${skaffold_version}/skaffold-${TARGETOS}-${TARGETARCH} \
   --output-document=/usr/local/bin/skaffold
 
 # terraform: https://developer.hashicorp.com/terraform/downloads
-terraform_version="1.14.7"
+terraform_version="1.16.1"
 wget https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_${TARGETOS}_${TARGETARCH}.zip \
   --output-document=/tmp/terraform.zip
 unzip terraform.zip
 mv terraform /usr/local/bin/terraform
 
 # velero: https://github.com/vmware-tanzu/velero/releases
-velero_version="1.17.1"
+velero_version="1.18.2"
 wget https://github.com/vmware-tanzu/velero/releases/download/v${velero_version}/velero-v${velero_version}-${TARGETOS}-${TARGETARCH}.tar.gz \
   --output-document=/tmp/velero.tar.gz
 tar -zxvf velero.tar.gz
 mv velero-v${velero_version}-${TARGETOS}-${TARGETARCH}/velero /usr/local/bin/velero
 
 # yq: https://github.com/mikefarah/yq/releases
-yq_version="4.52.4"
+yq_version="4.53.6"
 wget https://github.com/mikefarah/yq/releases/download/v${yq_version}/yq_${TARGETOS}_${TARGETARCH} \
   --output-document=/usr/local/bin/yq
 

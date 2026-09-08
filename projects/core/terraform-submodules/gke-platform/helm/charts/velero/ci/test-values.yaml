@@ -14,6 +14,7 @@ configuration:
   - name: backups-secondary
     bucket: velero-backups
     provider: aws
+    backupSyncPeriod: "3h"
     config:
       region: us-west-1
       profile: us-west-1-profile
@@ -41,6 +42,11 @@ schedules:
 serviceAccount:
   server:
     name: velero
+
+# Exercise the optional PodDisruptionBudget in CI install/upgrade
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
 
 # The Velero server
 # Annotations to Velero deployment

@@ -19,6 +19,7 @@ metadata:
     k8s-app: cilium-envoy
     app.kubernetes.io/name: cilium-envoy
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: {{ include "cilium.chart" . }}
     io.cilium/app: proxy
     {{- with .Values.commonLabels }}
     {{- toYaml . | nindent 4 }}
@@ -32,5 +33,5 @@ spec:
   - name: envoy-metrics
     port: {{ .Values.envoy.prometheus.port }}
     protocol: TCP
-    targetPort: envoy-metrics
+    targetPort: {{ .Values.envoy.prometheus.port }}
 {{- end }}

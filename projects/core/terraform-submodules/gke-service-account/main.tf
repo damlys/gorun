@@ -4,7 +4,7 @@ resource "google_service_account" "this" {
   description = local.gsa_desc
 }
 
-resource "kubernetes_service_account" "this" {
+resource "kubernetes_service_account_v1" "this" {
   metadata {
     namespace = var.kubernetes_namespace.metadata[0].name
     name      = var.service_account_name
@@ -17,5 +17,5 @@ resource "kubernetes_service_account" "this" {
 resource "google_service_account_iam_member" "this" {
   service_account_id = google_service_account.this.id
   role               = "roles/iam.workloadIdentityUser"
-  member             = "serviceAccount:${google_service_account.this.project}.svc.id.goog[${kubernetes_service_account.this.metadata[0].namespace}/${kubernetes_service_account.this.metadata[0].name}]"
+  member             = "serviceAccount:${google_service_account.this.project}.svc.id.goog[${kubernetes_service_account_v1.this.metadata[0].namespace}/${kubernetes_service_account_v1.this.metadata[0].name}]"
 }

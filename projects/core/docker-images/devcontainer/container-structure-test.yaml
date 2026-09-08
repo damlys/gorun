@@ -7,7 +7,7 @@ schemaVersion: 2.0.0
 commandTests:
   # Cloud
 
-  - # https://cloud.google.com/sdk/gcloud
+  - # https://docs.cloud.google.com/sdk/gcloud
     name: gcloud
     command: gcloud
     args:
@@ -116,7 +116,7 @@ commandTests:
     args:
       - version
     expectedOutput:
-      - go version go1\.25\.
+      - go version go1\.27\.
   - name: go installation
     command: which
     args:

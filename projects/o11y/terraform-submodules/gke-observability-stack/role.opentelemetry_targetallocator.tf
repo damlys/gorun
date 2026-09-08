@@ -1,5 +1,5 @@
 # https://github.com/open-telemetry/opentelemetry-operator/tree/main/cmd/otel-allocator#rbac
-resource "kubernetes_cluster_role" "opentelemetry_targetallocator" {
+resource "kubernetes_cluster_role_v1" "opentelemetry_targetallocator" {
   metadata {
     name = "opentelemetry-targetallocator"
   }

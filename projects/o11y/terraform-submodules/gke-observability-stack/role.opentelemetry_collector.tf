@@ -1,6 +1,6 @@
 # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/k8sattributesprocessor#role-based-access-control
 # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/k8sclusterreceiver#rbac
-resource "kubernetes_cluster_role" "opentelemetry_collector" {
+resource "kubernetes_cluster_role_v1" "opentelemetry_collector" {
   metadata {
     name = "opentelemetry-collector"
   }

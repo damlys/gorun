@@ -2,7 +2,7 @@
 ### ClickHouse
 #######################################
 
-resource "kubernetes_namespace" "clickhouse" {
+resource "kubernetes_namespace_v1" "clickhouse" {
   metadata {
     name = "o11y-clickhouse"
   }
@@ -18,7 +18,7 @@ resource "helm_release" "clickhouse" {
   version    = "0.9.100"
 
   name      = "clickhouse"
-  namespace = kubernetes_namespace.clickhouse.metadata[0].name
+  namespace = kubernetes_namespace_v1.clickhouse.metadata[0].name
 
   values = [templatefile("${path.module}/assets/clickhouse.yaml.tftpl", {
   })]
@@ -32,7 +32,7 @@ resource "helm_release" "clickhouse" {
 ### Grafana
 #######################################
 
-resource "kubernetes_namespace" "grafana" {
+resource "kubernetes_namespace_v1" "grafana" {
   metadata {
     name = "o11y-grafana"
   }
@@ -48,7 +48,7 @@ resource "helm_release" "grafana_postgres" {
   version    = "0.9.100"
 
   name      = "grafana-postgres"
-  namespace = kubernetes_namespace.grafana.metadata[0].name
+  namespace = kubernetes_namespace_v1.grafana.metadata[0].name
 
   values = [templatefile("${path.module}/assets/grafana_postgres.yaml.tftpl", {
   })]
@@ -64,7 +64,7 @@ module "grafana_service_account" {
 
   google_project           = var.google_project
   google_container_cluster = var.google_container_cluster
-  kubernetes_namespace     = kubernetes_namespace.grafana
+  kubernetes_namespace     = kubernetes_namespace_v1.grafana
   service_account_name     = "grafana"
 }
 
@@ -92,7 +92,7 @@ resource "helm_release" "grafana" {
   version    = "0.9.100"
 
   name      = "grafana"
-  namespace = kubernetes_namespace.grafana.metadata[0].name
+  namespace = kubernetes_namespace_v1.grafana.metadata[0].name
 
   values = [templatefile("${path.module}/assets/grafana.yaml.tftpl", {
     grafana_domain = var.grafana_domain
@@ -102,16 +102,16 @@ resource "helm_release" "grafana" {
     service_account_name = module.grafana_service_account.kubernetes_service_account.metadata[0].name
     postgres_host        = local.postgres_host
     clickhouse_host      = local.clickhouse_host
-    smtp_host            = nonsensitive(data.kubernetes_secret.grafana_smtp.data["host"])
-    smtp_user            = nonsensitive(data.kubernetes_secret.grafana_smtp.data["user"])
+    smtp_host            = nonsensitive(data.kubernetes_secret_v1.grafana_smtp.data["host"])
+    smtp_user            = nonsensitive(data.kubernetes_secret_v1.grafana_smtp.data["user"])
   })]
 
   set_sensitive = [
-    { name = "secretConfigEnvs.GF_SMTP_PASSWORD", value = data.kubernetes_secret.grafana_smtp.data["password"] },
+    { name = "secretConfigEnvs.GF_SMTP_PASSWORD", value = data.kubernetes_secret_v1.grafana_smtp.data["password"] },
   ]
 }
 
-data "kubernetes_service" "grafana" {
+data "kubernetes_service_v1" "grafana" {
   metadata {
     name      = helm_release.grafana.name
     namespace = helm_release.grafana.namespace
@@ -122,7 +122,7 @@ module "grafana_gateway_http_route" {
   # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.9.100.zip"
   source = "../../../core/terraform-submodules/k8s-gateway-http-route"
 
-  kubernetes_service = data.kubernetes_service.grafana
+  kubernetes_service = data.kubernetes_service_v1.grafana
 
   domain            = var.grafana_domain
   service_port      = 80
@@ -147,7 +147,7 @@ module "grafana_availability_monitor" {
 ### otlp collector
 #######################################
 
-resource "kubernetes_namespace" "otlp_collector" {
+resource "kubernetes_namespace_v1" "otlp_collector" {
   metadata {
     name = "o11y-otlp-collector"
   }
@@ -160,7 +160,7 @@ resource "helm_release" "otlp_collector" {
   version    = "0.9.100"
 
   name      = "otlp"
-  namespace = kubernetes_namespace.otlp_collector.metadata[0].name
+  namespace = kubernetes_namespace_v1.otlp_collector.metadata[0].name
 
   values = [templatefile("${path.module}/assets/otlp_collector.yaml.tftpl", {
     clickhouse_endpoint = local.clickhouse_endpoint
@@ -171,7 +171,7 @@ resource "helm_release" "otlp_collector" {
 ### file collector
 #######################################
 
-resource "kubernetes_namespace" "file_collector" {
+resource "kubernetes_namespace_v1" "file_collector" {
   metadata {
     name = "o11y-file-collector"
   }
@@ -184,7 +184,7 @@ resource "helm_release" "file_collector" {
   version    = "0.9.100"
 
   name      = "file"
-  namespace = kubernetes_namespace.file_collector.metadata[0].name
+  namespace = kubernetes_namespace_v1.file_collector.metadata[0].name
 
   values = [templatefile("${path.module}/assets/file_collector.yaml.tftpl", {
     clickhouse_endpoint = local.clickhouse_endpoint
@@ -195,7 +195,7 @@ resource "helm_release" "file_collector" {
 ### kube collector
 #######################################
 
-resource "kubernetes_namespace" "kube_collector" {
+resource "kubernetes_namespace_v1" "kube_collector" {
   metadata {
     name = "o11y-kube-collector"
   }
@@ -208,7 +208,7 @@ resource "helm_release" "kube_collector" {
   version    = "0.9.100"
 
   name      = "kube"
-  namespace = kubernetes_namespace.kube_collector.metadata[0].name
+  namespace = kubernetes_namespace_v1.kube_collector.metadata[0].name
 
   values = [templatefile("${path.module}/assets/kube_collector.yaml.tftpl", {
     clickhouse_endpoint = local.clickhouse_endpoint
@@ -219,7 +219,7 @@ resource "helm_release" "kube_collector" {
 ### node collector
 #######################################
 
-resource "kubernetes_namespace" "node_collector" {
+resource "kubernetes_namespace_v1" "node_collector" {
   metadata {
     name = "o11y-node-collector"
   }
@@ -232,7 +232,7 @@ resource "helm_release" "node_collector" {
   version    = "0.9.100"
 
   name      = "node"
-  namespace = kubernetes_namespace.node_collector.metadata[0].name
+  namespace = kubernetes_namespace_v1.node_collector.metadata[0].name
 
   values = [templatefile("${path.module}/assets/node_collector.yaml.tftpl", {
     clickhouse_endpoint = local.clickhouse_endpoint
@@ -243,7 +243,7 @@ resource "helm_release" "node_collector" {
 ### prom collector
 #######################################
 
-resource "kubernetes_namespace" "prom_collector" {
+resource "kubernetes_namespace_v1" "prom_collector" {
   metadata {
     name = "o11y-prom-collector"
   }
@@ -256,7 +256,7 @@ resource "helm_release" "prom_collector" {
   version    = "0.9.100"
 
   name      = "prom"
-  namespace = kubernetes_namespace.prom_collector.metadata[0].name
+  namespace = kubernetes_namespace_v1.prom_collector.metadata[0].name
 
   values = [templatefile("${path.module}/assets/prom_collector.yaml.tftpl", {
     clickhouse_endpoint = local.clickhouse_endpoint
@@ -267,7 +267,7 @@ resource "helm_release" "prom_collector" {
 ### blackbox exporter
 #######################################
 
-resource "kubernetes_namespace" "blackbox_exporter" {
+resource "kubernetes_namespace_v1" "blackbox_exporter" {
   metadata {
     name = "o11y-blackbox-exporter"
   }
@@ -278,7 +278,7 @@ resource "helm_release" "blackbox_exporter" {
   chart      = "prometheus-blackbox-exporter"
 
   name      = "prometheus-blackbox-exporter"
-  namespace = kubernetes_namespace.blackbox_exporter.metadata[0].name
+  namespace = kubernetes_namespace_v1.blackbox_exporter.metadata[0].name
 
   values = [
     file("${path.module}/helm/values/prometheus-blackbox-exporter.yaml"),

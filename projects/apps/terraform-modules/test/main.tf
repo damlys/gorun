@@ -26,7 +26,7 @@ module "gomod_test_workspace" {
   ]
 }
 
-data "kubernetes_service" "goapp_test" {
+data "kubernetes_service_v1" "goapp_test" {
   metadata {
     name      = "goapp-test-9"
     namespace = "gomod-test-9"
@@ -37,7 +37,7 @@ module "goapp_test_gateway_http_route" {
   # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.9.100.zip"
   source = "../../../core/terraform-submodules/k8s-gateway-http-route"
 
-  kubernetes_service = data.kubernetes_service.goapp_test
+  kubernetes_service = data.kubernetes_service_v1.goapp_test
 
   domain            = "goapp.gogke-test-9.damlys.pl"
   service_port      = 8080

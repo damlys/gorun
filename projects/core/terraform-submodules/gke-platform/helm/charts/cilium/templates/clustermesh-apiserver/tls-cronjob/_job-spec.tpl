@@ -9,10 +9,18 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: certgen
           image: {{ include "cilium.image" .Values.certgen.image | quote }}
           imagePullPolicy: {{ .Values.certgen.image.pullPolicy }}
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
+            allowPrivilegeEscalation: false
           {{- with .Values.certgen.resources }}
           resources:
           {{- toYaml . | nindent 12 }}
@@ -28,25 +36,17 @@ spec:
             - "--ca-secret-namespace={{ include "cilium.namespace" . }}"
             - "--ca-secret-name=cilium-ca"
             - "--ca-common-name=Cilium CA"
+            - "--ca-enforce-validity-throughout-leaves-duration={{ .Values.certgen.enforceCAValidityThroughoutLeavesDuration }}"
           env:
             - name: CILIUM_CERTGEN_CONFIG
               value: |
                 certs:
                 - name: clustermesh-apiserver-server-cert
                   namespace: {{ include "cilium.namespace" . }}
-                  commonName: "clustermesh-apiserver.cilium.io"
+                  commonName: {{ include "clustermesh-apiserver-generate-certs.server-common-name" . }}
                   hosts:
-                  - "clustermesh-apiserver.cilium.io"
-                  - "*.mesh.cilium.io"
-                  - "clustermesh-apiserver.{{ include "cilium.namespace" . }}.svc"
-                  {{- range $dns := .Values.clustermesh.apiserver.tls.server.extraDnsNames }}
-                  - {{ $dns | quote }}
-                  {{- end }}
-                  - "127.0.0.1"
-                  - "::1"
-                  {{- range $ip := .Values.clustermesh.apiserver.tls.server.extraIpAddresses }}
-                  - {{ $ip | quote }}
-                  {{- end }}
+                  {{- include "clustermesh-apiserver-generate-certs.server-dns-names" . | nindent 18 }}
+                  {{- include "clustermesh-apiserver-generate-certs.server-ip-addresses" . | nindent 18 }}
                   usage:
                   - signing
                   - key encipherment
@@ -84,7 +84,7 @@ spec:
           volumeMounts:
           {{- toYaml . | nindent 10 }}
           {{- end }}
-      hostNetwork: true
+      hostNetwork: false
       {{- with .Values.certgen.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -96,7 +96,6 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccount: {{ .Values.serviceAccounts.clustermeshcertgen.name | quote }}
       serviceAccountName: {{ .Values.serviceAccounts.clustermeshcertgen.name | quote }}
       automountServiceAccountToken: {{ .Values.serviceAccounts.clustermeshcertgen.automount }}
       {{- with .Values.imagePullSecrets }}
@@ -108,9 +107,11 @@ spec:
       volumes:
       {{- toYaml . | nindent 6 }}
       {{- end }}
-      affinity:
       {{- with .Values.certgen.affinity }}
+      affinity:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-  ttlSecondsAfterFinished: {{ .Values.certgen.ttlSecondsAfterFinished }}
+  {{- with .Values.certgen.ttlSecondsAfterFinished }}
+  ttlSecondsAfterFinished: {{ . }}
+  {{- end }}
 {{- end }}
