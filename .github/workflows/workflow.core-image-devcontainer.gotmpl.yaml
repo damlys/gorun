@@ -14,7 +14,7 @@ on:
 jobs:
   core-image-devcontainer:
     name: core-image-devcontainer
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container: ghcr.io/damlys/gorun-devcontainer:0.9.100
     permissions:
       contents: write

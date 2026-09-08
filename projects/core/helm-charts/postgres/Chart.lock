@@ -1,6 +1,0 @@
-dependencies:
-- name: configs
-  repository: file://../configs
-  version: 0.8.100
-digest: sha256:c49a929893ea7d12f30467e69288710501b53c4ff0d6b416c7adacf74cbaaf2d
-generated: "2026-03-13T13:16:27.337752219Z"

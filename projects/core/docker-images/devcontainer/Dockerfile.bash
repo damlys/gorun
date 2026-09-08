@@ -33,7 +33,7 @@ apt install --yes \
 echo "ALL ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers
 
 # golang: https://go.dev/dl/
-go_version="1.25.4"
+go_version="1.27.1"
 wget https://go.dev/dl/go${go_version}.${TARGETOS}-${TARGETARCH}.tar.gz \
   --output-document=/tmp/go.tar.gz
 tar --directory=/usr/local -zxvf go.tar.gz

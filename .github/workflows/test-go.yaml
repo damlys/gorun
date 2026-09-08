@@ -11,7 +11,7 @@ on:
 jobs:
   test-go:
     name: test-go
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container: ghcr.io/damlys/gorun-devcontainer:0.9.100
     steps:
       - name: git clone (PR)

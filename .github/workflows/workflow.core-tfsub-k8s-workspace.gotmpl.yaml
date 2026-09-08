@@ -13,7 +13,7 @@ on:
 jobs:
   core-tfsub-k8s-workspace:
     name: core-tfsub-k8s-workspace
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container: ghcr.io/damlys/gorun-devcontainer:0.9.100
     permissions:
       contents: write
