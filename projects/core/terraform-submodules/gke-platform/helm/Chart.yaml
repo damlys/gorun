@@ -6,10 +6,6 @@ dependencies:
     repository: https://charts.jetstack.io
     name: cert-manager
     version: v1.21.1
-  - # https://github.com/cilium/cilium/tree/main/install/kubernetes/cilium
-    repository: https://helm.cilium.io
-    name: cilium
-    version: 1.20.1
   - # https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
     repository: https://open-telemetry.github.io/opentelemetry-helm-charts
     name: opentelemetry-operator
