@@ -311,34 +311,6 @@ resource "google_container_node_pool" "this" {
 }
 
 #######################################
-### Cilium & Hubble
-#######################################
-
-data "kubernetes_namespace_v1" "gke_dataplane_v2_observability" {
-  depends_on = [
-    google_container_cluster.this,
-    google_container_node_pool.this,
-  ]
-
-  metadata {
-    name = "gke-managed-dpv2-observability" # Dataplane V2 Observability
-  }
-}
-
-resource "helm_release" "hubble_ui" {
-  repository = "${path.module}/helm/charts"
-  chart      = "cilium"
-  name       = "hubble-ui"
-  namespace  = data.kubernetes_namespace_v1.gke_dataplane_v2_observability.metadata[0].name
-
-  values = [
-    file("${path.module}/helm/values/cilium.yaml"),
-    templatefile("${path.module}/assets/hubble_ui.yaml.tftpl", {
-    }),
-  ]
-}
-
-#######################################
 ### Prometheus Operator (CRDs only)
 #######################################
 
