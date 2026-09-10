@@ -3,5 +3,3 @@ tag: 0.9.100
 aliases:
   # https://hub.docker.com/r/damlys/gorun-devcontainer
   - repository: damlys/gorun-devcontainer
-  # https://github.com/users/damlys/packages/container/package/gogcp-devcontainer
-  - repository: ghcr.io/damlys/gorun-devcontainer

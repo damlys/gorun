@@ -6,7 +6,7 @@ jobs:
   dev-stop:
     name: dev-stop
     runs-on: ubuntu-26.04
-    container: ghcr.io/damlys/gorun-devcontainer:0.9.100
+    container: damlys/gorun-devcontainer:0.9.100
     steps:
       - name: git clone (PR)
         if: github.event_name == 'pull_request'

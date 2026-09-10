@@ -89,7 +89,7 @@ module "private_docker_images_registry" {
   registry_immutability = false
 
   iam_readers = [
-    # TODO "serviceAccount:gogke-test-9-gke-node@gogcp-test-9.iam.gserviceaccount.com",
+    "serviceAccount:gogke-test-9-gke-node@gogcp-test-9.iam.gserviceaccount.com",
   ]
   iam_writers = [
     "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",

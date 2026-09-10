@@ -3,5 +3,3 @@ tag: 0.9.100
 aliases:
   # https://hub.docker.com/r/damlys/gorun-kuard
   - repository: damlys/gorun-kuard
-  # https://github.com/users/damlys/packages/container/package/gogcp-kuard
-  - repository: ghcr.io/damlys/gorun-kuard
