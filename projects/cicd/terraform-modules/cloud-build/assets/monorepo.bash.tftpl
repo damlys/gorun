@@ -8,6 +8,7 @@ git config --global user.email "${git_email}"
 export DOCKER_BUILDKIT="1"
 
 gcloud auth configure-docker "europe-central2-docker.pkg.dev"
+docker login --username="$DOCKERHUB_USERNAME" --password="$DOCKERHUB_TOKEN"
 
 ./scripts/docker-image build "${project_path}"
 ./scripts/docker-image test "${project_path}"
