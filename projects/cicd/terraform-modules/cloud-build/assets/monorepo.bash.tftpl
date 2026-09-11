@@ -36,6 +36,7 @@ gcloud auth print-access-token | helm registry login --username="oauth2accesstok
 %{~ endif /* helm-charts */ }
 %{~ if project_type == "terraform-submodules" }
 export TF_IN_AUTOMATION="1"
+export TF_CLI_ARGS="-no-color"
 
 ./scripts/terraform-submodule build "${project_path}"
 ./scripts/terraform-submodule test "${project_path}"
@@ -49,6 +50,7 @@ export TF_IN_AUTOMATION="1"
 %{~ endif /* terraform-submodules */ }
 %{~ if project_type == "terraform-modules" }
 export TF_IN_AUTOMATION="1"
+export TF_CLI_ARGS="-no-color"
 
 ./scripts/terraform-module test "${project_path}"
 

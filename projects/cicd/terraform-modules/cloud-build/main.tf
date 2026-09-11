@@ -59,27 +59,6 @@ data "google_secret_manager_secret_version" "github_token" {
 }
 
 #######################################
-### GitHub connection
-#######################################
-
-resource "google_cloudbuildv2_connection" "github" {
-  depends_on = [
-    google_secret_manager_secret_iam_member.github_token,
-  ]
-
-  project  = data.google_project.this.project_id
-  location = local.gcp_region
-  name     = "github.com"
-
-  github_config {
-    app_installation_id = local.github_app_installation_id
-    authorizer_credential {
-      oauth_token_secret_version = data.google_secret_manager_secret_version.github_token.id
-    }
-  }
-}
-
-#######################################
 ### GitHub repositories
 #######################################
 
@@ -90,7 +69,7 @@ data "github_repository" "monorepo" {
 resource "google_cloudbuildv2_repository" "monorepo" {
   project           = data.google_project.this.project_id
   location          = local.gcp_region
-  parent_connection = google_cloudbuildv2_connection.github.name
+  parent_connection = local.cloud_build_connection_name
   name              = data.github_repository.monorepo.full_name
   remote_uri        = data.github_repository.monorepo.http_clone_url
 }
@@ -108,8 +87,8 @@ resource "google_cloudbuild_trigger" "monorepo_push_branch" {
   project     = data.google_project.this.project_id
   location    = local.gcp_region
   name        = "${data.github_repository.monorepo.name}-${each.value.project_slug}"
-  description = "${google_cloudbuildv2_connection.github.name}/${data.github_repository.monorepo.full_name}/${each.value.project_path}"
-  disabled    = true
+  description = "${local.cloud_build_connection_domain}/${data.github_repository.monorepo.full_name}/${each.value.project_path}"
+  disabled    = false
 
   repository_event_config {
     repository = google_cloudbuildv2_repository.monorepo.id
