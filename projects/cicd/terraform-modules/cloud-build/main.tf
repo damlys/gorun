@@ -96,7 +96,7 @@ resource "google_cloudbuild_trigger" "monorepo_push_branch" {
   project     = data.google_project.this.project_id
   location    = local.gcp_region
   name        = "${data.github_repository.monorepo.name}-${each.value.project_slug}"
-  description = "${local.cloud_build_connection_domain}/${data.github_repository.monorepo.full_name}/${each.value.project_path}"
+  description = "${local.cloud_build_connection_host}/${data.github_repository.monorepo.full_name}/${each.value.project_path}"
   disabled    = false
 
   repository_event_config {
@@ -117,6 +117,7 @@ resource "google_cloudbuild_trigger" "monorepo_push_branch" {
       script = templatefile("${path.module}/assets/monorepo.bash.tftpl", {
         project_path = each.value.project_path
         project_type = each.value.project_type
+        git_host     = local.cloud_build_connection_host
         git_name     = google_service_account.cloud_build.account_id
         git_email    = google_service_account.cloud_build.email
         github_event = "push_branch"
@@ -171,6 +172,7 @@ resource "google_cloudbuild_trigger" "monorepo_pull_request" {
       script = templatefile("${path.module}/assets/monorepo.bash.tftpl", {
         project_path = each.value.project_path
         project_type = each.value.project_type
+        git_host     = local.cloud_build_connection_host
         git_name     = google_service_account.cloud_build.account_id
         git_email    = google_service_account.cloud_build.email
         github_event = "pull_request"
