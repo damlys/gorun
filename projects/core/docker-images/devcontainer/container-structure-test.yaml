@@ -5,6 +5,14 @@ schemaVersion: 2.0.0
 #######################################
 
 commandTests:
+  # IDE
+
+  - # https://github.com/coder/code-server
+    name: vscode
+    command: code-server
+    args:
+      - --version
+
   # Cloud
 
   - # https://docs.cloud.google.com/sdk/gcloud
@@ -343,6 +351,14 @@ fileContentTests:
     path: /root/.bashrc
     expectedContents:
       - .*complete -C /usr/local/bin/terraform terraform.*
+  - name: code group
+    path: /etc/group
+    expectedContents:
+      - .*code:x:1111:.*
+  - name: code user
+    path: /etc/passwd
+    expectedContents:
+      - .*code:x:1111:1111::/home/code:/bin/bash.*
 
 #######################################
 ### Container

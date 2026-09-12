@@ -32,6 +32,11 @@ apt install --yes \
 
 echo "ALL ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers
 
+# vscode: https://github.com/coder/code-server
+curl -fsSL https://code-server.dev/install.sh | sh
+groupadd --gid="1111" code
+useradd --uid="1111" --gid="1111" --shell="/bin/bash" --create-home code
+
 # golang: https://go.dev/dl/
 go_version="1.27.1"
 wget https://go.dev/dl/go${go_version}.${TARGETOS}-${TARGETARCH}.tar.gz \
