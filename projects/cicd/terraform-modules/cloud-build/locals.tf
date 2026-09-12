@@ -5,6 +5,7 @@ locals {
   cloud_build_connection_name = "github"
   cloud_build_connection_host = "github.com"
   cloud_build_envs = {
+    BRANCH_NAME        = "$BRANCH_NAME"
     DOCKERHUB_USERNAME = "damlys"
   }
   cloud_build_secret_envs = {

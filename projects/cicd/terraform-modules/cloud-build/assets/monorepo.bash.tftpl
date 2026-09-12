@@ -1,9 +1,13 @@
 #!/bin/bash
 set -e
 
-echo "machine ${git_host} login x-access-token password $${GITHUB_TOKEN}" >>~/.netrc
 git config --global user.name "${git_name}"
 git config --global user.email "${git_email}"
+# fix git push
+echo "machine ${git_host} login x-access-token password $${GITHUB_TOKEN}" >>~/.netrc
+# fix git HEAD
+git fetch origin "$${BRANCH_NAME}" --filter="blob:none" --no-tags
+git checkout "$${BRANCH_NAME}"
 
 %{~ if project_type == "docker-images" }
 export DOCKER_BUILDKIT="0"
