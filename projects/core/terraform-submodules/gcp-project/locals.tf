@@ -13,6 +13,7 @@ locals {
     "networkservices.googleapis.com",
 
     "cloudbuild.googleapis.com",
+    "cloudscheduler.googleapis.com",
     "secretmanager.googleapis.com",
 
     "cloudtrace.googleapis.com",
