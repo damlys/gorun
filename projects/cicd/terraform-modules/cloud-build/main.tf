@@ -295,5 +295,4 @@ resource "google_cloudbuild_trigger" "monorepo_dev_stop" {
     }
     logs_bucket = google_storage_bucket.cloud_build_logs.url
   }
-  include_build_logs = "INCLUDE_BUILD_LOGS_WITH_STATUS"
 }

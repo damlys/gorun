@@ -13,7 +13,7 @@ func main() {
 	wd, err := os.Getwd()
 	if err != nil {
 		log.Fatalf("working directory get error: %v\n", err)
-	}
+	   }
 	log.Printf("working directory: %s\n", wd)
 
 	projects, err := monorepo.ListProjects([]string{wd, "projects"}...)
