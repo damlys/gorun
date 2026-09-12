@@ -123,6 +123,7 @@ resource "google_cloudbuild_trigger" "monorepo_push_branch" {
         github_event = "push_branch"
       })
     }
+    timeout = "1200s" # 20 minutes
 
     available_secrets {
       dynamic "secret_manager" {
@@ -178,6 +179,7 @@ resource "google_cloudbuild_trigger" "monorepo_pull_request" {
         github_event = "pull_request"
       })
     }
+    timeout = google_cloudbuild_trigger.monorepo_push_branch[each.key].build[0].timeout
 
     available_secrets {
       dynamic "secret_manager" {
