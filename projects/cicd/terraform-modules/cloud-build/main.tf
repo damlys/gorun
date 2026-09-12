@@ -198,3 +198,102 @@ resource "google_cloudbuild_trigger" "monorepo_pull_request" {
   }
   include_build_logs = google_cloudbuild_trigger.monorepo_push_branch[each.key].include_build_logs
 }
+
+resource "google_cloudbuild_trigger" "monorepo_test_bash" {
+  depends_on = [
+    google_storage_bucket_iam_member.cloud_build_logs_admin,
+  ]
+
+  project     = data.google_project.this.project_id
+  location    = local.gcp_region
+  name        = "${data.github_repository.monorepo.name}-test-bash"
+  description = "${local.cloud_build_connection_host}/${data.github_repository.monorepo.full_name} test bash"
+  disabled    = false
+
+  repository_event_config {
+    repository = google_cloudbuildv2_repository.monorepo.id
+    pull_request {
+      branch = "^main$"
+    }
+  }
+  included_files = ["scripts/**"]
+  ignored_files  = []
+
+  service_account = google_service_account.cloud_build.id
+  build {
+    step {
+      name   = local.devcontainer
+      script = file("${path.module}/assets/monorepo_test_bash.bash")
+    }
+    timeout = "300s" # 5 minutes
+
+    options {
+      logging = "GCS_ONLY"
+    }
+    logs_bucket = google_storage_bucket.cloud_build_logs.url
+  }
+  include_build_logs = "INCLUDE_BUILD_LOGS_WITH_STATUS"
+}
+
+resource "google_cloudbuild_trigger" "monorepo_test_go" {
+  depends_on = [
+    google_storage_bucket_iam_member.cloud_build_logs_admin,
+  ]
+
+  project     = data.google_project.this.project_id
+  location    = local.gcp_region
+  name        = "${data.github_repository.monorepo.name}-test-go"
+  description = "${local.cloud_build_connection_host}/${data.github_repository.monorepo.full_name} test go"
+  disabled    = false
+
+  repository_event_config {
+    repository = google_cloudbuildv2_repository.monorepo.id
+    pull_request {
+      branch = "^main$"
+    }
+  }
+  included_files = ["go/**/*.go"]
+  ignored_files  = []
+
+  service_account = google_service_account.cloud_build.id
+  build {
+    step {
+      name   = local.devcontainer
+      script = file("${path.module}/assets/monorepo_test_go.bash")
+    }
+    timeout = "300s" # 5 minutes
+
+    options {
+      logging = "GCS_ONLY"
+    }
+    logs_bucket = google_storage_bucket.cloud_build_logs.url
+  }
+  include_build_logs = "INCLUDE_BUILD_LOGS_WITH_STATUS"
+}
+
+resource "google_cloudbuild_trigger" "monorepo_dev_stop" {
+  depends_on = [
+    google_storage_bucket_iam_member.cloud_build_logs_admin,
+  ]
+
+  project     = data.google_project.this.project_id
+  location    = local.gcp_region
+  name        = "${data.github_repository.monorepo.name}-dev-stop"
+  description = "${local.cloud_build_connection_host}/${data.github_repository.monorepo.full_name} dev stop"
+  disabled    = false
+
+  service_account = google_service_account.cloud_build.id
+  build {
+    step {
+      name   = local.devcontainer
+      script = file("${path.module}/assets/monorepo_dev_stop.bash")
+    }
+    timeout = "300s" # 5 minutes
+
+    options {
+      logging = "GCS_ONLY"
+    }
+    logs_bucket = google_storage_bucket.cloud_build_logs.url
+  }
+  include_build_logs = "INCLUDE_BUILD_LOGS_WITH_STATUS"
+}
