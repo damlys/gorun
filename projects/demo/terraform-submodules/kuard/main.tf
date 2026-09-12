@@ -39,12 +39,12 @@ resource "helm_release" "stateless_kuard" {
   values = [templatefile("${path.module}/assets/values.yaml.tftpl", {
     service_account_name = module.stateless_kuard_service_account.kubernetes_service_account.metadata[0].name
 
-    example_username = data.kubernetes_secret.example.data.username
-    example_password = data.kubernetes_secret.example.data.password
+    example_username = data.kubernetes_secret_v1.example.data.username
+    example_password = data.kubernetes_secret_v1.example.data.password
   })]
 }
 
-data "kubernetes_service" "stateless_kuard" {
+data "kubernetes_service_v1" "stateless_kuard" {
   depends_on = [
     helm_release.stateless_kuard,
   ]
@@ -59,7 +59,7 @@ module "stateless_kuard_gateway_http_route" {
   # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.9.100.zip"
   source = "../../../core/terraform-submodules/k8s-gateway-http-route"
 
-  kubernetes_service = data.kubernetes_service.stateless_kuard
+  kubernetes_service = data.kubernetes_service_v1.stateless_kuard
 
   domain = "stateless-kuard.${var.platform_domain}"
 }
@@ -102,12 +102,12 @@ resource "helm_release" "stateful_kuard" {
   values = [templatefile("${path.module}/assets/values.yaml.tftpl", {
     service_account_name = module.stateful_kuard_service_account.kubernetes_service_account.metadata[0].name
 
-    example_username = data.kubernetes_secret.example.data.username
-    example_password = data.kubernetes_secret.example.data.password
+    example_username = data.kubernetes_secret_v1.example.data.username
+    example_password = data.kubernetes_secret_v1.example.data.password
   })]
 }
 
-data "kubernetes_service" "stateful_kuard" {
+data "kubernetes_service_v1" "stateful_kuard" {
   depends_on = [
     helm_release.stateful_kuard,
   ]
@@ -122,7 +122,7 @@ module "stateful_kuard_gateway_http_route" {
   # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.9.100.zip"
   source = "../../../core/terraform-submodules/k8s-gateway-http-route"
 
-  kubernetes_service = data.kubernetes_service.stateful_kuard
+  kubernetes_service = data.kubernetes_service_v1.stateful_kuard
 
   domain = "stateful-kuard.${var.platform_domain}"
 }

@@ -1,4 +1,4 @@
-resource "kubernetes_cluster_role" "cluster_workspace_developer" {
+resource "kubernetes_cluster_role_v1" "cluster_workspace_developer" {
   metadata {
     name = "custom:workspace-developer:cluster"
   }
@@ -32,7 +32,7 @@ resource "kubernetes_cluster_role" "cluster_workspace_developer" {
   }
 }
 
-resource "kubernetes_cluster_role" "namespace_workspace_developer" {
+resource "kubernetes_cluster_role_v1" "namespace_workspace_developer" {
   metadata {
     name = "custom:workspace-developer:namespace"
   }

@@ -13,7 +13,6 @@ module "main_project" {
 
   iam_owners = [
     "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
@@ -28,7 +27,6 @@ module "test_project" {
 
   iam_owners = [
     "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
@@ -43,7 +41,6 @@ module "prod_project" {
 
   iam_owners = [
     "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
@@ -60,7 +57,6 @@ module "terraform_state_bucket" {
 
   iam_writers = [
     "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
@@ -80,8 +76,6 @@ module "public_docker_images_registry" {
   iam_readers = ["allUsers"]
   iam_writers = [
     "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gomod@gogcp-main-9.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
@@ -99,8 +93,6 @@ module "private_docker_images_registry" {
   ]
   iam_writers = [
     "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gomod@gogcp-main-9.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
@@ -120,7 +112,6 @@ module "public_helm_charts_registry" {
   iam_readers = ["allUsers"]
   iam_writers = [
     "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
@@ -134,11 +125,9 @@ module "private_helm_charts_registry" {
   registry_immutability = false
 
   iam_readers = [
-    "serviceAccount:gha-damlys-gomod@gogcp-main-9.iam.gserviceaccount.com",
   ]
   iam_writers = [
     "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
@@ -158,7 +147,6 @@ module "public_terraform_modules_registry" {
   iam_readers = ["allUsers"]
   iam_writers = [
     "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }
 
@@ -173,6 +161,5 @@ module "private_terraform_modules_registry" {
 
   iam_writers = [
     "serviceAccount:cloud-build@gogcp-main-9.iam.gserviceaccount.com",
-    "serviceAccount:gha-damlys-gorun@gogcp-main-9.iam.gserviceaccount.com",
   ]
 }

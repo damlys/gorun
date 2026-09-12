@@ -2,7 +2,7 @@
 
 ## Google Cloud Platform billing accounts
 
-- [01873E-ED36A0-27C009](https://console.cloud.google.com/billing/01873E-ED36A0-27C009/manage)
+- [011D45-32FBBB-49E61D](https://console.cloud.google.com/billing/011D45-32FBBB-49E61D/manage)
 
 ## Kubernetes resources
 

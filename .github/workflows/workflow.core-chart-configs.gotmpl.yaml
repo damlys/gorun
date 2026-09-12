@@ -13,8 +13,8 @@ on:
 jobs:
   core-chart-configs:
     name: core-chart-configs
-    runs-on: ubuntu-24.04
-    container: ghcr.io/damlys/gorun-devcontainer:0.9.100
+    runs-on: ubuntu-26.04
+    container: damlys/gorun-devcontainer:0.9.100
     permissions:
       contents: write
       id-token: write

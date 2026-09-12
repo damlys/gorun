@@ -20,7 +20,6 @@ module "test_platform" {
   }
 
   iam_cluster_viewers = [
-    "serviceAccount:gha-damlys-gomod@gogcp-main-9.iam.gserviceaccount.com",
     "user:damlys.test@gmail.com",
   ]
 }

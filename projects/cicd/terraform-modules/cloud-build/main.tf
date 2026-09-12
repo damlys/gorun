@@ -18,6 +18,17 @@ resource "google_storage_bucket" "cloud_build_logs" {
 
   storage_class = "STANDARD"
 
+  lifecycle_rule {
+    condition {
+      matches_prefix = ["log-"]
+      matches_suffix = [".txt"]
+      age            = 21 # 3 weeks
+    }
+    action {
+      type = "Delete"
+    }
+  }
+
   uniform_bucket_level_access = true
   public_access_prevention    = "enforced"
 }
@@ -29,54 +40,31 @@ resource "google_storage_bucket_iam_member" "cloud_build_logs_admin" {
 }
 
 #######################################
-### GitHub access token
+### Cloud Build secrets
 #######################################
 
-resource "google_secret_manager_secret" "github_token" {
+resource "google_secret_manager_secret" "cloud_build_secret_envs" {
+  for_each = local.cloud_build_secret_envs
+
   project   = data.google_project.this.project_id
-  secret_id = "github-token"
+  secret_id = "cloud-build-${each.key}"
 
   replication {
-    auto {
+    user_managed {
+      replicas {
+        location = local.gcp_region
+      }
     }
   }
 }
 
-resource "google_secret_manager_secret_iam_member" "github_token" {
+resource "google_secret_manager_secret_iam_member" "cloud_build_secret_envs" {
+  for_each = google_secret_manager_secret.cloud_build_secret_envs
+
   project   = data.google_project.this.project_id
-  secret_id = google_secret_manager_secret.github_token.id
+  secret_id = each.value.id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${local.gsa}"
-}
-
-# resource "google_secret_manager_secret_version" "github_token" {
-#   secret      = google_secret_manager_secret.github_token.id
-#   secret_data = var.github_token
-# }
-
-data "google_secret_manager_secret_version" "github_token" {
-  secret = google_secret_manager_secret.github_token.id
-}
-
-#######################################
-### GitHub connection
-#######################################
-
-resource "google_cloudbuildv2_connection" "github" {
-  depends_on = [
-    google_secret_manager_secret_iam_member.github_token,
-  ]
-
-  project  = data.google_project.this.project_id
-  location = local.gcp_region
-  name     = "github.com"
-
-  github_config {
-    app_installation_id = local.github_app_installation_id
-    authorizer_credential {
-      oauth_token_secret_version = data.google_secret_manager_secret_version.github_token.id
-    }
-  }
 }
 
 #######################################
@@ -90,7 +78,7 @@ data "github_repository" "monorepo" {
 resource "google_cloudbuildv2_repository" "monorepo" {
   project           = data.google_project.this.project_id
   location          = local.gcp_region
-  parent_connection = google_cloudbuildv2_connection.github.name
+  parent_connection = local.cloud_build_connection_name
   name              = data.github_repository.monorepo.full_name
   remote_uri        = data.github_repository.monorepo.http_clone_url
 }
@@ -108,8 +96,8 @@ resource "google_cloudbuild_trigger" "monorepo_push_branch" {
   project     = data.google_project.this.project_id
   location    = local.gcp_region
   name        = "${data.github_repository.monorepo.name}-${each.value.project_slug}"
-  description = "${google_cloudbuildv2_connection.github.name}/${data.github_repository.monorepo.full_name}/${each.value.project_path}"
-  disabled    = true
+  description = "${local.cloud_build_connection_host}/${data.github_repository.monorepo.full_name}/${each.value.project_path}"
+  disabled    = false
 
   repository_event_config {
     repository = google_cloudbuildv2_repository.monorepo.id
@@ -123,14 +111,28 @@ resource "google_cloudbuild_trigger" "monorepo_push_branch" {
   service_account = google_service_account.cloud_build.id
   build {
     step {
-      name = local.devcontainer
+      name       = local.devcontainer
+      env        = [for k, v in local.cloud_build_envs : "${k}=${v}"]
+      secret_env = [for k, _ in local.cloud_build_secret_envs : k]
       script = templatefile("${path.module}/assets/monorepo.bash.tftpl", {
         project_path = each.value.project_path
         project_type = each.value.project_type
+        git_host     = local.cloud_build_connection_host
         git_name     = google_service_account.cloud_build.account_id
         git_email    = google_service_account.cloud_build.email
         github_event = "push_branch"
       })
+    }
+    timeout = "1200s" # 20 minutes
+
+    available_secrets {
+      dynamic "secret_manager" {
+        for_each = local.cloud_build_secret_envs
+        content {
+          env          = secret_manager.key
+          version_name = "${google_secret_manager_secret.cloud_build_secret_envs[secret_manager.key].id}/versions/${secret_manager.value}"
+        }
+      }
     }
 
     options {
@@ -165,14 +167,28 @@ resource "google_cloudbuild_trigger" "monorepo_pull_request" {
   service_account = google_cloudbuild_trigger.monorepo_push_branch[each.key].service_account
   build {
     step {
-      name = google_cloudbuild_trigger.monorepo_push_branch[each.key].build[0].step[0].name
+      name       = google_cloudbuild_trigger.monorepo_push_branch[each.key].build[0].step[0].name
+      env        = google_cloudbuild_trigger.monorepo_push_branch[each.key].build[0].step[0].env
+      secret_env = google_cloudbuild_trigger.monorepo_push_branch[each.key].build[0].step[0].secret_env
       script = templatefile("${path.module}/assets/monorepo.bash.tftpl", {
         project_path = each.value.project_path
         project_type = each.value.project_type
+        git_host     = local.cloud_build_connection_host
         git_name     = google_service_account.cloud_build.account_id
         git_email    = google_service_account.cloud_build.email
         github_event = "pull_request"
       })
+    }
+    timeout = google_cloudbuild_trigger.monorepo_push_branch[each.key].build[0].timeout
+
+    available_secrets {
+      dynamic "secret_manager" {
+        for_each = google_cloudbuild_trigger.monorepo_push_branch[each.key].build[0].available_secrets[0].secret_manager
+        content {
+          env          = secret_manager.value.env
+          version_name = secret_manager.value.version_name
+        }
+      }
     }
 
     options {

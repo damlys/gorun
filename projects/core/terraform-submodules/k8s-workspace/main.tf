@@ -1,4 +1,4 @@
-resource "kubernetes_namespace" "this" {
+resource "kubernetes_namespace_v1" "this" {
   metadata {
     name = var.workspace_name
     labels = merge({
@@ -27,7 +27,7 @@ resource "kubernetes_manifest" "velero_schedule" { # console.cloud.google.com/co
     apiVersion = "velero.io/v1"
     kind       = "Schedule" # https://velero.io/docs/main/api-types/schedule/
     metadata = {
-      name      = "backup-${kubernetes_namespace.this.metadata[0].name}"
+      name      = "backup-${kubernetes_namespace_v1.this.metadata[0].name}"
       namespace = "velero"
     }
     spec = {
@@ -35,7 +35,7 @@ resource "kubernetes_manifest" "velero_schedule" { # console.cloud.google.com/co
       template = {
         ttl = "72h0m0s" # 3 days
 
-        includedNamespaces = [kubernetes_namespace.this.metadata[0].name]
+        includedNamespaces = [kubernetes_namespace_v1.this.metadata[0].name]
         includedResources  = ["configmaps", "secrets", "persistentvolumeclaims", "persistentvolumes"]
 
         storageLocation         = "default"
@@ -50,11 +50,11 @@ resource "kubernetes_manifest" "velero_schedule" { # console.cloud.google.com/co
 ### IAM
 #######################################
 
-resource "kubernetes_cluster_role_binding" "testers" {
+resource "kubernetes_cluster_role_binding_v1" "testers" {
   count = length(var.iam_testers) > 0 ? 1 : 0
 
   metadata {
-    name = "custom:workspace-testers:${kubernetes_namespace.this.metadata[0].name}"
+    name = "custom:workspace-testers:${kubernetes_namespace_v1.this.metadata[0].name}"
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
@@ -73,12 +73,12 @@ resource "kubernetes_cluster_role_binding" "testers" {
   }
 }
 
-resource "kubernetes_role_binding" "testers" {
+resource "kubernetes_role_binding_v1" "testers" {
   count = length(var.iam_testers) > 0 ? 1 : 0
 
   metadata {
     name      = "custom:workspace-testers"
-    namespace = kubernetes_namespace.this.metadata[0].name
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
@@ -97,11 +97,11 @@ resource "kubernetes_role_binding" "testers" {
   }
 }
 
-resource "kubernetes_cluster_role_binding" "developers" {
+resource "kubernetes_cluster_role_binding_v1" "developers" {
   count = length(var.iam_developers) > 0 ? 1 : 0
 
   metadata {
-    name = "custom:workspace-developers:${kubernetes_namespace.this.metadata[0].name}"
+    name = "custom:workspace-developers:${kubernetes_namespace_v1.this.metadata[0].name}"
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
@@ -120,12 +120,12 @@ resource "kubernetes_cluster_role_binding" "developers" {
   }
 }
 
-resource "kubernetes_role_binding" "developers" {
+resource "kubernetes_role_binding_v1" "developers" {
   count = length(var.iam_developers) > 0 ? 1 : 0
 
   metadata {
     name      = "custom:workspace-developers"
-    namespace = kubernetes_namespace.this.metadata[0].name
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"

@@ -1,4 +1,4 @@
-resource "kubernetes_cluster_role" "cluster_vault_reader" {
+resource "kubernetes_cluster_role_v1" "cluster_vault_reader" {
   metadata {
     name = "custom:vault-reader:cluster"
   }
@@ -10,7 +10,7 @@ resource "kubernetes_cluster_role" "cluster_vault_reader" {
   }
 }
 
-resource "kubernetes_cluster_role" "namespace_vault_reader" {
+resource "kubernetes_cluster_role_v1" "namespace_vault_reader" {
   metadata {
     name = "custom:vault-reader:namespace"
   }

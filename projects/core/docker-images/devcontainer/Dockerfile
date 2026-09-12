@@ -19,7 +19,7 @@ ENV TZ="UTC"
 ENV USE_GKE_GCLOUD_AUTH_PLUGIN="True"
 
 COPY ./etc/.bashrc /root/.bashrc
-COPY ./etc/pip.conf /root/.config/pip/pip.conf
+COPY ./etc/pip.conf /etc/pip.conf
 
 COPY ./Dockerfile.bash /Dockerfile.bash
 RUN /Dockerfile.bash && rm /Dockerfile.bash

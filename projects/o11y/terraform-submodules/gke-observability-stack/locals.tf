@@ -4,7 +4,7 @@ locals {
   clickhouse_endpoint = "tcp://${local.clickhouse_host}:9000"
 }
 
-data "kubernetes_secret" "grafana_smtp" {
+data "kubernetes_secret_v1" "grafana_smtp" {
   metadata {
     name      = "smtp"
     namespace = "vault-grafana"

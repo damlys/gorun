@@ -5,7 +5,7 @@ commandTests:
     args:
       - version
     expectedOutput:
-      - go version go1\.25\.
+      - go version go1\.27\.
 fileExistenceTests:
   - name: go directory
     path: /go

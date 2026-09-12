@@ -1,4 +1,4 @@
-resource "kubernetes_namespace" "this" {
+resource "kubernetes_namespace_v1" "this" {
   metadata {
     name = "vault-${var.vault_name}"
   }
@@ -8,10 +8,10 @@ resource "kubernetes_namespace" "this" {
   }
 }
 
-resource "kubernetes_resource_quota" "disable_pods_scheduling" {
+resource "kubernetes_resource_quota_v1" "disable_pods_scheduling" {
   metadata {
     name      = "disable-pods-scheduling"
-    namespace = kubernetes_namespace.this.metadata[0].name
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
   }
   spec {
     hard = {
@@ -25,7 +25,7 @@ resource "kubernetes_manifest" "velero_schedule" {
     apiVersion = "velero.io/v1"
     kind       = "Schedule"
     metadata = {
-      name      = "backup-${kubernetes_namespace.this.metadata[0].name}"
+      name      = "backup-${kubernetes_namespace_v1.this.metadata[0].name}"
       namespace = "velero"
     }
     spec = {
@@ -33,7 +33,7 @@ resource "kubernetes_manifest" "velero_schedule" {
       template = {
         ttl = "672h0m0s" # 28 days
 
-        includedNamespaces = [kubernetes_namespace.this.metadata[0].name]
+        includedNamespaces = [kubernetes_namespace_v1.this.metadata[0].name]
         includedResources  = ["configmaps", "secrets"]
 
         storageLocation = "default"
@@ -47,11 +47,11 @@ resource "kubernetes_manifest" "velero_schedule" {
 ### IAM
 #######################################
 
-resource "kubernetes_cluster_role_binding" "readers" {
+resource "kubernetes_cluster_role_binding_v1" "readers" {
   count = length(var.iam_readers) > 0 ? 1 : 0
 
   metadata {
-    name = "custom:vault-readers:${kubernetes_namespace.this.metadata[0].name}"
+    name = "custom:vault-readers:${kubernetes_namespace_v1.this.metadata[0].name}"
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
@@ -70,12 +70,12 @@ resource "kubernetes_cluster_role_binding" "readers" {
   }
 }
 
-resource "kubernetes_role_binding" "readers" {
+resource "kubernetes_role_binding_v1" "readers" {
   count = length(var.iam_readers) > 0 ? 1 : 0
 
   metadata {
     name      = "custom:vault-readers"
-    namespace = kubernetes_namespace.this.metadata[0].name
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
@@ -94,11 +94,11 @@ resource "kubernetes_role_binding" "readers" {
   }
 }
 
-resource "kubernetes_cluster_role_binding" "writers" {
+resource "kubernetes_cluster_role_binding_v1" "writers" {
   count = length(var.iam_writers) > 0 ? 1 : 0
 
   metadata {
-    name = "custom:vault-writers:${kubernetes_namespace.this.metadata[0].name}"
+    name = "custom:vault-writers:${kubernetes_namespace_v1.this.metadata[0].name}"
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
@@ -117,12 +117,12 @@ resource "kubernetes_cluster_role_binding" "writers" {
   }
 }
 
-resource "kubernetes_role_binding" "writers" {
+resource "kubernetes_role_binding_v1" "writers" {
   count = length(var.iam_writers) > 0 ? 1 : 0
 
   metadata {
     name      = "custom:vault-writers"
-    namespace = kubernetes_namespace.this.metadata[0].name
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"

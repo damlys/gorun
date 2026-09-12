@@ -1,14 +1,21 @@
 #!/bin/bash
-set -ex
+set -e
 
 git config --global user.name "${git_name}"
 git config --global user.email "${git_email}"
+# fix git push
+echo "machine ${git_host} login x-access-token password $${GITHUB_TOKEN}" >>~/.netrc
+# fix git HEAD
+git fetch origin "$${BRANCH_NAME}" --filter="blob:none" --no-tags
+git checkout "$${BRANCH_NAME}"
 
 %{~ if project_type == "docker-images" }
-export DOCKER_BUILDKIT="1"
+export DOCKER_BUILDKIT="0"
 
 gcloud auth configure-docker "europe-central2-docker.pkg.dev"
+docker login --username="$${DOCKERHUB_USERNAME}" --password="$${DOCKERHUB_TOKEN}"
 
+set -x
 ./scripts/docker-image build "${project_path}"
 ./scripts/docker-image test "${project_path}"
 %{~ if github_event == "pull_request" }
@@ -24,6 +31,7 @@ export HELM_EXPERIMENTAL_OCI="1"
 
 gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
 
+set -x
 ./scripts/helm-chart build "${project_path}"
 ./scripts/helm-chart test "${project_path}"
 %{~ if github_event == "pull_request" }
@@ -36,7 +44,9 @@ gcloud auth print-access-token | helm registry login --username="oauth2accesstok
 %{~ endif /* helm-charts */ }
 %{~ if project_type == "terraform-submodules" }
 export TF_IN_AUTOMATION="1"
+export TF_CLI_ARGS="-no-color"
 
+set -x
 ./scripts/terraform-submodule build "${project_path}"
 ./scripts/terraform-submodule test "${project_path}"
 %{~ if github_event == "pull_request" }
@@ -49,9 +59,10 @@ export TF_IN_AUTOMATION="1"
 %{~ endif /* terraform-submodules */ }
 %{~ if project_type == "terraform-modules" }
 export TF_IN_AUTOMATION="1"
+export TF_CLI_ARGS="-no-color"
 
+set -x
 ./scripts/terraform-module test "${project_path}"
-
 terraform -chdir="${project_path}" init -input=false
 %{~ if github_event == "pull_request" }
 terraform -chdir="${project_path}" plan -input=false

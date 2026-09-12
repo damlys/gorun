@@ -15,6 +15,7 @@ locals {
       project_type  = split("/", v)[1]
       project_name  = split("/", v)[2]
     }
+    if !contains(split("/", v), ".terraform")
   ]
 
   monorepo_projects = {

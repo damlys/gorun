@@ -225,7 +225,7 @@ resource "google_container_cluster" "this" { # console.cloud.google.com/kubernet
   remove_default_node_pool = true
 }
 
-resource "kubernetes_namespace" "gke_security_groups" {
+resource "kubernetes_namespace_v1" "gke_security_groups" {
   depends_on = [
     google_container_cluster.this,
     google_container_node_pool.this,
@@ -314,7 +314,7 @@ resource "google_container_node_pool" "this" {
 ### Prometheus Operator (CRDs only)
 #######################################
 
-resource "kubernetes_namespace" "prometheus_operator" {
+resource "kubernetes_namespace_v1" "prometheus_operator" {
   depends_on = [
     google_container_cluster.this,
     google_container_node_pool.this,
@@ -329,7 +329,7 @@ resource "helm_release" "prometheus_operator_crds" {
   repository = "${path.module}/helm/charts"
   chart      = "prometheus-operator-crds"
   name       = "prometheus-operator-crds"
-  namespace  = kubernetes_namespace.prometheus_operator.metadata[0].name
+  namespace  = kubernetes_namespace_v1.prometheus_operator.metadata[0].name
 
   values = [
     file("${path.module}/helm/values/prometheus-operator-crds.yaml"),
@@ -340,7 +340,7 @@ resource "helm_release" "prometheus_operator_crds" {
 ### OpenTelemetry Operator
 #######################################
 
-resource "kubernetes_namespace" "opentelemetry_operator" {
+resource "kubernetes_namespace_v1" "opentelemetry_operator" {
   depends_on = [
     google_container_cluster.this,
     google_container_node_pool.this,
@@ -355,7 +355,7 @@ resource "helm_release" "opentelemetry_operator" {
   repository = "${path.module}/helm/charts"
   chart      = "opentelemetry-operator"
   name       = "opentelemetry-operator"
-  namespace  = kubernetes_namespace.opentelemetry_operator.metadata[0].name
+  namespace  = kubernetes_namespace_v1.opentelemetry_operator.metadata[0].name
 
   values = [
     file("${path.module}/helm/values/opentelemetry-operator.yaml"),
@@ -384,7 +384,7 @@ resource "google_kms_crypto_key_iam_member" "velero_backups" {
   member        = data.google_storage_project_service_account.this.member
 }
 
-resource "kubernetes_namespace" "velero" {
+resource "kubernetes_namespace_v1" "velero" {
   depends_on = [
     google_container_cluster.this,
     google_container_node_pool.this,
@@ -401,7 +401,7 @@ module "velero_service_account" {
 
   google_project           = var.google_project
   google_container_cluster = google_container_cluster.this
-  kubernetes_namespace     = kubernetes_namespace.velero
+  kubernetes_namespace     = kubernetes_namespace_v1.velero
   service_account_name     = "velero"
 }
 
@@ -481,7 +481,7 @@ resource "helm_release" "velero" {
   repository = "${path.module}/helm/charts"
   chart      = "velero"
   name       = "velero"
-  namespace  = kubernetes_namespace.velero.metadata[0].name
+  namespace  = kubernetes_namespace_v1.velero.metadata[0].name
 
   values = [
     file("${path.module}/helm/values/velero.yaml"),
@@ -503,7 +503,7 @@ resource "helm_release" "velero" {
 ### cert-manager
 #######################################
 
-resource "kubernetes_namespace" "cert_manager" {
+resource "kubernetes_namespace_v1" "cert_manager" {
   depends_on = [
     google_container_cluster.this,
     google_container_node_pool.this,
@@ -520,7 +520,7 @@ module "cert_manager_service_account" {
 
   google_project           = var.google_project
   google_container_cluster = google_container_cluster.this
-  kubernetes_namespace     = kubernetes_namespace.cert_manager
+  kubernetes_namespace     = kubernetes_namespace_v1.cert_manager
   service_account_name     = "cert-manager"
 }
 
@@ -532,7 +532,7 @@ resource "helm_release" "cert_manager" {
   repository = "${path.module}/helm/charts"
   chart      = "cert-manager"
   name       = "cert-manager"
-  namespace  = kubernetes_namespace.cert_manager.metadata[0].name
+  namespace  = kubernetes_namespace_v1.cert_manager.metadata[0].name
 
   values = [
     file("${path.module}/helm/values/cert-manager.yaml"),
@@ -608,7 +608,7 @@ resource "google_dns_record_set" "ingress_internet" {
   rrdatas  = [google_compute_address.ingress_internet.address]
 }
 
-resource "kubernetes_namespace" "gke_gateway" {
+resource "kubernetes_namespace_v1" "gke_gateway" {
   depends_on = [
     google_container_cluster.this,
     google_container_node_pool.this,
@@ -629,7 +629,7 @@ resource "kubernetes_manifest" "letsencrypt_production" {
     kind       = "Issuer" # https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Issuer
     metadata = {
       name      = "letsencrypt-production"
-      namespace = kubernetes_namespace.gke_gateway.metadata[0].name
+      namespace = kubernetes_namespace_v1.gke_gateway.metadata[0].name
     }
     spec = {
       acme = {
@@ -661,7 +661,7 @@ resource "kubernetes_manifest" "letsencrypt_staging" {
     kind       = "Issuer"
     metadata = {
       name      = "letsencrypt-staging"
-      namespace = kubernetes_namespace.gke_gateway.metadata[0].name
+      namespace = kubernetes_namespace_v1.gke_gateway.metadata[0].name
     }
     spec = {
       acme = {
@@ -686,7 +686,7 @@ resource "kubernetes_manifest" "gke_gateway" { # console.cloud.google.com/net-se
     kind       = "Gateway"
     metadata = {
       name      = "gke-gateway"
-      namespace = kubernetes_namespace.gke_gateway.metadata[0].name
+      namespace = kubernetes_namespace_v1.gke_gateway.metadata[0].name
       annotations = {
         "cert-manager.io/issuer" = kubernetes_manifest.letsencrypt_production.manifest.metadata.name
       }
@@ -754,7 +754,7 @@ resource "kubernetes_manifest" "gke_gateway_redirect_http" {
     kind       = "HTTPRoute"
     metadata = {
       name      = "redirect-http"
-      namespace = kubernetes_namespace.gke_gateway.metadata[0].name
+      namespace = kubernetes_namespace_v1.gke_gateway.metadata[0].name
     }
     spec = {
       parentRefs = [{
