@@ -2,7 +2,7 @@ variable "workstation_name" {
   type = string
 }
 
-variable "workstation_domain" {
+variable "code_domain" {
   type = string
 }
 

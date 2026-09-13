@@ -158,7 +158,7 @@ module "code_http_route" {
   kubernetes_service = kubernetes_service_v1.code
   health_check_path  = "/healthz"
 
-  domain = var.workstation_domain
+  domain = var.code_domain
 }
 
 #######################################
