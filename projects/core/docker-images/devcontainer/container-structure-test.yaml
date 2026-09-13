@@ -373,11 +373,11 @@ fileExistenceTests:
     shouldExist: true
 fileContentTests:
   - name: go shell completion
-    path: /root/.bashrc
+    path: /etc/bash.bashrc
     expectedContents:
       - .*complete -C /usr/local/go/bin/gocomplete go.*
   - name: terraform shell completion
-    path: /root/.bashrc
+    path: /etc/bash.bashrc
     expectedContents:
       - .*complete -C /usr/local/bin/terraform terraform.*
   - name: code group

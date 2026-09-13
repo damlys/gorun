@@ -13,13 +13,13 @@ ENV TARGETARCH="${TARGETARCH:-amd64}"
 ENV TARGETVARIANT="${TARGETVARIANT}"
 
 ENV CODE_SERVER_CONFIG="/etc/code-server.yaml"
-ENV EXTENSIONS_GALLERY="{\"serviceUrl\":\"https://marketplace.visualstudio.com/_apis/public/gallery\"}"
+ENV EXTENSIONS_GALLERY='{"serviceUrl":"https://marketplace.visualstudio.com/_apis/public/gallery"}'
 ENV NODE_ENV="development"
 ENV PATH="${PATH}:/usr/local/go/bin"
 ENV TZ="UTC"
 ENV USE_GKE_GCLOUD_AUTH_PLUGIN="True"
 
-COPY ./etc/.bashrc /root/.bashrc
+COPY ./etc/bash.bashrc /etc/bash.bashrc
 COPY ./etc/code-server.yaml /etc/code-server.yaml
 COPY ./etc/pip.conf /etc/pip.conf
 
