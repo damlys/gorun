@@ -71,7 +71,6 @@ resource "kubernetes_stateful_set_v1" "code" {
       spec {
         service_account_name            = kubernetes_service_account_v1.code.metadata[0].name
         automount_service_account_token = false
-        enable_service_links            = false
         container {
           name  = "code-server"
           image = local.devcontainer
@@ -88,7 +87,7 @@ resource "kubernetes_stateful_set_v1" "code" {
           }
           env {
             name  = "EDITOR"
-            value = "code --wait"
+            value = "code-server --wait"
           }
           volume_mount {
             name       = "code-home"
