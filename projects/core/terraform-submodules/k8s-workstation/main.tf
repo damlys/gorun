@@ -72,15 +72,10 @@ resource "kubernetes_stateful_set_v1" "code" {
         service_account_name            = kubernetes_service_account_v1.code.metadata[0].name
         automount_service_account_token = false
         container {
-          name  = "code-server"
-          image = local.devcontainer
-          command = [
-            "code-server",
-          ]
-          args = [
-            "--bind-addr=0.0.0.0:8080",
-            "--auth=password",
-          ]
+          name    = "code-server"
+          image   = local.devcontainer
+          command = ["code-server"]
+          args    = ["--auth=password"]
           env {
             name  = "PASSWORD"
             value = "Secret123"
@@ -129,8 +124,8 @@ resource "kubernetes_stateful_set_v1" "code" {
           security_context { # container security context
             run_as_non_root           = true
             read_only_root_filesystem = false
-            run_as_user               = 1111
-            run_as_group              = 1111
+            run_as_user               = 1111 # code
+            run_as_group              = 1111 # code
           }
         }
         security_context { # pod security context
