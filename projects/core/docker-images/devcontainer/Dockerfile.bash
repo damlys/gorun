@@ -19,6 +19,7 @@ apt install --yes \
   less \
   lsb-release \
   man \
+  nano \
   nmap \
   openssh-client \
   sudo \
@@ -31,11 +32,6 @@ apt install --yes \
   zip
 
 echo "ALL ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers
-
-# vscode: https://github.com/coder/code-server
-curl -fsSL https://code-server.dev/install.sh | sh
-groupadd --gid="1111" code
-useradd --uid="1111" --gid="1111" --shell="/bin/bash" --create-home code
 
 # golang: https://go.dev/dl/
 go_version="1.27.1"
@@ -163,6 +159,27 @@ mv velero-v${velero_version}-${TARGETOS}-${TARGETARCH}/velero /usr/local/bin/vel
 yq_version="4.53.6"
 wget https://github.com/mikefarah/yq/releases/download/v${yq_version}/yq_${TARGETOS}_${TARGETARCH} \
   --output-document=/usr/local/bin/yq
+
+# code: https://github.com/coder/code-server
+curl -fsSL https://code-server.dev/install.sh | sh
+
+code-server --install-extension "docker.docker"
+code-server --install-extension "esbenp.prettier-vscode"
+code-server --install-extension "foxundermoon.shell-format@7.2.5"
+code-server --install-extension "golang.go"
+code-server --install-extension "google.geminicodeassist"
+code-server --install-extension "googlecloudtools.cloudcode"
+code-server --install-extension "hashicorp.hcl"
+code-server --install-extension "hashicorp.terraform"
+code-server --install-extension "ms-kubernetes-tools.vscode-kubernetes-tools"
+code-server --install-extension "ms-python.autopep8"
+code-server --install-extension "ms-python.python"
+code-server --install-extension "redhat.vscode-xml"
+code-server --install-extension "redhat.vscode-yaml"
+code-server --install-extension "timonwong.shellcheck"
+
+groupadd --gid="1111" code
+useradd --uid="1111" --gid="1111" --shell="/bin/bash" --create-home code
 
 # executable files
 chmod a+x /usr/local/bin/*

@@ -12,6 +12,7 @@ ENV TARGETOS="${TARGETOS:-linux}"
 ENV TARGETARCH="${TARGETARCH:-amd64}"
 ENV TARGETVARIANT="${TARGETVARIANT}"
 
+ENV EXTENSIONS_GALLERY="{\"serviceUrl\":\"https://marketplace.visualstudio.com/_apis/public/gallery\"}"
 ENV GOPATH="/root/go"
 ENV NODE_ENV="development"
 ENV PATH="${PATH}:${GOPATH}/bin:/usr/local/go/bin"

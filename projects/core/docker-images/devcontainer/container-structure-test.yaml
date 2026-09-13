@@ -5,11 +5,39 @@ schemaVersion: 2.0.0
 #######################################
 
 commandTests:
-  # IDE
+  # Code editors
 
   - # https://github.com/coder/code-server
-    name: vscode
+    name: code
     command: code-server
+    args:
+      - --version
+  - name: code extensions
+    command: code-server
+    args:
+      - --list-extensions
+      - --show-versions
+    expectedOutput:
+      - docker.docker
+      - esbenp.prettier-vscode
+      - foxundermoon.shell-format@7.2.5
+      - golang.go
+      - google.geminicodeassist
+      - googlecloudtools.cloudcode
+      - hashicorp.hcl
+      - hashicorp.terraform
+      - ms-kubernetes-tools.vscode-kubernetes-tools
+      - ms-python.autopep8
+      - ms-python.python
+      - redhat.vscode-xml
+      - redhat.vscode-yaml
+      - timonwong.shellcheck
+  - name: nano
+    command: nano
+    args:
+      - --version
+  - name: vim
+    command: vim
     args:
       - --version
 
@@ -280,10 +308,6 @@ commandTests:
       - -V
   - name: tree
     command: tree
-    args:
-      - --version
-  - name: vim
-    command: vim
     args:
       - --version
   - name: wget
