@@ -38,6 +38,7 @@ go_version="1.27.1"
 wget https://go.dev/dl/go${go_version}.${TARGETOS}-${TARGETARCH}.tar.gz \
   --output-document=/tmp/go.tar.gz
 tar --directory=/usr/local -zxvf go.tar.gz
+export GOBIN="/usr/local/go/bin"
 
 # nodejs: https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions
 curl -fsSL https://deb.nodesource.com/setup_lts.x -o nodesource_setup.sh
@@ -202,8 +203,8 @@ yq shell-completion bash >/etc/bash_completion.d/yq
 
 # cleanup
 apt clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
-go clean -cache && rm -rf /root/.cache/go-build/*
-go clean -modcache && rm -rf /root/go/pkg/mod/*
-npm cache clean --force && rm -rf /root/.npm/*
-pip cache purge && rm -rf /root/.cache/pip/*
+go clean -cache && rm -rf ~/.cache/go-build/*
+go clean -modcache && rm -rf ~/go/pkg/mod/*
+npm cache clean --force && rm -rf ~/.npm/*
+pip cache purge && rm -rf ~/.cache/pip/*
 rm -rf /tmp/*
