@@ -20,6 +20,16 @@ function main {
     terraform -chdir="${project_path}" validate
     ;;
 
+  "plan")
+    terraform -chdir="${project_path}" init -input=false
+    terraform -chdir="${project_path}" plan -input=false
+    ;;
+
+  "apply")
+    terraform -chdir="${project_path}" init -input=false
+    terraform -chdir="${project_path}" apply -input=false -auto-approve
+    ;;
+
   *)
     log::error "unknown command: ${cmd}"
     return 127
