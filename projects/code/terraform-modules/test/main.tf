@@ -3,7 +3,7 @@ module "damlys_workstation" {
   source = "../../../core/terraform-submodules/k8s-workstation"
 
   workstation_name = "damlys"
-  code_domain      = "damlys.gogke-test-9.damlys.pl"
+  code_domain      = "damlys-code.gogke-test-9.damlys.pl"
 
   iam_owners = [
     "user:damlys.test@gmail.com",

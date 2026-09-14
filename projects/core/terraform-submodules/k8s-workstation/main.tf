@@ -18,7 +18,7 @@ resource "kubernetes_namespace_v1" "this" {
 
 resource "kubernetes_service_v1" "code" {
   metadata {
-    name      = "code-headless"
+    name      = "code"
     namespace = kubernetes_namespace_v1.this.metadata[0].name
     labels    = local.code_metadata_labels
   }
@@ -124,8 +124,8 @@ resource "kubernetes_stateful_set_v1" "code" {
           security_context { # container security context
             run_as_non_root           = true
             read_only_root_filesystem = false
-            run_as_user               = 1111 # code
-            run_as_group              = 1111 # code
+            run_as_user               = 1111
+            run_as_group              = 1111
           }
         }
         security_context { # pod security context
@@ -151,7 +151,7 @@ resource "kubernetes_stateful_set_v1" "code" {
   }
 }
 
-module "code_http_route" {
+module "code_gateway_http_route" {
   # PROD source = "gcs::https://www.googleapis.com/storage/v1/gogcp-main-9-private-terraform-modules/gorun/core/k8s-gateway-http-route/0.9.100.zip"
   source = "../../../core/terraform-submodules/k8s-gateway-http-route"
 

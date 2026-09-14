@@ -8,28 +8,6 @@ resource "kubernetes_cluster_role_v1" "cluster_workstation_owner" {
     resources  = ["namespaces", "namespaces/status"]
     verbs      = ["get", "list", "watch"]
   }
-
-  rule {
-    api_groups = [""]
-    resources  = ["persistentvolumes", "persistentvolumes/status"]
-    verbs      = ["get", "list", "watch"]
-  }
-  rule {
-    api_groups = ["storage.k8s.io"]
-    resources  = ["storageclasses"]
-    verbs      = ["get", "list", "watch"]
-  }
-
-  rule {
-    api_groups = ["networking.k8s.io"]
-    resources  = ["ingressclasses"]
-    verbs      = ["get", "list", "watch"]
-  }
-  rule {
-    api_groups = ["gateway.networking.k8s.io"]
-    resources  = ["gatewayclasses", "gatewayclasses/status"]
-    verbs      = ["get", "list", "watch"]
-  }
 }
 
 resource "kubernetes_cluster_role_v1" "namespace_workstation_owner" {
@@ -39,24 +17,8 @@ resource "kubernetes_cluster_role_v1" "namespace_workstation_owner" {
 
   rule {
     api_groups = [""]
-    resources  = ["serviceaccounts"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
-  }
-  rule {
-    api_groups = [""]
-    resources  = ["configmaps"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
-  }
-  rule {
-    api_groups = [""]
-    resources  = ["secrets"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
-  }
-
-  rule {
-    api_groups = [""]
     resources  = ["pods", "pods/status"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
+    verbs      = ["get", "list", "watch", "delete", "deletecollection"]
   }
   rule {
     api_groups = [""]
@@ -67,94 +29,5 @@ resource "kubernetes_cluster_role_v1" "namespace_workstation_owner" {
     api_groups = [""]
     resources  = ["pods/portforward", "pods/exec"]
     verbs      = ["get", "create"]
-  }
-  rule {
-    api_groups = ["apps"]
-    resources  = ["deployments", "deployments/status", "deployments/scale", "replicasets", "replicasets/status", "replicasets/scale", "statefulsets", "statefulsets/status", "statefulsets/scale"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
-  }
-  rule {
-    api_groups = [""]
-    resources  = ["replicationcontrollers", "replicationcontrollers/status"]
-    verbs      = ["get", "list", "watch"]
-  }
-  rule {
-    api_groups = ["apps"]
-    resources  = ["daemonsets", "daemonsets/status"]
-    verbs      = ["get", "list", "watch"]
-  }
-  rule {
-    api_groups = ["batch"]
-    resources  = ["jobs", "jobs/status", "cronjobs", "cronjobs/status"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
-  }
-  rule {
-    api_groups = ["autoscaling", "autoscaling.k8s.io"]
-    resources  = ["horizontalpodautoscalers", "horizontalpodautoscalers/status", "verticalpodautoscalers", "verticalpodautoscalers/status"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
-  }
-  rule {
-    api_groups = ["policy"]
-    resources  = ["poddisruptionbudgets", "poddisruptionbudgets/status"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
-  }
-  rule {
-    api_groups = [""]
-    resources  = ["resourcequotas"]
-    verbs      = ["get", "list", "watch"]
-  }
-
-  rule {
-    api_groups = [""]
-    resources  = ["persistentvolumeclaims", "persistentvolumeclaims/status"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
-  }
-
-  rule {
-    api_groups = [""]
-    resources  = ["endpoints", "services", "services/status"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
-  }
-  rule {
-    api_groups = ["discovery.k8s.io"]
-    resources  = ["endpointslices"]
-    verbs      = ["get", "list", "watch"]
-  }
-  rule {
-    api_groups = ["net.gke.io"]
-    resources  = ["serviceexports", "serviceimports"]
-    verbs      = ["get", "list", "watch"]
-  }
-  # rule {
-  #   api_groups = ["networking.gke.io"]
-  #   resources  = []
-  #   verbs      = ["get", "list", "watch"]
-  # }
-  rule {
-    api_groups = ["networking.k8s.io"]
-    resources  = ["ingresses", "ingresses/status"]
-    verbs      = ["get", "list", "watch"]
-  }
-  rule {
-    api_groups = ["gateway.networking.k8s.io"]
-    resources  = ["gateways", "gateways/status", "httproutes", "httproutes/status"]
-    verbs      = ["get", "list", "watch"]
-  }
-
-  # rule {
-  #   api_groups = ["cert-manager.io"]
-  #   resources  = []
-  #   verbs      = ["get", "list", "watch"]
-  # }
-
-  # rule {
-  #   api_groups = ["opentelemetry.io"]
-  #   resources  = []
-  #   verbs      = ["get", "list", "watch"]
-  # }
-  rule {
-    api_groups = ["monitoring.coreos.com"]
-    resources  = ["podmonitors", "servicemonitors"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
   }
 }
