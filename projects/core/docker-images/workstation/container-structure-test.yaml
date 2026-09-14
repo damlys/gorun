@@ -1,0 +1,51 @@
+schemaVersion: 2.0.0
+commandTests:
+  - # https://github.com/coder/code-server
+    name: code
+    command: code-server
+    args:
+      - --version
+  - name: code extensions
+    command: code-server
+    args:
+      - --extensions-dir=/usr/lib/code-server/lib/vscode/extensions
+      - --list-extensions
+      - --show-versions
+    expectedOutput:
+      - docker.docker
+      - google.geminicodeassist
+      - googlecloudtools.cloudcode
+      - hashicorp.hcl
+      - hashicorp.terraform
+      - ms-kubernetes-tools.vscode-kubernetes-tools
+      - redhat.vscode-xml
+      - redhat.vscode-yaml
+      # Golang
+      - golang.go
+      # Python
+      - ms-python.autopep8
+      - ms-python.python
+      # Node.js
+      - esbenp.prettier-vscode
+      # Shell script
+      - foxundermoon.shell-format@7.2.5
+      - timonwong.shellcheck
+fileContentTests:
+  - name: code group
+    path: /etc/group
+    expectedContents:
+      - .*code:x:1111:.*
+  - name: code user
+    path: /etc/passwd
+    expectedContents:
+      - .*code:x:1111:1111::/home/code:/bin/bash.*
+metadataTest:
+  user: code:code
+  workdir: /home/code
+  entrypoint: ["code-server"]
+  #cmd: []
+  exposedPorts:
+    - "8080"
+  envVars:
+    - key: EDITOR
+      value: code-server --wait

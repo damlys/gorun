@@ -73,21 +73,18 @@ resource "kubernetes_stateful_set_v1" "code" {
         automount_service_account_token = false
         container {
           name    = "code-server"
-          image   = local.devcontainer
+          image   = local.workstation_image
           command = ["code-server"]
           args    = ["--auth=password"]
           env {
             name  = "PASSWORD"
             value = "Secret123"
           }
-          env {
-            name  = "EDITOR"
-            value = "code-server --wait"
-          }
           volume_mount {
             name       = "code-home"
             mount_path = "/home/code"
           }
+          working_dir = "/home/code"
           port {
             name           = "code-http"
             container_port = 8080
@@ -113,19 +110,21 @@ resource "kubernetes_stateful_set_v1" "code" {
           }
           resources {
             requests = {
+              # PROD cpu    = "2000m"
+              # PROD memory = "1Gi"
               cpu    = "1m"
               memory = "1Mi"
             }
-            limits = {
-              cpu    = "2000m"
-              memory = "1Gi"
-            }
+            # PROD limits = {
+            #   cpu    = ""
+            #   memory = ""
+            # }
           }
           security_context { # container security context
             run_as_non_root           = true
             read_only_root_filesystem = false
-            run_as_user               = 1111
-            run_as_group              = 1111
+            run_as_user               = 1111 # code
+            run_as_group              = 1111 # code
           }
         }
         security_context { # pod security context
@@ -143,10 +142,15 @@ resource "kubernetes_stateful_set_v1" "code" {
         access_modes       = ["ReadWriteOnce"]
         resources {
           requests = {
+            # PROD storage = "100Gi"
             storage = "10Gi"
           }
         }
       }
+    }
+    persistent_volume_claim_retention_policy {
+      when_scaled  = "Retain"
+      when_deleted = "Retain"
     }
   }
 }
