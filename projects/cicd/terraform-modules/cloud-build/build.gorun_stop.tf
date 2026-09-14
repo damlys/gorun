@@ -5,12 +5,12 @@ resource "google_cloudbuild_trigger" "gorun_stop" {
 
   project     = data.google_project.this.project_id
   location    = local.gcp_region
-  name        = "${data.github_repository.monorepo.name}-stop"
-  description = "${local.cloud_build_connection_host}/${data.github_repository.monorepo.full_name}//scripts/dev stop"
+  name        = "${data.github_repository.gorun.name}-stop"
+  description = "${local.cloud_build_connection_host}/${data.github_repository.gorun.full_name}//scripts/dev stop"
   disabled    = true # git events are disabled, this trigger is only used by the Cloud Scheduler job
 
   repository_event_config {
-    repository = google_cloudbuildv2_repository.monorepo.id
+    repository = google_cloudbuildv2_repository.gorun.id
     push {
       branch = "^main$"
     }

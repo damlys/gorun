@@ -88,14 +88,14 @@ resource "google_secret_manager_secret_iam_member" "cloud_build_secret_envs" {
 ### GitHub repositories
 #######################################
 
-data "github_repository" "monorepo" {
+data "github_repository" "gorun" {
   full_name = "damlys/gorun"
 }
 
-resource "google_cloudbuildv2_repository" "monorepo" {
+resource "google_cloudbuildv2_repository" "gorun" {
   project           = data.google_project.this.project_id
   location          = local.gcp_region
   parent_connection = local.cloud_build_connection_name
-  name              = data.github_repository.monorepo.full_name
-  remote_uri        = data.github_repository.monorepo.http_clone_url
+  name              = data.github_repository.gorun.full_name
+  remote_uri        = data.github_repository.gorun.http_clone_url
 }

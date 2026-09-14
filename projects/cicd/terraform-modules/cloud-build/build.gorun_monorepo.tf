@@ -1,36 +1,4 @@
-locals {
-  short_project_types = {
-    "docker-images"        = "image"
-    "helm-charts"          = "chart"
-    "terraform-submodules" = "tfsub"
-    "terraform-modules"    = "tfmod"
-  }
-
-  monorepo_root = "${path.module}/../../../.."
-
-  _monorepo_projects = [
-    for _, v in fileset("${local.monorepo_root}/projects", "**/.project.yaml") :
-    {
-      project_scope = split("/", v)[0]
-      project_type  = split("/", v)[1]
-      project_name  = split("/", v)[2]
-    }
-    if !contains(split("/", v), ".terraform")
-  ]
-
-  monorepo_projects = {
-    for _, v in local._monorepo_projects :
-    join("/", ["projects", v.project_scope, v.project_type, v.project_name]) => {
-      project_path  = join("/", ["projects", v.project_scope, v.project_type, v.project_name])
-      project_slug  = join("-", [v.project_scope, local.short_project_types[v.project_type], v.project_name])
-      project_scope = v.project_scope
-      project_type  = v.project_type
-      project_name  = v.project_name
-    }
-  }
-}
-
-resource "google_cloudbuild_trigger" "monorepo_push_branch" {
+resource "google_cloudbuild_trigger" "gorun_monorepo_push_branch" {
   depends_on = [
     google_storage_bucket_iam_member.cloud_build_logs_admin,
   ]
@@ -38,12 +6,12 @@ resource "google_cloudbuild_trigger" "monorepo_push_branch" {
 
   project     = data.google_project.this.project_id
   location    = local.gcp_region
-  name        = "${data.github_repository.monorepo.name}-${each.value.project_slug}"
-  description = "${local.cloud_build_connection_host}/${data.github_repository.monorepo.full_name}/${each.value.project_path}"
+  name        = "${data.github_repository.gorun.name}-${each.value.project_slug}"
+  description = "${local.cloud_build_connection_host}/${data.github_repository.gorun.full_name}//${each.value.project_path}"
   disabled    = false
 
   repository_event_config {
-    repository = google_cloudbuildv2_repository.monorepo.id
+    repository = google_cloudbuildv2_repository.gorun.id
     push {
       branch = "^main$"
     }
@@ -86,33 +54,33 @@ resource "google_cloudbuild_trigger" "monorepo_push_branch" {
   include_build_logs = "INCLUDE_BUILD_LOGS_WITH_STATUS"
 }
 
-resource "google_cloudbuild_trigger" "monorepo_pull_request" {
+resource "google_cloudbuild_trigger" "gorun_monorepo_pull_request" {
   depends_on = [
     google_storage_bucket_iam_member.cloud_build_logs_admin,
   ]
   for_each = local.monorepo_projects
 
-  project     = google_cloudbuild_trigger.monorepo_push_branch[each.key].project
-  location    = google_cloudbuild_trigger.monorepo_push_branch[each.key].location
-  name        = "${google_cloudbuild_trigger.monorepo_push_branch[each.key].name}-pr"
-  description = google_cloudbuild_trigger.monorepo_push_branch[each.key].description
-  disabled    = google_cloudbuild_trigger.monorepo_push_branch[each.key].disabled
+  project     = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].project
+  location    = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].location
+  name        = "${google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].name}-pr"
+  description = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].description
+  disabled    = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].disabled
 
   repository_event_config {
-    repository = google_cloudbuild_trigger.monorepo_push_branch[each.key].repository_event_config[0].repository
+    repository = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].repository_event_config[0].repository
     pull_request {
-      branch = google_cloudbuild_trigger.monorepo_push_branch[each.key].repository_event_config[0].push[0].branch
+      branch = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].repository_event_config[0].push[0].branch
     }
   }
-  included_files = google_cloudbuild_trigger.monorepo_push_branch[each.key].included_files
-  ignored_files  = google_cloudbuild_trigger.monorepo_push_branch[each.key].ignored_files
+  included_files = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].included_files
+  ignored_files  = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].ignored_files
 
-  service_account = google_cloudbuild_trigger.monorepo_push_branch[each.key].service_account
+  service_account = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].service_account
   build {
     step {
-      name       = google_cloudbuild_trigger.monorepo_push_branch[each.key].build[0].step[0].name
-      env        = google_cloudbuild_trigger.monorepo_push_branch[each.key].build[0].step[0].env
-      secret_env = google_cloudbuild_trigger.monorepo_push_branch[each.key].build[0].step[0].secret_env
+      name       = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].build[0].step[0].name
+      env        = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].build[0].step[0].env
+      secret_env = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].build[0].step[0].secret_env
       script = templatefile("${path.module}/assets/build.gorun_monorepo.bash.tftpl", {
         project_path = each.value.project_path
         project_type = each.value.project_type
@@ -122,11 +90,11 @@ resource "google_cloudbuild_trigger" "monorepo_pull_request" {
         github_event = "pull_request"
       })
     }
-    timeout = google_cloudbuild_trigger.monorepo_push_branch[each.key].build[0].timeout
+    timeout = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].build[0].timeout
 
     available_secrets {
       dynamic "secret_manager" {
-        for_each = google_cloudbuild_trigger.monorepo_push_branch[each.key].build[0].available_secrets[0].secret_manager
+        for_each = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].build[0].available_secrets[0].secret_manager
         content {
           env          = secret_manager.value.env
           version_name = secret_manager.value.version_name
@@ -135,9 +103,9 @@ resource "google_cloudbuild_trigger" "monorepo_pull_request" {
     }
 
     options {
-      logging = google_cloudbuild_trigger.monorepo_push_branch[each.key].build[0].options[0].logging
+      logging = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].build[0].options[0].logging
     }
-    logs_bucket = google_cloudbuild_trigger.monorepo_push_branch[each.key].build[0].logs_bucket
+    logs_bucket = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].build[0].logs_bucket
   }
-  include_build_logs = google_cloudbuild_trigger.monorepo_push_branch[each.key].include_build_logs
+  include_build_logs = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].include_build_logs
 }

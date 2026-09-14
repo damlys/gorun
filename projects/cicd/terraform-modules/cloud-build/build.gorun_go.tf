@@ -5,12 +5,12 @@ resource "google_cloudbuild_trigger" "gorun_go" {
 
   project     = data.google_project.this.project_id
   location    = local.gcp_region
-  name        = "${data.github_repository.monorepo.name}-go"
-  description = "${local.cloud_build_connection_host}/${data.github_repository.monorepo.full_name}//scripts/test go"
+  name        = "${data.github_repository.gorun.name}-go"
+  description = "${local.cloud_build_connection_host}/${data.github_repository.gorun.full_name}//scripts/test go"
   disabled    = false
 
   repository_event_config {
-    repository = google_cloudbuildv2_repository.monorepo.id
+    repository = google_cloudbuildv2_repository.gorun.id
     pull_request {
       branch = "^main$"
     }
