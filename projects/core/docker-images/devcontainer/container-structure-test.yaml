@@ -128,7 +128,7 @@ commandTests:
     args:
       - gocomplete
     expectedOutput:
-      - /root/go/bin/gocomplete
+      - /usr/local/go/bin/gocomplete
   - # https://golangci-lint.run/
     name: golangci-lint
     command: golangci-lint
@@ -258,6 +258,10 @@ commandTests:
     command: man
     args:
       - --version
+  - name: nano
+    command: nano
+    args:
+      - --version
   - name: nmap
     command: nmap
     args:
@@ -336,11 +340,11 @@ fileExistenceTests:
     shouldExist: true
 fileContentTests:
   - name: go shell completion
-    path: /root/.bashrc
+    path: /etc/bash.bashrc
     expectedContents:
-      - .*complete -C /root/go/bin/gocomplete go.*
+      - .*complete -C /usr/local/go/bin/gocomplete go.*
   - name: terraform shell completion
-    path: /root/.bashrc
+    path: /etc/bash.bashrc
     expectedContents:
       - .*complete -C /usr/local/bin/terraform terraform.*
 
@@ -354,8 +358,6 @@ metadataTest:
   # entrypoint: []
   cmd: ["bash"]
   envVars:
-    - key: GOPATH
-      value: /root/go
     - key: NODE_ENV
       value: development
     - key: TZ

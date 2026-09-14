@@ -10,7 +10,7 @@ module "test_platform" {
 
   node_pools = {
     "spot-pool-1" = {
-      node_machine_type   = "e2-standard-2"
+      node_machine_type   = "e2-highmem-2"
       node_spot_instances = true
       node_min_instances  = 1
       node_max_instances  = 1

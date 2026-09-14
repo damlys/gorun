@@ -13,5 +13,5 @@ locals {
     GITHUB_TOKEN    = "latest"
   }
 
-  devcontainer = "europe-central2-docker.pkg.dev/gogcp-main-9/private-docker-images/gorun/core/devcontainer:0.9.100"
+  devcontainer = "europe-central2-docker.pkg.dev/gogcp-main-9/private-docker-images/gorun/core/devcontainer:0.9.101"
 }
