@@ -13,6 +13,94 @@ resource "kubernetes_namespace_v1" "this" {
 }
 
 #######################################
+### Docker-in-Docker (DinD)
+#######################################
+
+resource "kubernetes_service_v1" "dind" {
+  metadata {
+    name      = "dind"
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+    labels    = local.dind_metadata_labels
+  }
+  spec {
+    selector                    = local.dind_selector_labels
+    type                        = "ClusterIP"
+    cluster_ip                  = "None" # headless service
+    publish_not_ready_addresses = true
+    port {
+      name        = "dind-tcp"
+      port        = 2375
+      protocol    = "TCP"
+      target_port = "dind-tcp"
+    }
+  }
+}
+
+resource "kubernetes_service_account_v1" "dind" {
+  metadata {
+    name      = "dind"
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+    labels    = local.dind_metadata_labels
+  }
+}
+
+resource "kubernetes_stateful_set_v1" "dind" {
+  metadata {
+    name      = "dind"
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+    labels    = local.dind_metadata_labels
+  }
+  spec {
+    service_name = kubernetes_service_v1.dind.metadata[0].name
+    replicas     = 1
+    selector {
+      match_labels = local.dind_selector_labels
+    }
+    template {
+      metadata {
+        labels = local.dind_metadata_labels
+      }
+      spec {
+        service_account_name = kubernetes_service_account_v1.dind.metadata[0].name
+        container {
+          name  = "docker"
+          image = "docker:dind"
+          env {
+            name  = "DOCKER_TLS_CERTDIR"
+            value = ""
+          }
+          volume_mount {
+            name       = "docker-data"
+            mount_path = "/var/lib/docker"
+          }
+          port {
+            name           = "dind-tcp"
+            container_port = 2375
+            protocol       = "TCP"
+          }
+          resources {
+            requests = {
+              cpu    = "1m"
+              memory = "1Mi"
+            }
+          }
+          security_context { # container security context
+            privileged = true
+          }
+        }
+        security_context { # pod security context
+        }
+        volume {
+          name = "docker-data"
+          empty_dir {
+          }
+        }
+      }
+    }
+  }
+}
+
+#######################################
 ### Code editor
 #######################################
 
@@ -79,6 +167,10 @@ resource "kubernetes_stateful_set_v1" "code" {
           env {
             name  = "PASSWORD"
             value = "Secret123"
+          }
+          env {
+            name  = "DOCKER_HOST"
+            value = local.dind_host
           }
           volume_mount {
             name       = "code-home"
