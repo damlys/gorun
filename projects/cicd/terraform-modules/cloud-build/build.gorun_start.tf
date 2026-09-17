@@ -22,6 +22,7 @@ resource "google_cloudbuild_trigger" "gorun_start" {
       name   = local.devcontainer_image
       script = file("${path.module}/assets/gorun_start.bash")
     }
+    timeout = "1200s" # 20 minutes
 
     options {
       logging = "GCS_ONLY"

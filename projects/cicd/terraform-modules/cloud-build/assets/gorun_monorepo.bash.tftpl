@@ -11,7 +11,6 @@ git checkout "$${BRANCH_NAME}"
 
 %{~ if project_type == "docker-images" }
 export DOCKER_BUILDKIT="0"
-
 gcloud auth configure-docker "europe-central2-docker.pkg.dev"
 docker login --username="$${DOCKERHUB_USERNAME}" --password="$${DOCKERHUB_TOKEN}"
 
@@ -28,7 +27,6 @@ set -x
 %{~ endif /* docker-images */ }
 %{~ if project_type == "helm-charts" }
 export HELM_EXPERIMENTAL_OCI="1"
-
 gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
 
 set -x
