@@ -20,7 +20,7 @@ resource "google_cloudbuild_trigger" "gorun_stop" {
   build {
     step {
       name   = local.devcontainer_image
-      script = file("${path.module}/assets/build.gorun_stop.bash")
+      script = file("${path.module}/assets/gorun_stop.bash")
     }
 
     options {

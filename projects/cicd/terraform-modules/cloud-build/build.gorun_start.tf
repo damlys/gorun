@@ -1,28 +1,26 @@
-resource "google_cloudbuild_trigger" "gorun_bash" {
+resource "google_cloudbuild_trigger" "gorun_start" {
   depends_on = [
     google_storage_bucket_iam_member.cloud_build_logs_admin,
   ]
 
   project     = data.google_project.this.project_id
   location    = local.gcp_region
-  name        = "${data.github_repository.gorun.name}-bash"
-  description = "${local.cloud_build_connection_host}/${data.github_repository.gorun.full_name}//scripts/test bash"
-  disabled    = false
+  name        = "${data.github_repository.gorun.name}-start"
+  description = "${local.cloud_build_connection_host}/${data.github_repository.gorun.full_name}//scripts/dev start"
+  disabled    = true # git events are disabled, this trigger is only used manually
 
   repository_event_config {
     repository = google_cloudbuildv2_repository.gorun.id
-    pull_request {
+    push {
       branch = "^main$"
     }
   }
-  included_files = ["scripts/**"]
-  ignored_files  = []
 
   service_account = google_service_account.cloud_build.id
   build {
     step {
       name   = local.devcontainer_image
-      script = file("${path.module}/assets/gorun_bash.bash")
+      script = file("${path.module}/assets/gorun_start.bash")
     }
 
     options {

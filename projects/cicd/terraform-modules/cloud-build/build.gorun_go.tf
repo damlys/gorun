@@ -22,7 +22,7 @@ resource "google_cloudbuild_trigger" "gorun_go" {
   build {
     step {
       name   = local.devcontainer_image
-      script = file("${path.module}/assets/build.gorun_go.bash")
+      script = file("${path.module}/assets/gorun_go.bash")
     }
 
     options {

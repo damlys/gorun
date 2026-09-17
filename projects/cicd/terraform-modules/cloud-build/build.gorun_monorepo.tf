@@ -25,7 +25,7 @@ resource "google_cloudbuild_trigger" "gorun_monorepo_push_branch" {
       name       = local.devcontainer_image
       env        = [for k, v in local.cloud_build_envs : "${k}=${v}"]
       secret_env = [for k, _ in local.cloud_build_secret_envs : k]
-      script = templatefile("${path.module}/assets/build.gorun_monorepo.bash.tftpl", {
+      script = templatefile("${path.module}/assets/gorun_monorepo.bash.tftpl", {
         project_path = each.value.project_path
         project_type = each.value.project_type
         git_host     = local.cloud_build_connection_host
@@ -81,7 +81,7 @@ resource "google_cloudbuild_trigger" "gorun_monorepo_pull_request" {
       name       = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].build[0].step[0].name
       env        = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].build[0].step[0].env
       secret_env = google_cloudbuild_trigger.gorun_monorepo_push_branch[each.key].build[0].step[0].secret_env
-      script = templatefile("${path.module}/assets/build.gorun_monorepo.bash.tftpl", {
+      script = templatefile("${path.module}/assets/gorun_monorepo.bash.tftpl", {
         project_path = each.value.project_path
         project_type = each.value.project_type
         git_host     = local.cloud_build_connection_host

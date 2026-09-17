@@ -99,3 +99,15 @@ resource "google_cloudbuildv2_repository" "gorun" {
   name              = data.github_repository.gorun.full_name
   remote_uri        = data.github_repository.gorun.http_clone_url
 }
+
+data "github_repository" "gomod" {
+  full_name = "damlys/gomod"
+}
+
+resource "google_cloudbuildv2_repository" "gomod" {
+  project           = data.google_project.this.project_id
+  location          = local.gcp_region
+  parent_connection = local.cloud_build_connection_name
+  name              = data.github_repository.gomod.full_name
+  remote_uri        = data.github_repository.gomod.http_clone_url
+}
