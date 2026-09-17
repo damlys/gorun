@@ -1,5 +1,5 @@
 locals {
-  workstation_image = "europe-central2-docker.pkg.dev/gogcp-main-9/private-docker-images/gorun/core/workstation:0.9.100"
+  workstation_image = "europe-central2-docker.pkg.dev/gogcp-main-9/private-docker-images/gorun/core/workstation:0.9.101"
 
   code_selector_labels = {
     "app.kubernetes.io/name"    = "code"
