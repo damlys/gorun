@@ -14,13 +14,13 @@ fileExistenceTests:
     shouldExist: true
     uid: 1111
     gid: 1111
-    permissions: drwxr-xr-x
+    permissions: drwx------
 fileContentTests:
   - name: operating system
     path: /etc/os-release
     expectedContents:
       - ID=debian
-      - VERSION_CODENAME=bookworm
+      - VERSION_CODENAME=trixie
   - name: deploy group
     path: /etc/group
     expectedContents:

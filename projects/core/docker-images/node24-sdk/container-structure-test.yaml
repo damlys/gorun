@@ -23,7 +23,7 @@ fileContentTests:
     path: /etc/os-release
     expectedContents:
       - ID=debian
-      - VERSION_CODENAME=bookworm
+      - VERSION_CODENAME=trixie
 metadataTest:
   user: root:root
   workdir: /
