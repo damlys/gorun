@@ -1,4 +1,4 @@
-FROM europe-central2-docker.pkg.dev/gogcp-main-9/private-docker-images/gorun/core/devcontainer:0.9.101
+FROM europe-central2-docker.pkg.dev/gogcp-main-9/private-docker-images/gorun/core/devcontainer:0.9.102
 
 # platform ARGs: https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope
 ARG TARGETOS
