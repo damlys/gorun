@@ -1,0 +1,35 @@
+#!/bin/bash
+set -e
+
+git config --global user.name "${git_name}"
+git config --global user.email "${git_email}"
+# fix git push
+echo "machine ${git_host} login x-access-token password $${GITHUB_TOKEN}" >>~/.netrc
+# fix git HEAD
+git fetch origin "$${BRANCH_NAME}" --filter="blob:none" --no-tags
+git checkout "$${BRANCH_NAME}"
+
+# docker auth
+export DOCKER_BUILDKIT="0"
+gcloud auth configure-docker "europe-central2-docker.pkg.dev"
+docker login --username="$${DOCKERHUB_USERNAME}" --password="$${DOCKERHUB_TOKEN}"
+
+# helm auth
+export HELM_EXPERIMENTAL_OCI="1"
+gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
+
+# kube auth
+gcloud --project="gogcp-test-9" container clusters --region="europe-central2-a" get-credentials "gogke-test-9"
+kubectl config set-context --current --namespace="gomod-test-9"
+
+set -x
+./scripts/go-download-dependencies
+./scripts/go-scan-vulnerabilities
+./scripts/go-format-check
+./scripts/go-lint
+./scripts/go-build
+./scripts/go-test
+./scripts/skaffold-test
+%{~ if github_event == "push_branch" }
+skaffold run --profile="test"
+%{~ endif }

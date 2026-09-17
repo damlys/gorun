@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+# shellcheck disable=SC1090
 for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
 
 function main {
@@ -18,6 +19,7 @@ function main {
   image_repository="$(yq '.repository' "${project_path}/.project.yaml")"
   image_tag="$(yq '.tag' "${project_path}/.project.yaml")"
   image="${image_repository}:${image_tag}"
+  # shellcheck disable=SC2016
   image_aliases=$(yq '.tag as $tag | .aliases.[] | .repository + ":" + $tag' "${project_path}/.project.yaml")
 
   case "${cmd}" in

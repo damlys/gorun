@@ -11,7 +11,6 @@ git checkout "$${BRANCH_NAME}"
 
 %{~ if project_type == "docker-images" }
 export DOCKER_BUILDKIT="0"
-
 gcloud auth configure-docker "europe-central2-docker.pkg.dev"
 docker login --username="$${DOCKERHUB_USERNAME}" --password="$${DOCKERHUB_TOKEN}"
 
@@ -28,7 +27,6 @@ set -x
 %{~ endif /* docker-images */ }
 %{~ if project_type == "helm-charts" }
 export HELM_EXPERIMENTAL_OCI="1"
-
 gcloud auth print-access-token | helm registry login --username="oauth2accesstoken" --password-stdin "europe-central2-docker.pkg.dev"
 
 set -x
@@ -63,11 +61,10 @@ export TF_CLI_ARGS="-no-color"
 
 set -x
 ./scripts/terraform-module test "${project_path}"
-terraform -chdir="${project_path}" init -input=false
 %{~ if github_event == "pull_request" }
-terraform -chdir="${project_path}" plan -input=false
+./scripts/terraform-module plan "${project_path}"
 %{~ endif }
 %{~ if github_event == "push_branch" }
-terraform -chdir="${project_path}" apply -input=false -auto-approve
+./scripts/terraform-module apply "${project_path}"
 %{~ endif }
 %{~ endif /* terraform-modules */ }

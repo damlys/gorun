@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+# shellcheck disable=SC1090
 for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
 
 function main {
@@ -28,8 +29,8 @@ function main {
     terraform -chdir="projects/core/terraform-modules/test" init -input=false
     terraform -chdir="projects/core/terraform-modules/test" apply -input=false -auto-approve -target=module.test_platform.google_container_node_pool.this
 
-    log::info "waiting 15 minutes"
-    sleep 900
+    log::info "waiting 10 minutes"
+    sleep 600
 
     log::info "enabling test monitoring policies"
     for gcp_monitoring_policy in $(gcloud alpha monitoring policies list --project="${gcp_project}" --format="value(name)"); do

@@ -1,0 +1,36 @@
+#!/bin/bash
+set -e
+# shellcheck disable=SC1090
+for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
+
+function main {
+  local cmd="$1"
+
+  case "${cmd}" in
+  "refresh")
+    log::info "apply Google Cloud Build builds"
+    terraform -chdir="projects/cicd/terraform-modules/cloud-build" apply -auto-approve
+
+    log::info "render GitHub Actions workflows"
+    rm -f ./.github/workflows/workflow.*.gotmpl.yaml
+    go run ./go/cmd/render-github-workflows
+
+    log::info "render GitLab pipelines"
+    rm -f ./.gitlab-ci.yml
+    go run ./go/cmd/render-gitlab-pipelines
+
+    log::info "render Bitbucket pipelines"
+    rm -f ./bitbucket-pipelines.yml
+    go run ./go/cmd/render-bitbucket-pipelines
+
+    log::info "done"
+    ;;
+
+  *)
+    log::error "unknown command: ${cmd}"
+    return 127
+    ;;
+  esac
+}
+
+main "$@"

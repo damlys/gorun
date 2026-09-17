@@ -1,0 +1,44 @@
+#!/bin/bash
+set -e
+# shellcheck disable=SC1090
+for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
+
+function main {
+  local cmd="$1"
+
+  case "${cmd}" in
+  "bash")
+    log::info "format check"
+    shfmt --indent=2 --diff ./scripts
+
+    log::info "lint check"
+    # shellcheck disable=SC2046
+    shellcheck $(find ./scripts -type f)
+
+    log::info "test pass"
+    ;;
+
+  "go")
+    log::info "format check"
+    files="$(gofmt -l ./go)" && echo "$files" && test -z "$files"
+
+    log::info "lint check (go vet)"
+    go vet ./go/...
+
+    log::info "lint check (golangci-lint)"
+    golangci-lint run ./go/...
+
+    log::info "unit tests"
+    go test -v ./go/...
+
+    log::info "test pass"
+    ;;
+
+  *)
+    log::error "unknown command: ${cmd}"
+    return 127
+    ;;
+  esac
+}
+
+main "$@"
