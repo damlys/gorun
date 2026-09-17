@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+# shellcheck disable=SC1090
 for lib in "$(dirname "$0")"/lib/*.bash; do source "${lib}"; done
 
 function main {
@@ -11,7 +12,8 @@ function main {
     shfmt --indent=2 --diff ./scripts
 
     log::info "lint check"
-    shellcheck --exclude=1090 $(find ./scripts -type f)
+    # shellcheck disable=SC2046
+    shellcheck $(find ./scripts -type f)
 
     log::info "test pass"
     ;;
