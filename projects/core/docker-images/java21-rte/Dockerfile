@@ -1,4 +1,4 @@
-FROM ubuntu:noble
+FROM ubuntu:resolute
 USER root:root
 WORKDIR /
 ENTRYPOINT []

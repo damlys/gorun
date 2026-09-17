@@ -29,7 +29,7 @@ fileContentTests:
     path: /etc/os-release
     expectedContents:
       - ID=ubuntu
-      - VERSION_CODENAME=noble
+      - VERSION_CODENAME=resolute
 metadataTest:
   user: root:root
   workdir: /
