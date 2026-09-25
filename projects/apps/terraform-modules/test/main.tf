@@ -27,7 +27,7 @@ module "gomod_test_workspace" {
 data "kubernetes_service_v1" "goapp_test" {
   metadata {
     name      = "goapp-test-9"
-    namespace = "gomod-test-9"
+    namespace = "workspace-gomod-test-9"
   }
 }
 

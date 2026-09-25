@@ -46,5 +46,5 @@ $ gcloud auth print-access-token | helm registry login --username="oauth2accesst
 ```
 $ gcloud --project="gogcp-test-9" container clusters --region="europe-central2-a" get-credentials "gogke-test-9"
 $ kubectl config set-context "gke_gogcp-test-9_europe-central2-a_gogke-test-9"
-$ kubectl config set-context --current --namespace="gomod-test-9"
+$ kubectl config set-context --current --namespace="workspace-gomod-test-9"
 ```
