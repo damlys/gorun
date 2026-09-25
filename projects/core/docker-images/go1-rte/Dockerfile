@@ -4,6 +4,7 @@ WORKDIR /
 ENTRYPOINT []
 CMD ["bash"]
 
+ENV LANG="C.UTF-8"
 ENV TZ="UTC"
 
 RUN groupadd --gid="1111" deploy \

@@ -4,6 +4,7 @@ WORKDIR /
 ENTRYPOINT []
 CMD ["bash"]
 
+ENV LANG="C.UTF-8"
 ENV NODE_ENV="production"
 ENV TZ="UTC"
 

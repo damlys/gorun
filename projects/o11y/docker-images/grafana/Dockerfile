@@ -1,5 +1,6 @@
 FROM grafana/grafana:13.0
 
+ENV LANG="C.UTF-8"
 ENV TZ="UTC"
 
 RUN grafana cli plugins install grafana-clickhouse-datasource \

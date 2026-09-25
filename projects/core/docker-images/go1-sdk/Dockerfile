@@ -4,4 +4,5 @@ WORKDIR /go
 ENTRYPOINT []
 CMD ["bash"]
 
+ENV LANG="C.UTF-8"
 ENV TZ="UTC"
