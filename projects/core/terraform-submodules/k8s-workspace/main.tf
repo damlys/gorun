@@ -1,6 +1,6 @@
 resource "kubernetes_namespace_v1" "this" {
   metadata {
-    name = var.workspace_name
+    name = "workspace-${var.workspace_name}"
     labels = merge({
       "pod-security.kubernetes.io/enforce"         = "baseline"
       "pod-security.kubernetes.io/enforce-version" = "latest"
