@@ -1,6 +1,6 @@
 apiVersion: v2
 name: stateless-kuard
-version: 0.9.100
+version: 0.9.101
 dependencies:
   - # PROD repository: oci://europe-central2-docker.pkg.dev/gogcp-main-9/private-helm-charts/gorun/core
     repository: file://../../../core/helm-charts/configs
